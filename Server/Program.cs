@@ -1,10 +1,21 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+using System.Xml.Serialization;
 
 namespace Server
 {
     public static class Program
     {
-        static void Main()
+        private static void Main()
+        {
+            RunTestClient();
+        }
+
+        private static void RunTestClient()
         {
             // Create a a ServerData object (which will be used eventually to accept TCP connection)
             var serverData = new ServerData();
@@ -17,6 +28,12 @@ namespace Server
             serverData.TcpInput(newClient);
 
             Console.ReadKey();
+        }
+
+        private static void Send(Stream stream, Client thisClient)
+        {
+            var binaryFormatter = new BinaryFormatter();
+            binaryFormatter.Serialize(stream, thisClient);
         }
     }
 }
