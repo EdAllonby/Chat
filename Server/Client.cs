@@ -6,12 +6,24 @@ namespace Server
     {
         private string userID;
         private Message message;
-        private CurrentStatus currentStatus;
+        private Status currentStatus;
+
+        public Client(string userId, Message message, Status currentStatus)
+        {
+            userID = userId;
+            this.message = message;
+            this.currentStatus = currentStatus;
+        }
 
         public string GetMessage()
         {
-            string clientMessage = message.GetText() + message.GetTimeStamp();
-            return clientMessage;
+            if (message != null)
+            {
+                string clientMessage = message.GetText() + message.GetTimeStamp();
+                return clientMessage;
+
+            }
+            return null;
         }
 
         public string GetUserId()
@@ -19,7 +31,7 @@ namespace Server
             return userID;
         }
 
-        public CurrentStatus GetStatus()
+        public Status GetStatus()
         {
             return currentStatus;
         }
