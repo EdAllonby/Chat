@@ -8,8 +8,15 @@ namespace Server
     public class Client : ISerializable
     {
         private readonly string userId;
-        private readonly Message message;
+        private Message message;
         private readonly Status currentStatus;
+
+        // If Client is created
+        public Client(string userId)
+        {
+            currentStatus = Status.Connected;
+            this.userId = userId;
+        }
 
         public Client(string userId, Message message, Status currentStatus)
         {
@@ -62,6 +69,13 @@ namespace Server
             info.AddValue("UserId", userId);
             info.AddValue("message", message);
             info.AddValue("currentStatus", currentStatus);
+        }
+
+        public void NewMessage(string messageBody)
+        {
+            DateTime messageTime = DateTime.Now;
+            var newMessage = new Message(messageBody, messageTime);
+            message = newMessage;
         }
     }
 }
