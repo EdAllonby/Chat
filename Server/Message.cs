@@ -4,8 +4,15 @@ namespace Server
 {
     public class Message
     {
-        private string text;
-        private DateTime timeStamp;
+        private readonly string text;
+        private readonly DateTime timeStamp;
+
+        public Message(string text, DateTime timeStamp)
+        {
+            this.text = text;
+            this.timeStamp = timeStamp;
+        }
+
 
         public string GetText()
         {

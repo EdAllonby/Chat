@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace Server
 {
@@ -6,6 +9,8 @@ namespace Server
     {
         private readonly List<IObserver> observers;
         private Client clientData;
+
+        private int portNumber = 5004;
 
         public ServerData()
         {
@@ -39,6 +44,29 @@ namespace Server
         {
             clientData = client;
             ClientUpdate();
+        }
+
+        public void TcpServerRun()
+        {
+            var tcpListener = new TcpListener(IPAddress.Any, portNumber);
+            tcpListener.Start();
+
+            while (true)
+            {
+                TcpClient client = tcpListener.AcceptTcpClient();
+                var tcpHandlerThread = new Thread(TcpHandler);
+                tcpHandlerThread.Start(client);
+            }
+        }
+
+        public void TcpHandler(object client)
+        {
+            var mClient = (TcpClient) client;
+            NetworkStream stream = mClient.GetStream();
+            while (true)
+            {
+                // Read or Write
+            }
         }
     }
 }

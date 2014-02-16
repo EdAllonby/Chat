@@ -9,7 +9,6 @@ namespace Server.Tests
         public void NewClientConnectedWithoutSockets()
         {
 
-
         }
     }
 }
