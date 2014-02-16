@@ -1,12 +1,9 @@
 ﻿namespace Server
 {
-    public class CurrentStatus
+    public enum Status
     {
-        public enum Status
-        {
-            Connected = 1,
-            Disconnected,
-            NewMessage,
-        }
+        Connected = 1,
+        Disconnected,
+        NewMessage,
     }
 }
