@@ -23,17 +23,7 @@ namespace Server
             // Create a ServerLog object
             var log = new ServerLog(serverData);
 
-            //Simulate a Client object coming from a socket (After serialisation)
-            var newClient = new Client("Ed", null, Status.Connected);
-            serverData.TcpInput(newClient);
-
             Console.ReadKey();
-        }
-
-        private static void Send(Stream stream, Client thisClient)
-        {
-            var binaryFormatter = new BinaryFormatter();
-            binaryFormatter.Serialize(stream, thisClient);
         }
     }
 }

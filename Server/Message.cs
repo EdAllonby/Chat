@@ -2,17 +2,19 @@
 
 namespace Server
 {
+    [Serializable]
     public class Message
     {
         private readonly string text;
         private readonly DateTime timeStamp;
 
-        public Message(string text, DateTime timeStamp)
+        public Message(string text)
         {
             this.text = text;
-            this.timeStamp = timeStamp;
-        }
 
+            DateTime time = DateTime.Now;
+            timeStamp = time;
+        }
 
         public string GetText()
         {

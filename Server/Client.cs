@@ -16,13 +16,15 @@ namespace Server
         {
             currentStatus = Status.Connected;
             this.userId = userId;
+            message = null;
         }
 
-        public Client(string userId, Message message, Status currentStatus)
+        // If client has a message, then its status = NewMessage
+        public Client(string userId, string message)
         {
             this.userId = userId;
-            this.message = message;
-            this.currentStatus = currentStatus;
+            this.message = new Message(message);
+            currentStatus = Status.NewMessage;
         }
 
         public string GetMessage()
@@ -66,16 +68,9 @@ namespace Server
                 throw new ArgumentNullException("info");
             }
 
-            info.AddValue("UserId", userId);
+            info.AddValue("userId", userId);
             info.AddValue("message", message);
             info.AddValue("currentStatus", currentStatus);
-        }
-
-        public void NewMessage(string messageBody)
-        {
-            DateTime messageTime = DateTime.Now;
-            var newMessage = new Message(messageBody, messageTime);
-            message = newMessage;
         }
     }
 }
