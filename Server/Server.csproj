@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Serialisation\BinaryFormat.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IObserver.cs" />
@@ -47,6 +48,8 @@
     <Compile Include="ServerData.cs" />
     <Compile Include="ServerLog.cs" />
     <Compile Include="CurrentStatus.cs" />
+    <Compile Include="Serialisation\ITcpSendBehaviour.cs" />
+    <Compile Include="Serialisation\XmlFormat.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

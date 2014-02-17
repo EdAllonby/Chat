@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 
 namespace Server
 {
@@ -10,11 +7,23 @@ namespace Server
         private readonly List<IObserver> observers;
         private Client clientData;
 
-        private int portNumber = 5004;
+        // Use Strategy pattern to chose what TCP Serialisation method to use
+        private ITcpSendBehaviour sendBehaviour;
 
-        public ServerData()
+        public const int portNumber = 5004;
+
+        public ServerData(ITcpSendBehaviour sendBehaviour)
         {
+            this.sendBehaviour = sendBehaviour;
             observers = new List<IObserver>();
+
+            // Start TCP Listen
+            TcpInput();
+        }
+
+        public void SetSerialiseMethod(ITcpSendBehaviour sendBehaviour)
+        {
+            this.sendBehaviour = sendBehaviour;
         }
 
         public void RegisterObserver(IObserver o)
@@ -40,33 +49,10 @@ namespace Server
             NotifyObservers();
         }
 
-        public void TcpInput(Client client)
+        public void TcpInput()
         {
-            clientData = client;
+            clientData = sendBehaviour.Serialise();
             ClientUpdate();
-        }
-
-        public void TcpServerRun()
-        {
-            var tcpListener = new TcpListener(IPAddress.Any, portNumber);
-            tcpListener.Start();
-
-            while (true)
-            {
-                TcpClient client = tcpListener.AcceptTcpClient();
-                var tcpHandlerThread = new Thread(TcpHandler);
-                tcpHandlerThread.Start(client);
-            }
-        }
-
-        public void TcpHandler(object client)
-        {
-            var mClient = (TcpClient) client;
-            NetworkStream stream = mClient.GetStream();
-            while (true)
-            {
-                // Read or Write
-            }
         }
     }
 }
