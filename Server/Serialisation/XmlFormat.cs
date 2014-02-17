@@ -1,4 +1,5 @@
-﻿using Server.Serialisation;
+﻿using System.IO;
+using Server.Serialisation;
 
 namespace Server
 {
@@ -9,7 +10,7 @@ namespace Server
             throw new System.NotImplementedException();
         }
 
-        public Client Deserialise()
+        public Client Deserialise(Stream networkStream)
         {
             throw new System.NotImplementedException();
         }
