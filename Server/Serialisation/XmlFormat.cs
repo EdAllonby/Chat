@@ -1,7 +1,6 @@
 ﻿using System.IO;
-using Server.Serialisation;
 
-namespace Server
+namespace Server.Serialisation
 {
     public class XmlFormat : ITcpSendBehaviour
     {

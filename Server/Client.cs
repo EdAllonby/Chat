@@ -31,7 +31,7 @@ namespace Server
         {
             if (message != null)
             {
-                string clientMessage = message.GetText() + message.GetTimeStamp();
+                string clientMessage = message.GetText() + " sent at: " + message.GetTimeStamp();
                 return clientMessage;
 
             }

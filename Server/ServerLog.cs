@@ -10,6 +10,9 @@ namespace Server
 
         public ServerLog(ISubject serverData)
         {
+            Console.WriteLine("Server log started, connected to: {0}", serverData);
+            Console.WriteLine();
+
             this.serverData = serverData;
             serverData.RegisterObserver(this);
         }
@@ -22,8 +25,16 @@ namespace Server
 
         private void Log()
         {
-            Console.WriteLine("Client ID: {0}, Client Message: {1}, Client Status: {2}", clientUpdate.GetUserId(),
-                clientUpdate.GetMessage(), clientUpdate.GetStatus());
+            if (!string.IsNullOrEmpty(clientUpdate.GetMessage()))
+            {
+                Console.WriteLine("Client ID: {0}, Client Status: {1} Client Message: {2}", clientUpdate.GetUserId(),
+                    clientUpdate.GetStatus(), clientUpdate.GetMessage());
+            }
+            else
+            {
+                Console.WriteLine("Client ID: {0} has {1}", clientUpdate.GetUserId(),
+                    clientUpdate.GetStatus());
+            }
         }
     }
 }
