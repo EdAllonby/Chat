@@ -1,10 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using Server.Serialisation;
 
 namespace Server
 {
     public class ServerData : ISubject
     {
+        private static TcpListener listener;
+
+        private const int Limit = 5; //Max 5 concurrent clients
+
         private readonly List<IObserver> observers;
         private Client clientData;
 
@@ -52,8 +60,30 @@ namespace Server
 
         public void TcpInput()
         {
-            clientData = sendBehaviour. Deserialise();
-            ClientUpdate();
+            listener = new TcpListener(portNumber);
+            listener.Start();
+
+            for (int i = 0; i < Limit; i++)
+            {
+                var t = new Thread(Service);
+                t.Start();
+            }
+        }
+
+        private void Service()
+        {
+            while (true)
+            {
+                var socket = listener.AcceptSocket();
+
+                Stream networkStream = new NetworkStream(socket);
+                clientData = sendBehaviour.Deserialise(networkStream);
+
+                if (clientData != null)
+                {
+                    ClientUpdate();
+                }
+            }
         }
     }
 }

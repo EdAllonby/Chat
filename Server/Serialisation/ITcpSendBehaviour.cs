@@ -1,4 +1,6 @@
-﻿namespace Server.Serialisation
+﻿using System.IO;
+
+namespace Server.Serialisation
 {
     public interface ITcpSendBehaviour
     {
@@ -11,6 +13,6 @@
         /// Method to get incoming data and deserialise it into a Client object
         /// </summary>
         /// <returns>A Client object</returns>
-        Client Deserialise();
+        Client Deserialise(Stream networkStream);
     }
 }

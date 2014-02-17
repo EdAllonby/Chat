@@ -38,9 +38,26 @@ namespace Server.Serialisation
             }
         }
 
-        public Client Deserialise()
+        public Client Deserialise(Stream networkStream)
         {
-            throw new NotImplementedException();
+            try
+            {
+                while (true)
+                {
+                    var binaryFormatter = new BinaryFormatter();
+                    Client client = null;
+
+                    if (networkStream.CanRead)
+                    {
+                        client = (Client) binaryFormatter.Deserialize(networkStream);
+                    }
+                    return client;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

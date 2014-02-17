@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Xml.Serialization;
+using Server.Serialisation;
 
 namespace Server
 {
@@ -18,7 +19,7 @@ namespace Server
         private static void RunTestClient()
         {
             // Create a a ServerData object (which will be used eventually to accept TCP connection)
-            var serverData = new ServerData(new XmlFormat());
+            var serverData = new ServerData(new BinaryFormat());
 
             // Create a ServerLog object
             var log = new ServerLog(serverData);
