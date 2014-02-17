@@ -18,7 +18,7 @@ namespace Server
         private static void RunTestClient()
         {
             // Create a a ServerData object (which will be used eventually to accept TCP connection)
-            var serverData = new ServerData();
+            var serverData = new ServerData(new XmlFormat());
 
             // Create a ServerLog object
             var log = new ServerLog(serverData);
