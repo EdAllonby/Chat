@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="Serialisation\BinaryFormat.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="ILogger.cs" />
     <Compile Include="IObserver.cs" />
     <Compile Include="ISubject.cs" />
     <Compile Include="Message.cs" />

@@ -1,8 +1,15 @@
-﻿namespace Server
+﻿using Server.Serialisation;
+
+namespace Server
 {
-    class XmlFormat : ITcpSendBehaviour
+    public class XmlFormat : ITcpSendBehaviour
     {
-        public Client Serialise()
+        public void Serialise(Client clientMessage)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Client Deserialise()
         {
             throw new System.NotImplementedException();
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Server.Serialisation;
 
 namespace Server
 {
@@ -51,7 +52,7 @@ namespace Server
 
         public void TcpInput()
         {
-            clientData = sendBehaviour.Serialise();
+            clientData = sendBehaviour. Deserialise();
             ClientUpdate();
         }
     }

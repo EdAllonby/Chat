@@ -2,7 +2,7 @@
 
 namespace Server
 {
-    public class ServerLog : IObserver, ILogger
+    public class ServerLog : IObserver
     {
         private Client clientUpdate;
 
@@ -20,7 +20,7 @@ namespace Server
             Log();
         }
 
-        public void Log()
+        private void Log()
         {
             Console.WriteLine("Client ID: {0}, Client Message: {1}, Client Status: {2}", clientUpdate.GetUserId(),
                 clientUpdate.GetMessage(), clientUpdate.GetStatus());
