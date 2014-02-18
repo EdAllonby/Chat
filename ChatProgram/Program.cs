@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Net.Sockets;
 using Server;
 using Server.Serialisation;
 
@@ -6,6 +8,8 @@ namespace ChatProgram
 {
     internal static class Program
     {
+        private static TcpClient client = null;
+
         private static string name;
         private static string message;
 
@@ -28,6 +32,8 @@ namespace ChatProgram
 
             SendMessage(client);
 
+            string file = @"C:\test.txt";
+
             do
             {
                 Console.Write("Chat: ");
@@ -41,7 +47,34 @@ namespace ChatProgram
 
         private static void SendMessage(Client clientMessage)
         {
-            sendBehaviour.Serialise(clientMessage);
+            try
+            {
+                client = new TcpClient("localhost", ServerData.portNumber);
+                Stream networkStream = client.GetStream();
+
+                sendBehaviour.Serialise(networkStream, clientMessage);
+
+                client.Close();
+            }
+            catch (SocketException socketException)
+            {
+                Console.WriteLine("Check that the server is running and you've set the right port and IPAddress");
+                Console.WriteLine();
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine();
+                Console.WriteLine(socketException);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+            finally
+            {
+                if (client != null)
+                {
+                    client.Close();    
+                }
+            }
         }
     }
 }

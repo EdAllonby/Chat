@@ -11,6 +11,11 @@ namespace Server
         private Message message;
         private readonly Status currentStatus;
 
+        public Client()
+        {
+            
+        }
+
         // If Client is created
         public Client(string userId)
         {
@@ -48,7 +53,7 @@ namespace Server
             return currentStatus;
         }
 
-        public Client(SerializationInfo info, StreamingContext context)
+        protected Client(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {

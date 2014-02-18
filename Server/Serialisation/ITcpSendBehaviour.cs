@@ -7,7 +7,7 @@ namespace Server.Serialisation
         /// <summary>
         /// Method used to serialise the object data over the TCP Socket
         /// </summary>
-        void Serialise(Client clientMessage);
+        void Serialise(Stream networkStream, Client clientMessage);
 
         /// <summary>
         /// Method to get incoming data and deserialise it into a Client object
