@@ -17,6 +17,6 @@
         /// <summary>
         /// Notify all subscribed observers of changes to the subject
         /// </summary>
-        void NotifyObservers();
+        void NotifyObserversOfClientChange();
     }
 }

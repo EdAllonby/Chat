@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Text;
 
 namespace Server
 {
     [Serializable]
     public class Client : ISerializable
     {
-        private readonly string userId;
+        private string userId;
         private Message message;
-        private readonly Status currentStatus;
+        private Status currentStatus;
 
         public Client()
         {
-            
         }
 
         // If Client is created
@@ -36,9 +36,12 @@ namespace Server
         {
             if (message != null)
             {
-                string clientMessage = message.GetText() + " sent at: " + message.GetTimeStamp();
-                return clientMessage;
+                var clientMessage = new StringBuilder();
+                clientMessage.Append(message.GetText());
+                clientMessage.Append(" sent at: ");
+                clientMessage.Append(message.GetTimeStamp());
 
+                return clientMessage.ToString();
             }
             return null;
         }
@@ -59,14 +62,33 @@ namespace Server
             {
                 throw new ArgumentNullException("info");
             }
+            DeSerialiseClient(info);
+        }
 
+        private void DeSerialiseClient(SerializationInfo info)
+        {
+            DeSerialiseUserId(info);
+            DeSerialiseMessage(info);
+            DeSerialiseCurrentStatus(info);
+        }
+
+        private void DeSerialiseUserId(SerializationInfo info)
+        {
             userId = (string) info.GetValue("userId", typeof (string));
+        }
+
+        private void DeSerialiseMessage(SerializationInfo info)
+        {
             message = (Message) info.GetValue("message", typeof (Message));
+        }
+
+        private void DeSerialiseCurrentStatus(SerializationInfo info)
+        {
             currentStatus = (Status) info.GetValue("currentStatus", typeof (Status));
         }
 
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
