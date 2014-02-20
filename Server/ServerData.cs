@@ -8,9 +8,12 @@ namespace Server
 {
     public class ServerData : ISubject
     {
+        private static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static TcpListener listener;
 
-        private const int Limit = 5; //Max 5 concurrent clients
+        private const int ConcurrentSockets = 5;
 
         private readonly List<IObserver> observers;
         private Client clientData;
@@ -18,20 +21,20 @@ namespace Server
         // Use Strategy pattern to chose what TCP Serialisation method to use
         private ITcpSendBehaviour sendBehaviour;
 
-        public const int portNumber = 5004;
+        public const int PortNumber = 5004;
 
         public ServerData(ITcpSendBehaviour sendBehaviour)
         {
-            this.sendBehaviour = sendBehaviour;
+            SetSerialiseMethod(sendBehaviour);
+
             observers = new List<IObserver>();
 
-            // Start TCP Listen
-            TcpInput();
+            StartTcpInput();
         }
 
-        public void SetSerialiseMethod(ITcpSendBehaviour sendBehaviour)
+        public void SetSerialiseMethod(ITcpSendBehaviour wantedSendBehaviour)
         {
-            this.sendBehaviour = sendBehaviour;
+            sendBehaviour = wantedSendBehaviour;
         }
 
         public void RegisterObserver(IObserver o)
@@ -44,44 +47,40 @@ namespace Server
             observers.Remove(o);
         }
 
-        public void NotifyObservers()
+        public void NotifyObserversOfClientChange()
         {
             foreach (var observer in observers)
             {
-                observer.Update(clientData);
+                if (clientData != null)
+                {
+                    observer.Update(clientData);
+                }
             }
         }
 
-        public void ClientUpdate()
+        private void StartTcpInput()
         {
-            NotifyObservers();
-        }
-
-        public void TcpInput()
-        {
-            listener = new TcpListener(portNumber);
+            listener = new TcpListener(PortNumber);
             listener.Start();
 
-            for (int i = 0; i < Limit; i++)
+            for (int i = 0; i < ConcurrentSockets; i++)
             {
-                var t = new Thread(Service);
-                t.Start();
+                var tcpInstance = new Thread(ListenForIncomingData);
+                tcpInstance.Start();
             }
         }
 
-        private void Service()
+        private void ListenForIncomingData()
         {
             while (true)
             {
-                var socket = listener.AcceptSocket();
+                Socket socket = listener.AcceptSocket();
 
                 Stream networkStream = new NetworkStream(socket);
+
                 clientData = sendBehaviour.Deserialise(networkStream);
 
-                if (clientData != null)
-                {
-                    ClientUpdate();
-                }
+                NotifyObserversOfClientChange();
             }
         }
     }
