@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -63,25 +64,39 @@ namespace Server
             listener = new TcpListener(PortNumber);
             listener.Start();
 
+            Log.Debug("Start the socket listener");
+
             for (int i = 0; i < ConcurrentSockets; i++)
             {
-                var tcpInstance = new Thread(ListenForIncomingData);
+                var tcpInstance = new Thread(ListenForIncomingData) { Name = "Listener thread " + (i + 1) };
+
+
                 tcpInstance.Start();
             }
         }
 
         private void ListenForIncomingData()
         {
+            Log.Debug("Create listener thread");
+
             while (true)
             {
                 Socket socket = listener.AcceptSocket();
 
                 Stream networkStream = new NetworkStream(socket);
 
+                Log.Debug("Deserialise Data");
                 clientData = sendBehaviour.Deserialise(networkStream);
 
+                ParseClientData();
+                Log.Debug("Notify Clients of change");
                 NotifyObserversOfClientChange();
             }
+        }
+
+        private void ParseClientData()
+        {
+            Log.Info("User: " + clientData.GetUserId() + " - " + clientData.GetStatus());
         }
     }
 }
