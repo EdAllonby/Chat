@@ -6,6 +6,9 @@ namespace Server.Serialisation
 {
     public class XmlFormat : ITcpSendBehaviour
     {
+        private static readonly log4net.ILog log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public void Serialise(Stream networkStream, Client clientMessage)
         {
             var serialiser = new XmlSerializer(typeof(Client));
@@ -32,8 +35,9 @@ namespace Server.Serialisation
                     return client;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                log.Error("Cannot deserialise data - exception: ", e);
                 return null;
             }
         }
