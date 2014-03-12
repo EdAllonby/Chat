@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using Server.Serialisation;
+using SharedClasses;
+using SharedClasses.Serialisation;
 
 namespace Server
 {
-    public class ServerData : ISubject
+    public class Server : ISubject
     {
         private static readonly log4net.ILog Log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -17,14 +17,14 @@ namespace Server
         private const int ConcurrentSockets = 5;
 
         private readonly List<IObserver> observers;
-        private Client clientData;
+        private Message clientMessage;
 
         // Use Strategy pattern to chose what TCP Serialisation method to use
         private ITcpSendBehaviour sendBehaviour;
 
         public const int PortNumber = 5004;
 
-        public ServerData(ITcpSendBehaviour sendBehaviour)
+        public Server(ITcpSendBehaviour sendBehaviour)
         {
             SetSerialiseMethod(sendBehaviour);
 
@@ -52,9 +52,9 @@ namespace Server
         {
             foreach (var observer in observers)
             {
-                if (clientData != null)
+                if (clientMessage != null)
                 {
-                    observer.Update(clientData);
+                    observer.Update(clientMessage);
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace Server
                 Stream networkStream = new NetworkStream(socket);
 
                 Log.Debug("Deserialise Data");
-                clientData = sendBehaviour.Deserialise(networkStream);
+                clientMessage = sendBehaviour.Deserialise(networkStream);
 
                 ParseClientData();
                 Log.Debug("Notify Clients of change");
@@ -96,7 +96,7 @@ namespace Server
 
         private void ParseClientData()
         {
-            Log.Info("User: " + clientData.GetUserId() + " - " + clientData.GetStatus());
+            Log.Info("User: " + clientMessage + " - " + clientMessage);
         }
     }
 }

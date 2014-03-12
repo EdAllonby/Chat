@@ -7,13 +7,13 @@
         /// </summary>
         /// <param name="o">Object that wants to be notified from the subject</param>
         void RegisterObserver(IObserver o);
-        
+
         /// <summary>
         /// Remove an object from the subject to no longer receive notifications
         /// </summary>
         /// <param name="o">Object that wants to be removed from the subscription list</param>
         void RemoveObserver(IObserver o);
-        
+
         /// <summary>
         /// Notify all subscribed observers of changes to the subject
         /// </summary>

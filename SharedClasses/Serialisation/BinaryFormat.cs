@@ -1,11 +1,11 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Server.Serialisation
+namespace SharedClasses.Serialisation
 {
     public class BinaryFormat : ITcpSendBehaviour
     {
-        public void Serialise(Stream networkStream, Client clientMessage)
+        public void Serialise(Stream networkStream, Message clientMessage)
         {
             var binaryFormatter = new BinaryFormatter();
 
@@ -16,18 +16,18 @@ namespace Server.Serialisation
             networkStream.Close();
         }
 
-        public Client Deserialise(Stream networkStream)
+        public Message Deserialise(Stream networkStream)
         {
             while (true)
             {
                 var binaryFormatter = new BinaryFormatter();
-                Client client = null;
+                Message message = null;
 
                 if (networkStream.CanRead)
                 {
-                    client = (Client) binaryFormatter.Deserialize(networkStream);
+                    message = (Message)binaryFormatter.Deserialize(networkStream);
                 }
-                return client;
+                return message;
             }
         }
     }
