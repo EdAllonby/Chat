@@ -1,4 +1,4 @@
-﻿namespace Server
+﻿namespace SharedClasses
 {
     public enum Status
     {

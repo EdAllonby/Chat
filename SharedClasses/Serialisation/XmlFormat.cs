@@ -2,16 +2,16 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Server.Serialisation
+namespace SharedClasses.Serialisation
 {
     public class XmlFormat : ITcpSendBehaviour
     {
         private static readonly log4net.ILog log =
             log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public void Serialise(Stream networkStream, Client clientMessage)
+        public void Serialise(Stream networkStream, Message clientMessage)
         {
-            var serialiser = new XmlSerializer(typeof(Client));
+            var serialiser = new XmlSerializer(typeof(Message));
             var memoryStream = new MemoryStream();
 
             var streamWriter = new StreamWriter(networkStream, System.Text.Encoding.UTF8);
@@ -19,18 +19,18 @@ namespace Server.Serialisation
             serialiser.Serialize(streamWriter, clientMessage);
         }
 
-        public Client Deserialise(Stream networkStream)
+        public Message Deserialise(Stream networkStream)
         {
             try
             {
                 while (true)
                 {
-                    var xmlSerialiser = new XmlSerializer(typeof(Client));
-                    Client client = null;
+                    var xmlSerialiser = new XmlSerializer(typeof(Message));
+                    Message client = null;
 
                     if (networkStream.CanRead)
                     {
-                        client = (Client)xmlSerialiser.Deserialize(networkStream);
+                        client = (Message)xmlSerialiser.Deserialize(networkStream);
                     }
                     return client;
                 }
