@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using SharedClasses;
 using SharedClasses.Serialisation;
 
 namespace Server
@@ -18,7 +19,6 @@ namespace Server
         private static void StartServer()
         {
             // Create a a Server object (which will be used eventually to accept TCP connection)
-            Log.Info("Set serialise method");
             var serverData = new Server(new BinaryFormat());
         }
     }

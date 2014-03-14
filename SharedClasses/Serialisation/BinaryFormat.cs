@@ -5,6 +5,9 @@ namespace SharedClasses.Serialisation
 {
     public class BinaryFormat : ITcpSendBehaviour
     {
+        private static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public void Serialise(Stream networkStream, Message clientMessage)
         {
             var binaryFormatter = new BinaryFormatter();
@@ -25,8 +28,13 @@ namespace SharedClasses.Serialisation
 
                 if (networkStream.CanRead)
                 {
-                    message = (Message)binaryFormatter.Deserialize(networkStream);
+                    Log.Debug("Network stream can be read from, starting binary deserialisation process");
+
+                    message = (Message) binaryFormatter.Deserialize(networkStream);
+
+                    Log.Info("Message deserialised");
                 }
+
                 return message;
             }
         }

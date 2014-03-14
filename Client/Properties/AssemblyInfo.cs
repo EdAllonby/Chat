@@ -19,6 +19,9 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
+// Set the project to watch the log4net.config file and reload of the config changes when needed.
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
+
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("a62a157c-0009-42b5-94c7-91542814074e")]
 

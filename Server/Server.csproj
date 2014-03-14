@@ -53,7 +53,9 @@
     <Compile Include="Server.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="log4net.config" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

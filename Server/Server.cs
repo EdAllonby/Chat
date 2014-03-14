@@ -33,9 +33,11 @@ namespace Server
             StartTcpInput();
         }
 
-        public void SetSerialiseMethod(ITcpSendBehaviour wantedSendBehaviour)
+        public void SetSerialiseMethod(ITcpSendBehaviour sendBehaviour)
         {
-            sendBehaviour = wantedSendBehaviour;
+            this.sendBehaviour = sendBehaviour;
+            Log.Info("Server's send behaviour set to " + this.sendBehaviour + " method");
+
         }
 
         public void RegisterObserver(IObserver o)
@@ -55,6 +57,7 @@ namespace Server
                 if (clientMessage != null)
                 {
                     observer.Update(clientMessage);
+                    Log.Info("Observer " + observer + " notified");
                 }
             }
         }
@@ -70,14 +73,13 @@ namespace Server
             {
                 var tcpInstance = new Thread(ListenForIncomingData) { Name = "Listener thread " + (i + 1) };
 
-
                 tcpInstance.Start();
             }
         }
 
         private void ListenForIncomingData()
         {
-            Log.Debug("Create listener thread");
+            Log.Debug("New listener thread created");
 
             while (true)
             {
@@ -85,11 +87,9 @@ namespace Server
 
                 Stream networkStream = new NetworkStream(socket);
 
-                Log.Debug("Deserialise Data");
                 clientMessage = sendBehaviour.Deserialise(networkStream);
 
                 ParseClientData();
-                Log.Debug("Notify Clients of change");
                 NotifyObserversOfClientChange();
             }
         }
