@@ -7,44 +7,49 @@ namespace Client
 {
     internal class Client
     {
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof (Client));
+
         private static TcpClient tcpClient;
 
-        public Client()
+        static Client()
         {
-            while (true)
-            {
-                Console.Write("Message: ");
-                string message = Console.ReadLine();
-                var clientMessage = new Message(message);
-
-                SendMessage(clientMessage);
-            }
+            CreateTCPConnection();
         }
 
-        private static void SendMessage(Message clientMessage)
+        private static void CreateTCPConnection()
         {
             try
             {
                 tcpClient = new TcpClient("localhost", 5004);
-                Stream networkStream = tcpClient.GetStream();
+                while (true)
+                {
+                    Console.Write("Message: ");
 
-                clientMessage.Serialise(networkStream);
+                    string message = Console.ReadLine();
+                    var clientMessage = new Message(message);
 
-                tcpClient.Close();
+                    SendMessage(clientMessage);
+                }
             }
             catch (SocketException socketException)
             {
-            }
-            catch (Exception exception)
-            {
+                Log.Error("No connection to server", socketException);
             }
             finally
             {
                 if (tcpClient != null)
                 {
                     tcpClient.Close();
+                    Log.Info("TCP Connection successfully closed");
                 }
             }
+
+        }
+
+        private static void SendMessage(Message clientMessage)
+        {
+            Stream networkStream = tcpClient.GetStream();
+            clientMessage.Serialise(networkStream);
         }
     }
 }

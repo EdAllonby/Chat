@@ -13,8 +13,8 @@ namespace SharedClasses
 
        private static readonly ITcpSendBehaviour SerialiseMessage = new BinaryFormat();
 
-        public string text { get; private set; }
-        public DateTime messageTimeStamp;
+        public string Text { get; private set; }
+        public DateTime MessageTimeStamp;
 
         public Message(string text)
         {
@@ -26,7 +26,7 @@ namespace SharedClasses
         {
             SetTextOfMessage(messageText);
 
-            if (text != null)
+            if (Text != null)
             {
                 SetTimeStampOfMessage();
             }
@@ -45,14 +45,14 @@ namespace SharedClasses
 
         private void SetTextOfMessage(string messageText)
         {
-            text = messageText;
-            Log.Debug("Message text set: " + text);
+            Text = messageText;
+            Log.Debug("Message text set: " + Text);
         }
 
         private void SetTimeStampOfMessage()
         {
-            messageTimeStamp = DateTime.Now;
-            Log.Debug("Time stamp created: " + messageTimeStamp);
+            MessageTimeStamp = DateTime.Now;
+            Log.Debug("Time stamp created: " + MessageTimeStamp);
         }
     }
 }
