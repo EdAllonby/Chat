@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using SharedClasses;
@@ -7,96 +7,64 @@ using SharedClasses.Serialisation;
 
 namespace Server
 {
-    public class Server : ISubject
+    public class Server
     {
-        private static readonly log4net.ILog Log =
-            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof (Server));
 
-        private static TcpListener listener;
-
-        private const int ConcurrentSockets = 5;
-
-        private readonly List<IObserver> observers;
         private Message clientMessage;
+
+        // Main server socket
+        private Socket serverSocket;
+
+        private IPEndPoint ipEndPoint;
+
+        // List of connected clients
+        private List<ConnectedClients> connectedClients = new List<ConnectedClients>();
 
         // Use Strategy pattern to chose what TCP Serialisation method to use
         private ITcpSendBehaviour sendBehaviour;
 
-        public const int PortNumber = 5004;
+        private const int PortNumber = 5004;
 
         public Server(ITcpSendBehaviour sendBehaviour)
         {
+
+            var workerThread = new Thread(StartToListen);
+            workerThread.Start();
             SetSerialiseMethod(sendBehaviour);
 
-            observers = new List<IObserver>();
+            //StartTcpListen();
+        }
 
-            StartTcpInput();
+        private void StartToListen()
+        {
+            // Assign the IP of the machine and listen on a specified port.
+            ipEndPoint = new IPEndPoint(IPAddress.Any, PortNumber);
+
+            // Create a TCP socket
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            serverSocket.Bind(ipEndPoint);
+
+            serverSocket.Listen(10);
+
+            while (true)
+            {
+                Log.Info("Listening for new connection");
+                AddToConnectedClients(serverSocket.Accept());
+            }
+        }
+
+        private void AddToConnectedClients(Socket clientSocket)
+        {
+            connectedClients.Add(new ConnectedClients(clientSocket));
+            Log.Info("New client connected");
         }
 
         public void SetSerialiseMethod(ITcpSendBehaviour sendBehaviour)
         {
             this.sendBehaviour = sendBehaviour;
             Log.Info("Server's send behaviour set to " + this.sendBehaviour + " method");
-
-        }
-
-        public void RegisterObserver(IObserver o)
-        {
-            observers.Add(o);
-        }
-
-        public void RemoveObserver(IObserver o)
-        {
-            observers.Remove(o);
-        }
-
-        public void NotifyObserversOfClientChange()
-        {
-            foreach (var observer in observers)
-            {
-                if (clientMessage != null)
-                {
-                    observer.Update(clientMessage);
-                    Log.Info("Observer " + observer + " notified");
-                }
-            }
-        }
-
-        private void StartTcpInput()
-        {
-            listener = new TcpListener(PortNumber);
-            listener.Start();
-
-            Log.Debug("Start the socket listener");
-
-            for (int i = 0; i < ConcurrentSockets; i++)
-            {
-                var tcpInstance = new Thread(ListenForIncomingData) { Name = "Listener thread " + (i + 1) };
-
-                tcpInstance.Start();
-            }
-        }
-
-        private void ListenForIncomingData()
-        {
-            Log.Debug("New listener thread created");
-
-            while (true)
-            {
-                Socket socket = listener.AcceptSocket();
-
-                Stream networkStream = new NetworkStream(socket);
-
-                clientMessage = sendBehaviour.Deserialise(networkStream);
-
-                ParseClientData();
-                NotifyObserversOfClientChange();
-            }
-        }
-
-        private void ParseClientData()
-        {
-            Log.Info("User: " + clientMessage + " - " + clientMessage);
         }
     }
 }
