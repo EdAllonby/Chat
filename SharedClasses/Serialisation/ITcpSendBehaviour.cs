@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System.Net.Sockets;
 
 namespace SharedClasses.Serialisation
 {
@@ -7,12 +7,12 @@ namespace SharedClasses.Serialisation
         /// <summary>
         /// Method used to serialise the object data over the TCP Socket
         /// </summary>
-        void Serialise(Stream networkStream, Message clientMessage);
+        void Serialise(NetworkStream networkStream, Message clientMessage);
 
         /// <summary>
         /// Method to get incoming data and deserialise it into a Message object
         /// </summary>
         /// <returns>A Message object</returns>
-        Message Deserialise(Stream networkStream);
+        Message Deserialise(NetworkStream networkStream);
     }
 }

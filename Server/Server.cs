@@ -1,70 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using SharedClasses;
-using SharedClasses.Serialisation;
 
 namespace Server
 {
-    public class Server
+    internal class Server
     {
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof (Server));
 
-        private Message clientMessage;
-
-        // Main server socket
-        private Socket serverSocket;
-
-        private IPEndPoint ipEndPoint;
-
-        // List of connected clients
-        private List<ConnectedClients> connectedClients = new List<ConnectedClients>();
-
-        // Use Strategy pattern to chose what TCP Serialisation method to use
-        private ITcpSendBehaviour sendBehaviour;
-
-        private const int PortNumber = 5004;
-
-        public Server(ITcpSendBehaviour sendBehaviour)
+        public Server()
         {
+            //listen for connections from tcp network clients
+            var server1 = new TcpListener(IPAddress.Loopback, 5004);
 
-            var workerThread = new Thread(StartToListen);
-            workerThread.Start();
-            SetSerialiseMethod(sendBehaviour);
+            //start listening
+            server1.Start();
+            Log.Info("Server started listening for clients to connect");
 
-            //StartTcpListen();
-        }
-
-        private void StartToListen()
-        {
-            // Assign the IP of the machine and listen on a specified port.
-            ipEndPoint = new IPEndPoint(IPAddress.Any, PortNumber);
-
-            // Create a TCP socket
-            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            serverSocket.Bind(ipEndPoint);
-
-            serverSocket.Listen(10);
-
-            while (true)
-            {
-                Log.Info("Listening for new connection");
-                AddToConnectedClients(serverSocket.Accept());
-            }
-        }
-
-        private void AddToConnectedClients(Socket clientSocket)
-        {
-            connectedClients.Add(new ConnectedClients(clientSocket));
+            //accepts a pending connection request
+            TcpClient client = server1.AcceptTcpClient();
             Log.Info("New client connected");
-        }
 
-        public void SetSerialiseMethod(ITcpSendBehaviour sendBehaviour)
-        {
-            this.sendBehaviour = sendBehaviour;
-            Log.Info("Server's send behaviour set to " + this.sendBehaviour + " method");
+            //get the network stream
+            NetworkStream stream = client.GetStream();
+            Log.Info("Stream with client established");
+
+            bool connection = true;
+            while (connection)
+            {
+                try
+                {
+                    // you have to cast the deserialized object
+                    var addressInfo = Message.Deserialise(stream);
+
+                    Log.Info("Message deserialised. Client sent: " + addressInfo.Text + " at: " +
+                             addressInfo.MessageTimeStamp);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                    stream.Close();
+                    Log.Info("Client stream closed");
+                    client.Close();
+                    Log.Info("Client connection closed");
+                    connection = false;
+                }
+            }
         }
     }
 }

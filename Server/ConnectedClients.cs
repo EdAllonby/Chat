@@ -4,9 +4,9 @@ namespace Server
 {
     internal class ConnectedClients
     {
-        public readonly Socket socket;
+        public readonly TcpClient socket;
 
-        public ConnectedClients(Socket socket)
+        public ConnectedClients(TcpClient socket)
         {
             this.socket = socket;
         }
