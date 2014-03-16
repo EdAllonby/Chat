@@ -12,24 +12,34 @@ namespace Server
 
         public Server()
         {
-            var server1 = new TcpListener(IPAddress.Loopback, 5004);
+            ListenForNewClients();   
+        }
 
-            server1.Start();
+        private static void ListenForNewClients()
+        {
+            var clientListener = new TcpListener(IPAddress.Loopback, 5004);
+            int listenerCount = 1;
+
+            clientListener.Start();
             Log.Info("Server started listening for clients to connect");
 
-            TcpClient client = server1.AcceptTcpClient();
-            Log.Info("New client connected");
-
-            NetworkStream stream = client.GetStream();
-            Log.Info("Stream with client established");
-
-            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+            while (true)
             {
-                Name = "MessageListenerThread"
-            };
+                TcpClient client = clientListener.AcceptTcpClient();
+                Log.Info("New client connected");
 
-            messageListenerThread.Start();
+                NetworkStream stream = client.GetStream();
+                Log.Info("Stream with client established");
+
+                var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+                {
+                    Name = "MessageListenerThread" + listenerCount
+                };
+                listenerCount++;
+                messageListenerThread.Start();
+            }
         }
+
 
         private static void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
