@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using SharedClasses;
 
 namespace Server
@@ -26,6 +27,12 @@ namespace Server
             NetworkStream stream = client.GetStream();
             Log.Info("Stream with client established");
 
+            var messsageListenerThread = new Thread(() => ReceiveMessageListener(stream, client)) {Name = "MessageListenerThread"};
+            messsageListenerThread.Start();
+        }
+
+        private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
+        {
             bool connection = true;
             while (connection)
             {
