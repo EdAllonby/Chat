@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net.Sockets;
 using SharedClasses;
 
@@ -9,47 +8,39 @@ namespace Client
     {
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof (Client));
 
-        private static TcpClient tcpClient;
-
-        static Client()
+        public Client()
         {
-            CreateTCPConnection();
-        }
+            Log.Info("Client looking for server");
 
-        private static void CreateTCPConnection()
-        {
-            try
+            var client = new TcpClient("localhost", 5004);
+            Log.Info("Client found server, connection created");
+
+            //get the network stream
+            NetworkStream stream = client.GetStream();
+            Log.Info("Created stream with Server");
+
+            while (true)
             {
-                tcpClient = new TcpClient("localhost", 5004);
-                while (true)
+                try
                 {
-                    Console.Write("Message: ");
+                    Console.WriteLine("Say: ");
+                    string test = Console.ReadLine();
+                    var message = new Message(test);
 
-                    string message = Console.ReadLine();
-                    var clientMessage = new Message(message);
+                    Log.Info("Attempt to serialise message and send to server");
+                    message.Serialise(stream);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
 
-                    SendMessage(clientMessage);
+                    //close the client and stream
+                    stream.Close();
+                    Log.Info("Stream closed");
+                    client.Close();
+                    Log.Info("Client connection closed");
                 }
             }
-            catch (SocketException socketException)
-            {
-                Log.Error("No connection to server", socketException);
-            }
-            finally
-            {
-                if (tcpClient != null)
-                {
-                    tcpClient.Close();
-                    Log.Info("TCP Connection successfully closed");
-                }
-            }
-
-        }
-
-        private static void SendMessage(Message clientMessage)
-        {
-            Stream networkStream = tcpClient.GetStream();
-            clientMessage.Serialise(networkStream);
         }
     }
 }

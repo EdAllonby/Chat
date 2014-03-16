@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SharedClasses.Serialisation
@@ -6,37 +6,32 @@ namespace SharedClasses.Serialisation
     public class BinaryFormat : ITcpSendBehaviour
     {
         private static readonly log4net.ILog Log =
-            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            log4net.LogManager.GetLogger(typeof (BinaryFormat));
 
-        public void Serialise(Stream networkStream, Message clientMessage)
+        public void Serialise(NetworkStream networkStream, Message clientMessage)
         {
             var binaryFormatter = new BinaryFormatter();
 
             if (networkStream.CanWrite)
             {
                 binaryFormatter.Serialize(networkStream, clientMessage);
+                Log.Info("Message deserialised and sent to network stream");
             }
-            networkStream.Close();
         }
 
-        public Message Deserialise(Stream networkStream)
+        public Message Deserialise(NetworkStream networkStream)
         {
-            while (true)
+            var binaryFormatter = new BinaryFormatter();
+            Message message = null;
+
+            if (networkStream.CanRead)
             {
-                var binaryFormatter = new BinaryFormatter();
-                Message message = null;
-
-                if (networkStream.CanRead)
-                {
-                    Log.Debug("Network stream can be read from, starting binary deserialisation process");
-
-                    message = (Message) binaryFormatter.Deserialize(networkStream);
-
-                    Log.Info("Message deserialised");
-                }
-
-                return message;
+                Log.Debug("Network stream can be read from, waiting for message");
+                message = (Message) binaryFormatter.Deserialize(networkStream);
+                Log.Info("Network stream has received data and deserialised to a message object");
             }
+
+            return message;
         }
     }
 }

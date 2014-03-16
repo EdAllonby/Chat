@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Xml.Serialization;
 
 namespace SharedClasses.Serialisation
@@ -7,33 +8,29 @@ namespace SharedClasses.Serialisation
     public class XmlFormat : ITcpSendBehaviour
     {
         private static readonly log4net.ILog log =
-            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            log4net.LogManager.GetLogger(typeof (XmlFormat));
 
-        public void Serialise(Stream networkStream, Message clientMessage)
+        public void Serialise(NetworkStream networkStream, Message clientMessage)
         {
-            var serialiser = new XmlSerializer(typeof(Message));
-            var memoryStream = new MemoryStream();
+            var serialiser = new XmlSerializer(typeof (Message));
 
             var streamWriter = new StreamWriter(networkStream, System.Text.Encoding.UTF8);
 
             serialiser.Serialize(streamWriter, clientMessage);
         }
 
-        public Message Deserialise(Stream networkStream)
+        public Message Deserialise(NetworkStream networkStream)
         {
             try
             {
-                while (true)
-                {
-                    var xmlSerialiser = new XmlSerializer(typeof(Message));
-                    Message client = null;
+                var xmlSerialiser = new XmlSerializer(typeof (Message));
+                Message client = null;
 
-                    if (networkStream.CanRead)
-                    {
-                        client = (Message)xmlSerialiser.Deserialize(networkStream);
-                    }
-                    return client;
+                if (networkStream.CanRead)
+                {
+                    client = (Message) xmlSerialiser.Deserialize(networkStream);
                 }
+                return client;
             }
             catch (Exception e)
             {

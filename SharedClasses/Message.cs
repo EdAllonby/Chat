@@ -1,6 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
+using System.Net.Sockets;
 using SharedClasses.Serialisation;
 
 namespace SharedClasses
@@ -9,9 +8,9 @@ namespace SharedClasses
     public class Message
     {
         private static readonly log4net.ILog Log =
-                log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            log4net.LogManager.GetLogger(typeof (Message));
 
-       private static readonly ITcpSendBehaviour SerialiseMessage = new BinaryFormat();
+        private static readonly ITcpSendBehaviour SerialiseMessage = new BinaryFormat();
 
         public string Text { get; private set; }
         public DateTime MessageTimeStamp;
@@ -19,7 +18,7 @@ namespace SharedClasses
         public Message(string text)
         {
             CreateMessage(text);
-            Log.Info("Message created");
+            Log.Debug("Message created");
         }
 
         private void CreateMessage(string messageText)
@@ -32,15 +31,14 @@ namespace SharedClasses
             }
         }
 
-        public void Serialise(Stream newtworkStream)
+        public void Serialise(NetworkStream networkStream)
         {
-            SerialiseMessage.Serialise(newtworkStream, this);
-    
+            SerialiseMessage.Serialise(networkStream, this);
         }
 
-        public static Message Deserialise(Stream newtworkStream)
+        public static Message Deserialise(NetworkStream networkStream)
         {
-            return SerialiseMessage.Deserialise(newtworkStream);
+            return SerialiseMessage.Deserialise(networkStream);
         }
 
         private void SetTextOfMessage(string messageText)

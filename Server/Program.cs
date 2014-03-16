@@ -1,12 +1,12 @@
-﻿using System.Threading;
-using SharedClasses;
-using SharedClasses.Serialisation;
+﻿using System;
+using System.Threading;
 
 namespace Server
 {
     public static class Program
     {
-        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly log4net.ILog Log =
+            log4net.LogManager.GetLogger(typeof (Program));
 
 
         private static void Main()
@@ -14,12 +14,14 @@ namespace Server
             Thread.CurrentThread.Name = "Main Thread";
             Log.Info("Server started");
             StartServer();
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
         private static void StartServer()
         {
             // Create a a Server object (which will be used eventually to accept TCP connection)
-            var serverData = new Server(new BinaryFormat());
+            var serverData = new Server();
         }
     }
 }
