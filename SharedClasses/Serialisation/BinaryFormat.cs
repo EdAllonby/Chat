@@ -14,8 +14,9 @@ namespace SharedClasses.Serialisation
 
             if (networkStream.CanWrite)
             {
+                Log.Info("Attempt to serialise message and send to server");
                 binaryFormatter.Serialize(networkStream, clientMessage);
-                Log.Info("Message deserialised and sent to network stream");
+                Log.Info("Message serialised and sent to network stream");
             }
         }
 
