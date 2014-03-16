@@ -2,7 +2,7 @@
 
 namespace Server
 {
-    internal class ConnectedClients
+    public class ConnectedClients
     {
         public readonly TcpClient socket;
 
