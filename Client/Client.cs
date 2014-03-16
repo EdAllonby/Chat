@@ -54,8 +54,9 @@ namespace Client
             {
                 try
                 {
-                    var message = Message.Deserialise(stream);
+                    Message message = Message.Deserialise(stream);
                     Log.Info("This client sent: " + message.Text + " at: " + message.MessageTimeStamp);
+                    Console.WriteLine(message.Text + " sent at: " + message.MessageTimeStamp);
                 }
                 catch (Exception e)
                 {
