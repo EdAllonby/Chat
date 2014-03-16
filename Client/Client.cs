@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading;
 using SharedClasses;
 
 namespace Client
@@ -15,19 +16,21 @@ namespace Client
             var client = new TcpClient("localhost", 5004);
             Log.Info("Client found server, connection created");
 
-            //get the network stream
             NetworkStream stream = client.GetStream();
             Log.Info("Created stream with Server");
 
+            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+            {
+                Name = "MessageListenerThread"
+            };
+            messageListenerThread.Start();
             while (true)
             {
                 try
                 {
-                    Console.WriteLine("Say: ");
                     string test = Console.ReadLine();
                     var message = new Message(test);
 
-                    Log.Info("Attempt to serialise message and send to server");
                     message.Serialise(stream);
                 }
                 catch (Exception e)
@@ -39,6 +42,29 @@ namespace Client
                     Log.Info("Stream closed");
                     client.Close();
                     Log.Info("Client connection closed");
+                }
+            }
+        }
+
+        private static void ReceiveMessageListener(NetworkStream stream, TcpClient client)
+        {
+            Log.Info("Message listener thread started");
+            bool connection = true;
+            while (connection)
+            {
+                try
+                {
+                    var message = Message.Deserialise(stream);
+                    Log.Info("This client sent: " + message.Text + " at: " + message.MessageTimeStamp);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                    stream.Close();
+                    Log.Info("Client stream closed");
+                    client.Close();
+                    Log.Info("Client connection closed");
+                    connection = false;
                 }
             }
         }

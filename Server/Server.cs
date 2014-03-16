@@ -12,26 +12,26 @@ namespace Server
 
         public Server()
         {
-            //listen for connections from tcp network clients
             var server1 = new TcpListener(IPAddress.Loopback, 5004);
 
-            //start listening
             server1.Start();
             Log.Info("Server started listening for clients to connect");
 
-            //accepts a pending connection request
             TcpClient client = server1.AcceptTcpClient();
             Log.Info("New client connected");
 
-            //get the network stream
             NetworkStream stream = client.GetStream();
             Log.Info("Stream with client established");
 
-            var messsageListenerThread = new Thread(() => ReceiveMessageListener(stream, client)) {Name = "MessageListenerThread"};
-            messsageListenerThread.Start();
+            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+            {
+                Name = "MessageListenerThread"
+            };
+
+            messageListenerThread.Start();
         }
 
-        private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
+        private static void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
             bool connection = true;
             while (connection)
@@ -39,10 +39,10 @@ namespace Server
                 try
                 {
                     // you have to cast the deserialized object
-                    var addressInfo = Message.Deserialise(stream);
+                    var message = Message.Deserialise(stream);
+                    Log.Info("Message deserialised. Client sent: " + message.Text + " at: " + message.MessageTimeStamp);
 
-                    Log.Info("Message deserialised. Client sent: " + addressInfo.Text + " at: " +
-                             addressInfo.MessageTimeStamp);
+                    SendMessage(stream, message);
                 }
                 catch (Exception e)
                 {
@@ -53,6 +53,23 @@ namespace Server
                     Log.Info("Client connection closed");
                     connection = false;
                 }
+            }
+        }
+
+        private static void SendMessage(NetworkStream stream, Message message)
+        {
+            try
+            {
+                Log.Info("Attempt to serialise message and send to the client");
+                message.Serialise(stream);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+
+                //close the client and stream
+                stream.Close();
+                Log.Info("Stream closed");
             }
         }
     }
