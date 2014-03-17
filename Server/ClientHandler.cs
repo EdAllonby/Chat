@@ -59,5 +59,11 @@ namespace Server
             ConnectedClients.Add(new ConnectedClients(client));
             Log.Info("Added client to connectedClients list");
         }
+
+        public static void RemoveDisconnectedClient(TcpClient client)
+        {
+            //TODO: Implement a way of finding out when a client disconnects.
+            ConnectedClients.Remove(new ConnectedClients(client));
+        }
     }
 }
