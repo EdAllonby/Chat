@@ -56,7 +56,7 @@ namespace Client
                 try
                 {
                     Message message = Message.Deserialise(stream);
-                    Log.Info("A client sent: " + message.GetMessage());
+                    Log.Info("Message deserialised. Client sent: " + message.GetMessage());
                     Console.WriteLine("A client sent: " + message.GetMessage());
                 }
                 catch (Exception e)
