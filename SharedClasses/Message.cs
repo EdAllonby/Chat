@@ -10,8 +10,9 @@ namespace SharedClasses
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Message));
 
-        private static ITcpSendBehaviour serialiseMessage;
+        private static ITcpSendBehaviour serialiseMessage = new BinaryFormat();
 
+        private string Text;
         private DateTime messageTimeStamp;
 
         public Message(string text)
@@ -20,8 +21,6 @@ namespace SharedClasses
             Log.Debug("Message created");
             SetSerialiseMethod(new BinaryFormat());
         }
-
-        public string Text { get; private set; }
 
         public static void SetSerialiseMethod(ITcpSendBehaviour method)
         {
