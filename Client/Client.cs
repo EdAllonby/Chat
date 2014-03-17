@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -9,84 +10,83 @@ namespace Client
     internal class Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
-
+        private readonly TcpClient client;
         private static NetworkStream stream;
 
         public Client()
         {
-            TcpClient client = ConnectToServer();
-
-            if (client != null)
+            try
             {
-                while (true)
+                client = ConnectToServer();
+
+                if (client != null)
                 {
-                    try
+                    while (true)
                     {
+
                         string test = Console.ReadLine();
                         var message = new Message(test);
 
                         message.Serialise(stream);
                     }
-                    catch (Exception e)
-                    {
-                        Log.Error(e);
-
-                        //close the client and stream
-                        stream.Close();
-                        Log.Info("Stream closed");
-                        client.Close();
-                        Log.Info("Client connection closed");
-                    }
                 }
-            }
-        }
-
-        private static TcpClient ConnectToServer()
-        {
-            try
-            {
-                Log.Info("Client looking for server");
-
-                var client = new TcpClient("localhost", 5004);
-                Log.Info("Client found server, connection created");
-
-                stream = client.GetStream();
-                Log.Info("Created stream with Server");
-
-                var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
-                {
-                    Name = "MessageListenerThread"
-                };
-                messageListenerThread.Start();
-                return client;
             }
             catch (SocketException socketException)
             {
-                Log.Error("Could not connect to the server, exiting...");
-                return null;
+                Log.Error("Could not connect to the server, exiting...", socketException);
+            }
+            catch (IOException ioException)
+            {
+                Log.Error("could not send data to the server, connection lost.", ioException);
+            }
+            finally
+            {
+                //close the client and stream
+                stream.Close();
+                Log.Info("Stream closed");
+                client.Close();
+                Log.Info("Client connection closed");
             }
         }
 
-        private static void ReceiveMessageListener(NetworkStream stream, TcpClient client)
+        private static
+            TcpClient ConnectToServer()
+        {
+
+            Log.Info("Client looking for server");
+
+            var client = new TcpClient("localhost", 5004);
+            Log.Info("Client found server, connection created");
+
+            stream = client.GetStream();
+            Log.Info("Created stream with Server");
+
+            var messageListenerThread = new Thread(ReceiveMessageListener)
+            {
+                Name = "MessageListenerThread"
+            };
+            messageListenerThread.Start();
+            return client;
+
+        }
+
+        private static void ReceiveMessageListener()
         {
             Log.Info("Message listener thread started");
             bool connection = true;
             while (connection)
             {
-                try
+                Message message = Message.Deserialise(stream);
+
+                if (stream.CanRead)
                 {
-                    Message message = Message.Deserialise(stream);
                     Log.Info("Message deserialised. Client sent: " + message.GetMessage());
                     Console.WriteLine("A client sent: " + message.GetMessage());
                 }
-                catch (Exception e)
+                else
                 {
-                    Log.Error(e);
-                    stream.Close();
-                    Log.Info("Client stream closed");
-                    client.Close();
-                    Log.Info("Client connection closed");
                     connection = false;
+                    Log.Warn("Connection is no longer available, stopping client listener thread");
                 }
             }
         }

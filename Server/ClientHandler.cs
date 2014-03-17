@@ -14,27 +14,24 @@ namespace Server
 
         public static int TotalListeners { get; private set; }
 
-        public static void ReceiveMessageListener(NetworkStream stream, TcpClient client)
+        public static void ReceiveMessageListener(NetworkStream stream, ConnectedClient client)
         {
             bool connection = true;
             TotalListeners++;
             while (connection)
             {
-                try
-                {
-                    Message message = Message.Deserialise(stream);
-                    Log.Info("Message deserialised. Client sent: " + message.GetMessage());
+                Message message = Message.Deserialise(stream);
 
+                if (stream.CanRead)
+                {
+                    Log.Info("Message deserialised. Client sent: " + message.GetMessage());
                     SendMessage(message);
                 }
-                catch (Exception e)
+                else
                 {
-                    Log.Error(e);
-                    stream.Close();
-                    Log.Info("Client stream closed");
-                    client.Close();
-                    Log.Info("Client connection closed");
                     connection = false;
+                    Log.Warn("Connection is no longer available, stopping server listener thread for this client");
+                    RemoveDisconnectedClient(client);
                 }
             }
         }
@@ -58,21 +55,21 @@ namespace Server
             }
             catch (Exception e)
             {
-                Log.Error(e);
+                Log.Error("Most probably this exception is because client disconnection is not implemented yet " +
+                          "and the server thinks a disconnected client is still available to send a message to.", e);
             }
         }
 
-        public static void AddConnectedClient(TcpClient client)
+        public static void AddConnectedClient(ConnectedClient client)
         {
-            ConnectedClients.Add(new ConnectedClient(client));
+            ConnectedClients.Add(client);
             Log.Info("Added client to connectedClients list");
         }
 
         private static void RemoveDisconnectedClient(ConnectedClient client)
         {
-            //TODO: Implement a way of finding out when a client disconnects.
             ConnectedClients.Remove(client);
-            Log.Info("Client disconnected" + client.Name);
+            Log.Info("Client successfully removed from ConnectedClients list");
         }
     }
 }
