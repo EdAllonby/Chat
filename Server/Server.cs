@@ -19,7 +19,6 @@ namespace Server
         private static void ListenForNewClients()
         {
             var clientListener = new TcpListener(IPAddress.Loopback, PortNumber);
-            int listenerCount = 1;
 
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");
@@ -33,14 +32,12 @@ namespace Server
 
                 NetworkStream stream = client.GetStream();
                 Log.Info("Stream with client established");
-
-
+                
                 var messageListenerThread = new Thread(() => ClientHandler.ReceiveMessageListener(stream, client))
                 {
-                    Name = "MessageListenerThread" + listenerCount
+                    Name = "MessageListenerThread" + ClientHandler.TotalListeners
                 };
                 messageListenerThread.Start();
-                listenerCount++;
             }
         }
     }
