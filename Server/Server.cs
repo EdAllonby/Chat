@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -13,6 +15,7 @@ namespace Server
 
         public Server()
         {
+            Log.Info("Server instance started");
             ListenForNewClients();
         }
 
@@ -28,12 +31,14 @@ namespace Server
                 TcpClient client = clientListener.AcceptTcpClient();
                 Log.Info("New client connected");
 
-                ClientHandler.AddConnectedClient(client);
+                var newClient = new ConnectedClient(client);
+
+                ClientHandler.AddConnectedClient(newClient);
 
                 NetworkStream stream = client.GetStream();
                 Log.Info("Stream with client established");
-                
-                var messageListenerThread = new Thread(() => ClientHandler.ReceiveMessageListener(stream, client))
+
+                var messageListenerThread = new Thread(() => ClientHandler.ReceiveMessageListener(stream, newClient))
                 {
                     Name = "MessageListenerThread" + ClientHandler.TotalListeners
                 };

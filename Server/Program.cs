@@ -11,7 +11,6 @@ namespace Server
         private static void Main()
         {
             Thread.CurrentThread.Name = "Main Thread";
-            Log.Info("Server started");
             StartServer();
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
@@ -19,7 +18,7 @@ namespace Server
 
         private static void StartServer()
         {
-            // Create a a Server object (which will be used eventually to accept TCP connection)
+            Log.Info("Starting server instance");
             var serverData = new Server();
         }
     }
