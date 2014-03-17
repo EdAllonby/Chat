@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using log4net;
 using SharedClasses.Serialisation;
 
 namespace SharedClasses
@@ -7,18 +8,30 @@ namespace SharedClasses
     [Serializable]
     public class Message
     {
-        private static readonly log4net.ILog Log =
-            log4net.LogManager.GetLogger(typeof (Message));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Message));
 
-        private static readonly ITcpSendBehaviour SerialiseMessage = new BinaryFormat();
+        private static ITcpSendBehaviour serialiseMessage;
 
-        public string Text { get; private set; }
-        public DateTime MessageTimeStamp;
+        private DateTime messageTimeStamp;
 
         public Message(string text)
         {
             CreateMessage(text);
             Log.Debug("Message created");
+            SetSerialiseMethod(new BinaryFormat());
+        }
+
+        public string Text { get; private set; }
+
+        public static void SetSerialiseMethod(ITcpSendBehaviour method)
+        {
+            serialiseMessage = method;
+            Log.Debug("Serialise method set to: " + serialiseMessage.GetType());
+        }
+
+        public string GetMessage()
+        {
+            return Text + " sent at " + messageTimeStamp;
         }
 
         private void CreateMessage(string messageText)
@@ -33,12 +46,12 @@ namespace SharedClasses
 
         public void Serialise(NetworkStream networkStream)
         {
-            SerialiseMessage.Serialise(networkStream, this);
+            serialiseMessage.Serialise(networkStream, this);
         }
 
         public static Message Deserialise(NetworkStream networkStream)
         {
-            return SerialiseMessage.Deserialise(networkStream);
+            return serialiseMessage.Deserialise(networkStream);
         }
 
         private void SetTextOfMessage(string messageText)
@@ -49,8 +62,8 @@ namespace SharedClasses
 
         private void SetTimeStampOfMessage()
         {
-            MessageTimeStamp = DateTime.Now;
-            Log.Debug("Time stamp created: " + MessageTimeStamp);
+            messageTimeStamp = DateTime.Now;
+            Log.Debug("Time stamp created: " + messageTimeStamp);
         }
     }
 }

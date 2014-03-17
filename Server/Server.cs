@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using log4net;
 
 namespace Server
 {
     internal class Server
     {
-        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof (Server));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private const int PortNumber = 5004;
 

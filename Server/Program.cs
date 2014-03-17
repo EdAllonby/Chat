@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading;
+using log4net;
 
 namespace Server
 {
     public static class Program
     {
-        private static readonly log4net.ILog Log =
-            log4net.LogManager.GetLogger(typeof (Program));
-
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
 
         private static void Main()
         {
