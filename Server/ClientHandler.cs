@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using log4net;
 using SharedClasses;
 
 namespace Server
 {
     public static class ClientHandler
     {
-        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof(Server));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         public static List<ConnectedClients> ConnectedClients = new List<ConnectedClients>();
 
@@ -20,10 +21,10 @@ namespace Server
                 try
                 {
                     // you have to cast the deserialized object
-                    var message = Message.Deserialise(stream);
-                    Log.Info("Message deserialised. Client sent: " + message.Text + " at: " + message.MessageTimeStamp);
+                    Message message = Message.Deserialise(stream);
+                    Log.Info("Message deserialised. Client sent: " + message.GetMessage());
 
-                    SendMessage(stream, message);
+                    SendMessage(message);
                 }
                 catch (Exception e)
                 {
@@ -37,13 +38,11 @@ namespace Server
             }
         }
 
-        private static void SendMessage(NetworkStream stream, Message message)
+        private static void SendMessage(Message message)
         {
             try
             {
-                Log.Info("Attempt to serialise message and send to the client");
-
-                foreach (var client in ConnectedClients)
+                foreach (ConnectedClients client in ConnectedClients)
                 {
                     NetworkStream clientStream = client.socket.GetStream();
                     message.Serialise(clientStream);
@@ -52,10 +51,6 @@ namespace Server
             catch (Exception e)
             {
                 Log.Error(e);
-
-                //close the client and stream
-                stream.Close();
-                Log.Info("Stream closed");
             }
         }
 

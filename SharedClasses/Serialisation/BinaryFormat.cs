@@ -1,12 +1,13 @@
 ﻿using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
+using log4net;
 
 namespace SharedClasses.Serialisation
 {
     public class BinaryFormat : ITcpSendBehaviour
     {
-        private static readonly log4net.ILog Log =
-            log4net.LogManager.GetLogger(typeof (BinaryFormat));
+        private static readonly ILog Log =
+            LogManager.GetLogger(typeof (BinaryFormat));
 
         public void Serialise(NetworkStream networkStream, Message clientMessage)
         {
@@ -14,7 +15,7 @@ namespace SharedClasses.Serialisation
 
             if (networkStream.CanWrite)
             {
-                Log.Info("Attempt to serialise message and send to server");
+                Log.Info("Attempt to serialise message and send to stream");
                 binaryFormatter.Serialize(networkStream, clientMessage);
                 Log.Info("Message serialised and sent to network stream");
             }

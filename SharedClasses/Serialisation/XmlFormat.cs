@@ -1,20 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Text;
 using System.Xml.Serialization;
+using log4net;
 
 namespace SharedClasses.Serialisation
 {
     public class XmlFormat : ITcpSendBehaviour
     {
-        private static readonly log4net.ILog log =
-            log4net.LogManager.GetLogger(typeof (XmlFormat));
+        private static readonly ILog log = LogManager.GetLogger(typeof (XmlFormat));
 
         public void Serialise(NetworkStream networkStream, Message clientMessage)
         {
             var serialiser = new XmlSerializer(typeof (Message));
 
-            var streamWriter = new StreamWriter(networkStream, System.Text.Encoding.UTF8);
+            var streamWriter = new StreamWriter(networkStream, Encoding.UTF8);
 
             serialiser.Serialize(streamWriter, clientMessage);
         }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
+using log4net;
 using SharedClasses;
 
 namespace Client
 {
     internal class Client
     {
-        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(typeof (Client));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
         public Client()
         {
@@ -55,8 +56,8 @@ namespace Client
                 try
                 {
                     Message message = Message.Deserialise(stream);
-                    Log.Info("This client sent: " + message.Text + " at: " + message.MessageTimeStamp);
-                    Console.WriteLine(message.Text + " sent at: " + message.MessageTimeStamp);
+                    Log.Info("A client sent: " + message.GetMessage());
+                    Console.WriteLine("A client sent: " + message.GetMessage());
                 }
                 catch (Exception e)
                 {
