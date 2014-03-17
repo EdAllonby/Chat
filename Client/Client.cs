@@ -10,40 +10,60 @@ namespace Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
+        private static NetworkStream stream;
+
         public Client()
         {
-            Log.Info("Client looking for server");
+            TcpClient client = ConnectToServer();
 
-            var client = new TcpClient("localhost", 5004);
-            Log.Info("Client found server, connection created");
-
-            NetworkStream stream = client.GetStream();
-            Log.Info("Created stream with Server");
-
-            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+            if (client != null)
             {
-                Name = "MessageListenerThread"
-            };
-            messageListenerThread.Start();
-            while (true)
+                while (true)
+                {
+                    try
+                    {
+                        string test = Console.ReadLine();
+                        var message = new Message(test);
+
+                        message.Serialise(stream);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e);
+
+                        //close the client and stream
+                        stream.Close();
+                        Log.Info("Stream closed");
+                        client.Close();
+                        Log.Info("Client connection closed");
+                    }
+                }
+            }
+        }
+
+        private static TcpClient ConnectToServer()
+        {
+            try
             {
-                try
-                {
-                    string test = Console.ReadLine();
-                    var message = new Message(test);
+                Log.Info("Client looking for server");
 
-                    message.Serialise(stream);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
+                var client = new TcpClient("localhost", 5004);
+                Log.Info("Client found server, connection created");
 
-                    //close the client and stream
-                    stream.Close();
-                    Log.Info("Stream closed");
-                    client.Close();
-                    Log.Info("Client connection closed");
-                }
+                stream = client.GetStream();
+                Log.Info("Created stream with Server");
+
+                var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+                {
+                    Name = "MessageListenerThread"
+                };
+                messageListenerThread.Start();
+                return client;
+            }
+            catch (SocketException socketException)
+            {
+                Log.Error("Could not connect to the server, exiting...");
+                return null;
             }
         }
 
