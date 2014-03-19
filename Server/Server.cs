@@ -21,7 +21,7 @@ namespace Server
 
         private static void ListenForNewClients()
         {
-            var clientListener = new TcpListener(IPAddress.Loopback, PortNumber);
+            var clientListener = new TcpListener(IPAddress.Any, PortNumber);
 
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");
@@ -29,6 +29,7 @@ namespace Server
             while (true)
             {
                 TcpClient client = clientListener.AcceptTcpClient();
+                
                 Log.Info("New client connected");
 
                 var newClient = new ConnectedClient(client);

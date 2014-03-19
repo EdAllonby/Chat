@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -9,12 +10,18 @@ namespace Client
 {
     internal class Client
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+        private readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private readonly TcpClient client;
-        private static NetworkStream stream;
+        private NetworkStream stream;
+        private IPAddress targetAddress;
 
-        public Client()
+        private int port;
+
+        public Client(IPAddress targetAddress, int port)
         {
+            this.targetAddress = targetAddress;
+            this.port = port;
+
             try
             {
                 client = ConnectToServer();
@@ -42,20 +49,25 @@ namespace Client
             finally
             {
                 //close the client and stream
-                stream.Close();
-                Log.Info("Stream closed");
-                client.Close();
-                Log.Info("Client connection closed");
+                if (stream != null)
+                {
+                    stream.Close();
+                    Log.Info("Stream closed");
+                }
+                if (client != null)
+                {
+                    client.Close();
+                    Log.Info("Client connection closed");
+                }
             }
         }
 
-        private static
-            TcpClient ConnectToServer()
+        private TcpClient ConnectToServer()
         {
 
             Log.Info("Client looking for server");
 
-            var client = new TcpClient("localhost", 5004);
+            var client = new TcpClient(targetAddress.ToString(), port);
             Log.Info("Client found server, connection created");
 
             stream = client.GetStream();
@@ -70,7 +82,7 @@ namespace Client
 
         }
 
-        private static void ReceiveMessageListener()
+        private void ReceiveMessageListener()
         {
             Log.Info("Message listener thread started");
             bool connection = true;
