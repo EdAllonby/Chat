@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using log4net;
@@ -13,17 +14,15 @@ namespace Client
 
         private static void Main(string[] args)
         {
-
-
             if (args.Length == 0)
             {
                 Console.Write("Enter IP Address (e.g. 127.0.0.1): ");
                 string ipString = Console.ReadLine();
-                targetedAddress = SetIPAddress(ipString);
+                SetIPAddress(ipString);
 
                 Console.Write("Enter a port: ");
                 string port = Console.ReadLine();
-                targetedPort = SetPort(port);
+                SetPort(port);
             }
             else
             {
@@ -36,7 +35,7 @@ namespace Client
             Console.ReadKey();
         }
 
-        private static void ParseCommandLineArguments(string[] args)
+        private static void ParseCommandLineArguments(IEnumerable<string> args)
         {
             string parameterName = "";
 
@@ -50,36 +49,18 @@ namespace Client
                 {
                     if (parameterName == "/IPAddress")
                     {
-                        targetedAddress = SetIPAddress(argument);
+                        SetIPAddress(argument);
                     }
                     if (parameterName == "/Port")
                     {
-                        targetedPort = SetPort(argument);
+                        SetPort(argument);
                     }
                 }
             }
         }
 
-        private static int SetPort(string portLine)
+        private static void SetIPAddress(string ipString)
         {
-            int port;
-            bool portResult = int.TryParse(portLine, out port);
-            if (portResult == false)
-            {
-                Console.WriteLine("You didn't enter a number, setting port as 5004");
-                port = 5004;
-                Log.Warn(port + "was not a valid entry, setting port to default of 5004");
-            }
-            else
-            {
-                Log.Info("User entered port " + port);
-            }
-            return port;
-        }
-
-        private static IPAddress SetIPAddress(string ipString)
-        {
-
             IPAddress address;
             bool addressResult = IPAddress.TryParse(ipString, out address);
             if (addressResult == false)
@@ -93,7 +74,25 @@ namespace Client
             {
                 Log.Info("User entered target IPAddress " + address);
             }
-            return address;
+
+            targetedAddress = address;
+        }
+
+        private static void SetPort(string portLine)
+        {
+            int port;
+            bool portResult = int.TryParse(portLine, out port);
+            if (portResult == false)
+            {
+                Console.WriteLine("You didn't enter a number, setting port as 5004");
+                port = 5004;
+                Log.Warn(port + "was not a valid entry, setting port to default of 5004");
+            }
+            else
+            {
+                Log.Info("User entered port " + port);
+            }
+            targetedPort = port;
         }
     }
 }
