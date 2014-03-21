@@ -11,22 +11,22 @@ namespace Client
     internal class Client
     {
         private readonly ILog Log = LogManager.GetLogger(typeof (Client));
-        private readonly TcpClient client;
+        private readonly TcpClient connection;
         private NetworkStream stream;
-        private IPAddress targetAddress;
 
-        private int port;
+        private readonly IPAddress targetAddress;
+        private readonly int targetPort;
 
-        public Client(IPAddress targetAddress, int port)
+        public Client(IPAddress targetAddress, int targetPort)
         {
             this.targetAddress = targetAddress;
-            this.port = port;
+            this.targetPort = targetPort;
 
             try
             {
-                client = ConnectToServer();
+                connection = ConnectToServer();
 
-                if (client != null)
+                if (connection != null)
                 {
                     while (true)
                     {
@@ -54,9 +54,9 @@ namespace Client
                     stream.Close();
                     Log.Info("Stream closed");
                 }
-                if (client != null)
+                if (connection != null)
                 {
-                    client.Close();
+                    connection.Close();
                     Log.Info("Client connection closed");
                 }
             }
@@ -67,7 +67,7 @@ namespace Client
 
             Log.Info("Client looking for server");
 
-            var client = new TcpClient(targetAddress.ToString(), port);
+            var client = new TcpClient(targetAddress.ToString(), targetPort);
             Log.Info("Client found server, connection created");
 
             stream = client.GetStream();
@@ -85,8 +85,8 @@ namespace Client
         private void ReceiveMessageListener()
         {
             Log.Info("Message listener thread started");
-            bool connection = true;
-            while (connection)
+            bool serverConnection = true;
+            while (serverConnection)
             {
                 Message message = Message.Deserialise(stream);
 
@@ -97,7 +97,7 @@ namespace Client
                 }
                 else
                 {
-                    connection = false;
+                    serverConnection = false;
                     Log.Warn("Connection is no longer available, stopping client listener thread");
                 }
             }
