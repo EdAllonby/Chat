@@ -19,7 +19,7 @@ namespace Client
         {
             commandLineArguments = args;
             SetUserLogonMethod();
-            Thread.CurrentThread.Name = "Mafin Thread";
+            Thread.CurrentThread.Name = "Main Thread";
             var MainClient = new Client(targetedAddress, targetedPort);
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
@@ -29,6 +29,7 @@ namespace Client
         {
             Console.WriteLine("Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
             string usersConnectionChoice = Console.ReadLine();
+
             int connectionChoice;
             bool connectionChoiceResult = int.TryParse(usersConnectionChoice, out connectionChoice);
 
@@ -39,6 +40,7 @@ namespace Client
                     case 1:
                         targetedAddress = LocalIPAddress();
                         targetedPort = 5004;
+                        Log.Debug("Port set to 5004");
                         break;
                     case 2:
                         if (!commandLineArguments.Any())
@@ -69,6 +71,7 @@ namespace Client
 
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
 
+            Log.Debug("Local IP Address found: " + host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork));
             return host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
         }
 

@@ -30,7 +30,7 @@ namespace SharedClasses
 
         public string GetMessage()
         {
-            return text + " sent at " + messageTimeStamp;
+            return text + " @ " + messageTimeStamp;
         }
 
         private void CreateMessage(string messageText)
