@@ -11,6 +11,7 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
+
         private const int PortNumber = 5004;
 
         public Server()
@@ -19,9 +20,11 @@ namespace Server
             ListenForNewClients();
         }
 
-        private static void ListenForNewClients()
+        private void ListenForNewClients()
         {
             var clientListener = new TcpListener(IPAddress.Any, PortNumber);
+
+            var clientHandler = new ClientHandler();
 
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");
@@ -29,21 +32,9 @@ namespace Server
             while (true)
             {
                 TcpClient client = clientListener.AcceptTcpClient();
-                
                 Log.Info("New client connected");
 
-                var newClient = new ConnectedClient(client);
-
-                ClientHandler.AddConnectedClient(newClient);
-
-                NetworkStream stream = client.GetStream();
-                Log.Info("Stream with client established");
-
-                var messageListenerThread = new Thread(() => ClientHandler.ReceiveMessageListener(stream, newClient))
-                {
-                    Name = "MessageListenerThread" + ClientHandler.TotalListeners
-                };
-                messageListenerThread.Start();
+                clientHandler.CreateListenerThreadForClient(client);
             }
         }
     }
