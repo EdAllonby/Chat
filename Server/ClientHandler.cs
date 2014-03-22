@@ -1,20 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading;
 using log4net;
 using SharedClasses;
 
 namespace Server
 {
-    public static class ClientHandler
+    public class ClientHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        private static readonly IList<ConnectedClient> ConnectedClients = new List<ConnectedClient>();
+        private readonly IList<ConnectedClient> connectedClients = new List<ConnectedClient>();
 
-        public static int TotalListeners { get; private set; }
+        public ClientHandler()
+        {
+            Log.Info("New client handler created");
+        }
 
-        public static void ReceiveMessageListener(NetworkStream stream, ConnectedClient client)
+        public void CreateListenerThreadForClient(TcpClient client)
+        {
+            var newClient = new ConnectedClient(client);
+            AddConnectedClient(newClient);
+            NetworkStream stream = client.GetStream();
+            Log.Info("Stream with client established");
+
+            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, newClient))
+            {
+                Name = "MessageListenerThread" + TotalListeners
+            };
+
+            messageListenerThread.Start();
+        }
+
+        public int TotalListeners { get; private set; }
+
+        public void ReceiveMessageListener(NetworkStream stream, ConnectedClient client)
         {
             bool connection = true;
             TotalListeners++;
@@ -36,39 +57,32 @@ namespace Server
             }
         }
 
-        private static void SendMessage(Message message)
+        private void SendMessage(Message message)
         {
-            try
+            foreach (ConnectedClient client in connectedClients)
             {
-                foreach (ConnectedClient client in ConnectedClients)
+                if (client.CurrentStatus == Status.Connected)
                 {
-                    if (client.CurrentStatus == Status.Connected)
-                    {
-                        NetworkStream clientStream = client.Socket.GetStream();
-                        message.Serialise(clientStream);
-                    }
-                    if (client.CurrentStatus == Status.Disconnected)
-                    {
-                        RemoveDisconnectedClient(client);
-                    }
+                    NetworkStream clientStream = client.Socket.GetStream();
+                    message.Serialise(clientStream);
                 }
-            }
-            catch (Exception e)
-            {
-                Log.Error("Most probably this exception is because client disconnection is not implemented yet " +
-                          "and the server thinks a disconnected client is still available to send a message to.", e);
+                if (client.CurrentStatus == Status.Disconnected)
+                {
+                    RemoveDisconnectedClient(client);
+                }
             }
         }
 
-        public static void AddConnectedClient(ConnectedClient client)
+
+        public void AddConnectedClient(ConnectedClient client)
         {
-            ConnectedClients.Add(client);
+            connectedClients.Add(client);
             Log.Info("Added client to connectedClients list");
         }
 
-        private static void RemoveDisconnectedClient(ConnectedClient client)
+        private void RemoveDisconnectedClient(ConnectedClient client)
         {
-            ConnectedClients.Remove(client);
+            connectedClients.Remove(client);
             Log.Info("Client successfully removed from ConnectedClients list");
         }
     }
