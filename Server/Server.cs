@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using log4net;
 
 namespace Server
@@ -10,7 +7,6 @@ namespace Server
     internal class Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
-
 
         private const int PortNumber = 5004;
 
