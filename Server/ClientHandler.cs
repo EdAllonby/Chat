@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using log4net;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace Server
 {
@@ -41,12 +42,12 @@ namespace Server
             TotalListeners++;
             while (connection)
             {
-                Message message = Message.Deserialise(stream);
+                Contribution contribution = Contribution.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
-                    Log.Info("Message deserialised. Client sent: " + message.GetMessage());
-                    SendMessage(message);
+                    Log.Info("Contribution deserialised. Client sent: " + contribution.GetMessage());
+                    SendMessage(contribution);
                 }
                 else
                 {
@@ -57,14 +58,14 @@ namespace Server
             }
         }
 
-        private void SendMessage(Message message)
+        private void SendMessage(Contribution contribution)
         {
             foreach (ConnectedClient client in connectedClients)
             {
                 if (client.CurrentStatus == Status.Connected)
                 {
                     NetworkStream clientStream = client.Socket.GetStream();
-                    message.Serialise(clientStream);
+                    contribution.Serialise(clientStream);
                 }
                 if (client.CurrentStatus == Status.Disconnected)
                 {

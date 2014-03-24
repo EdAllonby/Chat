@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Net.Sockets;
 using log4net;
-using SharedClasses.Serialisation;
+using SharedClasses.Protocol;
 
-namespace SharedClasses
+namespace SharedClasses.Domain
 {
     [Serializable]
-    public class Message
+    public class Contribution
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Message));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
         private static ITcpSendBehaviour serialiseMessage = new BinaryFormat();
 
         private string text;
         private DateTime messageTimeStamp;
 
-        public Message(string text)
+        public Contribution(string text)
         {
             CreateMessage(text);
-            Log.Debug("Message created");
+            Log.Debug("Contribution created");
             SetSerialiseMethod(new BinaryFormat());
         }
 
@@ -44,7 +44,7 @@ namespace SharedClasses
             serialiseMessage.Serialise(networkStream, this);
         }
 
-        public static Message Deserialise(NetworkStream networkStream)
+        public static Contribution Deserialise(NetworkStream networkStream)
         {
             return serialiseMessage.Deserialise(networkStream);
         }
@@ -52,7 +52,7 @@ namespace SharedClasses
         private void SetTextOfMessage(string messageText)
         {
             text = messageText;
-            Log.Debug("Message text set: " + text);
+            Log.Debug("Contribution text set: " + text);
         }
 
         private void SetTimeStampOfMessage()
