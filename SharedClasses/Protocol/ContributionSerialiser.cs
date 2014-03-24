@@ -6,10 +6,9 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
-    public class BinaryFormat : ITcpSendBehaviour
+    public class ContributionSerialiser
     {
-        private static readonly ILog Log =
-            LogManager.GetLogger(typeof (BinaryFormat));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
         public void Serialise(NetworkStream networkStream, Contribution clientContribution)
         {
@@ -47,9 +46,6 @@ namespace SharedClasses.Protocol
             {
                 Log.Error("connection lost between the client and the server", ioException);
                 networkStream.Close();
-            }
-            finally
-            {
             }
             return new Contribution(string.Empty);
         }

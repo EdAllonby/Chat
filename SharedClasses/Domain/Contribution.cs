@@ -10,7 +10,7 @@ namespace SharedClasses.Domain
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
-        private static ITcpSendBehaviour serialiseMessage = new BinaryFormat();
+        private static readonly ContributionSerialiser SerialiseMessage = new ContributionSerialiser();
 
         private string text;
         private DateTime messageTimeStamp;
@@ -19,13 +19,6 @@ namespace SharedClasses.Domain
         {
             CreateMessage(text);
             Log.Debug("Contribution created");
-            SetSerialiseMethod(new BinaryFormat());
-        }
-
-        public static void SetSerialiseMethod(ITcpSendBehaviour method)
-        {
-            serialiseMessage = method;
-            Log.Debug("Serialise method set to: " + serialiseMessage.GetType());
         }
 
         public string GetMessage()
@@ -41,12 +34,12 @@ namespace SharedClasses.Domain
 
         public void Serialise(NetworkStream networkStream)
         {
-            serialiseMessage.Serialise(networkStream, this);
+            SerialiseMessage.Serialise(networkStream, this);
         }
 
         public static Contribution Deserialise(NetworkStream networkStream)
         {
-            return serialiseMessage.Deserialise(networkStream);
+            return SerialiseMessage.Deserialise(networkStream);
         }
 
         private void SetTextOfMessage(string messageText)
