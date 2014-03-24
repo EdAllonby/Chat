@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using log4net;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace Client
 {
@@ -32,7 +33,7 @@ namespace Client
                     {
 
                         string test = Console.ReadLine();
-                        var message = new Message(test);
+                        var message = new Contribution(test);
 
                         message.Serialise(stream);
                     }
@@ -88,12 +89,12 @@ namespace Client
             bool serverConnection = true;
             while (serverConnection)
             {
-                Message message = Message.Deserialise(stream);
+                Contribution contribution = Contribution.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
-                    Log.Info("Message deserialised. Client sent: " + message.GetMessage());
-                    Console.WriteLine("A client sent: " + message.GetMessage());
+                    Log.Info("Contribution deserialised. Client sent: " + contribution.GetMessage());
+                    Console.WriteLine("A client sent: " + contribution.GetMessage());
                 }
                 else
                 {

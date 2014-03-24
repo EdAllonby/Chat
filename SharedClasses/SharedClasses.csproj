@@ -45,11 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Status.cs" />
-    <Compile Include="Message.cs" />
+    <Compile Include="Domain\Contribution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialisation\BinaryFormat.cs" />
-    <Compile Include="Serialisation\ITcpSendBehaviour.cs" />
-    <Compile Include="Serialisation\XmlFormat.cs" />
+    <Compile Include="Protocol\BinaryFormat.cs" />
+    <Compile Include="Protocol\ITcpSendBehaviour.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

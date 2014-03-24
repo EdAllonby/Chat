@@ -1,26 +1,26 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
+using SharedClasses.Domain;
 
-namespace SharedClasses.Serialisation
+namespace SharedClasses.Protocol
 {
     public class BinaryFormat : ITcpSendBehaviour
     {
         private static readonly ILog Log =
             LogManager.GetLogger(typeof (BinaryFormat));
 
-        public void Serialise(NetworkStream networkStream, Message clientMessage)
+        public void Serialise(NetworkStream networkStream, Contribution clientContribution)
         {
             var binaryFormatter = new BinaryFormatter();
             try
             {
                 if (networkStream.CanWrite)
                 {
-                    Log.Info("Attempt to serialise message and send to stream");
-                    binaryFormatter.Serialize(networkStream, clientMessage);
-                    Log.Info("Message serialised and sent to network stream");
+                    Log.Info("Attempt to serialise Contribution and send to stream");
+                    binaryFormatter.Serialize(networkStream, clientContribution);
+                    Log.Info("Contribution serialised and sent to network stream");
                 }
             }
             catch (IOException ioException)
@@ -29,7 +29,7 @@ namespace SharedClasses.Serialisation
             }
         }
 
-        public Message Deserialise(NetworkStream networkStream)
+        public Contribution Deserialise(NetworkStream networkStream)
         {
             var binaryFormatter = new BinaryFormatter();
             try
@@ -37,9 +37,9 @@ namespace SharedClasses.Serialisation
                 if (networkStream.CanRead)
                 {
 
-                    Log.Debug("Network stream can be read from, waiting for message");
-                    var message = (Message) binaryFormatter.Deserialize(networkStream);
-                    Log.Info("Network stream has received data and deserialised to a message object");
+                    Log.Debug("Network stream can be read from, waiting for Contribution");
+                    var message = (Contribution) binaryFormatter.Deserialize(networkStream);
+                    Log.Info("Network stream has received data and deserialised to a Contribution object");
                     return message;
                 }
             }
@@ -51,7 +51,7 @@ namespace SharedClasses.Serialisation
             finally
             {
             }
-            return new Message(string.Empty);
+            return new Contribution(string.Empty);
         }
     }
 }
