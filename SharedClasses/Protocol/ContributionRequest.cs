@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     [Serializable]
-    internal class ContributionRequest
+    public class ContributionRequest
     {
         public Contribution Contribution { get; set; }
     }

@@ -34,7 +34,7 @@ namespace SharedClasses.Domain
 
         public void Serialise(NetworkStream networkStream)
         {
-            SerialiseMessage.Serialise(networkStream, this);
+            SerialiseMessage.Serialise(this, networkStream);
         }
 
         public static Contribution Deserialise(NetworkStream networkStream)

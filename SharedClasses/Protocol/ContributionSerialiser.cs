@@ -10,9 +10,10 @@ namespace SharedClasses.Protocol
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
-        public void Serialise(NetworkStream networkStream, Contribution clientContribution)
+        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+        public void Serialise(Contribution clientContribution, NetworkStream networkStream)
         {
-            var binaryFormatter = new BinaryFormatter();
             try
             {
                 if (networkStream.CanWrite)
@@ -30,12 +31,10 @@ namespace SharedClasses.Protocol
 
         public Contribution Deserialise(NetworkStream networkStream)
         {
-            var binaryFormatter = new BinaryFormatter();
             try
             {
                 if (networkStream.CanRead)
                 {
-
                     Log.Debug("Network stream can be read from, waiting for Contribution");
                     var message = (Contribution) binaryFormatter.Deserialize(networkStream);
                     Log.Info("Network stream has received data and deserialised to a Contribution object");
