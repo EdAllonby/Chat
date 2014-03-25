@@ -11,10 +11,12 @@ namespace Client
 {
     internal class Client
     {
-        private readonly ILog Log = LogManager.GetLogger(typeof (Client));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private readonly TcpClient connection;
-        private readonly ContributionNotificationSerialiser notificationSerialiser = new ContributionNotificationSerialiser();
-        private readonly ContributionRequestSerialiser requestSerialiser = new ContributionRequestSerialiser();
+
+        private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
+        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
+        private readonly ContributionRequestSerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
@@ -25,18 +27,22 @@ namespace Client
             this.targetAddress = targetAddress;
             this.targetPort = targetPort;
 
+            Console.Write("Enter name: ");
+            string userName = Console.ReadLine();
+
             try
             {
                 connection = ConnectToServer();
 
                 if (connection != null)
                 {
+                    SendLoginRequest(userName);
                     while (true)
                     {
                         string clientContributionString = Console.ReadLine();
                         var clientContribution = new ContributionRequest {Contribution = new Contribution(clientContributionString)};
 
-                        requestSerialiser.Serialise(clientContribution, stream);
+                        contributionRequestSerialiser.Serialise(clientContribution, stream);
                     }
                 }
             }
@@ -64,6 +70,12 @@ namespace Client
             }
         }
 
+        private void SendLoginRequest(string userName)
+        {
+            var loginRequest = new LoginRequest {UserName = userName};
+            loginRequestSerialiser.Serialise(loginRequest, stream);
+        }
+
         private TcpClient ConnectToServer()
         {
             Log.Info("Client looking for server");
@@ -88,7 +100,7 @@ namespace Client
             bool serverConnection = true;
             while (serverConnection)
             {
-                ContributionNotification contributionNotification = notificationSerialiser.Deserialise(stream);
+                ContributionNotification contributionNotification = contributionNotificationSerialiser.Deserialise(stream);
 
                 if (stream.CanRead)
                 {

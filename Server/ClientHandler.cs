@@ -11,9 +11,10 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly ContributionNotificationSerialiser notificationSerialiser = new ContributionNotificationSerialiser();
-        private readonly ContributionRequestSerialiser requestSerialiser = new ContributionRequestSerialiser();
-        private int totalListeners;
+        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
+        private readonly ContributionRequestSerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
+        private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
+        private int totalListeners = 1;
 
         public ClientHandler()
         {
@@ -31,16 +32,21 @@ namespace Server
                 Name = "MessageListenerThread" + totalListeners
             };
 
+            totalListeners++;
+
             messageListenerThread.Start();
+
         }
 
         private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
             bool connection = true;
-            totalListeners++;
+            LoginRequest clientLoginRequest = GetClientLoginRequest(stream);
+
             while (connection)
             {
-                ContributionRequest contributionRequest = requestSerialiser.Deserialise(stream);
+
+                ContributionRequest contributionRequest = contributionRequestSerialiser.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
@@ -57,13 +63,22 @@ namespace Server
             }
         }
 
+        private LoginRequest GetClientLoginRequest(NetworkStream stream)
+        {
+            Log.Debug("Waiting for LoginRequest message to be sent from client");
+            LoginRequest loginRequest = loginRequestSerialiser.Deserialise(stream);
+            Log.Info("Client with username " + loginRequest.UserName + " has logged in");
+
+            return loginRequest;
+        }
+
         private void SendMessage(ContributionNotification contribution)
         {
             foreach (TcpClient client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
 
-                notificationSerialiser.Serialise(contribution, clientStream);
+                contributionNotificationSerialiser.Serialise(contribution, clientStream);
             }
         }
 
