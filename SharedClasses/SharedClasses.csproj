@@ -37,11 +37,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Protocol\ContributionNotification.cs" />
@@ -51,6 +46,8 @@
     <Compile Include="Domain\Contribution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ContributionSerialiser.cs" />
+    <Compile Include="Protocol\LoginRequest.cs" />
+    <Compile Include="Protocol\LoginRequestSerialiser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

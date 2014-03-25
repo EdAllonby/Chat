@@ -2,7 +2,6 @@
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
 namespace Server
