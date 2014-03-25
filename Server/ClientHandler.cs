@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses;
 using SharedClasses.Domain;
+using SharedClasses.Protocol;
 
 namespace Server
 {
     public class ClientHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
+        private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly IList<ConnectedClient> connectedClients = new List<ConnectedClient>();
+        private readonly ContributionNotificationSerialiser notificationSerialiser = new ContributionNotificationSerialiser();
+        private readonly ContributionRequestSerialiser requestSerialiser = new ContributionRequestSerialiser();
+        private int totalListeners;
 
         public ClientHandler()
         {
@@ -21,33 +23,31 @@ namespace Server
 
         public void CreateListenerThreadForClient(TcpClient client)
         {
-            var newClient = new ConnectedClient(client);
-            AddConnectedClient(newClient);
+            AddConnectedClient(client);
             NetworkStream stream = client.GetStream();
             Log.Info("Stream with client established");
 
-            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, newClient))
+            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
             {
-                Name = "MessageListenerThread" + TotalListeners
+                Name = "MessageListenerThread" + totalListeners
             };
 
             messageListenerThread.Start();
         }
 
-        public int TotalListeners { get; private set; }
-
-        public void ReceiveMessageListener(NetworkStream stream, ConnectedClient client)
+        private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
             bool connection = true;
-            TotalListeners++;
+            totalListeners++;
             while (connection)
             {
-                Contribution contribution = Contribution.Deserialise(stream);
+                ContributionNotification contributionRequest = notificationSerialiser.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
-                    Log.Info("Contribution deserialised. Client sent: " + contribution.GetMessage());
-                    SendMessage(contribution);
+                    Log.Info("Contribution request deserialised. Client sent: " + contributionRequest.Contribution.GetMessage());
+                    var contributionNotification = new ContributionNotification {Contribution = contributionRequest.Contribution};
+                    SendMessage(contributionNotification);
                 }
                 else
                 {
@@ -58,30 +58,23 @@ namespace Server
             }
         }
 
-        private void SendMessage(Contribution contribution)
+        private void SendMessage(ContributionNotification contribution)
         {
-            foreach (ConnectedClient client in connectedClients)
+            foreach (TcpClient client in connectedClients)
             {
-                if (client.CurrentStatus == Status.Connected)
-                {
-                    NetworkStream clientStream = client.Socket.GetStream();
-                    contribution.Serialise(clientStream);
-                }
-                if (client.CurrentStatus == Status.Disconnected)
-                {
-                    RemoveDisconnectedClient(client);
-                }
+                NetworkStream clientStream = client.GetStream();
+
+                notificationSerialiser.Serialise(contribution, clientStream);
             }
         }
 
-
-        public void AddConnectedClient(ConnectedClient client)
+        private void AddConnectedClient(TcpClient client)
         {
             connectedClients.Add(client);
             Log.Info("Added client to connectedClients list");
         }
 
-        private void RemoveDisconnectedClient(ConnectedClient client)
+        private void RemoveDisconnectedClient(TcpClient client)
         {
             connectedClients.Remove(client);
             Log.Info("Client successfully removed from ConnectedClients list");

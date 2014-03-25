@@ -35,7 +35,6 @@ namespace SharedClasses.Protocol
             {
                 if (networkStream.CanRead)
                 {
-                    Log.Debug("Network stream can be read from, waiting for Contribution");
                     var message = (Contribution) binaryFormatter.Deserialize(networkStream);
                     Log.Info("Network stream has received data and deserialised to a Contribution object");
                     return message;

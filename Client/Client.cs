@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses;
 using SharedClasses.Domain;
+using SharedClasses.Protocol;
 
 namespace Client
 {
@@ -13,10 +13,12 @@ namespace Client
     {
         private readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private readonly TcpClient connection;
-        private NetworkStream stream;
+        private readonly ContributionNotificationSerialiser notificationSerialiser = new ContributionNotificationSerialiser();
+        private readonly ContributionRequestSerialiser requestSerialiser = new ContributionRequestSerialiser();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
+        private NetworkStream stream;
 
         public Client(IPAddress targetAddress, int targetPort)
         {
@@ -31,11 +33,10 @@ namespace Client
                 {
                     while (true)
                     {
+                        string clientContributionString = Console.ReadLine();
+                        var clientContribution = new ContributionRequest {Contribution = new Contribution(clientContributionString)};
 
-                        string test = Console.ReadLine();
-                        var message = new Contribution(test);
-
-                        message.Serialise(stream);
+                        requestSerialiser.Serialise(clientContribution, stream);
                     }
                 }
             }
@@ -65,7 +66,6 @@ namespace Client
 
         private TcpClient ConnectToServer()
         {
-
             Log.Info("Client looking for server");
 
             var client = new TcpClient(targetAddress.ToString(), targetPort);
@@ -80,7 +80,6 @@ namespace Client
             };
             messageListenerThread.Start();
             return client;
-
         }
 
         private void ReceiveMessageListener()
@@ -89,12 +88,12 @@ namespace Client
             bool serverConnection = true;
             while (serverConnection)
             {
-                Contribution contribution = Contribution.Deserialise(stream);
+                ContributionNotification contributionNotification = notificationSerialiser.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
-                    Log.Info("Contribution deserialised. Client sent: " + contribution.GetMessage());
-                    Console.WriteLine("A client sent: " + contribution.GetMessage());
+                    Log.Info("Contribution deserialised. Client sent: " + contributionNotification.Contribution.GetMessage());
+                    Console.WriteLine("A client sent: " + contributionNotification.Contribution.GetMessage());
                 }
                 else
                 {
