@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net.Sockets;
 using log4net;
-using SharedClasses.Protocol;
 
 namespace SharedClasses.Domain
 {
@@ -10,10 +8,8 @@ namespace SharedClasses.Domain
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
-        private static readonly ContributionSerialiser SerialiseMessage = new ContributionSerialiser();
-
-        private string text;
         private DateTime messageTimeStamp;
+        private string text;
 
         public Contribution(string text)
         {
@@ -29,17 +25,7 @@ namespace SharedClasses.Domain
         private void CreateMessage(string messageText)
         {
             SetTextOfMessage(messageText ?? String.Empty);
-            SetTimeStampOfMessage(); 
-        }
-
-        public void Serialise(NetworkStream networkStream)
-        {
-            SerialiseMessage.Serialise(this, networkStream);
-        }
-
-        public static Contribution Deserialise(NetworkStream networkStream)
-        {
-            return SerialiseMessage.Deserialise(networkStream);
+            SetTimeStampOfMessage();
         }
 
         private void SetTextOfMessage(string messageText)
