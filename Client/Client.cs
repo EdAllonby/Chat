@@ -12,12 +12,13 @@ namespace Client
     internal class Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
-        private readonly TcpClient connection;
+        private TcpClient connection;
 
         private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
         private readonly ContributionNotificationSerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
         private readonly ContributionRequestSerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
 
+        private readonly string userName;
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
         private NetworkStream stream;
@@ -28,22 +29,15 @@ namespace Client
             this.targetPort = targetPort;
 
             Console.Write("Enter name: ");
-            string userName = Console.ReadLine();
+            userName = Console.ReadLine();
 
             try
             {
-                connection = ConnectToServer();
+                ConnectToServer();
 
-                if (connection != null)
+                while (true)
                 {
-                    SendLoginRequest(userName);
-                    while (true)
-                    {
-                        string clientContributionString = Console.ReadLine();
-                        var clientContribution = new ContributionRequest {Contribution = new Contribution(clientContributionString)};
-
-                        contributionRequestSerialiser.Serialise(clientContribution, stream);
-                    }
+                    SendNewContributionRequest();
                 }
             }
             catch (SocketException socketException)
@@ -70,13 +64,7 @@ namespace Client
             }
         }
 
-        private void SendLoginRequest(string userName)
-        {
-            var loginRequest = new LoginRequest {UserName = userName};
-            loginRequestSerialiser.Serialise(loginRequest, stream);
-        }
-
-        private TcpClient ConnectToServer()
+        private void ConnectToServer()
         {
             Log.Info("Client looking for server");
 
@@ -90,8 +78,15 @@ namespace Client
             {
                 Name = "MessageListenerThread"
             };
-            messageListenerThread.Start();
-            return client;
+            messageListenerThread.Start();         
+            connection = client;
+
+            SendLoginRequest();
+        }
+        private void SendLoginRequest()
+        {
+            var loginRequest = new LoginRequest { UserName = userName };
+            loginRequestSerialiser.Serialise(loginRequest, stream);
         }
 
         private void ReceiveMessageListener()
@@ -100,7 +95,8 @@ namespace Client
             bool serverConnection = true;
             while (serverConnection)
             {
-                ContributionNotification contributionNotification = contributionNotificationSerialiser.Deserialise(stream);
+                ContributionNotification contributionNotification =
+                    contributionNotificationSerialiser.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
@@ -113,6 +109,17 @@ namespace Client
                     Log.Warn("Connection is no longer available, stopping client listener thread");
                 }
             }
+        }
+
+        private void SendNewContributionRequest()
+        {
+            string clientContributionString = Console.ReadLine();
+            var clientContribution = new ContributionRequest
+            {
+                Contribution = new Contribution(clientContributionString)
+            };
+
+            contributionRequestSerialiser.Serialise(clientContribution, stream);
         }
     }
 }
