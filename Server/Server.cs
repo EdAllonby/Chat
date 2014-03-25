@@ -6,9 +6,8 @@ namespace Server
 {
     internal class Server
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
-
         private const int PortNumber = 5004;
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         public Server()
         {

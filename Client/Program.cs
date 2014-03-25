@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -13,7 +14,7 @@ namespace Client
         private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
         private static IPAddress targetedAddress;
         private static int targetedPort;
-        private static IEnumerable<string> commandLineArguments; 
+        private static IEnumerable<string> commandLineArguments;
 
         private static void Main(string[] args)
         {
@@ -64,7 +65,7 @@ namespace Client
 
         private static IPAddress LocalIPAddress()
         {
-            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            if (!NetworkInterface.GetIsNetworkAvailable())
             {
                 return null;
             }
@@ -79,7 +80,7 @@ namespace Client
         {
             string parameterName = "";
 
-            foreach (var argument in commandLineArguments)
+            foreach (string argument in commandLineArguments)
             {
                 if (argument[0] == '/')
                 {
