@@ -41,11 +41,11 @@ namespace Server
             totalListeners++;
             while (connection)
             {
-                ContributionNotification contributionRequest = notificationSerialiser.Deserialise(stream);
+                ContributionRequest contributionRequest = requestSerialiser.Deserialise(stream);
 
                 if (stream.CanRead)
                 {
-                    Log.Info("Contribution request deserialised. Client sent: " + contributionRequest.Contribution.GetMessage());
+                    Log.Info("Client sent: " + contributionRequest.Contribution.GetMessage());
                     var contributionNotification = new ContributionNotification {Contribution = contributionRequest.Contribution};
                     SendMessage(contributionNotification);
                 }

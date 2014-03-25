@@ -92,7 +92,7 @@ namespace Client
 
                 if (stream.CanRead)
                 {
-                    Log.Info("Contribution deserialised. Client sent: " + contributionNotification.Contribution.GetMessage());
+                    Log.Info("Client sent: " + contributionNotification.Contribution.GetMessage());
                     Console.WriteLine("A client sent: " + contributionNotification.Contribution.GetMessage());
                 }
                 else
