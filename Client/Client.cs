@@ -95,13 +95,9 @@ namespace Client
             bool serverConnection = true;
             while (serverConnection)
             {
-                ContributionNotification contributionNotification =
-                    contributionNotificationSerialiser.Deserialise(stream);
-
                 if (stream.CanRead)
                 {
-                    Log.Info("Client sent: " + contributionNotification.Contribution.GetMessage());
-                    Console.WriteLine("A client sent: " + contributionNotification.Contribution.GetMessage());
+                    ReceiveContributionNotification();
                 }
                 else
                 {
@@ -111,13 +107,26 @@ namespace Client
             }
         }
 
+        private void ReceiveContributionNotification()
+        {
+            ContributionNotification contributionNotification = contributionNotificationSerialiser.Deserialise(stream);
+
+            if (contributionNotification.MessageType == 2)
+            {
+                Log.Debug("Client sent Contribution notification message");
+                Log.Info("Client sent: " + contributionNotification.Contribution.GetMessage());
+                Console.WriteLine("A client sent: " + contributionNotification.Contribution.GetMessage());
+            }
+            else
+            {
+                Log.Error("Server expected Contribution Notification message. Server actually got " + contributionNotification.MessageType + " type message");                
+            }
+        }
+
         private void SendNewContributionRequest()
         {
             string clientContributionString = Console.ReadLine();
-            var clientContribution = new ContributionRequest
-            {
-                Contribution = new Contribution(clientContributionString)
-            };
+            var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
 
             contributionRequestSerialiser.Serialise(clientContribution, stream);
         }

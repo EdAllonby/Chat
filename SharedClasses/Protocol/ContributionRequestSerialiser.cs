@@ -19,7 +19,7 @@ namespace SharedClasses.Protocol
         public ContributionRequest Deserialise(NetworkStream stream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            var request = new ContributionRequest {Contribution = serialiser.Deserialise(stream)};
+            var request = new ContributionRequest(serialiser.Deserialise(stream));
             Log.Info("Contribution request message deserialised");
             return request;
         }
