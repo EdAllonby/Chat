@@ -6,5 +6,6 @@ namespace SharedClasses.Protocol
     public class LoginRequest
     {
         public string UserName { get; set; }
+        public int MessageType = 3;
     }
 }

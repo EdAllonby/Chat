@@ -19,7 +19,7 @@ namespace SharedClasses.Protocol
         public ContributionNotification Deserialise(NetworkStream stream)
         {
             Log.Debug("Waiting for a contribution notification message to deserialise");
-            var notification = new ContributionNotification {Contribution = serialiser.Deserialise(stream)};
+            var notification = new ContributionNotification(serialiser.Deserialise(stream));
             Log.Info("Contribution notification message deserialised");
             return notification;
         }

@@ -42,16 +42,12 @@ namespace Server
         {
             bool connection = true;
             LoginRequest clientLoginRequest = GetClientLoginRequest(stream);
-
+      
             while (connection)
             {
-
-                ContributionRequest contributionRequest = contributionRequestSerialiser.Deserialise(stream);
-
                 if (stream.CanRead)
                 {
-                    Log.Info("Client sent: " + contributionRequest.Contribution.GetMessage());
-                    var contributionNotification = new ContributionNotification {Contribution = contributionRequest.Contribution};
+                    ContributionNotification contributionNotification = ReceiveContributionRequest(stream);
                     SendMessage(contributionNotification);
                 }
                 else
@@ -67,9 +63,32 @@ namespace Server
         {
             Log.Debug("Waiting for LoginRequest message to be sent from client");
             LoginRequest loginRequest = loginRequestSerialiser.Deserialise(stream);
-            Log.Info("Client with username " + loginRequest.UserName + " has logged in");
 
-            return loginRequest;
+            if (loginRequest.MessageType == 3)
+            {
+                Log.Debug("Client sent Login Message Request message");
+                Log.Info("Client with username " + loginRequest.UserName + " has logged in");
+                return loginRequest;
+            }
+            
+            Log.Error("Server expected Login Request message. Server actually got " + loginRequest.MessageType + " type message");
+            return null;
+        }
+
+        private ContributionNotification ReceiveContributionRequest(NetworkStream stream)
+        {
+            ContributionRequest contributionRequest = contributionRequestSerialiser.Deserialise(stream);
+
+            if (contributionRequest.MessageType == 1)
+            {
+                Log.Debug("Client sent Contribution Request message");
+                Log.Info("Client sent: " + contributionRequest.Contribution.GetMessage());
+                var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
+                return contributionNotification;
+            }
+
+            Log.Error("Server expected Contribution Request message. Server actually got " + contributionRequest.MessageType + " type message");
+            return null;
         }
 
         private void SendMessage(ContributionNotification contribution)
