@@ -6,8 +6,6 @@ namespace SharedClasses.Domain
     [Serializable]
     public class Contribution
     {
-        public int MessageType;
-
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
         private DateTime messageTimeStamp;

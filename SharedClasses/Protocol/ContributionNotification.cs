@@ -4,13 +4,13 @@ namespace SharedClasses.Protocol
 {
     public class ContributionNotification
     {
+        public static MessageType MessageType = new MessageType(2);
+
         public Contribution Contribution { get; set; }
-        public int MessageType = 2;
 
         public ContributionNotification(Contribution contribution)
         {
             Contribution = contribution;
-            Contribution.MessageType = MessageType;
         }
     }
 }

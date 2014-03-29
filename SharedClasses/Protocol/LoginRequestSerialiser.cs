@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
@@ -11,14 +12,16 @@ namespace SharedClasses.Protocol
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-        public void Serialise(LoginRequest loginRequest, NetworkStream networkStream)
+        public void Serialise(LoginRequest loginRequest, NetworkStream stream)
         {
             try
             {
-                if (networkStream.CanWrite)
+                if (stream.CanWrite)
                 {
+                    MessageType.SendMessageType(LoginRequest.MessageType.Identifier, stream);
+
                     Log.Info("Attempt to serialise LoginRequest and send to stream");
-                    binaryFormatter.Serialize(networkStream, loginRequest);
+                    binaryFormatter.Serialize(stream, loginRequest);
                     Log.Info("LoginRequest serialised and sent to network stream");
                 }
             }
