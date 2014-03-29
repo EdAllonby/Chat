@@ -109,17 +109,21 @@ namespace Client
 
         private void ReceiveContributionNotification()
         {
-            ContributionNotification contributionNotification = contributionNotificationSerialiser.Deserialise(stream);
+            int messageType = MessageType.GetMessageType(stream);
 
-            if (contributionNotification.MessageType == 2)
+            if (messageType == ContributionNotification.MessageType.Identifier)
             {
+                ContributionNotification contributionNotification =
+                    contributionNotificationSerialiser.Deserialise(stream);
+
                 Log.Debug("Client sent Contribution notification message");
                 Log.Info("Client sent: " + contributionNotification.Contribution.GetMessage());
                 Console.WriteLine("A client sent: " + contributionNotification.Contribution.GetMessage());
             }
             else
             {
-                Log.Error("Server expected Contribution Notification message. Server actually got " + contributionNotification.MessageType + " type message");                
+                Log.Error("Server expected Contribution Notification message. Server actually got " +
+                          ContributionNotification.MessageType + " type message");
             }
         }
 

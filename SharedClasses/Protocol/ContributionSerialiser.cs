@@ -12,14 +12,14 @@ namespace SharedClasses.Protocol
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-        public void Serialise(Contribution clientContribution, NetworkStream networkStream)
+        public void Serialise(Contribution clientContribution, NetworkStream stream)
         {
             try
             {
-                if (networkStream.CanWrite)
+                if (stream.CanWrite)
                 {
                     Log.Info("Attempt to serialise Contribution and send to stream");
-                    binaryFormatter.Serialize(networkStream, clientContribution);
+                    binaryFormatter.Serialize(stream, clientContribution);
                     Log.Info("Contribution serialised and sent to network stream");
                 }
             }
