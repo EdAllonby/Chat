@@ -11,8 +11,12 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
-        private readonly ContributionRequestSerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
+        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser =
+            new ContributionNotificationSerialiser();
+
+        private readonly ContributionRequestSerialiser contributionRequestSerialiser =
+            new ContributionRequestSerialiser();
+
         private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
         private int totalListeners = 1;
 
@@ -35,14 +39,13 @@ namespace Server
             totalListeners++;
 
             messageListenerThread.Start();
-
         }
 
         private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
             bool connection = true;
             LoginRequest clientLoginRequest = GetClientLoginRequest(stream);
-      
+
             while (connection)
             {
                 if (stream.CanRead)
@@ -64,7 +67,7 @@ namespace Server
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
             int messageType = MessageType.Deserialise(stream);
 
-            if (messageType == MessageType.GetMessageIdentity(typeof(LoginRequest)))
+            if (messageType == MessageType.GetMessageIdentity(typeof (LoginRequest)))
             {
                 LoginRequest loginRequest = loginRequestSerialiser.Deserialise(stream);
 
@@ -82,7 +85,7 @@ namespace Server
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
             int messageType = MessageType.Deserialise(stream);
 
-            if (messageType == MessageType.GetMessageIdentity(typeof(ContributionRequest)))
+            if (messageType == MessageType.GetMessageIdentity(typeof (ContributionRequest)))
             {
                 ContributionRequest contributionRequest = contributionRequestSerialiser.Deserialise(stream);
 

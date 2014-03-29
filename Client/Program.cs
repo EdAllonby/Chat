@@ -28,7 +28,8 @@ namespace Client
 
         private static void SetUserLogonMethod()
         {
-            Console.WriteLine("Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
+            Console.WriteLine(
+                "Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
             string usersConnectionChoice = Console.ReadLine();
 
             int connectionChoice;
@@ -72,7 +73,8 @@ namespace Client
 
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
 
-            Log.Debug("Local IP Address found: " + host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork));
+            Log.Debug("Local IP Address found: " +
+                      host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork));
             return host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
         }
 

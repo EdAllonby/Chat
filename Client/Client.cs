@@ -12,15 +12,19 @@ namespace Client
     internal class Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
-        private TcpClient connection;
+
+        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser =
+            new ContributionNotificationSerialiser();
+
+        private readonly ContributionRequestSerialiser contributionRequestSerialiser =
+            new ContributionRequestSerialiser();
 
         private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
-        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
-        private readonly ContributionRequestSerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
 
-        private readonly string userName;
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
+        private readonly string userName;
+        private TcpClient connection;
         private NetworkStream stream;
 
         public Client(IPAddress targetAddress, int targetPort)
@@ -78,14 +82,15 @@ namespace Client
             {
                 Name = "MessageListenerThread"
             };
-            messageListenerThread.Start();         
+            messageListenerThread.Start();
             connection = client;
 
             SendLoginRequest();
         }
+
         private void SendLoginRequest()
         {
-            var loginRequest = new LoginRequest { UserName = userName };
+            var loginRequest = new LoginRequest {UserName = userName};
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
 

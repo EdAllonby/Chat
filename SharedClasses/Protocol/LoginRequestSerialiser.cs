@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
@@ -18,7 +17,7 @@ namespace SharedClasses.Protocol
             {
                 if (stream.CanWrite)
                 {
-                    MessageType.Serialise(typeof(LoginRequest), stream);
+                    MessageType.Serialise(typeof (LoginRequest), stream);
 
                     Log.Info("Attempt to serialise LoginRequest and send to stream");
                     binaryFormatter.Serialize(stream, loginRequest);
