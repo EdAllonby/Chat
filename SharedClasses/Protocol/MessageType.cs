@@ -1,24 +1,40 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using log4net;
 
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// This class is used to hold the type of message identifier, and related utility methods.
+    /// This static class is used to hold the type of message identifier, and related utility methods.
     /// </summary>
-    public class MessageType
+    public static class MessageType
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageType));
 
-        public int Identifier { get; private set; }
-
-        public MessageType(int identifier)
+        private static Dictionary<int, Type> MessageIdentifierRegistry = new Dictionary<int, Type>
         {
-            Identifier = identifier;
+            {1, typeof (ContributionRequest)},
+            {2, typeof (ContributionNotification)},
+            {3, typeof (LoginRequest)},
+        };
+
+        private static Dictionary<Type, int> MessageTypeRegistry = new Dictionary<Type, int>
+        {
+            {typeof (ContributionRequest), 1},
+            {typeof (ContributionNotification), 2},
+            {typeof (LoginRequest), 3}
+        };
+
+        public static void Serialise(Type serialiserType, NetworkStream stream)
+        {
+            int messageIdentifier = GetMessageIdentity(serialiserType);
+
+            stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
+            Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
         }
 
-        public static int GetMessageType(NetworkStream stream)
+        public static int Deserialise(NetworkStream stream)
         {
             var messageTypeBuffer = new byte[4];
             stream.Read(messageTypeBuffer, 0, 4);
@@ -27,10 +43,9 @@ namespace SharedClasses.Protocol
             return messageIdentifier;
         }
 
-        public static void SendMessageType(int messageIdentifier, NetworkStream stream)
+        public static int GetMessageIdentity(Type serialiserType)
         {
-            stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
-            Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
+            return MessageTypeRegistry[serialiserType];
         }
     }
 }
