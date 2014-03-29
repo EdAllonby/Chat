@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using log4net;
 
 namespace SharedClasses.Protocol
@@ -12,7 +11,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(ContributionRequest request, NetworkStream stream)
         {
-            MessageType.Serialise(typeof(ContributionRequest), stream);
+            MessageType.Serialise(typeof (ContributionRequest), stream);
 
             Log.Debug("Waiting for contribution request message to serialise");
             serialiser.Serialise(request.Contribution, stream);

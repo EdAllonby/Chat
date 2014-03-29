@@ -6,7 +6,7 @@ using log4net;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// This static class is used to hold the type of message identifier, and related utility methods.
+    ///     This static class is used to hold the type of message identifier, and related utility methods.
     /// </summary>
     public static class MessageType
     {
@@ -19,7 +19,7 @@ namespace SharedClasses.Protocol
             {3, typeof (LoginRequest)},
         };
 
-        private static Dictionary<Type, int> MessageTypeRegistry = new Dictionary<Type, int>
+        private static readonly Dictionary<Type, int> MessageTypeRegistry = new Dictionary<Type, int>
         {
             {typeof (ContributionRequest), 1},
             {typeof (ContributionNotification), 2},
