@@ -109,9 +109,9 @@ namespace Client
 
         private void ReceiveContributionNotification()
         {
-            int messageType = MessageType.GetMessageType(stream);
+            int messageType = MessageType.Deserialise(stream);
 
-            if (messageType == ContributionNotification.MessageType.Identifier)
+            if (messageType == MessageType.GetMessageIdentity(typeof (ContributionNotification)))
             {
                 ContributionNotification contributionNotification =
                     contributionNotificationSerialiser.Deserialise(stream);
@@ -122,8 +122,7 @@ namespace Client
             }
             else
             {
-                Log.Error("Server expected Contribution Notification message. Server actually got " +
-                          ContributionNotification.MessageType + " type message");
+                Log.Error("Server expected Contribution Notification message");
             }
         }
 

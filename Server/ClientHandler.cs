@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -64,9 +62,9 @@ namespace Server
         private LoginRequest GetClientLoginRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
-            int messageType = MessageType.GetMessageType(stream);
+            int messageType = MessageType.Deserialise(stream);
 
-            if (messageType == LoginRequest.MessageType.Identifier)
+            if (messageType == MessageType.GetMessageIdentity(typeof(LoginRequest)))
             {
                 LoginRequest loginRequest = loginRequestSerialiser.Deserialise(stream);
 
@@ -75,17 +73,16 @@ namespace Server
                 return loginRequest;
             }
 
-            Log.Error("Server expected Login Request message. Server actually got " + LoginRequest.MessageType +
-                      " type message");
+            Log.Error("Server expected Login Request message");
             return null;
         }
 
         private ContributionNotification ReceiveContributionRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
-            int messageType = MessageType.GetMessageType(stream);
+            int messageType = MessageType.Deserialise(stream);
 
-            if (messageType == ContributionRequest.MessageType.Identifier)
+            if (messageType == MessageType.GetMessageIdentity(typeof(ContributionRequest)))
             {
                 ContributionRequest contributionRequest = contributionRequestSerialiser.Deserialise(stream);
 
@@ -95,7 +92,7 @@ namespace Server
                 return contributionNotification;
             }
 
-            Log.Error("Server expected Contribution Request message. Server actually got " + ContributionRequest.MessageType + " type message");
+            Log.Error("Server expected Contribution Request message");
             return null;
         }
 
