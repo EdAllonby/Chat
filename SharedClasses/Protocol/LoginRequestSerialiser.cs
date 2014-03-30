@@ -5,7 +5,7 @@ using log4net;
 
 namespace SharedClasses.Protocol
 {
-    public class LoginRequestSerialiser : ISerialise
+    public class LoginRequestSerialiser : ISerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginRequestSerialiser));
 
