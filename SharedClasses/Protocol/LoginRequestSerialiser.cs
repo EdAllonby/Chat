@@ -5,13 +5,13 @@ using log4net;
 
 namespace SharedClasses.Protocol
 {
-    public class LoginRequestSerialiser
+    public class LoginRequestSerialiser : ISerialise
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginRequestSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-        public void Serialise(LoginRequest loginRequest, NetworkStream stream)
+        public void Serialise(IMessage loginRequest, NetworkStream stream)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace SharedClasses.Protocol
             }
         }
 
-        public LoginRequest Deserialise(NetworkStream networkStream)
+        public IMessage Deserialise(NetworkStream networkStream)
         {
             try
             {

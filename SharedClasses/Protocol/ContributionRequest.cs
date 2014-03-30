@@ -2,7 +2,7 @@
 
 namespace SharedClasses.Protocol
 {
-    public class ContributionRequest
+    public class ContributionRequest : IMessage
     {
         public ContributionRequest(Contribution contribution)
         {
@@ -10,5 +10,9 @@ namespace SharedClasses.Protocol
         }
 
         public Contribution Contribution { get; set; }
+        public string GetMessage()
+        {
+            return Contribution.GetMessage();
+        }
     }
 }

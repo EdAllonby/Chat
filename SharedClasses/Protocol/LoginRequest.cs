@@ -3,8 +3,12 @@
 namespace SharedClasses.Protocol
 {
     [Serializable]
-    public class LoginRequest
+    public class LoginRequest : IMessage
     {
-        public string UserName { get; set; }
+        public string UserName { private get; set; }
+        public string GetMessage()
+        {
+            return UserName;
+        }
     }
 }
