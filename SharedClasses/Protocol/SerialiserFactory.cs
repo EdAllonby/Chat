@@ -2,9 +2,9 @@
 {
     public class SerialiserFactory
     {
-        public ISerialise GetSerialiser(int messageIdentity)
+        public ISerialiser GetSerialiser(int messageIdentity)
         {
-            ISerialise serialiser = null;
+            ISerialiser serialiser = null;
             switch (messageIdentity)
             {
                 case 1:

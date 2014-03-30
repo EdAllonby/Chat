@@ -47,7 +47,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ContributionSerialiser.cs" />
     <Compile Include="Protocol\IMessage.cs" />
-    <Compile Include="Protocol\ISerialise.cs" />
+    <Compile Include="Protocol\ISerialiser.cs" />
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
     <Compile Include="Protocol\MessageType.cs" />

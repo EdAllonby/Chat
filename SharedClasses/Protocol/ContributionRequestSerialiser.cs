@@ -3,7 +3,7 @@ using log4net;
 
 namespace SharedClasses.Protocol
 {
-    public class ContributionRequestSerialiser : ISerialise
+    public class ContributionRequestSerialiser : ISerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionRequestSerialiser));
 
