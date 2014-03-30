@@ -13,11 +13,11 @@ namespace Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly ISerialise contributionNotificationSerialiser = new ContributionNotificationSerialiser();
+        private readonly ISerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
 
-        private readonly ISerialise contributionRequestSerialiser = new ContributionRequestSerialiser();
+        private readonly ISerialiser loginRequestSerialiser = new LoginRequestSerialiser();
 
-        private readonly ISerialise loginRequestSerialiser = new LoginRequestSerialiser();
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
@@ -112,20 +112,15 @@ namespace Client
 
         private void ReceiveContributionNotification()
         {
-            int messageType = MessageType.Deserialise(stream);
+            int messageIdentity = MessageType.Deserialise(stream);
 
-            if (messageType == MessageType.GetMessageIdentity(typeof (ContributionNotification)))
-            {
-                IMessage contributionNotification = contributionNotificationSerialiser.Deserialise(stream);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentity);
 
-                Log.Debug("Client sent Contribution notification message");
-                Log.Info("Client sent: " + contributionNotification.GetMessage());
-                Console.WriteLine("A client sent: " + contributionNotification.GetMessage());
-            }
-            else
-            {
-                Log.Error("Server expected Contribution Notification message");
-            }
+            IMessage contributionNotification = serialiser.Deserialise(stream);
+
+            Log.Debug("Client sent Contribution notification message");
+            Log.Info("Client sent: " + contributionNotification.GetMessage());
+            Console.WriteLine("A client sent: " + contributionNotification.GetMessage());
         }
 
         private void SendNewContributionRequest()

@@ -51,6 +51,7 @@
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
     <Compile Include="Protocol\MessageType.cs" />
+    <Compile Include="Protocol\SerialiserFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
