@@ -13,13 +13,11 @@ namespace Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser =
-            new ContributionNotificationSerialiser();
+        private readonly ISerialise contributionNotificationSerialiser = new ContributionNotificationSerialiser();
 
-        private readonly ContributionRequestSerialiser contributionRequestSerialiser =
-            new ContributionRequestSerialiser();
+        private readonly ISerialise contributionRequestSerialiser = new ContributionRequestSerialiser();
 
-        private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
+        private readonly ISerialise loginRequestSerialiser = new LoginRequestSerialiser();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
@@ -118,12 +116,11 @@ namespace Client
 
             if (messageType == MessageType.GetMessageIdentity(typeof (ContributionNotification)))
             {
-                ContributionNotification contributionNotification =
-                    contributionNotificationSerialiser.Deserialise(stream);
+                IMessage contributionNotification = contributionNotificationSerialiser.Deserialise(stream);
 
                 Log.Debug("Client sent Contribution notification message");
-                Log.Info("Client sent: " + contributionNotification.Contribution.GetMessage());
-                Console.WriteLine("A client sent: " + contributionNotification.Contribution.GetMessage());
+                Log.Info("Client sent: " + contributionNotification.GetMessage());
+                Console.WriteLine("A client sent: " + contributionNotification.GetMessage());
             }
             else
             {
@@ -135,7 +132,6 @@ namespace Client
         {
             string clientContributionString = Console.ReadLine();
             var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
-
             contributionRequestSerialiser.Serialise(clientContribution, stream);
         }
     }

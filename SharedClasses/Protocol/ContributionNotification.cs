@@ -2,7 +2,7 @@
 
 namespace SharedClasses.Protocol
 {
-    public class ContributionNotification
+    public class ContributionNotification : IMessage
     {
         public ContributionNotification(Contribution contribution)
         {
@@ -10,5 +10,10 @@ namespace SharedClasses.Protocol
         }
 
         public Contribution Contribution { get; set; }
+
+        public string GetMessage()
+        {
+            return Contribution.GetMessage();
+        }
     }
 }

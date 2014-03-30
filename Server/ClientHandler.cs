@@ -11,13 +11,12 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly ContributionNotificationSerialiser contributionNotificationSerialiser =
-            new ContributionNotificationSerialiser();
+        private readonly ISerialise contributionNotificationSerialiser = new ContributionNotificationSerialiser();
 
-        private readonly ContributionRequestSerialiser contributionRequestSerialiser =
-            new ContributionRequestSerialiser();
+        private readonly ISerialise contributionRequestSerialiser = new ContributionRequestSerialiser();
 
-        private readonly LoginRequestSerialiser loginRequestSerialiser = new LoginRequestSerialiser();
+        private readonly ISerialise loginRequestSerialiser = new LoginRequestSerialiser();
+
         private int totalListeners = 1;
 
         public ClientHandler()
@@ -44,13 +43,13 @@ namespace Server
         private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
             bool connection = true;
-            LoginRequest clientLoginRequest = GetClientLoginRequest(stream);
+            IMessage clientLoginRequest = GetClientLoginRequest(stream);
 
             while (connection)
             {
                 if (stream.CanRead)
                 {
-                    ContributionNotification contributionNotification = ReceiveContributionRequest(stream);
+                    IMessage contributionNotification = ReceiveContributionRequest(stream);
                     SendMessage(contributionNotification);
                 }
                 else
@@ -62,17 +61,17 @@ namespace Server
             }
         }
 
-        private LoginRequest GetClientLoginRequest(NetworkStream stream)
+        private IMessage GetClientLoginRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
             int messageType = MessageType.Deserialise(stream);
 
             if (messageType == MessageType.GetMessageIdentity(typeof (LoginRequest)))
             {
-                LoginRequest loginRequest = loginRequestSerialiser.Deserialise(stream);
+                IMessage loginRequest = loginRequestSerialiser.Deserialise(stream);
 
                 Log.Debug("Client sent Login Message Request message");
-                Log.Info("Client with username " + loginRequest.UserName + " has logged in");
+                Log.Info("Client with username " + loginRequest.GetMessage() + " has logged in");
                 return loginRequest;
             }
 
@@ -80,26 +79,29 @@ namespace Server
             return null;
         }
 
-        private ContributionNotification ReceiveContributionRequest(NetworkStream stream)
+        private IMessage ReceiveContributionRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
             int messageType = MessageType.Deserialise(stream);
 
             if (messageType == MessageType.GetMessageIdentity(typeof (ContributionRequest)))
             {
-                ContributionRequest contributionRequest = contributionRequestSerialiser.Deserialise(stream);
+                var contributionRequest = contributionRequestSerialiser.Deserialise(stream) as ContributionRequest;
 
                 Log.Debug("Client sent Contribution Request message");
-                Log.Info("Client sent: " + contributionRequest.Contribution.GetMessage());
-                var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
-                return contributionNotification;
+                if (contributionRequest != null)
+                {
+                    Log.Info("Client sent: " + contributionRequest.GetMessage());
+                    var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
+                    return contributionNotification;
+                }
             }
 
             Log.Error("Server expected Contribution Request message");
             return null;
         }
 
-        private void SendMessage(ContributionNotification contribution)
+        private void SendMessage(IMessage contribution)
         {
             foreach (TcpClient client in connectedClients)
             {
