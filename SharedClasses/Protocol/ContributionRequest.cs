@@ -10,6 +10,7 @@ namespace SharedClasses.Protocol
         }
 
         public Contribution Contribution { get; set; }
+
         public string GetMessage()
         {
             return Contribution.GetMessage();

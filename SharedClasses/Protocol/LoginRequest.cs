@@ -6,6 +6,7 @@ namespace SharedClasses.Protocol
     public class LoginRequest : IMessage
     {
         public string UserName { private get; set; }
+
         public string GetMessage()
         {
             return UserName;
