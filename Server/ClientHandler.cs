@@ -11,11 +11,9 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly ISerialise contributionNotificationSerialiser = new ContributionNotificationSerialiser();
+        private readonly ISerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
 
-        private readonly ISerialise contributionRequestSerialiser = new ContributionRequestSerialiser();
-
-        private readonly ISerialise loginRequestSerialiser = new LoginRequestSerialiser();
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private int totalListeners = 1;
 
@@ -64,19 +62,15 @@ namespace Server
         private IMessage GetClientLoginRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
-            int messageType = MessageType.Deserialise(stream);
+            int messageIdentity = MessageType.Deserialise(stream);
 
-            if (messageType == MessageType.GetMessageIdentity(typeof (LoginRequest)))
-            {
-                IMessage loginRequest = loginRequestSerialiser.Deserialise(stream);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentity);
 
-                Log.Debug("Client sent Login Message Request message");
-                Log.Info("Client with username " + loginRequest.GetMessage() + " has logged in");
-                return loginRequest;
-            }
+            IMessage loginRequest = serialiser.Deserialise(stream);
 
-            Log.Error("Server expected Login Request message");
-            return null;
+            Log.Debug("Client sent Login Message Request message");
+            Log.Info("Client with username " + loginRequest.GetMessage() + " has logged in");
+            return loginRequest;
         }
 
         private IMessage ReceiveContributionRequest(NetworkStream stream)
@@ -84,20 +78,19 @@ namespace Server
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
             int messageType = MessageType.Deserialise(stream);
 
-            if (messageType == MessageType.GetMessageIdentity(typeof (ContributionRequest)))
-            {
-                var contributionRequest = contributionRequestSerialiser.Deserialise(stream) as ContributionRequest;
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageType);
 
-                Log.Debug("Client sent Contribution Request message");
-                if (contributionRequest != null)
-                {
-                    Log.Info("Client sent: " + contributionRequest.GetMessage());
-                    var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
-                    return contributionNotification;
-                }
+            var contributionRequest = serialiser.Deserialise(stream) as ContributionRequest;
+
+            Log.Debug("Client sent Contribution Request message");
+
+            if (contributionRequest != null)
+            {
+                Log.Info("Client sent: " + contributionRequest.GetMessage());
+                var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
+                return contributionNotification;
             }
 
-            Log.Error("Server expected Contribution Request message");
             return null;
         }
 

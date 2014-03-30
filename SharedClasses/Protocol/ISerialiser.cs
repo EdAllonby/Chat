@@ -2,7 +2,7 @@
 
 namespace SharedClasses.Protocol
 {
-    public interface ISerialise
+    public interface ISerialiser
     {
         void Serialise(IMessage message, NetworkStream stream);
 
