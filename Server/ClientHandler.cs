@@ -60,7 +60,7 @@ namespace Server
         private IMessage GetClientLoginRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
-            int messageIdentifier = MessageType.Deserialise(stream);
+            int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
@@ -74,7 +74,7 @@ namespace Server
         private IMessage ReceiveContributionRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
-            int messageType = MessageType.Deserialise(stream);
+            int messageType = MessageUtilities.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageType);
 

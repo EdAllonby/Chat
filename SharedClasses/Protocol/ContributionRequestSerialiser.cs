@@ -11,7 +11,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(IMessage request, NetworkStream stream)
         {
-            MessageType.Serialise(typeof (ContributionRequest), stream);
+            MessageUtilities.SerialiseMessageIdentifier(typeof (ContributionRequest), stream);
             var message = request as ContributionRequest;
 
             Log.Debug("Waiting for contribution request message to serialise");
