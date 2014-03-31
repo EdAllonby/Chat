@@ -109,9 +109,9 @@ namespace Client
 
         private void ReceiveContributionNotification()
         {
-            int messageIdentity = MessageType.Deserialise(stream);
+            int messageIdentifier = MessageType.Deserialise(stream);
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentity);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
             IMessage contributionNotification = serialiser.Deserialise(stream);
 
