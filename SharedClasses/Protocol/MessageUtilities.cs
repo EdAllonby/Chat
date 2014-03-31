@@ -28,17 +28,15 @@ namespace SharedClasses.Protocol
             {typeof (LoginRequest), 3}
         };
 
-        public static void SerialiseMessageIdentifier(Type serialiserType, NetworkStream stream)
+        public static void SerialiseMessageIdentifier(int messageIdentifier, NetworkStream stream)
         {
-            int messageIdentifier = GetMessageIdentifier(serialiserType);
-
             stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
             Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
         }
 
-        public static int GetMessageIdentifier(Type serialiserType)
+        public static int GetMessageIdentifier(Type messageType)
         {
-            return MessageTypeRegistry[serialiserType];
+            return MessageTypeRegistry[messageType];
         }
 
         public static int DeserialiseMessageIdentifier(NetworkStream stream)

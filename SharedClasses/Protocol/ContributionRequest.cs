@@ -15,5 +15,10 @@ namespace SharedClasses.Protocol
         {
             return Contribution.GetMessage();
         }
+
+        public int GetMessageIdentifier()
+        {
+            return MessageUtilities.GetMessageIdentifier(typeof(ContributionRequest));
+        }
     }
 }

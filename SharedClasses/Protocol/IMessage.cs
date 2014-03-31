@@ -11,5 +11,7 @@
         /// </summary>
         /// <returns>A string of the message</returns>
         string GetMessage();
+
+        int GetMessageIdentifier();
     }
 }
