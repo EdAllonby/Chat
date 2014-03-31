@@ -60,9 +60,9 @@ namespace Server
         private IMessage GetClientLoginRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
-            int messageIdentity = MessageType.Deserialise(stream);
+            int messageIdentifier = MessageType.Deserialise(stream);
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentity);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
             IMessage loginRequest = serialiser.Deserialise(stream);
 

@@ -28,7 +28,7 @@ namespace SharedClasses.Protocol
 
         public static void Serialise(Type serialiserType, NetworkStream stream)
         {
-            int messageIdentifier = GetMessageIdentity(serialiserType);
+            int messageIdentifier = GetMessageIdentifier(serialiserType);
 
             stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
             Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
@@ -43,7 +43,7 @@ namespace SharedClasses.Protocol
             return messageIdentifier;
         }
 
-        public static int GetMessageIdentity(Type serialiserType)
+        public static int GetMessageIdentifier(Type serialiserType)
         {
             return MessageTypeRegistry[serialiserType];
         }

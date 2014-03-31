@@ -2,10 +2,10 @@
 {
     public class SerialiserFactory
     {
-        public ISerialiser GetSerialiser(int messageIdentity)
+        public ISerialiser GetSerialiser(int messageIdentifier)
         {
             ISerialiser serialiser = null;
-            switch (messageIdentity)
+            switch (messageIdentifier)
             {
                 case 1:
                     serialiser = new ContributionRequestSerialiser();
