@@ -11,8 +11,6 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly ISerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
-
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private int totalListeners = 1;
@@ -96,6 +94,8 @@ namespace Server
 
         private void SendMessage(IMessage contribution)
         {
+            ISerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
+
             foreach (TcpClient client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
