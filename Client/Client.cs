@@ -13,10 +13,6 @@ namespace Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly ISerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
-
-        private readonly ISerialiser loginRequestSerialiser = new LoginRequestSerialiser();
-
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private readonly IPAddress targetAddress;
@@ -88,6 +84,7 @@ namespace Client
 
         private void SendLoginRequest()
         {
+            ISerialiser loginRequestSerialiser = new LoginRequestSerialiser();
             var loginRequest = new LoginRequest {UserName = userName};
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
@@ -125,6 +122,7 @@ namespace Client
 
         private void SendNewContributionRequest()
         {
+            ISerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
             string clientContributionString = Console.ReadLine();
             var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
             contributionRequestSerialiser.Serialise(clientContribution, stream);
