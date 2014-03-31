@@ -109,7 +109,7 @@ namespace Client
 
         private void ReceiveContributionNotification()
         {
-            int messageIdentifier = MessageType.Deserialise(stream);
+            int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
