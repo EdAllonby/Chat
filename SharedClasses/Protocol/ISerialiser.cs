@@ -11,9 +11,9 @@ namespace SharedClasses.Protocol
         /// <summary>
         /// Serialise an <see cref="IMessage"/> down the NetworkStream
         /// </summary>
-        /// <param name="message">The message to send</param>
+        /// <param name="notificationMessage">The message to send</param>
         /// <param name="stream">The stream that connects the Client and Server</param>
-        void Serialise(IMessage message, NetworkStream stream);
+        void Serialise(IMessage notificationMessage, NetworkStream stream);
 
         /// <summary>
         /// Deserialise an <see cref="IMessage"/> from the NetworkStream

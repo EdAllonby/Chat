@@ -35,7 +35,7 @@ namespace Client
 
                 while (true)
                 {
-                    SendNewContributionRequest();
+                    SendContributionMessage();
                 }
             }
             catch (SocketException socketException)
@@ -85,7 +85,7 @@ namespace Client
         private void SendLoginRequest()
         {
             ISerialiser loginRequestSerialiser = new LoginRequestSerialiser();
-            var loginRequest = new LoginRequest {UserName = userName};
+            var loginRequest = new LoginRequest(userName);
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
 
@@ -97,7 +97,7 @@ namespace Client
             {
                 if (stream.CanRead)
                 {
-                    ReceiveContributionNotification();
+                    ReceiveMessage();
                 }
                 else
                 {
@@ -107,25 +107,29 @@ namespace Client
             }
         }
 
-        private void ReceiveContributionNotification()
+        private void ReceiveMessage()
         {
             int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            IMessage contributionNotification = serialiser.Deserialise(stream);
+            IMessage message = serialiser.Deserialise(stream);
 
-            Log.Debug("Client sent Contribution notification message");
-            Log.Info("Client sent: " + contributionNotification.GetMessage());
-            Console.WriteLine("A client sent: " + contributionNotification.GetMessage());
+            Log.Info("Server sent: " + message.GetMessage());
+            Console.WriteLine("The Server sent: " + message.GetMessage());
         }
 
-        private void SendNewContributionRequest()
+        private void SendContributionMessage()
         {
-            ISerialiser contributionRequestSerialiser = new ContributionRequestSerialiser();
             string clientContributionString = Console.ReadLine();
             var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
-            contributionRequestSerialiser.Serialise(clientContribution, stream);
+            SendMessage(clientContribution);
+        }
+
+        private void SendMessage(IMessage message)
+        {
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(message.GetMessageIdentifier());
+            serialiser.Serialise(message, stream);
         }
     }
 }

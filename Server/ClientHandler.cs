@@ -9,11 +9,13 @@ namespace Server
     public class ClientHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
+
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        private int totalListeners = 1;
+        private int totalListenerThreads = 1;
+
 
         public ClientHandler()
         {
@@ -28,10 +30,10 @@ namespace Server
 
             var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
             {
-                Name = "MessageListenerThread" + totalListeners
+                Name = "MessageListenerThread" + totalListenerThreads
             };
 
-            totalListeners++;
+            totalListenerThreads++;
 
             messageListenerThread.Start();
         }
@@ -45,8 +47,8 @@ namespace Server
             {
                 if (stream.CanRead)
                 {
-                    IMessage contributionNotification = ReceiveContributionRequest(stream);
-                    SendMessage(contributionNotification);
+                    IMessage message = GetMessage(stream);
+                    SendMessage(message);
                 }
                 else
                 {
@@ -71,36 +73,42 @@ namespace Server
             return loginRequest;
         }
 
-        private IMessage ReceiveContributionRequest(NetworkStream stream)
+        private IMessage GetMessage(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
-            int messageType = MessageUtilities.DeserialiseMessageIdentifier(stream);
+            int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageType);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            var contributionRequest = serialiser.Deserialise(stream) as ContributionRequest;
-
-            Log.Debug("Client sent Contribution Request message");
-
-            if (contributionRequest != null)
+            if (messageIdentifier == 1)
             {
-                Log.Info("Client sent: " + contributionRequest.GetMessage());
-                var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
-                return contributionNotification;
+                var contributionRequest = serialiser.Deserialise(stream) as ContributionRequest;
+
+                Log.Debug("Client sent Contribution Request message");
+
+                if (contributionRequest != null)
+                {
+                    Log.Info("Client sent: " + contributionRequest.GetMessage());
+                    var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
+                    return contributionNotification;
+                }
             }
 
+            Log.Error("Message Type " + messageIdentifier + " cannot be used here");
             return null;
         }
 
-        private void SendMessage(IMessage contribution)
+        private void SendMessage(IMessage message)
         {
-            ISerialiser contributionNotificationSerialiser = new ContributionNotificationSerialiser();
+            int messageIdentifier = message.GetMessageIdentifier();
+
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
             foreach (TcpClient client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
 
-                contributionNotificationSerialiser.Serialise(contribution, clientStream);
+                messageSerialiser.Serialise(message, clientStream);
             }
         }
 

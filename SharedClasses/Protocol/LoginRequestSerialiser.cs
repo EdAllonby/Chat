@@ -11,16 +11,16 @@ namespace SharedClasses.Protocol
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-        public void Serialise(IMessage loginRequest, NetworkStream stream)
+        public void Serialise(IMessage loginRequestMessage, NetworkStream stream)
         {
             try
             {
                 if (stream.CanWrite)
                 {
-                    MessageUtilities.SerialiseMessageIdentifier(typeof (LoginRequest), stream);
+                    MessageUtilities.SerialiseMessageIdentifier(loginRequestMessage.GetMessageIdentifier(), stream);
 
                     Log.Info("Attempt to serialise LoginRequest and send to stream");
-                    binaryFormatter.Serialize(stream, loginRequest);
+                    binaryFormatter.Serialize(stream, loginRequestMessage);
                     Log.Info("LoginRequest serialised and sent to network stream");
                 }
             }
@@ -46,7 +46,7 @@ namespace SharedClasses.Protocol
                 Log.Error("connection lost between the client and the server", ioException);
                 networkStream.Close();
             }
-            return new LoginRequest();
+            return new LoginRequest(string.Empty);
         }
     }
 }

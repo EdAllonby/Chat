@@ -9,19 +9,21 @@ namespace SharedClasses.Protocol
 
         private readonly ContributionSerialiser serialiser = new ContributionSerialiser();
 
-        public void Serialise(IMessage request, NetworkStream stream)
+        public void Serialise(IMessage contributionRequestMessage, NetworkStream stream)
         {
-            MessageUtilities.SerialiseMessageIdentifier(typeof (ContributionRequest), stream);
-            var message = request as ContributionRequest;
-
-            Log.Debug("Waiting for contribution request message to serialise");
-
+            MessageUtilities.SerialiseMessageIdentifier(contributionRequestMessage.GetMessageIdentifier(), stream);
+            var message = contributionRequestMessage as ContributionRequest;
+            
             if (message != null)
             {
+                Log.Debug("Waiting for contribution request message to serialise");
                 serialiser.Serialise(message.Contribution, stream);
+                Log.Info("Contribution request message serialised");
             }
-
-            Log.Info("Contribution request message serialised");
+            else
+            {
+                Log.Warn("No message to be serialised, message object is null");
+            }
         }
 
         public IMessage Deserialise(NetworkStream stream)
