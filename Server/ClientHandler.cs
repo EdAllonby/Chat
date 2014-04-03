@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -47,8 +48,7 @@ namespace Server
             {
                 if (stream.CanRead)
                 {
-                    IMessage message = GetMessage(stream);
-                    SendMessage(message);
+                    ReceiveMessage(stream);
                 }
                 else
                 {
@@ -66,36 +66,40 @@ namespace Server
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            IMessage loginRequest = serialiser.Deserialise(stream);
+            LoginRequest loginRequest = (LoginRequest)serialiser.Deserialise(stream);
 
             Log.Debug("Client sent Login Message Request message");
-            Log.Info("Client with username " + loginRequest.GetMessage() + " has logged in");
+            Log.Info("Client with username " + loginRequest.UserName + " has logged in");
             return loginRequest;
         }
 
-        private IMessage GetMessage(NetworkStream stream)
+        private void ReceiveMessage(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
             int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            if (messageIdentifier == 1)
+            IMessage message = serialiser.Deserialise(stream);
+
+            switch (messageIdentifier)
             {
-                var contributionRequest = serialiser.Deserialise(stream) as ContributionRequest;
-
-                Log.Debug("Client sent Contribution Request message");
-
-                if (contributionRequest != null)
-                {
-                    Log.Info("Client sent: " + contributionRequest.GetMessage());
-                    var contributionNotification = new ContributionNotification(contributionRequest.Contribution);
-                    return contributionNotification;
-                }
+                case 1:
+                    ContributionRequest contributionRequest = (ContributionRequest) message;
+                    SendMessage(contributionRequest);
+                    Console.WriteLine("The Server sent: " + contributionRequest.Contribution.GetMessage());
+                    break;
+                case 2:
+                    ContributionNotification contributionNotification = (ContributionNotification) message;
+                    Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
+                    Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
+                    break;
+                case 3:
+                    LoginRequest loginRequest = (LoginRequest) message;
+                    Log.Info("Server sent: " + loginRequest.UserName);
+                    Console.WriteLine("The Server sent: " + loginRequest.UserName);
+                    break;
             }
-
-            Log.Error("Message Type " + messageIdentifier + " cannot be used here");
-            return null;
         }
 
         private void SendMessage(IMessage message)

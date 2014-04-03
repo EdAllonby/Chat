@@ -115,8 +115,24 @@ namespace Client
 
             IMessage message = serialiser.Deserialise(stream);
 
-            Log.Info("Server sent: " + message.GetMessage());
-            Console.WriteLine("The Server sent: " + message.GetMessage());
+            switch (messageIdentifier)
+            {
+                case 1:
+                    ContributionRequest contributionRequest = (ContributionRequest) message;
+                    Log.Info("Server sent: " + contributionRequest.Contribution.GetMessage());
+                    Console.WriteLine("The Server sent: " + contributionRequest.Contribution.GetMessage());
+                    break;
+                case 2:
+                    ContributionNotification contributionNotification = (ContributionNotification) message;
+                    Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
+                    Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
+                    break;
+                case 3:
+                    LoginRequest loginRequest = (LoginRequest) message;
+                    Log.Info("Server sent: " + loginRequest.UserName);
+                    Console.WriteLine("The Server sent: " + loginRequest.UserName);
+                    break;
+            }
         }
 
         private void SendContributionMessage()
