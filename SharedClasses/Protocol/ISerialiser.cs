@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {

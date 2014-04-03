@@ -5,29 +5,22 @@
     /// </summary>
     public class SerialiserFactory
     {
+        private readonly SerialiserRegistry serialiserRegistry = new SerialiserRegistry();
+
         /// <summary>
         /// Returns the correct serialiser for the <see cref="IMessage"/> object identifier
-        /// defined in the <see cref="MessageUtilities"/> class
+        /// defined in the <see cref="MessageIdentifierSerialiser"/> class
         /// </summary>
         /// <param name="messageIdentifier">The type of message that will be sent</param>
         /// <returns>The serialiser used to serialise and deserialise the message</returns>
-        public ISerialiser GetSerialiser(int messageIdentifier)
+        public ISerialiser<T> GetSerialiser<T>() where T : IMessage
         {
-            ISerialiser serialiser = null;
-            switch (messageIdentifier)
-            {
-                case 1:
-                    serialiser = new ContributionRequestSerialiser();
-                    break;
-                case 2:
-                    serialiser = new ContributionNotificationSerialiser();
-                    break;
-                case 3:
-                    serialiser = new LoginRequestSerialiser();
-                    break;
-            }
+            return serialiserRegistry.serialisersByMessageType[typeof (T)] as ISerialiser<T>;
+        }
 
-            return serialiser;
+        public ISerialiser GetSerialiser(int messageNumber)
+        {
+            return serialiserRegistry.serialisersByMessageNumber[messageNumber];
         }
     }
 }

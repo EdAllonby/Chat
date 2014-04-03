@@ -15,10 +15,5 @@ namespace SharedClasses.Protocol
         {
             return UserName;
         }
-
-        public int GetMessageIdentifier()
-        {
-            return MessageUtilities.GetMessageIdentifier(typeof(LoginRequest));
-        }
     }
 }
