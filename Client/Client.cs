@@ -65,7 +65,6 @@ namespace Client
         private void ConnectToServer()
         {
             Log.Info("Client looking for server");
-
             var client = new TcpClient(targetAddress.ToString(), targetPort);
             Log.Info("Client found server, connection created");
 
@@ -84,7 +83,7 @@ namespace Client
 
         private void SendLoginRequest()
         {
-            ISerialiser loginRequestSerialiser = new LoginRequestSerialiser();
+            ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
             var loginRequest = new LoginRequest(userName);
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
@@ -109,7 +108,7 @@ namespace Client
 
         private void ReceiveMessage()
         {
-            int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
+            int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
@@ -144,7 +143,7 @@ namespace Client
 
         private void SendMessage(IMessage message)
         {
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(message.GetMessageIdentifier());
+            ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(message, stream);
         }
     }

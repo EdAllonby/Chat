@@ -18,7 +18,7 @@ namespace SharedClasses.Protocol
             {
                 if (stream.CanWrite)
                 {
-                    MessageUtilities.SerialiseMessageIdentifier(message.GetMessageIdentifier(), stream);
+                    MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.MessageTypeRegistry[typeof(LoginRequest)], stream);
 
                     Log.Info("Attempt to serialise LoginRequest and send to stream");
                     binaryFormatter.Serialize(stream, message);

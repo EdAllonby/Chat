@@ -12,7 +12,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
         {
-            MessageUtilities.SerialiseMessageIdentifier(contributionRequest.GetMessageIdentifier(), stream);
+            MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.MessageTypeRegistry[typeof(ContributionRequest)], stream);
             var message = contributionRequest;
 
             Log.Debug("Waiting for contribution request message to serialise");

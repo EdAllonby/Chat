@@ -50,8 +50,9 @@
     <Compile Include="Protocol\ISerialiser.cs" />
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
-    <Compile Include="Protocol\MessageUtilities.cs" />
+    <Compile Include="Protocol\MessageIdentifierSerialiser.cs" />
     <Compile Include="Protocol\SerialiserFactory.cs" />
+    <Compile Include="Protocol\SerialiserRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

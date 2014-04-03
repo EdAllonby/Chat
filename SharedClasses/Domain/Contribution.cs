@@ -40,11 +40,5 @@ namespace SharedClasses.Domain
             messageTimeStamp = DateTime.Now;
             Log.Debug("Time stamp created: " + messageTimeStamp);
         }
-
-        public int GetMessageIdentifier()
-        {
-            return MessageUtilities.GetMessageIdentifier(typeof(Contribution));
-
-        }
     }
 }

@@ -17,7 +17,6 @@ namespace Server
 
         private int totalListenerThreads = 1;
 
-
         public ClientHandler()
         {
             Log.Info("New client handler created");
@@ -62,7 +61,7 @@ namespace Server
         private IMessage GetClientLoginRequest(NetworkStream stream)
         {
             Log.Debug("Waiting for LoginRequest message type to be sent from client");
-            int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
+            int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
@@ -76,7 +75,7 @@ namespace Server
         private void ReceiveMessage(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
-            int messageIdentifier = MessageUtilities.DeserialiseMessageIdentifier(stream);
+            int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
@@ -86,7 +85,7 @@ namespace Server
             {
                 case 1:
                     ContributionRequest contributionRequest = (ContributionRequest) message;
-                    SendMessage(contributionRequest);
+                    SendNotificationToClients(contributionRequest);
                     Console.WriteLine("The Server sent: " + contributionRequest.Contribution.GetMessage());
                     break;
                 case 2:
@@ -102,17 +101,19 @@ namespace Server
             }
         }
 
-        private void SendMessage(IMessage message)
+        private void SendNotificationToClients(IMessage message)
         {
-            int messageIdentifier = message.GetMessageIdentifier();
-
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
 
             foreach (TcpClient client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
 
-                messageSerialiser.Serialise(message, clientStream);
+                ContributionRequest request = (ContributionRequest) message;
+
+                ContributionNotification contributionNotification = new ContributionNotification(request.Contribution);
+
+                messageSerialiser.Serialise(contributionNotification, clientStream);
             }
         }
 
