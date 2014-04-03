@@ -1,10 +1,11 @@
 ﻿using System;
 using log4net;
+using SharedClasses.Protocol;
 
 namespace SharedClasses.Domain
 {
     [Serializable]
-    public class Contribution
+    public class Contribution : IMessage
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
@@ -38,6 +39,12 @@ namespace SharedClasses.Domain
         {
             messageTimeStamp = DateTime.Now;
             Log.Debug("Time stamp created: " + messageTimeStamp);
+        }
+
+        public int GetMessageIdentifier()
+        {
+            return MessageUtilities.GetMessageIdentifier(typeof(Contribution));
+
         }
     }
 }

@@ -6,7 +6,7 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
-    public class ContributionSerialiser
+    public class ContributionSerialiser : ISerialiser<Contribution>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
@@ -29,7 +29,12 @@ namespace SharedClasses.Protocol
             }
         }
 
-        public Contribution Deserialise(NetworkStream networkStream)
+        public void Serialise(IMessage message, NetworkStream stream)
+        {
+            Serialise((Contribution)message, stream);
+        }
+
+        public IMessage Deserialise(NetworkStream networkStream)
         {
             try
             {

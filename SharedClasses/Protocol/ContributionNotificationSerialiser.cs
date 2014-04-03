@@ -1,36 +1,33 @@
 ﻿using System.Net.Sockets;
 using log4net;
+using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
-    public class ContributionNotificationSerialiser : ISerialiser
+    public class ContributionNotificationSerialiser : ISerialiser<ContributionNotification>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionNotificationSerialiser));
 
         private readonly ContributionSerialiser serialiser = new ContributionSerialiser();
 
-        public void Serialise(IMessage contributionNotificationMessage, NetworkStream stream)
+        public void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream stream)
         {
             MessageUtilities.SerialiseMessageIdentifier(contributionNotificationMessage.GetMessageIdentifier(), stream);
 
-            var message = contributionNotificationMessage as ContributionNotification;
+            Log.Debug("Waiting for a contribution notification message to serialise");
+            serialiser.Serialise(contributionNotificationMessage.Contribution, stream);
+            Log.Info("Contribution notification message serialised");
+        }
 
-            if (message != null)
-            {
-                Log.Debug("Waiting for a contribution notification message to serialise");
-                serialiser.Serialise(message.Contribution, stream);
-                Log.Info("Contribution notification message serialised");
-            }
-            else
-            {
-                Log.Warn("No message to be serialised, message object is null");
-            }
+        public void Serialise(IMessage contributionNotificationMessage, NetworkStream stream)
+        {
+            Serialise((ContributionNotification) contributionNotificationMessage, stream);
         }
 
         public IMessage Deserialise(NetworkStream stream)
         {
             Log.Debug("Waiting for a contribution notification message to deserialise");
-            var notification = new ContributionNotification(serialiser.Deserialise(stream));
+            var notification = new ContributionNotification((Contribution)serialiser.Deserialise(stream));
             Log.Info("Contribution notification message deserialised");
             return notification;
         }

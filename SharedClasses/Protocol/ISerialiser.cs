@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
@@ -11,9 +12,9 @@ namespace SharedClasses.Protocol
         /// <summary>
         /// Serialise an <see cref="IMessage"/> down the NetworkStream
         /// </summary>
-        /// <param name="notificationMessage">The message to send</param>
+        /// <param name="message">The message to send</param>
         /// <param name="stream">The stream that connects the Client and Server</param>
-        void Serialise(IMessage notificationMessage, NetworkStream stream);
+        void Serialise(IMessage message, NetworkStream stream);
 
         /// <summary>
         /// Deserialise an <see cref="IMessage"/> from the NetworkStream
@@ -21,5 +22,10 @@ namespace SharedClasses.Protocol
         /// <param name="stream">The stream that connects the Client and Server</param>
         /// <returns>an <see cref="IMessage"/> object</returns>
         IMessage Deserialise(NetworkStream stream);
+    }
+
+    public interface ISerialiser<T> : ISerialiser where T : IMessage
+    {
+        void Serialise(T message, NetworkStream stream);
     }
 }
