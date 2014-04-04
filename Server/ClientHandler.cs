@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
+using SharedClasses;
 using SharedClasses.Protocol;
 
 namespace Server
@@ -14,6 +15,8 @@ namespace Server
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly MessageReceiver messageReceiver = new MessageReceiver();
+
 
         private int totalListenerThreads = 1;
 
@@ -46,7 +49,8 @@ namespace Server
             {
                 if (stream.CanRead)
                 {
-                    ReceiveMessage(stream);
+                    messageReceiver.OnNewMessage += NewMessageReceived;
+                    messageReceiver.ReceiveMessages(stream);
                 }
                 else
                 {
@@ -57,38 +61,28 @@ namespace Server
             }
         }
 
-        private void ReceiveMessage(NetworkStream stream)
+        private void NewMessageReceived(object sender, MessageEventArgs e)
         {
-            Log.Debug("Waiting for ContributionNotification message type to be sent from client");
-            int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
+            IMessage message = e.Message;
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-
-            IMessage message = serialiser.Deserialise(stream);
-
-            switch (messageIdentifier)
+            switch (message.Identifier)
             {
                 case 1:
                     var contributionRequest = (ContributionRequest) message;
                     SendNotificationToClients(contributionRequest);
-                    Console.WriteLine("The Server sent: " + contributionRequest.Contribution.GetMessage());
                     break;
                 case 2:
                     var contributionNotification = (ContributionNotification) message;
                     Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
-                    Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
                     break;
                 case 3:
                     var loginRequest = (LoginRequest) message;
                     DoSomethingWithLoginRequest(loginRequest);
-
-                    Log.Info("Server sent: " + loginRequest.UserName);
-                    Console.WriteLine("The Server sent: " + loginRequest.UserName);
                     break;
             }
         }
 
-        private void DoSomethingWithLoginRequest(LoginRequest message)
+        private static void DoSomethingWithLoginRequest(LoginRequest message)
         {
             Log.Debug("Client sent Login Message Request message");
             Log.Info("Client with username " + message.UserName + " has logged in");

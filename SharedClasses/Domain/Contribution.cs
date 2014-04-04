@@ -15,6 +15,7 @@ namespace SharedClasses.Domain
         public Contribution(string text)
         {
             CreateMessage(text);
+            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof(Contribution)];
             Log.Debug("Contribution created");
         }
 
@@ -40,5 +41,7 @@ namespace SharedClasses.Domain
             messageTimeStamp = DateTime.Now;
             Log.Debug("Time stamp created: " + messageTimeStamp);
         }
+
+        public int Identifier { get; private set; }
     }
 }

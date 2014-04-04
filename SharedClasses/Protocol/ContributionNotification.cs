@@ -7,8 +7,11 @@ namespace SharedClasses.Protocol
         public ContributionNotification(Contribution contribution)
         {
             Contribution = contribution;
+            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof(ContributionNotification)];
+
         }
 
         public Contribution Contribution { get; set; }
+        public int Identifier { get; private set; }
     }
 }

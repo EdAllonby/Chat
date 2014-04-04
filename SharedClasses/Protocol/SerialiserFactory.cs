@@ -5,7 +5,6 @@
     /// </summary>
     public class SerialiserFactory
     {
-        private readonly SerialiserRegistry serialiserRegistry = new SerialiserRegistry();
 
         /// <summary>
         /// Returns the correct serialiser for the <see cref="IMessage"/> object identifier
@@ -15,12 +14,12 @@
         /// <returns>The serialiser used to serialise and deserialise the message</returns>
         public ISerialiser<T> GetSerialiser<T>() where T : IMessage
         {
-            return serialiserRegistry.serialisersByMessageType[typeof (T)] as ISerialiser<T>;
+            return SerialiserRegistry.serialisersByMessageType[typeof (T)] as ISerialiser<T>;
         }
 
         public ISerialiser GetSerialiser(int messageNumber)
         {
-            return serialiserRegistry.serialisersByMessageNumber[messageNumber];
+            return SerialiserRegistry.serialisersByMessageNumber[messageNumber];
         }
     }
 }

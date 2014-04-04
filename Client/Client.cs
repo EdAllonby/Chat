@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
@@ -14,6 +15,7 @@ namespace Client
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly MessageReceiver messageReceiver = new MessageReceiver();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
@@ -35,7 +37,7 @@ namespace Client
 
                 while (true)
                 {
-                    SendContributionMessage();
+                    SendContributionRequestMessage();
                 }
             }
             catch (SocketException socketException)
@@ -88,33 +90,26 @@ namespace Client
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
 
+        private void SendContributionRequestMessage()
+        {
+            string clientContributionString = Console.ReadLine();
+            var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
+            ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
+            serialiser.Serialise(clientContribution, stream);
+        }
+
         private void ReceiveMessageListener()
         {
             Log.Info("Message listener thread started");
-            bool serverConnection = true;
-            while (serverConnection)
-            {
-                if (stream.CanRead)
-                {
-                    ReceiveMessage();
-                }
-                else
-                {
-                    serverConnection = false;
-                    Log.Warn("Connection is no longer available, stopping client listener thread");
-                }
-            }
+            messageReceiver.OnNewMessage += NewMessageReceived;
+            messageReceiver.ReceiveMessages(stream);
         }
 
-        private void ReceiveMessage()
+        private static void NewMessageReceived(object sender, MessageEventArgs e)
         {
-            int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
+            IMessage message = e.Message;
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-
-            IMessage message = serialiser.Deserialise(stream);
-
-            switch (messageIdentifier)
+            switch (message.Identifier)
             {
                 case 1:
                     var contributionRequest = (ContributionRequest) message;
@@ -132,19 +127,6 @@ namespace Client
                     Console.WriteLine("The Server sent: " + loginRequest.UserName);
                     break;
             }
-        }
-
-        private void SendContributionMessage()
-        {
-            string clientContributionString = Console.ReadLine();
-            var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
-            SendMessage(clientContribution);
-        }
-
-        private void SendMessage(IMessage message)
-        {
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
-            serialiser.Serialise(message, stream);
         }
     }
 }

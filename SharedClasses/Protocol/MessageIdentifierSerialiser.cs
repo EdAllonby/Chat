@@ -21,10 +21,10 @@ namespace SharedClasses.Protocol
         public static int DeserialiseMessageIdentifier(NetworkStream stream)
         {
             var messageTypeBuffer = new byte[4];
-            stream.Read(messageTypeBuffer, 0, 4);
+             stream.Read(messageTypeBuffer, 0, 4);
             int messageIdentifier = BitConverter.ToInt32(messageTypeBuffer, 0);
             Log.Debug("Message Identifier " + messageIdentifier + " received from client");
             return messageIdentifier;
         }
     }
-}
+}  
