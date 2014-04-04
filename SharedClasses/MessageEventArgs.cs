@@ -5,7 +5,7 @@ namespace SharedClasses
 {
     public class MessageEventArgs : EventArgs
     {
-        public IMessage Message { get; set; }
+        public IMessage Message { get; private set; }
 
         public MessageEventArgs(IMessage message)
         {
