@@ -12,7 +12,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream stream)
         {
-            MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.MessageTypeRegistry[typeof(ContributionNotification)], stream);
+            MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.IdentifiersByMessageType[typeof (ContributionNotification)], stream);
 
             Log.Debug("Waiting for a contribution notification message to serialise");
             serialiser.Serialise(contributionNotificationMessage.Contribution, stream);
@@ -21,13 +21,13 @@ namespace SharedClasses.Protocol
 
         public void Serialise(IMessage contributionNotificationMessage, NetworkStream stream)
         {
-            Serialise((ContributionNotification)contributionNotificationMessage, stream);
+            Serialise((ContributionNotification) contributionNotificationMessage, stream);
         }
 
         public IMessage Deserialise(NetworkStream stream)
         {
             Log.Debug("Waiting for a contribution notification message to deserialise");
-            var notification = new ContributionNotification((Contribution)serialiser.Deserialise(stream));
+            var notification = new ContributionNotification((Contribution) serialiser.Deserialise(stream));
             Log.Info("Contribution notification message deserialised");
             return notification;
         }

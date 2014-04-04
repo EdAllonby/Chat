@@ -9,6 +9,9 @@ namespace Server
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
+        private readonly ClientHandler clientHandler = new ClientHandler();
+        private TcpListener clientListener;
+
         public Server()
         {
             Log.Info("Server instance started");
@@ -17,9 +20,7 @@ namespace Server
 
         private void ListenForNewClients()
         {
-            var clientListener = new TcpListener(IPAddress.Any, PortNumber);
-
-            var clientHandler = new ClientHandler();
+            clientListener = new TcpListener(IPAddress.Any, PortNumber);
 
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");

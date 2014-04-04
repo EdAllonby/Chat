@@ -3,13 +3,23 @@ using System.Collections.Generic;
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    /// This class defines various relationships of message types, identifiers and serialisers
+    /// </summary>
     public class SerialiserRegistry
     {
-        public Dictionary<Type, ISerialiser> serialisersByMessageType = new Dictionary<Type, ISerialiser>
+        public static readonly Dictionary<Type, int> IdentifiersByMessageType = new Dictionary<Type, int>
         {
-            {typeof (ContributionRequest), new ContributionRequestSerialiser()},
-            {typeof (ContributionNotification), new ContributionNotificationSerialiser()},
-            {typeof (LoginRequest), new LoginRequestSerialiser()}
+            {typeof (ContributionRequest), 1},
+            {typeof (ContributionNotification), 2},
+            {typeof (LoginRequest), 3}
+        };
+
+        public static Dictionary<int, Type> MessageTypesByIdentifiers = new Dictionary<int, Type>
+        {
+            {1, typeof (ContributionRequest)},
+            {2, typeof (ContributionNotification)},
+            {3, typeof (LoginRequest)},
         };
 
         public Dictionary<int, ISerialiser> serialisersByMessageNumber = new Dictionary<int, ISerialiser>
@@ -19,18 +29,11 @@ namespace SharedClasses.Protocol
             {3, new LoginRequestSerialiser()},
         };
 
-        public static Dictionary<int, Type> MessageIdentifierRegistry = new Dictionary<int, Type>
+        public Dictionary<Type, ISerialiser> serialisersByMessageType = new Dictionary<Type, ISerialiser>
         {
-            {1, typeof (ContributionRequest)},
-            {2, typeof (ContributionNotification)},
-            {3, typeof (LoginRequest)},
-        };
-
-        public static readonly Dictionary<Type, int> MessageTypeRegistry = new Dictionary<Type, int>
-        {
-            {typeof (ContributionRequest), 1},
-            {typeof (ContributionNotification), 2},
-            {typeof (LoginRequest), 3}
+            {typeof (ContributionRequest), new ContributionRequestSerialiser()},
+            {typeof (ContributionNotification), new ContributionNotificationSerialiser()},
+            {typeof (LoginRequest), new LoginRequestSerialiser()}
         };
     }
 }

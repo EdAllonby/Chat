@@ -2,7 +2,6 @@
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
-using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
@@ -18,7 +17,7 @@ namespace SharedClasses.Protocol
             {
                 if (stream.CanWrite)
                 {
-                    MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.MessageTypeRegistry[typeof(LoginRequest)], stream);
+                    MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.IdentifiersByMessageType[typeof (LoginRequest)], stream);
 
                     Log.Info("Attempt to serialise LoginRequest and send to stream");
                     binaryFormatter.Serialize(stream, message);
@@ -33,7 +32,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(IMessage loginRequestMessage, NetworkStream stream)
         {
-            Serialise((LoginRequest)loginRequestMessage, stream);
+            Serialise((LoginRequest) loginRequestMessage, stream);
         }
 
         public IMessage Deserialise(NetworkStream networkStream)

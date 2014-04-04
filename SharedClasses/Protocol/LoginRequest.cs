@@ -9,6 +9,7 @@ namespace SharedClasses.Protocol
         {
             UserName = userName;
         }
+
         public string UserName { get; private set; }
 
         public string GetMessage()

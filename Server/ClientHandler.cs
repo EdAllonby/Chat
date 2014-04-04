@@ -41,7 +41,6 @@ namespace Server
         private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
         {
             bool connection = true;
-            IMessage clientLoginRequest = GetClientLoginRequest(stream);
 
             while (connection)
             {
@@ -58,20 +57,6 @@ namespace Server
             }
         }
 
-        private IMessage GetClientLoginRequest(NetworkStream stream)
-        {
-            Log.Debug("Waiting for LoginRequest message type to be sent from client");
-            int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
-
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-
-            LoginRequest loginRequest = (LoginRequest)serialiser.Deserialise(stream);
-
-            Log.Debug("Client sent Login Message Request message");
-            Log.Info("Client with username " + loginRequest.UserName + " has logged in");
-            return loginRequest;
-        }
-
         private void ReceiveMessage(NetworkStream stream)
         {
             Log.Debug("Waiting for ContributionNotification message type to be sent from client");
@@ -84,24 +69,32 @@ namespace Server
             switch (messageIdentifier)
             {
                 case 1:
-                    ContributionRequest contributionRequest = (ContributionRequest) message;
+                    var contributionRequest = (ContributionRequest) message;
                     SendNotificationToClients(contributionRequest);
                     Console.WriteLine("The Server sent: " + contributionRequest.Contribution.GetMessage());
                     break;
                 case 2:
-                    ContributionNotification contributionNotification = (ContributionNotification) message;
+                    var contributionNotification = (ContributionNotification) message;
                     Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
                     Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
                     break;
                 case 3:
-                    LoginRequest loginRequest = (LoginRequest) message;
+                    var loginRequest = (LoginRequest) message;
+                    DoSomethingWithLoginRequest(loginRequest);
+
                     Log.Info("Server sent: " + loginRequest.UserName);
                     Console.WriteLine("The Server sent: " + loginRequest.UserName);
                     break;
             }
         }
 
-        private void SendNotificationToClients(IMessage message)
+        private void DoSomethingWithLoginRequest(LoginRequest message)
+        {
+            Log.Debug("Client sent Login Message Request message");
+            Log.Info("Client with username " + message.UserName + " has logged in");
+        }
+
+        private void SendNotificationToClients(ContributionRequest message)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
 
@@ -109,9 +102,7 @@ namespace Server
             {
                 NetworkStream clientStream = client.GetStream();
 
-                ContributionRequest request = (ContributionRequest) message;
-
-                ContributionNotification contributionNotification = new ContributionNotification(request.Contribution);
+                var contributionNotification = new ContributionNotification(message.Contribution);
 
                 messageSerialiser.Serialise(contributionNotification, clientStream);
             }
