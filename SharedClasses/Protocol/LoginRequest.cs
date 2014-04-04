@@ -8,6 +8,7 @@ namespace SharedClasses.Protocol
         public LoginRequest(string userName)
         {
             UserName = userName;
+            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof (LoginRequest)];
         }
 
         public string UserName { get; private set; }
@@ -16,5 +17,7 @@ namespace SharedClasses.Protocol
         {
             return UserName;
         }
+
+        public int Identifier { get; private set; }
     }
 }
