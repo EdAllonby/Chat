@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
-using SharedClasses.Protocol;
 
-namespace SharedClasses
+namespace SharedClasses.Protocol
 {
     public class MessageReceiver
     {

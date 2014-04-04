@@ -39,8 +39,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageEventArgs.cs" />
-    <Compile Include="MessageReceiver.cs" />
+    <Compile Include="Protocol\MessageEventArgs.cs" />
+    <Compile Include="Protocol\MessageReceiver.cs" />
     <Compile Include="Protocol\ContributionNotification.cs" />
     <Compile Include="Protocol\ContributionNotificationSerialiser.cs" />
     <Compile Include="Protocol\ContributionRequest.cs" />
