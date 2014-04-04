@@ -12,8 +12,8 @@ namespace SharedClasses.Protocol
 
         public void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
         {
-            MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.MessageTypeRegistry[typeof(ContributionRequest)], stream);
-            var message = contributionRequest;
+            MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.IdentifiersByMessageType[typeof (ContributionRequest)], stream);
+            ContributionRequest message = contributionRequest;
 
             Log.Debug("Waiting for contribution request message to serialise");
             serialiser.Serialise(message.Contribution, stream);
@@ -28,7 +28,7 @@ namespace SharedClasses.Protocol
         public IMessage Deserialise(NetworkStream stream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            var request = new ContributionRequest((Contribution)serialiser.Deserialise(stream));
+            var request = new ContributionRequest((Contribution) serialiser.Deserialise(stream));
             Log.Info("Contribution request message deserialised");
             return request;
         }

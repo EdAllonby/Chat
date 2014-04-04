@@ -18,18 +18,23 @@ namespace Client
 
         private static void Main(string[] args)
         {
-            commandLineArguments = args;
-            SetUserLogonMethod();
             Thread.CurrentThread.Name = "Main Thread";
+
+            commandLineArguments = args;
+
+            SetUserLogonMethod();
+
             var MainClient = new Client(targetedAddress, targetedPort);
+
             Console.WriteLine("Press any key to exit.");
+
             Console.ReadKey();
         }
 
         private static void SetUserLogonMethod()
         {
-            Console.WriteLine(
-                "Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
+            Console.WriteLine("Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
+
             string usersConnectionChoice = Console.ReadLine();
 
             int connectionChoice;
