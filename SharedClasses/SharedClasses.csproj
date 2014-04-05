@@ -39,6 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\User.cs" />
     <Compile Include="Protocol\MessageEventArgs.cs" />
     <Compile Include="Protocol\MessageReceiver.cs" />
     <Compile Include="Protocol\ContributionNotification.cs" />
@@ -53,8 +54,11 @@
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
     <Compile Include="Protocol\MessageIdentifierSerialiser.cs" />
+    <Compile Include="Protocol\NotificationType.cs" />
     <Compile Include="Protocol\SerialiserFactory.cs" />
     <Compile Include="Protocol\SerialiserRegistry.cs" />
+    <Compile Include="Protocol\UserNotification.cs" />
+    <Compile Include="Protocol\UserNotificationSerialiser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

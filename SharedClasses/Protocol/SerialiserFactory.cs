@@ -16,12 +16,12 @@ namespace SharedClasses.Protocol
         /// <returns>The serialiser used to serialise and deserialise the message</returns>
         public ISerialiser<T> GetSerialiser<T>() where T : IMessage
         {
-            return SerialiserRegistry.serialisersByMessageType[typeof (T)] as ISerialiser<T>;
+            return SerialiserRegistry.SerialisersByMessageType[typeof (T)] as ISerialiser<T>;
         }
 
-        public ISerialiser GetSerialiser(int messageNumber)
+        public ISerialiser GetSerialiser(int identifier)
         {
-            return SerialiserRegistry.serialisersByMessageNumber[messageNumber];
+            return SerialiserRegistry.GetSerialisersByMessageIdentifier(identifier);
         }
     }
 }

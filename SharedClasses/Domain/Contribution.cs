@@ -1,6 +1,5 @@
 ﻿using System;
 using log4net;
-using SharedClasses.Protocol;
 
 namespace SharedClasses.Domain
 {

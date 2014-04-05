@@ -126,7 +126,20 @@ namespace Client
                     Log.Info("Server sent: " + loginRequest.UserName);
                     Console.WriteLine("The Server sent: " + loginRequest.UserName);
                     break;
+                case 4:
+                    var userNotification = (UserNotification) message;
+                    NotifyClientOfNewUser(userNotification);
+                    break;
+                default:
+                    Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
+                    break;
             }
+        }
+
+        private static void NotifyClientOfNewUser(UserNotification userNotification)
+        {
+            Log.Info("New user successfully connected to server: " + userNotification.User.UserName);
+            Console.WriteLine("New user successfully connected to server: " + userNotification.User.UserName);
         }
     }
 }

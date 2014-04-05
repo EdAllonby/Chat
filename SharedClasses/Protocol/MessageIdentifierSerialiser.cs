@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using log4net;
+using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
@@ -20,11 +22,21 @@ namespace SharedClasses.Protocol
 
         public static int DeserialiseMessageIdentifier(NetworkStream stream)
         {
-            var messageTypeBuffer = new byte[4];
-             stream.Read(messageTypeBuffer, 0, 4);
-            int messageIdentifier = BitConverter.ToInt32(messageTypeBuffer, 0);
-            Log.Debug("Message Identifier " + messageIdentifier + " received from client");
-            return messageIdentifier;
+            try
+            {
+                var messageTypeBuffer = new byte[4];
+                stream.Read(messageTypeBuffer, 0, 4);
+                int messageIdentifier = BitConverter.ToInt32(messageTypeBuffer, 0);
+                Log.Debug("Message Identifier " + messageIdentifier + " received from client");
+                return messageIdentifier;
+            }
+
+            catch (IOException ioException)
+            {
+                Log.Error("connection lost between the client and the server", ioException);
+                stream.Close();
+            }
+            return int.MaxValue;
         }
     }
-}  
+}
