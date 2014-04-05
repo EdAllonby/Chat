@@ -12,13 +12,15 @@ namespace SharedClasses.Protocol
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
+        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+
         public void Serialise(LoginRequest message, NetworkStream stream)
         {
             try
             {
                 if (stream.CanWrite)
                 {
-                    MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.IdentifiersByMessageType[typeof (LoginRequest)], stream);
+                    messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
                     Log.Info("Attempt to serialise LoginRequest and send to stream");
                     binaryFormatter.Serialize(stream, message);

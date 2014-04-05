@@ -13,10 +13,10 @@ namespace Server
 
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
-        private readonly IList<User> connectedUsers = new List<User>(); 
+        private readonly IList<User> connectedUsers = new List<User>();
 
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private int totalListenerThreads = 1;
 
@@ -68,7 +68,7 @@ namespace Server
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<UserNotification>();
 
-            foreach (var client in connectedClients)
+            foreach (TcpClient client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
                 var userNotification = new UserNotification(newUser, NotificationType.Create);
@@ -78,7 +78,7 @@ namespace Server
 
         private User UpdateUserList(LoginRequest message)
         {
-            User user = new User(message.UserName);
+            var user = new User(message.UserName);
             connectedUsers.Add(user);
             return user;
         }
@@ -87,7 +87,7 @@ namespace Server
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
 
-            foreach (var client in connectedClients)
+            foreach (TcpClient client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
 

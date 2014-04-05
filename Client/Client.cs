@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
@@ -14,8 +13,8 @@ namespace Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;

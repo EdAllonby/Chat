@@ -8,11 +8,12 @@ namespace SharedClasses.Protocol
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionRequestSerialiser));
 
+        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly ContributionSerialiser serialiser = new ContributionSerialiser();
 
         public void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
         {
-            MessageIdentifierSerialiser.SerialiseMessageIdentifier(SerialiserRegistry.IdentifiersByMessageType[typeof (ContributionRequest)], stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.Identifier, stream);
             ContributionRequest message = contributionRequest;
 
             Log.Debug("Waiting for contribution request message to serialise");
@@ -28,7 +29,7 @@ namespace SharedClasses.Protocol
         public IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            var request = new ContributionRequest((Contribution) serialiser.Deserialise(networkStream));
+            var request = new ContributionRequest(serialiser.Deserialise(networkStream));
             Log.Info("Contribution request message deserialised");
             return request;
         }

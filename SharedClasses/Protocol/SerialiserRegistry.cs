@@ -5,7 +5,7 @@ using log4net;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// This class defines various relationships of message types, identifiers and serialisers
+    ///     This class defines various relationships of message types, identifiers and serialisers
     /// </summary>
     public static class SerialiserRegistry
     {

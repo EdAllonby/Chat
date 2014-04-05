@@ -7,7 +7,7 @@ namespace SharedClasses.Protocol
         public ContributionRequest(Contribution contribution)
         {
             Contribution = contribution;
-            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof(ContributionRequest)];
+            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof (ContributionRequest)];
         }
 
         public Contribution Contribution { get; set; }
