@@ -14,11 +14,6 @@ namespace SharedClasses.Protocol
 
         public string UserName { get; private set; }
 
-        public string GetMessage()
-        {
-            return UserName;
-        }
-
         public int Identifier { get; private set; }
     }
 }

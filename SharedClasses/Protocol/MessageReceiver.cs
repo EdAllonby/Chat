@@ -6,15 +6,15 @@ namespace SharedClasses.Protocol
 {
     public class MessageReceiver
     {
-        public event EventHandler<MessageEventArgs> OnNewMessage;
-
+        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        public event EventHandler<MessageEventArgs> OnNewMessage;
 
         public void ReceiveMessages(NetworkStream stream)
         {
             while (true)
             {
-                int messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
+                int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
 
                 ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 

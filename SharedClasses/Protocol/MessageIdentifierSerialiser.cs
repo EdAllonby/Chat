@@ -2,25 +2,24 @@
 using System.IO;
 using System.Net.Sockets;
 using log4net;
-using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// This static class is used define what message gets what identifier,
-    /// and used to serialise and deserialise Message Identifiers to their related Typed
+    ///     This static class is used define what message gets what identifier,
+    ///     and used to serialise and deserialise Message Identifiers to their related Typed
     /// </summary>
-    public static class MessageIdentifierSerialiser
+    public class MessageIdentifierSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 
-        public static void SerialiseMessageIdentifier(int messageIdentifier, NetworkStream stream)
+        public void SerialiseMessageIdentifier(int messageIdentifier, NetworkStream stream)
         {
             stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
             Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
         }
 
-        public static int DeserialiseMessageIdentifier(NetworkStream stream)
+        public int DeserialiseMessageIdentifier(NetworkStream stream)
         {
             try
             {
@@ -36,6 +35,8 @@ namespace SharedClasses.Protocol
                 Log.Error("connection lost between the client and the server", ioException);
                 stream.Close();
             }
+
+            //TODO: What happens if this fails, what should I return. Need to think about properly laying out try catches
             return int.MaxValue;
         }
     }

@@ -6,7 +6,7 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
-    public class ContributionSerialiser
+    internal class ContributionSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
