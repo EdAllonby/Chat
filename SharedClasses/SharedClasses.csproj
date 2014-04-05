@@ -48,7 +48,7 @@
     <Compile Include="Domain\Contribution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ContributionSerialiser.cs" />
-    <Compile Include="Protocol\IMessage.cs" />
+    <Compile Include="Domain\IMessage.cs" />
     <Compile Include="Protocol\ISerialiser.cs" />
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />

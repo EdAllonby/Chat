@@ -11,7 +11,6 @@ namespace SharedClasses.Protocol
     {
         public static readonly Dictionary<Type, int> IdentifiersByMessageType = new Dictionary<Type, int>
         {
-            {typeof (Contribution), 0},
             {typeof (ContributionRequest), 1},
             {typeof (ContributionNotification), 2},
             {typeof (LoginRequest), 3}
@@ -19,7 +18,6 @@ namespace SharedClasses.Protocol
 
         public static Dictionary<int, Type> MessageTypesByIdentifiers = new Dictionary<int, Type>
         {
-            {0, typeof(Contribution)},
             {1, typeof (ContributionRequest)},
             {2, typeof (ContributionNotification)},
             {3, typeof (LoginRequest)}
@@ -27,7 +25,6 @@ namespace SharedClasses.Protocol
 
         public static Dictionary<int, ISerialiser> serialisersByMessageNumber = new Dictionary<int, ISerialiser>
         {
-            {0, new ContributionSerialiser()},
             {1, new ContributionRequestSerialiser()},
             {2, new ContributionNotificationSerialiser()},
             {3, new LoginRequestSerialiser()}
@@ -35,7 +32,6 @@ namespace SharedClasses.Protocol
 
         public static Dictionary<Type, ISerialiser> serialisersByMessageType = new Dictionary<Type, ISerialiser>
         {
-            {typeof(Contribution), new ContributionSerialiser()},
             {typeof (ContributionRequest), new ContributionRequestSerialiser()},
             {typeof (ContributionNotification), new ContributionNotificationSerialiser()},
             {typeof (LoginRequest), new LoginRequestSerialiser()}
