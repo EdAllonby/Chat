@@ -24,10 +24,10 @@ namespace SharedClasses.Protocol
             Serialise((ContributionNotification) contributionNotificationMessage, stream);
         }
 
-        public IMessage Deserialise(NetworkStream stream)
+        public IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution notification message to deserialise");
-            var notification = new ContributionNotification((Contribution) serialiser.Deserialise(stream));
+            var notification = new ContributionNotification((Contribution) serialiser.Deserialise(networkStream));
             Log.Info("Contribution notification message deserialised");
             return notification;
         }

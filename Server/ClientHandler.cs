@@ -13,6 +13,8 @@ namespace Server
 
         private readonly IList<TcpClient> connectedClients = new List<TcpClient>();
 
+        private readonly IList<User> connectedUsers = new List<User>(); 
+
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
 
@@ -47,25 +49,38 @@ namespace Server
 
             switch (message.Identifier)
             {
-                case 1:
+                case 1: //User Request
                     var contributionRequest = (ContributionRequest) message;
                     SendNotificationToClients(contributionRequest);
                     break;
-                case 2:
-                    var contributionNotification = (ContributionNotification) message;
-                    Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
+                case 2: //User Notification
+                    Log.Warn("Server has not implemented a usage for receiving a UserNotification message.");
                     break;
-                case 3:
+                case 3: //Login Request
                     var loginRequest = (LoginRequest) message;
-                    DoSomethingWithLoginRequest(loginRequest);
+                    User newUser = UpdateUserList(loginRequest);
+                    NotifyClientsOfNewUser(newUser);
                     break;
             }
         }
 
-        private static void DoSomethingWithLoginRequest(LoginRequest message)
+        private void NotifyClientsOfNewUser(User newUser)
         {
-            Log.Debug("Client sent Login Message Request message");
-            Log.Info("Client with username " + message.UserName + " has logged in");
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<UserNotification>();
+
+            foreach (var client in connectedClients)
+            {
+                NetworkStream clientStream = client.GetStream();
+                var userNotification = new UserNotification(newUser, NotificationType.Create);
+                messageSerialiser.Serialise(userNotification, clientStream);
+            }
+        }
+
+        private User UpdateUserList(LoginRequest message)
+        {
+            User user = new User(message.UserName);
+            connectedUsers.Add(user);
+            return user;
         }
 
         private void SendNotificationToClients(ContributionRequest message)

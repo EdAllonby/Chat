@@ -19,9 +19,9 @@ namespace SharedClasses.Protocol
         /// <summary>
         /// Deserialise an <see cref="IMessage"/> from the NetworkStream
         /// </summary>
-        /// <param name="stream">The stream that connects the Client and Server</param>
+        /// <param name="networkStream">The stream that connects the Client and Server</param>
         /// <returns>an <see cref="IMessage"/> object</returns>
-        IMessage Deserialise(NetworkStream stream);
+        IMessage Deserialise(NetworkStream networkStream);
     }
 
     public interface ISerialiser<T> : ISerialiser where T : IMessage
