@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses;
 using SharedClasses.Protocol;
 
 namespace Server
@@ -17,12 +15,12 @@ namespace Server
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
 
-
         private int totalListenerThreads = 1;
 
         public ClientHandler()
         {
             Log.Info("New client handler created");
+            messageReceiver.OnNewMessage += NewMessageReceived;
         }
 
         public void CreateListenerThreadForClient(TcpClient client)
@@ -31,7 +29,8 @@ namespace Server
             NetworkStream stream = client.GetStream();
             Log.Info("Stream with client established");
 
-            var messageListenerThread = new Thread(() => ReceiveMessageListener(stream, client))
+
+            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(stream))
             {
                 Name = "MessageListenerThread" + totalListenerThreads
             };
@@ -39,26 +38,6 @@ namespace Server
             totalListenerThreads++;
 
             messageListenerThread.Start();
-        }
-
-        private void ReceiveMessageListener(NetworkStream stream, TcpClient client)
-        {
-            bool connection = true;
-
-            while (connection)
-            {
-                if (stream.CanRead)
-                {
-                    messageReceiver.OnNewMessage += NewMessageReceived;
-                    messageReceiver.ReceiveMessages(stream);
-                }
-                else
-                {
-                    connection = false;
-                    Log.Warn("Connection is no longer available, stopping server listener thread for this client");
-                    RemoveDisconnectedClient(client);
-                }
-            }
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -92,7 +71,7 @@ namespace Server
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
 
-            foreach (TcpClient client in connectedClients)
+            foreach (var client in connectedClients)
             {
                 NetworkStream clientStream = client.GetStream();
 
