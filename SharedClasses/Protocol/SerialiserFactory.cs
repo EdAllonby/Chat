@@ -1,4 +1,6 @@
-﻿namespace SharedClasses.Protocol
+﻿using SharedClasses.Domain;
+
+namespace SharedClasses.Protocol
 {
     /// <summary>
     /// Class to get the correct serialiser for the given <see cref="IMessage"/> identifier
