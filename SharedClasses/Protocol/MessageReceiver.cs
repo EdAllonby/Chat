@@ -4,6 +4,10 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    ///     A class to listen for incoming messages from the wire. When a new <see cref="IMessage" /> is received,
+    ///     it will then fire off an <see cref="OnNewMessage" /> event where subscribers will be notified.
+    /// </summary>
     public class MessageReceiver
     {
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();

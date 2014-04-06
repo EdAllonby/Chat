@@ -4,12 +4,17 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    ///     Used to serialise and deserialise a <see cref="ContributionNotification" /> object
+    /// </summary>
     public class ContributionNotificationSerialiser : ISerialiser<ContributionNotification>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionNotificationSerialiser));
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly ContributionSerialiser serialiser = new ContributionSerialiser();
+
+        #region Serialise
 
         public void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream stream)
         {
@@ -25,6 +30,10 @@ namespace SharedClasses.Protocol
             Serialise((ContributionNotification) contributionNotificationMessage, stream);
         }
 
+        #endregion
+
+        #region Deserialise
+
         public IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution notification message to deserialise");
@@ -32,5 +41,7 @@ namespace SharedClasses.Protocol
             Log.Info("Contribution notification message deserialised");
             return notification;
         }
+
+        #endregion
     }
 }

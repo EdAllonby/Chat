@@ -6,6 +6,9 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    ///     Used to Serialise and Deserialise a <see cref="User" /> Domain object.
+    /// </summary>
     internal class UserNotificationSerialiser : ISerialiser<UserNotification>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserNotificationSerialiser));
@@ -13,6 +16,8 @@ namespace SharedClasses.Protocol
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+
+        #region Serialise
 
         public void Serialise(UserNotification message, NetworkStream stream)
         {
@@ -30,10 +35,14 @@ namespace SharedClasses.Protocol
             }
         }
 
-        public void Serialise(IMessage userNotification, NetworkStream stream)
+        public void Serialise(IMessage message, NetworkStream stream)
         {
-            Serialise((UserNotification) userNotification, stream);
+            Serialise((UserNotification) message, stream);
         }
+
+        #endregion
+
+        #region Deserialise
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
@@ -53,5 +62,7 @@ namespace SharedClasses.Protocol
             }
             return null;
         }
+
+        #endregion
     }
 }

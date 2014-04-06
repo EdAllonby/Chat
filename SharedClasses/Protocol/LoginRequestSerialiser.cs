@@ -6,6 +6,9 @@ using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    ///     Used to Serialise and Deserialise a <see cref="LoginRequest" /> object
+    /// </summary>
     public class LoginRequestSerialiser : ISerialiser<LoginRequest>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginRequestSerialiser));
@@ -13,6 +16,8 @@ namespace SharedClasses.Protocol
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+
+        #region Serialise
 
         public void Serialise(LoginRequest message, NetworkStream stream)
         {
@@ -38,6 +43,10 @@ namespace SharedClasses.Protocol
             Serialise((LoginRequest) loginRequestMessage, stream);
         }
 
+        #endregion
+
+        #region
+
         public IMessage Deserialise(NetworkStream networkStream)
         {
             try
@@ -56,5 +65,7 @@ namespace SharedClasses.Protocol
             }
             return new LoginRequest(string.Empty);
         }
+
+        #endregion
     }
 }

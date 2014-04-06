@@ -13,11 +13,17 @@ namespace SharedClasses.Protocol
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 
+        #region Serialise
+
         public void SerialiseMessageIdentifier(int messageIdentifier, NetworkStream stream)
         {
             stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
             Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
         }
+
+        #endregion
+
+        #region Deserialise
 
         public int DeserialiseMessageIdentifier(NetworkStream stream)
         {
@@ -39,5 +45,7 @@ namespace SharedClasses.Protocol
             //TODO: What happens if this fails, what should I return. Need to think about properly laying out try catches
             return int.MaxValue;
         }
+
+        #endregion
     }
 }

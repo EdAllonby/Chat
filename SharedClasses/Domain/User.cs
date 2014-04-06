@@ -2,6 +2,9 @@
 
 namespace SharedClasses.Domain
 {
+    /// <summary>
+    ///     Models a user in the system.
+    /// </summary>
     [Serializable]
     public class User
     {
