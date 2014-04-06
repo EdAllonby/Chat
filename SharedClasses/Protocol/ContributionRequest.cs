@@ -2,6 +2,9 @@
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    ///     A <see cref="Contribution"/> packaged as a Request for the client to send to the server
+    /// </summary>
     public class ContributionRequest : IMessage
     {
         public ContributionRequest(Contribution contribution)
