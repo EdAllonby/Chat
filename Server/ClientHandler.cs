@@ -54,12 +54,18 @@ namespace Server
                     SendNotificationToClients(contributionRequest);
                     break;
                 case 2: //User Notification
-                    Log.Warn("Server has not implemented a usage for receiving a UserNotification message.");
+                    Log.Warn("Client should not be sending UserNotification Message if following protocol");
                     break;
                 case 3: //Login Request
                     var loginRequest = (LoginRequest) message;
                     User newUser = UpdateUserList(loginRequest);
                     NotifyClientsOfNewUser(newUser);
+                    break;
+                case 4: //User Notification
+                    Log.Warn("Client should not be sending User Notification Message if following protocol");
+                    break;
+                default:
+                    Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
         }

@@ -110,22 +110,18 @@ namespace Client
 
             switch (message.Identifier)
             {
-                case 1:
-                    var contributionRequest = (ContributionRequest) message;
-                    Log.Info("Server sent: " + contributionRequest.Contribution.GetMessage());
-                    Console.WriteLine("The Server sent: " + contributionRequest.Contribution.GetMessage());
+                case 1: //Contribution Request
+                    Log.Warn("Server shouldn't be sending a ContributionRequest message to a client if following protocol");
                     break;
-                case 2:
+                case 2: //Contribution Notification
                     var contributionNotification = (ContributionNotification) message;
                     Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
                     Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
                     break;
-                case 3:
-                    var loginRequest = (LoginRequest) message;
-                    Log.Info("Server sent: " + loginRequest.UserName);
-                    Console.WriteLine("The Server sent: " + loginRequest.UserName);
+                case 3: //Login Request
+                    Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
                     break;
-                case 4:
+                case 4: //User Notification
                     var userNotification = (UserNotification) message;
                     NotifyClientOfNewUser(userNotification);
                     break;
