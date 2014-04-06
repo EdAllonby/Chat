@@ -19,6 +19,7 @@ namespace Client
         private static void Main(string[] args)
         {
             Thread.CurrentThread.Name = "Main Thread";
+            Console.Title = "Client";
 
             commandLineArguments = args;
 

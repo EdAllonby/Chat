@@ -27,9 +27,14 @@ namespace SharedClasses.Protocol
     /// <summary>
     ///     Generic ISerialiser which serialises a type which inherits <see cref="IMessage" /> down the stream
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T"><see cref="IMessage" /> object which is any message that can be used in this protocol</typeparam>
     public interface ISerialiser<T> : ISerialiser where T : IMessage
     {
+        /// <summary>
+        ///     Serialise the <see cref="IMessage" /> down the wire
+        /// </summary>
+        /// <param name="message">The message which inherits from <see cref="IMessage" /></param>
+        /// <param name="stream">The stream that connects the Client and Server</param>
         void Serialise(T message, NetworkStream stream);
     }
 }
