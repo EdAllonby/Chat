@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -21,6 +22,8 @@ namespace Client
         private readonly string userName;
         private TcpClient connection;
         private NetworkStream stream;
+
+        private readonly List<User> connectedUsers = new List<User>(); 
 
         public Client(IPAddress targetAddress, int targetPort)
         {
@@ -104,7 +107,7 @@ namespace Client
             messageReceiver.ReceiveMessages(stream);
         }
 
-        private static void NewMessageReceived(object sender, MessageEventArgs e)
+        private void NewMessageReceived(object sender, MessageEventArgs e)
         {
             IMessage message = e.Message;
 
@@ -131,10 +134,16 @@ namespace Client
             }
         }
 
-        private static void NotifyClientOfNewUser(UserNotification userNotification)
+        private void NotifyClientOfNewUser(UserNotification userNotification)
         {
-            Log.Info("New user successfully connected to server: " + userNotification.User.UserName);
-            Console.WriteLine("New user successfully connected to server: " + userNotification.User.UserName);
+            connectedUsers.Add(userNotification.User);
+
+            Log.Info("New user logged in successfully, currently connected users: ");
+
+            foreach (var user in connectedUsers)
+            {
+                Log.Info("User: " + user.UserName);
+            }
         }
     }
 }
