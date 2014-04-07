@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
+using log4net.Config;
 
 namespace Client
 {
@@ -19,6 +21,13 @@ namespace Client
         private static void Main(string[] args)
         {
             Thread.CurrentThread.Name = "Main Thread";
+
+#if DEBUG
+            ConfigureAndWatch();
+#else
+            ConfigureAndLockChanges();
+#endif
+
             Console.Title = "Client";
 
             commandLineArguments = args;
@@ -32,9 +41,36 @@ namespace Client
             Console.ReadKey();
         }
 
+        #region Log4Net Threshold
+
+#if DEBUG
+
+        private static void ConfigureAndWatch()
+        {
+            XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.config"));
+            Log.Debug("Log4Net set to debug mode. All messages are logged");
+        }
+
+#else
+
+private static void ConfigureAndLockChanges()
+    {
+        // Disable using DEBUG mode in Release mode (to make harder to hack)
+        XmlConfigurator.Configure(new FileInfo("log4net.config"));
+        foreach (ILoggerRepository repository in LogManager.GetAllRepositories())
+        {
+            repository.Threshold = Level.Warn;
+        }
+    }
+
+#endif
+
+        #endregion
+
         private static void SetUserLogonMethod()
         {
-            Console.WriteLine("Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
+            Console.WriteLine(
+                "Press 1 to connect the client on a local environment, or 2 to connect the client to an address");
 
             string usersConnectionChoice = Console.ReadLine();
 
