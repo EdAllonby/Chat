@@ -24,7 +24,7 @@ namespace SharedClasses.Protocol
 
                 IMessage message = serialiser.Deserialise(stream);
 
-                OnNewMessage(this, new MessageEventArgs(message));
+                OnNewMessage(this, new MessageEventArgs(message, stream));
             }
         }
     }

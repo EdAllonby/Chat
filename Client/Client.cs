@@ -23,7 +23,7 @@ namespace Client
         private TcpClient connection;
         private NetworkStream stream;
 
-        private readonly List<User> connectedUsers = new List<User>(); 
+        private IList<User> connectedUsers = new List<User>(); 
 
         public Client(IPAddress targetAddress, int targetPort)
         {
@@ -83,6 +83,7 @@ namespace Client
             connection = client;
 
             SendLoginRequest();
+            SendUserSnaphotRequest();
         }
 
         private void SendLoginRequest()
@@ -90,6 +91,12 @@ namespace Client
             ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
             var loginRequest = new LoginRequest(userName);
             loginRequestSerialiser.Serialise(loginRequest, stream);
+        }
+        private void SendUserSnaphotRequest()
+        {
+            ISerialiser userSnapshotRequestSerialiser = serialiserFactory.GetSerialiser<UserSnapshotRequest>();
+            var userSnapshotRequest = new UserSnapshotRequest();
+            userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, stream);
         }
 
         private void SendContributionRequestMessage()
@@ -128,22 +135,48 @@ namespace Client
                     var userNotification = (UserNotification) message;
                     NotifyClientOfNewUser(userNotification);
                     break;
+                case 5: //User Snapshot Request
+                    Log.Warn("Server shouldn't be sending a User Snapshot Request message to a client if following protocol");
+                    break;
+                case 6: //User Snapshot
+                    var userSnapshot = (UserSnapshot) message;
+                    ListCurrentUsers(userSnapshot);
+                    break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
         }
 
+        private void ListCurrentUsers(UserSnapshot userSnapshot)
+        {
+            connectedUsers = userSnapshot.Users;
+
+            Log.Info("Currently connected users: ");
+            foreach (var user in userSnapshot.Users)
+            {
+                Log.Info(user.UserName);
+            }
+        }
+
         private void NotifyClientOfNewUser(UserNotification userNotification)
         {
-            connectedUsers.Add(userNotification.User);
-
-            Log.Info("New user logged in successfully, currently connected users: ");
-
-            foreach (var user in connectedUsers)
+            if (userNotification.Notification == NotificationType.Create)
             {
-                Log.Info("User: " + user.UserName);
+                connectedUsers.Add(userNotification.User);
+
+                Log.Info("New user logged in successfully, currently connected users: ");
+
+                foreach (var user in connectedUsers)
+                {
+                    Log.Info("User: " + user.UserName);
+                }
             }
+            else if (userNotification.Notification == NotificationType.Delete)
+            {
+                connectedUsers.Remove(userNotification.User);
+                Log.Info("User " + userNotification.User + " logged out. Removing from connectedClients list");
+            } 
         }
     }
 }

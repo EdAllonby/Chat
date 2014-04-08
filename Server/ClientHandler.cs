@@ -49,25 +49,39 @@ namespace Server
 
             switch (message.Identifier)
             {
-                case 1: //User Request
+                case 1: // User Request
                     var contributionRequest = (ContributionRequest) message;
                     SendNotificationToClients(contributionRequest);
                     break;
-                case 2: //User Notification
+                case 2: // User Notification
                     Log.Warn("Client should not be sending UserNotification Message if following protocol");
                     break;
-                case 3: //Login Request
+                case 3: // Login Request
                     var loginRequest = (LoginRequest) message;
                     User newUser = UpdateUserList(loginRequest);
                     NotifyClientsOfNewUser(newUser);
                     break;
-                case 4: //User Notification
+                case 4: // User Notification
                     Log.Warn("Client should not be sending User Notification Message if following protocol");
+                    break;
+                case 5: // User Snapshot Request
+                    NetworkStream sendersStream = e.SendersStream;
+                    SendUserSnapshot(sendersStream);
+                    break;
+                case 6: // User Snapshot
+                    Log.Warn("Client should not be sending User Snapshot Message if following protocol");
                     break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
+        }
+
+        private void SendUserSnapshot(NetworkStream sendersStream)
+        {
+            ISerialiser userSnapshotSerialiser = serialiserFactory.GetSerialiser<UserSnapshot>();
+            var userSnapshot = new UserSnapshot(connectedUsers);
+            userSnapshotSerialiser.Serialise(userSnapshot, sendersStream);
         }
 
         private void NotifyClientsOfNewUser(User newUser)
