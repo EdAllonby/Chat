@@ -59,6 +59,10 @@
     <Compile Include="Protocol\SerialiserRegistry.cs" />
     <Compile Include="Protocol\UserNotification.cs" />
     <Compile Include="Protocol\UserNotificationSerialiser.cs" />
+    <Compile Include="Protocol\UserSnapshot.cs" />
+    <Compile Include="Protocol\UserSnapshotRequest.cs" />
+    <Compile Include="Protocol\UserSnapshotRequestSerialiser.cs" />
+    <Compile Include="Protocol\UserSnapshotSerialiser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
