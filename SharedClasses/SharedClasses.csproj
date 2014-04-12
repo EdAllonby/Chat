@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\User.cs" />
-    <Compile Include="Protocol\MessageEventArgs.cs" />
-    <Compile Include="Protocol\MessageReceiver.cs" />
+    <Compile Include="MessageEventArgs.cs" />
+    <Compile Include="MessageReceiver.cs" />
     <Compile Include="Protocol\ContributionNotification.cs" />
     <Compile Include="Protocol\ContributionNotificationSerialiser.cs" />
     <Compile Include="Protocol\ContributionRequest.cs" />
@@ -49,7 +49,7 @@
     <Compile Include="Domain\Contribution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ContributionSerialiser.cs" />
-    <Compile Include="Domain\IMessage.cs" />
+    <Compile Include="Protocol\IMessage.cs" />
     <Compile Include="Protocol\ISerialiser.cs" />
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
