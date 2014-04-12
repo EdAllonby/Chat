@@ -1,0 +1,44 @@
+﻿<Window x:Class="ChatClient.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        ResizeMode="NoResize"
+        Title="LogonWindow" Height="260" Width="350"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="80" />
+            <RowDefinition Height="50" />
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+            <Label Content="Logon To Chat" FontSize="36" />
+        </StackPanel>
+        <TextBox x:Name="LogonNameTextBox" Text="Enter user name" HorizontalAlignment="Center" TextAlignment="Center"
+                 VerticalAlignment="Center" Width="120" Grid.Row="1" Grid.Column="0" MaxLines="1" FontSize="14"
+                 GotFocus="RemoveTextOnFocus" LostFocus="AddTextOnLostFocus" />
+        <GroupBox Grid.Row="2" Header="Server Information" Margin="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="IPAddressTextBox" Text="Enter Server IP" HorizontalAlignment="Center"
+                         TextAlignment="Center" VerticalAlignment="Center" Width="120" MaxLines="1" FontSize="14"
+                         GotFocus="RemoveTextOnFocus" LostFocus="AddTextOnLostFocus" />
+                <TextBox Grid.Column="1" x:Name="PortTextBox" Text="Enter Server Port" HorizontalAlignment="Center"
+                         TextAlignment="Center" VerticalAlignment="Center" Width="120" MaxLines="1" FontSize="14"
+                         GotFocus="RemoveTextOnFocus" LostFocus="AddTextOnLostFocus" />
+            </Grid>
+        </GroupBox>
+        <Button x:Name="LogInButton" Content="Log In" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Grid.Row="3" Grid.Column="0" Height="24" Width="60" Click="LoginClick" />
+
+    </Grid>
+</Window>

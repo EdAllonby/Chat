@@ -8,11 +8,12 @@ using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
-namespace LegacyClient
+namespace ChatClient
 {
     internal class Client
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+        private static Client uniqueClientInstance;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -21,24 +22,29 @@ namespace LegacyClient
         private readonly int targetPort;
         private readonly string userName;
         private IList<User> connectedUsers = new List<User>();
-        private TcpClient connection;
         private NetworkStream stream;
 
-        public Client(IPAddress targetAddress, int targetPort)
+        private Client(string userName, IPAddress targetAddress, int targetPort)
         {
+            this.userName = userName;
             this.targetAddress = targetAddress;
             this.targetPort = targetPort;
-
-            Console.Write("Enter name: ");
-            userName = Console.ReadLine();
-
-
             ConnectToServer();
 
             while (true)
             {
                 SendContributionRequestMessage();
             }
+        }
+
+        public static Client GetInstance(string username, IPAddress targetAddress, int targetPort)
+        {
+            return uniqueClientInstance ?? (uniqueClientInstance = new Client(username, targetAddress, targetPort));
+        }
+
+        public static Client GetInstance()
+        {
+            return uniqueClientInstance ?? (uniqueClientInstance = new Client("unassigned", new IPAddress(127000000000), 5004));
         }
 
         private void ConnectToServer()
@@ -55,7 +61,6 @@ namespace LegacyClient
                 Name = "MessageListenerThread"
             };
             messageListenerThread.Start();
-            connection = client;
 
             SendLoginRequest();
             SendUserSnaphotRequest();

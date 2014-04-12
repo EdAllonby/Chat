@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{80807B49-4920-4680-9034-7BB27F7EF566}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{139258A9-AB43-4329-BA64-C04174DDD0D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyClient", "Client\LegacyClient.csproj", "{139258A9-AB43-4329-BA64-C04174DDD0D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedClasses", "SharedClasses\SharedClasses.csproj", "{51E169D3-C988-4460-AB60-BFC72848E954}"
 EndProject
@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0A77F8
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "ChatClient\ChatClient.csproj", "{9DE7B6FB-0A44-40DF-992B-DFA66BE6C43C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,10 @@ Global
 		{51E169D3-C988-4460-AB60-BFC72848E954}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51E169D3-C988-4460-AB60-BFC72848E954}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51E169D3-C988-4460-AB60-BFC72848E954}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DE7B6FB-0A44-40DF-992B-DFA66BE6C43C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE7B6FB-0A44-40DF-992B-DFA66BE6C43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE7B6FB-0A44-40DF-992B-DFA66BE6C43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE7B6FB-0A44-40DF-992B-DFA66BE6C43C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
