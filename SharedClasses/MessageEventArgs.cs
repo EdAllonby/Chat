@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
-using SharedClasses.Domain;
+using SharedClasses.Protocol;
 
 namespace SharedClasses
 {

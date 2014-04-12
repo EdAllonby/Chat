@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Sockets;
 using log4net;
-using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
 namespace SharedClasses

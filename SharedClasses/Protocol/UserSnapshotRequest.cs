@@ -1,5 +1,4 @@
 ﻿using System;
-using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {

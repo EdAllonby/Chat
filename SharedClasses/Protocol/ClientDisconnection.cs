@@ -1,8 +1,6 @@
-﻿using SharedClasses.Domain;
-
-namespace SharedClasses.Protocol
+﻿namespace SharedClasses.Protocol
 {
-    class ClientDisconnection : IMessage
+    internal class ClientDisconnection : IMessage
     {
         public ClientDisconnection()
         {
