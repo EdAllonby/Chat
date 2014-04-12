@@ -13,7 +13,7 @@ namespace SharedClasses.Protocol
         {
             User = user;
             Notification = notificationType;
-            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof (UserNotification)];
+            Identifier = MessageNumber.UserNotification;
         }
 
         public NotificationType Notification { get; set; }

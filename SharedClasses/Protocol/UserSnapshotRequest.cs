@@ -8,7 +8,7 @@ namespace SharedClasses.Protocol
     {
         public UserSnapshotRequest()
         {
-            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof(UserSnapshotRequest)];
+            Identifier = MessageNumber.UserSnapshotRequest;
         }
 
         public int Identifier { get; private set; }
