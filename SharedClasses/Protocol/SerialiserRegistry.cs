@@ -55,10 +55,10 @@ namespace SharedClasses.Protocol
         {
             ISerialiser serialiser;
             bool keyExists = SerialisersByMessageIdentifier.TryGetValue(identifier, out serialiser);
+
             if (!keyExists)
             {
-                Log.Error("Serialiser not found for message identifier: " + identifier);
-                throw new KeyNotFoundException();
+                throw new KeyNotFoundException("Serialiser not found for message identifier: " + identifier);
             }
 
             return serialiser;
