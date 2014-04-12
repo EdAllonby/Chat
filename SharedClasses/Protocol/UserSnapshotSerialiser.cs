@@ -1,14 +1,12 @@
-﻿using System.IO;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
-using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
-    class UserSnapshotSerialiser : ISerialiser<UserSnapshot>
+    internal class UserSnapshotSerialiser : ISerialiser<UserSnapshot>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(UserSnapshotSerialiser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (UserSnapshotSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
@@ -27,7 +25,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(IMessage message, NetworkStream stream)
         {
-            Serialise((UserSnapshot)message, stream);
+            Serialise((UserSnapshot) message, stream);
         }
 
         #endregion
@@ -42,7 +40,7 @@ namespace SharedClasses.Protocol
                 return null;
             }
 
-            var userSnapshot = (UserSnapshot)binaryFormatter.Deserialize(networkStream);
+            var userSnapshot = (UserSnapshot) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a UserSnapshot object");
             return userSnapshot;
         }

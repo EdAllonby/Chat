@@ -1,6 +1,4 @@
-﻿using SharedClasses.Protocol;
-
-namespace SharedClasses.Domain
+﻿namespace SharedClasses.Protocol
 {
     /// <summary>
     ///     <see cref="IMessage" /> interface is used to group the message objects into one type.

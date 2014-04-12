@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -21,10 +20,9 @@ namespace Client
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
         private readonly string userName;
+        private IList<User> connectedUsers = new List<User>();
         private TcpClient connection;
         private NetworkStream stream;
-
-        private IList<User> connectedUsers = new List<User>();
 
         public Client(IPAddress targetAddress, int targetPort)
         {
@@ -69,6 +67,7 @@ namespace Client
             var loginRequest = new LoginRequest(userName);
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
+
         private void SendUserSnaphotRequest()
         {
             ISerialiser userSnapshotRequestSerialiser = serialiserFactory.GetSerialiser<UserSnapshotRequest>();
@@ -130,7 +129,7 @@ namespace Client
             connectedUsers = userSnapshot.Users;
 
             Log.Info("Currently connected users: ");
-            foreach (var user in userSnapshot.Users)
+            foreach (User user in userSnapshot.Users)
             {
                 Log.Info(user.UserName);
             }
@@ -144,7 +143,7 @@ namespace Client
 
                 Log.Info("New user logged in successfully, currently connected users: ");
 
-                foreach (var user in connectedUsers)
+                foreach (User user in connectedUsers)
                 {
                     Log.Info("User: " + user.UserName);
                 }
@@ -153,7 +152,7 @@ namespace Client
             {
                 connectedUsers.Remove(userNotification.User);
                 Log.Info("User " + userNotification.User + " logged out. Removing from connectedClients list");
-            } 
+            }
         }
     }
 }
