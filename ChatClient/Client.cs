@@ -12,25 +12,33 @@ namespace ChatClient
 {
     internal class Client
     {
+        public delegate void NewContributionHandler(string contribution, EventArgs e);
+
+        public delegate void UserListHandler(IList<User> users, EventArgs e);
+
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private static Client uniqueClientInstance;
+        public readonly string UserName;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
-        private readonly string userName;
         private IList<User> connectedUsers = new List<User>();
         private NetworkStream stream;
 
         private Client(string userName, IPAddress targetAddress, int targetPort)
         {
-            this.userName = userName;
+            UserName = userName;
             this.targetAddress = targetAddress;
             this.targetPort = targetPort;
             ConnectToServer();
         }
+
+        public event NewContributionHandler OnNewContributionNotification;
+        public event UserListHandler OnNewUser;
+
 
         public static Client GetInstance(string username, IPAddress targetAddress, int targetPort)
         {
@@ -64,7 +72,7 @@ namespace ChatClient
         private void SendLoginRequest()
         {
             ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
-            var loginRequest = new LoginRequest(userName);
+            var loginRequest = new LoginRequest(UserName);
             loginRequestSerialiser.Serialise(loginRequest, stream);
         }
 
@@ -75,9 +83,8 @@ namespace ChatClient
             userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, stream);
         }
 
-        private void SendContributionRequestMessage()
+        public void SendContributionRequestMessage(string message)
         {
-            string message = Console.ReadLine();
             var clientContribution = new ContributionRequest(new Contribution(message));
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(clientContribution, stream);
@@ -102,7 +109,7 @@ namespace ChatClient
                 case MessageNumber.ContributionNotification: //Contribution Notification
                     var contributionNotification = (ContributionNotification) message;
                     Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
-                    Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
+                    OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), null);
                     break;
                 case MessageNumber.LoginRequest: //Login Request
                     Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
@@ -133,6 +140,8 @@ namespace ChatClient
             {
                 Log.Info(user.UserName);
             }
+
+            OnNewUser(connectedUsers, null);
         }
 
         private void NotifyClientOfNewUser(UserNotification userNotification)
@@ -153,6 +162,8 @@ namespace ChatClient
                 connectedUsers.Remove(userNotification.User);
                 Log.Info("User " + userNotification.User + " logged out. Removing from connectedClients list");
             }
+
+            OnNewUser(connectedUsers, null);
         }
     }
 }
