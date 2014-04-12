@@ -1,6 +1,7 @@
 ﻿<Window x:Class="ChatClient.ChatWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:chatClient="clr-namespace:ChatClient"
         Title="Chat With People" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
     <Grid>
@@ -13,7 +14,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Content="Chat Room"
+        <Label x:Name="TitleLabel" Grid.Row="0" Content="Chat Room"
                HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
                Margin="10"
@@ -28,10 +29,11 @@
                 <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock x:Name="ContributionNotificationTextBlock"
-                       Grid.Column="0"
-                       Background="AliceBlue"
-                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" TextWrapping="Wrap" />
+            <ListBox x:Name="ChatTextBlock"
+                     chatClient:ListBoxExtenders.AutoScrollToEnd="True"
+                     Grid.Column="0"
+                     Background="AliceBlue"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" />
             <ListBox x:Name="ConnectedUsersListBox"
                      Grid.Column="1"
                      Margin="10"
@@ -47,16 +49,17 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
-                     x:Name="ContributionRequesTextBox"
+                     x:Name="ContributionRequestTextBox"
                      DockPanel.Dock="Left"
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
-                     Margin="10" TextWrapping="Wrap" Text="Type your message..." />
+                     Margin="10" TextWrapping="Wrap" Text="Type your message..."
+                     GotFocus="EnterTextBox" />
             <Button
                 x:Name="SendNotificationRequestButton"
                 Width="50" Height="20"
-                Content="Send" Margin="0,90,130,10" Grid.Column="1" />
+                Content="Send" Margin="0,90,130,10" Grid.Column="1" Click="SendNotificationRequestButton_Click" />
         </Grid>
     </Grid>
 </Window>
