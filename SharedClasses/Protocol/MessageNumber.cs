@@ -11,5 +11,6 @@
         public const int UserNotification = 4;
         public const int UserSnapshotRequest = 5;
         public const int UserSnapshot = 6;
+        public const int ClientDisconnection = 7;
     }
 }

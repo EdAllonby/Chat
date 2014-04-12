@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using SharedClasses.Domain;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses
 {
     /// <summary>
     ///     Used as a holder of the <see cref="IMessage" /> object when an event is fired so spectators can use it

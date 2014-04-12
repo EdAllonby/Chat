@@ -27,23 +27,11 @@ namespace SharedClasses.Protocol
 
         public int DeserialiseMessageIdentifier(NetworkStream stream)
         {
-            try
-            {
-                var messageTypeBuffer = new byte[4];
-                stream.Read(messageTypeBuffer, 0, 4);
-                int messageIdentifier = BitConverter.ToInt32(messageTypeBuffer, 0);
-                Log.Debug("Message Identifier " + messageIdentifier + " received from client");
-                return messageIdentifier;
-            }
-
-            catch (IOException ioException)
-            {
-                Log.Error("connection lost between the client and the server", ioException);
-                stream.Close();
-            }
-
-            //TODO: What happens if this fails, what should I return. Need to think about properly laying out try catches
-            return int.MaxValue;
+            var messageTypeBuffer = new byte[4];
+            stream.Read(messageTypeBuffer, 0, 4);
+            int messageIdentifier = BitConverter.ToInt32(messageTypeBuffer, 0);
+            Log.Debug("Message Identifier " + messageIdentifier + " received from client");
+            return messageIdentifier;
         }
 
         #endregion

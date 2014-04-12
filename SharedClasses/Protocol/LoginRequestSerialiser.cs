@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
@@ -21,20 +20,13 @@ namespace SharedClasses.Protocol
 
         public void Serialise(LoginRequest message, NetworkStream stream)
         {
-            try
+            if (stream.CanWrite)
             {
-                if (stream.CanWrite)
-                {
-                    messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
+                messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-                    Log.Info("Attempt to serialise LoginRequest and send to stream");
-                    binaryFormatter.Serialize(stream, message);
-                    Log.Info("LoginRequest serialised and sent to network stream");
-                }
-            }
-            catch (IOException ioException)
-            {
-                Log.Error("connection lost between the client and the server", ioException);
+                Log.Info("Attempt to serialise LoginRequest and send to stream");
+                binaryFormatter.Serialize(stream, message);
+                Log.Info("LoginRequest serialised and sent to network stream");
             }
         }
 
@@ -45,25 +37,19 @@ namespace SharedClasses.Protocol
 
         #endregion
 
-        #region
+        #region Deserialise
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            try
+            if (!networkStream.CanRead)
             {
-                if (networkStream.CanRead)
-                {
-                    var loginRequest = (LoginRequest) binaryFormatter.Deserialize(networkStream);
-                    Log.Info("Network stream has received data and deserialised to a LoginRequest object");
-                    return loginRequest;
-                }
+                //TODO: What to return
+                return new LoginRequest(string.Empty);
             }
-            catch (IOException ioException)
-            {
-                Log.Error("connection lost between the client and the server", ioException);
-                networkStream.Close();
-            }
-            return new LoginRequest(string.Empty);
+
+            var loginRequest = (LoginRequest) binaryFormatter.Deserialize(networkStream);
+            Log.Info("Network stream has received data and deserialised to a LoginRequest object");
+            return loginRequest;
         }
 
         #endregion
