@@ -13,21 +13,14 @@ namespace SharedClasses.Protocol
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
- 
+
         public void Serialise(UserSnapshotRequest message, NetworkStream stream)
         {
-            try
-            {
-                messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-                Log.Info("Attempt to serialise UserSnapshotRequest and send to stream");
-                binaryFormatter.Serialize(stream, message);
-                Log.Info("UserSnapshotRequest serialised and sent to network stream");
-            }
-            catch (IOException ioException)
-            {
-                Log.Error("Connection lost between the client and the server", ioException);
-            }
+            Log.Info("Attempt to serialise UserSnapshotRequest and send to stream");
+            binaryFormatter.Serialize(stream, message);
+            Log.Info("UserSnapshotRequest serialised and sent to network stream");
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -37,21 +30,14 @@ namespace SharedClasses.Protocol
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            try
+            if (!networkStream.CanRead)
             {
-                if (networkStream.CanRead)
-                {
-                    var userSnapshotRequest = (UserSnapshotRequest)binaryFormatter.Deserialize(networkStream);
-                    Log.Info("Network stream has received data and deserialised to a UserSnapshotRequest object");
-                    return userSnapshotRequest;
-                }
+                //TODO: Don't return null
+                return null;
             }
-            catch (IOException ioException)
-            {
-                Log.Error("connection lost between the client and the server", ioException);
-                networkStream.Close();
-            }
-            return null;
+            var userSnapshotRequest = (UserSnapshotRequest)binaryFormatter.Deserialize(networkStream);
+            Log.Info("Network stream has received data and deserialised to a UserSnapshotRequest object");
+            return userSnapshotRequest;
         }
     }
 }

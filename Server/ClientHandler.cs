@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
@@ -49,27 +51,29 @@ namespace Server
 
             switch (message.Identifier)
             {
-                case 1: // User Request
+                case MessageNumber.ContributionRequest:
                     var contributionRequest = (ContributionRequest) message;
-                    SendNotificationToClients(contributionRequest);
+                    SendContributionNotificationToClients(contributionRequest);
                     break;
-                case 2: // User Notification
+                case MessageNumber.ContributionNotification:
                     Log.Warn("Client should not be sending UserNotification Message if following protocol");
                     break;
-                case 3: // Login Request
+                case MessageNumber.LoginRequest:
                     var loginRequest = (LoginRequest) message;
                     User newUser = UpdateUserList(loginRequest);
                     NotifyClientsOfNewUser(newUser);
                     break;
-                case 4: // User Notification
+                case MessageNumber.UserNotification:
                     Log.Warn("Client should not be sending User Notification Message if following protocol");
                     break;
-                case 5: // User Snapshot Request
-                    NetworkStream sendersStream = e.SendersStream;
-                    SendUserSnapshot(sendersStream);
+                case MessageNumber.UserSnapshotRequest:
+                    SendUserSnapshot(e.SendersStream);
                     break;
-                case 6: // User Snapshot
+                case MessageNumber.UserSnapshot:
                     Log.Warn("Client should not be sending User Snapshot Message if following protocol");
+                    break;
+                case MessageNumber.ClientDisconnection:
+                    RemoveDisconnectedClient();
                     break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
@@ -103,7 +107,7 @@ namespace Server
             return user;
         }
 
-        private void SendNotificationToClients(ContributionRequest message)
+        private void SendContributionNotificationToClients(ContributionRequest message)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
 
@@ -123,10 +127,20 @@ namespace Server
             Log.Info("Added client to connectedClients list");
         }
 
-        private void RemoveDisconnectedClient(TcpClient client)
+        private void RemoveDisconnectedClient()
         {
-            connectedClients.Remove(client);
-            Log.Info("Client successfully removed from ConnectedClients list");
+            TcpClient disconnectedClient = null;
+
+            foreach (TcpClient client in connectedClients.Where(client => !client.Connected))
+            {
+                disconnectedClient = client;
+            }
+
+            if (disconnectedClient != null)
+            {
+                connectedClients.Remove(disconnectedClient);
+                Log.Info("Client successfully removed from ConnectedClients list");
+            }
         }
     }
 }

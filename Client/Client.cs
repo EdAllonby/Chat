@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Protocol;
 
@@ -23,7 +24,7 @@ namespace Client
         private TcpClient connection;
         private NetworkStream stream;
 
-        private IList<User> connectedUsers = new List<User>(); 
+        private IList<User> connectedUsers = new List<User>();
 
         public Client(IPAddress targetAddress, int targetPort)
         {
@@ -33,36 +34,12 @@ namespace Client
             Console.Write("Enter name: ");
             userName = Console.ReadLine();
 
-            try
-            {
-                ConnectToServer();
 
-                while (true)
-                {
-                    SendContributionRequestMessage();
-                }
-            }
-            catch (SocketException socketException)
+            ConnectToServer();
+
+            while (true)
             {
-                Log.Error("Could not connect to the server, exiting...", socketException);
-            }
-            catch (IOException ioException)
-            {
-                Log.Error("could not send data to the server, connection lost.", ioException);
-            }
-            finally
-            {
-                //close the client and stream
-                if (stream != null)
-                {
-                    stream.Close();
-                    Log.Info("Stream closed");
-                }
-                if (connection != null)
-                {
-                    connection.Close();
-                    Log.Info("Client connection closed");
-                }
+                SendContributionRequestMessage();
             }
         }
 
@@ -101,8 +78,8 @@ namespace Client
 
         private void SendContributionRequestMessage()
         {
-            string clientContributionString = Console.ReadLine();
-            var clientContribution = new ContributionRequest(new Contribution(clientContributionString));
+            string message = Console.ReadLine();
+            var clientContribution = new ContributionRequest(new Contribution(message));
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(clientContribution, stream);
         }
@@ -120,25 +97,25 @@ namespace Client
 
             switch (message.Identifier)
             {
-                case 1: //Contribution Request
+                case MessageNumber.ContributionRequest: //Contribution Request
                     Log.Warn("Server shouldn't be sending a ContributionRequest message to a client if following protocol");
                     break;
-                case 2: //Contribution Notification
+                case MessageNumber.ContributionNotification: //Contribution Notification
                     var contributionNotification = (ContributionNotification) message;
                     Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
                     Console.WriteLine("The Server sent: " + contributionNotification.Contribution.GetMessage());
                     break;
-                case 3: //Login Request
+                case MessageNumber.LoginRequest: //Login Request
                     Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
                     break;
-                case 4: //User Notification
+                case MessageNumber.UserNotification: //User Notification
                     var userNotification = (UserNotification) message;
                     NotifyClientOfNewUser(userNotification);
                     break;
-                case 5: //User Snapshot Request
+                case MessageNumber.UserSnapshotRequest: //User Snapshot Request
                     Log.Warn("Server shouldn't be sending a User Snapshot Request message to a client if following protocol");
                     break;
-                case 6: //User Snapshot
+                case MessageNumber.UserSnapshot: //User Snapshot
                     var userSnapshot = (UserSnapshot) message;
                     ListCurrentUsers(userSnapshot);
                     break;

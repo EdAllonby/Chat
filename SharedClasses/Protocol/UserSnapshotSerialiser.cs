@@ -18,18 +18,11 @@ namespace SharedClasses.Protocol
 
         public void Serialise(UserSnapshot message, NetworkStream stream)
         {
-            try
-            {
-                messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-                Log.Info("Attempt to serialise UserSnapshot and send to stream");
-                binaryFormatter.Serialize(stream, message);
-                Log.Info("UserSnapshot serialised and sent to network stream");
-            }
-            catch (IOException ioException)
-            {
-                Log.Error("Connection lost between the client and the server", ioException);
-            }
+            Log.Info("Attempt to serialise UserSnapshot and send to stream");
+            binaryFormatter.Serialize(stream, message);
+            Log.Info("UserSnapshot serialised and sent to network stream");
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -43,21 +36,15 @@ namespace SharedClasses.Protocol
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            try
+            if (!networkStream.CanRead)
             {
-                if (networkStream.CanRead)
-                {
-                    var userSnapshot = (UserSnapshot)binaryFormatter.Deserialize(networkStream);
-                    Log.Info("Network stream has received data and deserialised to a UserSnapshot object");
-                    return userSnapshot;
-                }
+                //TODO: Don't return null
+                return null;
             }
-            catch (IOException ioException)
-            {
-                Log.Error("connection lost between the client and the server", ioException);
-                networkStream.Close();
-            }
-            return null;
+
+            var userSnapshot = (UserSnapshot)binaryFormatter.Deserialize(networkStream);
+            Log.Info("Network stream has received data and deserialised to a UserSnapshot object");
+            return userSnapshot;
         }
 
         #endregion

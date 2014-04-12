@@ -21,18 +21,11 @@ namespace SharedClasses.Protocol
 
         public void Serialise(UserNotification message, NetworkStream stream)
         {
-            try
-            {
-                messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-                Log.Info("Attempt to serialise UserNotification and send to stream");
-                binaryFormatter.Serialize(stream, message);
-                Log.Info("UserNotification serialised and sent to network stream");
-            }
-            catch (IOException ioException)
-            {
-                Log.Error("Connection lost between the client and the server", ioException);
-            }
+            Log.Info("Attempt to serialise UserNotification and send to stream");
+            binaryFormatter.Serialize(stream, message);
+            Log.Info("UserNotification serialised and sent to network stream");
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -46,21 +39,15 @@ namespace SharedClasses.Protocol
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            try
+            if (!networkStream.CanRead)
             {
-                if (networkStream.CanRead)
-                {
-                    var userNotification = (UserNotification) binaryFormatter.Deserialize(networkStream);
-                    Log.Info("Network stream has received data and deserialised to a UserNotification object");
-                    return userNotification;
-                }
+                //TODO: Don't return nulls
+                return null;
             }
-            catch (IOException ioException)
-            {
-                Log.Error("connection lost between the client and the server", ioException);
-                networkStream.Close();
-            }
-            return null;
+
+            var userNotification = (UserNotification) binaryFormatter.Deserialize(networkStream);
+            Log.Info("Network stream has received data and deserialised to a UserNotification object");
+            return userNotification;
         }
 
         #endregion

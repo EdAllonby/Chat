@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using log4net;
 
 namespace SharedClasses.Protocol
 {
@@ -9,8 +8,6 @@ namespace SharedClasses.Protocol
     /// </summary>
     public static class SerialiserRegistry
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (SerialiserRegistry));
-
         public static readonly Dictionary<Type, int> IdentifiersByMessageType = new Dictionary<Type, int>
         {
             {typeof (ContributionRequest), MessageNumber.ContributionRequest},
