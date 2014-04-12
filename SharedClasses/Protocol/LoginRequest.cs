@@ -12,7 +12,7 @@ namespace SharedClasses.Protocol
         public LoginRequest(string userName)
         {
             UserName = userName;
-            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof (LoginRequest)];
+            Identifier = MessageNumber.LoginRequest;
         }
 
         public string UserName { get; private set; }

@@ -13,32 +13,32 @@ namespace SharedClasses.Protocol
 
         public static readonly Dictionary<Type, int> IdentifiersByMessageType = new Dictionary<Type, int>
         {
-            {typeof (ContributionRequest), 1},
-            {typeof (ContributionNotification), 2},
-            {typeof (LoginRequest), 3},
-            {typeof (UserNotification), 4},
-            {typeof (UserSnapshotRequest), 5},
-            {typeof (UserSnapshot), 6}
+            {typeof (ContributionRequest), MessageNumber.ContributionRequest},
+            {typeof (ContributionNotification), MessageNumber.ContributionNotification},
+            {typeof (LoginRequest), MessageNumber.LoginRequest},
+            {typeof (UserNotification), MessageNumber.UserNotification},
+            {typeof (UserSnapshotRequest), MessageNumber.UserSnapshotRequest},
+            {typeof (UserSnapshot), MessageNumber.UserSnapshot}
         };
 
         public static readonly Dictionary<int, Type> MessageTypesByIdentifiers = new Dictionary<int, Type>
         {
-            {1, typeof (ContributionRequest)},
-            {2, typeof (ContributionNotification)},
-            {3, typeof (LoginRequest)},
-            {4, typeof (UserNotification)},
-            {5, typeof (UserSnapshotRequest)},
-            {6, typeof (UserSnapshot)}
+            {MessageNumber.ContributionRequest, typeof (ContributionRequest)},
+            {MessageNumber.ContributionNotification, typeof (ContributionNotification)},
+            {MessageNumber.LoginRequest, typeof (LoginRequest)},
+            {MessageNumber.UserNotification, typeof (UserNotification)},
+            {MessageNumber.UserSnapshotRequest, typeof (UserSnapshotRequest)},
+            {MessageNumber.UserSnapshot, typeof (UserSnapshot)}
         };
 
         private static readonly Dictionary<int, ISerialiser> SerialisersByMessageIdentifier = new Dictionary <int, ISerialiser>
         {
-            {1, new ContributionRequestSerialiser()},
-            {2, new ContributionNotificationSerialiser()},
-            {3, new LoginRequestSerialiser()},
-            {4, new UserNotificationSerialiser()},
-            {5, new UserSnapshotRequestSerialiser()},
-            {6, new UserSnapshotSerialiser()}
+            {MessageNumber.ContributionRequest, new ContributionRequestSerialiser()},
+            {MessageNumber.ContributionNotification, new ContributionNotificationSerialiser()},
+            {MessageNumber.LoginRequest, new LoginRequestSerialiser()},
+            {MessageNumber.UserNotification, new UserNotificationSerialiser()},
+            {MessageNumber.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
+            {MessageNumber.UserSnapshot, new UserSnapshotSerialiser()}
         };
 
         public static readonly Dictionary<Type, ISerialiser> SerialisersByMessageType = new Dictionary <Type, ISerialiser>

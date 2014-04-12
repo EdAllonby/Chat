@@ -54,6 +54,7 @@
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
     <Compile Include="Protocol\MessageIdentifierSerialiser.cs" />
+    <Compile Include="Protocol\MessageNumber.cs" />
     <Compile Include="Protocol\NotificationType.cs" />
     <Compile Include="Protocol\SerialiserFactory.cs" />
     <Compile Include="Protocol\SerialiserRegistry.cs" />

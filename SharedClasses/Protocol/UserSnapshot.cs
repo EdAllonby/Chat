@@ -13,7 +13,7 @@ namespace SharedClasses.Protocol
         public UserSnapshot(IList<User> users)
         {
             Users = users;
-            Identifier = SerialiserRegistry.IdentifiersByMessageType[typeof (UserSnapshot)];
+            Identifier = MessageNumber.UserSnapshot;
         }
 
         public IList<User> Users { get; private set; }
