@@ -30,11 +30,6 @@ namespace ChatClient
             this.targetAddress = targetAddress;
             this.targetPort = targetPort;
             ConnectToServer();
-
-            while (true)
-            {
-                SendContributionRequestMessage();
-            }
         }
 
         public static Client GetInstance(string username, IPAddress targetAddress, int targetPort)

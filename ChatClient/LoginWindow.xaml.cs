@@ -23,8 +23,7 @@ namespace ChatClient
                 bool result = loginParser.ParseCommandLineArguments(CommandLineArguments);
                 if (result)
                 {
-                    client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
-                    Log.Debug("Command line arguments passed to client object");
+                    LoginToChat();
                 }
             }
         }
@@ -79,12 +78,21 @@ namespace ChatClient
             bool result = loginParser.ParseLogonDetails(LogonNameTextBox.Text, IPAddressTextBox.Text, PortTextBox.Text);
             if (result)
             {
-                client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+                LoginToChat();
             }
             else
             {
                 MessageBox.Show("One or more entries were invalid, double check the formatting");
             }
+        }
+
+        private void LoginToChat()
+        {
+            Log.Debug("Logging in to server");
+            client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+            var chatWindow = new ChatWindow();
+            chatWindow.Show();
+            Close();
         }
     }
 }
