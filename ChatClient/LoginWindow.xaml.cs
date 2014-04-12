@@ -1,5 +1,5 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Controls;
 using log4net;
 
 namespace ChatClient
@@ -31,19 +31,60 @@ namespace ChatClient
 
         private void RemoveTextOnFocus(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var focusedTextBox = (TextBox) sender;
+
+            if (focusedTextBox.Text == "Enter user name")
+            {
+                focusedTextBox.Text = string.Empty;
+                Log.Debug("Text has been removed from Logon textbox");
+            }
+            if (focusedTextBox.Text == "Enter Server IP")
+            {
+                focusedTextBox.Text = string.Empty;
+                Log.Debug("Text has been removed from Logon textbox");
+            }
+            if (focusedTextBox.Text == "Enter Server Port")
+            {
+                focusedTextBox.Text = string.Empty;
+                Log.Debug("Text has been removed from Logon textbox");
+            }
         }
 
         private void AddTextOnLostFocus(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var lostFocusTextBox = (TextBox) sender;
+
+            if (string.IsNullOrEmpty(lostFocusTextBox.Text))
+            {
+                if (lostFocusTextBox.Name == "LogonNameTextBox")
+                {
+                    lostFocusTextBox.Text = "Enter user name";
+                    Log.Debug("Default text added back to textbox");
+                }
+                if (lostFocusTextBox.Name == "IPAddressTextBox")
+                {
+                    lostFocusTextBox.Text = "Enter Server IP";
+                    Log.Debug("Default text added back to textbox");
+                }
+                if (lostFocusTextBox.Name == "PortTextBox")
+                {
+                    lostFocusTextBox.Text = "Enter Server Port";
+                    Log.Debug("Default text added back to textbox");
+                }
+            }
         }
 
         private void LoginClick(object sender, RoutedEventArgs e)
         {
-            client = Client.GetInstance();
-
-            throw new NotImplementedException();
+            bool result = loginParser.ParseLogonDetails(LogonNameTextBox.Text, IPAddressTextBox.Text, PortTextBox.Text);
+            if (result)
+            {
+                client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+            }
+            else
+            {
+                MessageBox.Show("One or more entries were invalid, double check the formatting");
+            }
         }
     }
 }
