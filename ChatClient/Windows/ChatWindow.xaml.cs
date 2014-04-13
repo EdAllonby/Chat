@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 using SharedClasses.Domain;
 
 namespace ChatClient.Windows
@@ -38,17 +39,37 @@ namespace ChatClient.Windows
             Application.Current.Dispatcher.Invoke(() => { ChatTextBlock.Items.Add(contribution); });
         }
 
-        private void SendNotificationRequestButton_Click(object sender, RoutedEventArgs e)
-        {
-            client.SendContributionRequestMessage(ContributionRequestTextBox.Text);
-            ContributionRequestTextBox.Text = "Type your message...";
-        }
-
         private void EnterTextBox(object sender, RoutedEventArgs e)
         {
             if (ContributionRequestTextBox.Text == "Type your message...")
             {
                 ContributionRequestTextBox.Text = string.Empty;
+            }
+        }
+
+        private void SendNotificationRequestButton_Click(object sender, RoutedEventArgs e)
+        {
+            SendMessage();
+        }
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                SendMessage();
+                if (ContributionRequestTextBox.Text == "Type your message...")
+                {
+                    ContributionRequestTextBox.Text = string.Empty;
+                }
+            }
+        }
+
+        private void SendMessage()
+        {
+            if (!String.IsNullOrEmpty(ContributionRequestTextBox.Text))
+            {
+                client.SendContributionRequestMessage(ContributionRequestTextBox.Text);
+                ContributionRequestTextBox.Text = "Type your message...";
             }
         }
     }

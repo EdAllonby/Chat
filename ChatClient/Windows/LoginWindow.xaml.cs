@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using log4net;
 
 namespace ChatClient.Windows
@@ -76,6 +78,11 @@ namespace ChatClient.Windows
 
         private void LoginClick(object sender, RoutedEventArgs e)
         {
+            ParseDetails();
+        }
+
+        private void ParseDetails()
+        {
             bool result = loginParser.ParseLogonDetails(LogonNameTextBox.Text, IPAddressTextBox.Text, PortTextBox.Text);
             if (result)
             {
@@ -100,7 +107,20 @@ namespace ChatClient.Windows
             catch (TimeoutException timeoutException)
             {
                 Log.Error("Cannot find server", timeoutException);
-                MessageBox.Show("Could not find server, try again");
+                MessageBox.Show("Could not find server, check the IP Address");
+            }
+            catch (SocketException socketException)
+            {
+                Log.Error("Port is incorrect", socketException);
+                MessageBox.Show("Could log in to server, check the port");
+            }
+        }
+
+        private void OnKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                ParseDetails();
             }
         }
     }
