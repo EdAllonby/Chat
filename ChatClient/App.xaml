@@ -3,6 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="Windows/LoginWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="Windows/Styles/ButtonStyles.xaml" />
+        <ResourceDictionary Source="Windows/Styles/ControlStyles.xaml" />
     </Application.Resources>
 </Application>

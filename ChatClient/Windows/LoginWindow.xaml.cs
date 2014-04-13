@@ -1,8 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+using ChatClient.Annotations;
 using log4net;
 
 namespace ChatClient.Windows
@@ -15,7 +18,10 @@ namespace ChatClient.Windows
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindow));
         public static string[] CommandLineArguments;
         private readonly ClientLoginParser loginParser = new ClientLoginParser();
-        private Client client;
+
+        private bool alreadyFaded;
+        private ChatWindow chatWindow;
+        [UsedImplicitly] private Client client;
 
         public LoginWindow()
         {
@@ -100,8 +106,7 @@ namespace ChatClient.Windows
             {
                 Log.Debug("Logging in to server");
                 client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
-                var chatWindow = new ChatWindow();
-                chatWindow.Show();
+                chatWindow = new ChatWindow();
                 Close();
             }
             catch (TimeoutException timeoutException)
@@ -136,5 +141,39 @@ namespace ChatClient.Windows
         {
             Close();
         }
+
+        #region Close Logic
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            alreadyFaded = false;
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (!alreadyFaded)
+            {
+                alreadyFaded = true;
+                e.Cancel = true;
+                var closingAnimation = new DoubleAnimation(0, TimeSpan.FromSeconds(1));
+                closingAnimation.Completed += ClosingAnimationOnCompleted;
+                BeginAnimation(OpacityProperty, closingAnimation);
+            }
+        }
+
+        private void ClosingAnimationOnCompleted(object sender, EventArgs e)
+        {
+            Close();
+            if (chatWindow != null)
+            {
+                chatWindow.Show();
+            }
+            else
+            {
+                Log.Warn("Chat window cannot be opened");
+            }
+        }
+
+        #endregion
     }
 }
