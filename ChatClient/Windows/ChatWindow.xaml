@@ -55,11 +55,13 @@
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
                      Margin="10" TextWrapping="Wrap" Text="Type your message..."
-                     GotFocus="EnterTextBox" />
+                     GotFocus="EnterTextBox"
+                     KeyDown="OnKeyDownHandler" />
             <Button
                 x:Name="SendNotificationRequestButton"
                 Width="50" Height="20"
-                Content="Send" Margin="0,90,130,10" Grid.Column="1" Click="SendNotificationRequestButton_Click" />
+                Content="Send" Margin="0,90,130,10" Grid.Column="1" Click="SendNotificationRequestButton_Click"
+                IsEnabled="{Binding ElementName=ContributionRequestTextBox, Path=Text.Length, Mode=OneWay}" />
         </Grid>
     </Grid>
 </Window>
