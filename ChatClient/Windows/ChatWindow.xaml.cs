@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using SharedClasses.Domain;
 
-namespace ChatClient
+namespace ChatClient.Windows
 {
     /// <summary>
     ///     Interaction logic for ChatWindow.xaml

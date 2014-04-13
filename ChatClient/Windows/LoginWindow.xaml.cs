@@ -1,8 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using log4net;
 
-namespace ChatClient
+namespace ChatClient.Windows
 {
     /// <summary>
     ///     Interaction logic for LoginWindow.xaml
@@ -88,11 +89,19 @@ namespace ChatClient
 
         private void LoginToChat()
         {
-            Log.Debug("Logging in to server");
-            client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
-            var chatWindow = new ChatWindow();
-            chatWindow.Show();
-            Close();
+            try
+            {
+                Log.Debug("Logging in to server");
+                client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+                var chatWindow = new ChatWindow();
+                chatWindow.Show();
+                Close();
+            }
+            catch (TimeoutException timeoutException)
+            {
+                Log.Error("Cannot find server", timeoutException);
+                MessageBox.Show("Could not find server, try again");
+            }
         }
     }
 }

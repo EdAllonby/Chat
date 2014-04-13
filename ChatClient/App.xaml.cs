@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using ChatClient.Windows;
 using log4net;
 using log4net.Config;
 

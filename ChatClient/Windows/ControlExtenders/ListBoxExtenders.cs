@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ChatClient
+namespace ChatClient.Windows.ControlExtenders
 {
     /// <summary>
     ///     This class contains a few useful extenders for the ListBox
