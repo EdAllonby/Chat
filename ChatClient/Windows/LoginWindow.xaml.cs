@@ -35,7 +35,7 @@ namespace ChatClient.Windows
         {
             var focusedTextBox = (TextBox) sender;
 
-            if (focusedTextBox.Text == "Enter user name")
+            if (focusedTextBox.Text == "Username")
             {
                 focusedTextBox.Text = string.Empty;
                 Log.Debug("Text has been removed from Logon textbox");
@@ -60,7 +60,7 @@ namespace ChatClient.Windows
             {
                 if (lostFocusTextBox.Name == "LogonNameTextBox")
                 {
-                    lostFocusTextBox.Text = "Enter user name";
+                    lostFocusTextBox.Text = "Username";
                     Log.Debug("Default text added back to textbox");
                 }
                 if (lostFocusTextBox.Name == "IPAddressTextBox")
@@ -122,6 +122,19 @@ namespace ChatClient.Windows
             {
                 ParseDetails();
             }
+        }
+
+        private void Label_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                DragMove();
+            }
+        }
+
+        private void CloseClick(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }
