@@ -10,6 +10,8 @@ namespace ChatClient
     /// </summary>
     internal class ClientLoginParser
     {
+        private const int PortMaxBound = 65535;
+        private const int PortMinBound = 0;
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginParser));
 
         public String Username { get; private set; }
@@ -89,7 +91,7 @@ namespace ChatClient
             }
             else
             {
-                Log.Warn(address + " was not a valid entry");
+                Log.Warn("IPAddress was not a valid entry");
             }
 
             return addressResult;
@@ -99,6 +101,12 @@ namespace ChatClient
         {
             int port;
             bool portResult = int.TryParse(portLine, out port);
+
+            if (port > PortMaxBound || port < PortMinBound)
+            {
+                portResult = false;
+            }
+
             if (portResult)
             {
                 Log.Info("User entered port " + port);
@@ -106,8 +114,7 @@ namespace ChatClient
             }
             else
             {
-                port = 5004;
-                Log.Warn(port + " was not a valid entry");
+                Log.Warn("Port was not a valid entry");
             }
 
             return portResult;

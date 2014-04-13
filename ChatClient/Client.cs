@@ -16,6 +16,8 @@ namespace ChatClient
 
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
+        private const int LogonTimeout = 5;
+
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private static Client uniqueClientInstance;
         public readonly string UserName;
@@ -53,7 +55,27 @@ namespace ChatClient
         private void ConnectToServer()
         {
             Log.Info("Client looking for server");
-            var client = new TcpClient(targetAddress.ToString(), targetPort);
+
+
+            var client = new TcpClient();
+
+            IAsyncResult asyncResult = client.BeginConnect(targetAddress.ToString(), targetPort, null, null);
+            WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
+            try
+            {
+                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(LogonTimeout), false))
+                {
+                    client.Close();
+                    throw new TimeoutException();
+                }
+
+                client.EndConnect(asyncResult);
+            }
+            finally
+            {
+                waitHandle.Close();
+            }
+
             Log.Info("Client found server, connection created");
 
             stream = client.GetStream();
