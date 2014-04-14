@@ -57,7 +57,8 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" x:Name="IPAddressTextBox" Text="Enter Server IP" BorderThickness="0" CaretBrush="#e74c3c"
+            <TextBox Grid.Column="0" x:Name="IPAddressTextBox" Text="Enter Server IP" BorderThickness="0"
+                     CaretBrush="#e74c3c"
                      HorizontalAlignment="Stretch"
                      TextAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center"
                      MaxLines="1"
