@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.Sockets;
 using log4net;
 using SharedClasses.Protocol;
 
@@ -16,28 +15,32 @@ namespace SharedClasses
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+
+        public ConnectedClient ConnectedClient { get; set; }
         public event EventHandler<MessageEventArgs> OnNewMessage;
 
-        public void ReceiveMessages(NetworkStream stream)
+        public void ReceiveMessages(ConnectedClient connectedClient)
         {
+            ConnectedClient = connectedClient;
+
             try
             {
                 while (true)
                 {
-                    int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(stream);
+                    int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(connectedClient.TcpClient.GetStream());
 
                     ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-                    IMessage message = serialiser.Deserialise(stream);
+                    IMessage message = serialiser.Deserialise(ConnectedClient.TcpClient.GetStream());
 
-                    OnNewMessage(this, new MessageEventArgs(message, stream));
+                    OnNewMessage(this, new MessageEventArgs(message, ConnectedClient));
                 }
             }
             catch (IOException ioException)
             {
                 Log.Error("Couldn't send message across stream, removing client from server", ioException);
                 IMessage message = new ClientDisconnection();
-                OnNewMessage(this, new MessageEventArgs(message, stream));
+                OnNewMessage(this, new MessageEventArgs(message, ConnectedClient));
             }
         }
     }

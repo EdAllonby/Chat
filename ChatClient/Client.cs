@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -27,8 +28,8 @@ namespace ChatClient
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
+        private ConnectedClient client;
         private IList<User> connectedUsers = new List<User>();
-        private NetworkStream stream;
 
         private Client(string userName, IPAddress targetAddress, int targetPort)
         {
@@ -41,6 +42,17 @@ namespace ChatClient
         public event NewContributionHandler OnNewContributionNotification;
         public event UserListHandler OnNewUser;
 
+        private void NotifyClientOfUserChange()
+        {
+            OnNewUser(connectedUsers, null);
+            Log.Info("User changed event fired");
+        }
+
+        private void NotifyClientOfContributionNotification(ContributionNotification contributionNotification)
+        {
+            OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), null);
+            Log.Info("New contribution notification event fired");
+        }
 
         public static Client GetInstance(string username, IPAddress targetAddress, int targetPort)
         {
@@ -56,20 +68,19 @@ namespace ChatClient
         {
             Log.Info("Client looking for server");
 
+            var serverConnection = new TcpClient();
 
-            var client = new TcpClient();
-
-            IAsyncResult asyncResult = client.BeginConnect(targetAddress.ToString(), targetPort, null, null);
+            IAsyncResult asyncResult = serverConnection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
             WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
             try
             {
                 if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(LogonTimeout), false))
                 {
-                    client.Close();
+                    serverConnection.Close();
                     throw new TimeoutException();
                 }
 
-                client.EndConnect(asyncResult);
+                serverConnection.EndConnect(asyncResult);
             }
             finally
             {
@@ -78,7 +89,8 @@ namespace ChatClient
 
             Log.Info("Client found server, connection created");
 
-            stream = client.GetStream();
+            client = new ConnectedClient(serverConnection, new User(UserName));
+
             Log.Info("Created stream with Server");
 
             var messageListenerThread = new Thread(ReceiveMessageListener)
@@ -95,28 +107,28 @@ namespace ChatClient
         {
             ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
             var loginRequest = new LoginRequest(UserName);
-            loginRequestSerialiser.Serialise(loginRequest, stream);
+            loginRequestSerialiser.Serialise(loginRequest, client.TcpClient.GetStream());
         }
 
         private void SendUserSnaphotRequest()
         {
             ISerialiser userSnapshotRequestSerialiser = serialiserFactory.GetSerialiser<UserSnapshotRequest>();
             var userSnapshotRequest = new UserSnapshotRequest();
-            userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, stream);
+            userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, client.TcpClient.GetStream());
         }
 
         public void SendContributionRequestMessage(string message)
         {
             var clientContribution = new ContributionRequest(new Contribution(message));
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
-            serialiser.Serialise(clientContribution, stream);
+            serialiser.Serialise(clientContribution, client.TcpClient.GetStream());
         }
 
         private void ReceiveMessageListener()
         {
             Log.Info("Message listener thread started");
             messageReceiver.OnNewMessage += NewMessageReceived;
-            messageReceiver.ReceiveMessages(stream);
+            messageReceiver.ReceiveMessages(client);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -131,14 +143,15 @@ namespace ChatClient
                 case MessageNumber.ContributionNotification: //Contribution Notification
                     var contributionNotification = (ContributionNotification) message;
                     Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
-                    OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), null);
+                    NotifyClientOfContributionNotification(contributionNotification);
                     break;
                 case MessageNumber.LoginRequest: //Login Request
                     Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
                     break;
                 case MessageNumber.UserNotification: //User Notification
                     var userNotification = (UserNotification) message;
-                    NotifyClientOfNewUser(userNotification);
+                    UpdateUserCollections(userNotification);
+                    NotifyClientOfUserChange();
                     break;
                 case MessageNumber.UserSnapshotRequest: //User Snapshot Request
                     Log.Warn("Server shouldn't be sending a User Snapshot Request message to a client if following protocol");
@@ -166,26 +179,43 @@ namespace ChatClient
             OnNewUser(connectedUsers, null);
         }
 
-        private void NotifyClientOfNewUser(UserNotification userNotification)
+        private void UpdateUserCollections(UserNotification userNotification)
         {
-            if (userNotification.Notification == NotificationType.Create)
+            switch (userNotification.Notification)
             {
-                connectedUsers.Add(userNotification.User);
-
-                Log.Info("New user logged in successfully, currently connected users: ");
-
-                foreach (User user in connectedUsers)
-                {
-                    Log.Info("User: " + user.UserName);
-                }
+                case NotificationType.Create:
+                    AddUser(userNotification);
+                    break;
+                case NotificationType.Delete:
+                    RemoveUser(userNotification);
+                    break;
             }
-            else if (userNotification.Notification == NotificationType.Delete)
+        }
+
+        private void AddUser(UserNotification userNotification)
+        {
+            connectedUsers.Add(userNotification.User);
+            Log.Info("New user logged in successfully, currently connected users: ");
+            foreach (User user in connectedUsers)
             {
-                connectedUsers.Remove(userNotification.User);
-                Log.Info("User " + userNotification.User + " logged out. Removing from connectedClients list");
+                Log.Info("User: " + user.UserName);
+            }
+        }
+
+        private void RemoveUser(UserNotification userNotification)
+        {
+            User disconnectedUser = null;
+
+            foreach (User user in connectedUsers.Where(user => user.UserName == userNotification.User.UserName))
+            {
+                disconnectedUser = user;
             }
 
-            OnNewUser(connectedUsers, null);
+            if (disconnectedUser != null)
+            {
+                connectedUsers.Remove(disconnectedUser);
+                Log.Info("User " + userNotification.User.UserName + " logged out. Removing from connectedClients list");
+            }
         }
     }
 }

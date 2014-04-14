@@ -4,7 +4,7 @@ using log4net;
 
 namespace Server
 {
-    internal class Server
+    internal sealed class Server
     {
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));

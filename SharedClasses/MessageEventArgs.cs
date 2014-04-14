@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Sockets;
 using SharedClasses.Protocol;
 
 namespace SharedClasses
@@ -9,14 +8,14 @@ namespace SharedClasses
     /// </summary>
     public class MessageEventArgs : EventArgs
     {
-        public MessageEventArgs(IMessage message, NetworkStream sendersStream)
+        public MessageEventArgs(IMessage message, ConnectedClient connectedClient)
         {
             Message = message;
-            SendersStream = sendersStream;
+            ConnectedClient = connectedClient;
         }
 
         public IMessage Message { get; private set; }
 
-        public NetworkStream SendersStream { get; private set; }
+        public ConnectedClient ConnectedClient { get; private set; }
     }
 }
