@@ -11,15 +11,15 @@ namespace ChatClient.ViewModels
     {
         public ChatWindowViewModel()
         {
-            UserModel = new UserModel();
-            UserModel.PropertyChanged += userModel_PropertyChanged;
+            UserList = new UserList();
+            UserList.PropertyChanged += userModel_PropertyChanged;
         }
 
-        public UserModel UserModel { get; set; }
+        public UserList UserList { get; set; }
 
-        public IList<User> Users2
+        public ICollection<User> Users2
         {
-            get { return UserModel.Users; }
+            get { return UserList.Users; }
             set { OnPropertyChanged(); }
         }
 
