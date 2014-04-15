@@ -1,9 +1,14 @@
-﻿<Window x:Class="ChatClient.Windows.ChatWindow"
+﻿<Window x:Class="ChatClient.Views.ChatWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controlExtenders="clr-namespace:ChatClient.Windows.ControlExtenders"
+        xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
         Title="Chat With People" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <!-- Declaratively create an instance of our SongViewModel -->
+        <viewModels:ChatWindowViewModel />
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -13,7 +18,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-
         <Label x:Name="TitleLabel" Grid.Row="0" Content="Chat Room"
                HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
@@ -34,10 +38,19 @@
                      Grid.Column="0"
                      Background="AliceBlue"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" />
-            <ListBox x:Name="ConnectedUsersListBox"
+            <ListBox ItemsSource="{Binding Users2,UpdateSourceTrigger=PropertyChanged}" x:Name="ConnectedUsersListBox"
                      Grid.Column="1"
                      Margin="10"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding UserName}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
         </Grid>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
@@ -54,13 +67,11 @@
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
-                     Margin="10" TextWrapping="Wrap" Text="Type your message..."
-                     GotFocus="EnterTextBox"
-                     KeyDown="OnKeyDownHandler" />
+                     Margin="10" TextWrapping="Wrap" Text="Type your message..." />
             <Button
                 x:Name="SendNotificationRequestButton"
                 Width="50" Height="20"
-                Content="Send" Margin="0,90,130,10" Grid.Column="1" Click="SendNotificationRequestButton_Click"
+                Content="Send" Margin="0,90,130,10" Grid.Column="1"
                 IsEnabled="{Binding ElementName=ContributionRequestTextBox, Path=Text.Length, Mode=OneWay}" />
         </Grid>
     </Grid>
