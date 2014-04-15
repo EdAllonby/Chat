@@ -150,8 +150,18 @@ namespace Server
 
         private void RemoveConnectedClient(ConnectedClient client)
         {
-            connectedClients.Remove(client);
-            Log.Info("Removed client from connectedClients list");
+            ConnectedClient disconnectedClient = null;
+
+            foreach (ConnectedClient connectedClient in connectedClients.Where(connectedClient => connectedClient.User.UserName == client.User.UserName))
+            {
+                disconnectedClient = connectedClient;
+            }
+
+            if (disconnectedClient != null)
+            {
+                connectedClients.Remove(disconnectedClient);
+                Log.Info("User " + client.User.UserName + " logged out. Removing from connectedClients list");
+            }
         }
     }
 }
