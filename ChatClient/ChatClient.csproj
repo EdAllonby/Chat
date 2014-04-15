@@ -73,6 +73,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Models\MessageToSend.cs" />
+    <Compile Include="Models\MessagesReceivedList.cs" />
     <Compile Include="Models\UserList.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

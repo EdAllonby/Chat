@@ -33,7 +33,7 @@ namespace Server
 
             var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(newClient))
             {
-                Name = "MessageListenerThread" + totalListenerThreads
+                Name = "ReceiveMessageThread" + totalListenerThreads
             };
 
             totalListenerThreads++;

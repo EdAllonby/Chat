@@ -95,7 +95,7 @@ namespace ChatClient
 
             var messageListenerThread = new Thread(ReceiveMessageListener)
             {
-                Name = "MessageListenerThread"
+                Name = "ReceiveMessageThread"
             };
             messageListenerThread.Start();
 

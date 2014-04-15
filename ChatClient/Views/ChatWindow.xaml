@@ -37,8 +37,10 @@
                      controlExtenders:ListBoxExtenders.AutoScrollToEnd="True"
                      Grid.Column="0"
                      Background="AliceBlue"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" />
-            <ListBox ItemsSource="{Binding Users2,UpdateSourceTrigger=PropertyChanged}" x:Name="ConnectedUsersListBox"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
+                     ItemsSource="{Binding UpdatedMessage}" />
+            <ListBox x:Name="ConnectedUsersListBox"
+                     ItemsSource="{Binding Users,UpdateSourceTrigger=PropertyChanged}"
                      Grid.Column="1"
                      Margin="10"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -62,17 +64,18 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
+                     Text="{Binding MessageToSendToClient}"
                      x:Name="ContributionRequestTextBox"
                      DockPanel.Dock="Left"
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
-                     Margin="10" TextWrapping="Wrap" Text="Type your message..." />
+                     Margin="10" TextWrapping="Wrap" />
             <Button
                 x:Name="SendNotificationRequestButton"
                 Width="50" Height="20"
                 Content="Send" Margin="0,90,130,10" Grid.Column="1"
-                IsEnabled="{Binding ElementName=ContributionRequestTextBox, Path=Text.Length, Mode=OneWay}" />
+                Command="{Binding SendMessage}" />
         </Grid>
     </Grid>
 </Window>
