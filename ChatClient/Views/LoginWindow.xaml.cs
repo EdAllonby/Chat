@@ -8,7 +8,7 @@ using System.Windows.Media.Animation;
 using ChatClient.Properties;
 using log4net;
 
-namespace ChatClient.Windows
+namespace ChatClient.Views
 {
     /// <summary>
     ///     Interaction logic for LoginWindow.xaml
