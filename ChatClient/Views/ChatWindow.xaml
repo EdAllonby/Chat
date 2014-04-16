@@ -6,7 +6,6 @@
         Title="Chat With People" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
     <Window.DataContext>
-        <!-- Declaratively create an instance of our SongViewModel -->
         <viewModels:ChatWindowViewModel />
     </Window.DataContext>
     <Grid>
@@ -18,12 +17,17 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label x:Name="TitleLabel" Grid.Row="0" Content="Chat Room"
-               HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center"
-               VerticalContentAlignment="Center"
-               Margin="10"
-               FontFamily="Myriad Pro" FontSize="22" />
-
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Canvas Width="50" Margin="10,0,0,0" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
+                    HorizontalAlignment="Left">
+                <Path Data="{StaticResource PeopleIcon}"
+                      Stretch="Fill" Stroke="Black" StrokeThickness="1" Width="50" Height="38" Canvas.Top="18.5"
+                      Fill="#e74c3c" />
+            </Canvas>
+            <Label Content="Chat Room" VerticalContentAlignment="Center"
+                   FontFamily="Myriad Pro" FontSize="22" />
+        </StackPanel>
+        
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

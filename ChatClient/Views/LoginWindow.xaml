@@ -38,10 +38,12 @@
             <Button Grid.Column="2" Padding="0"
                     Height="25" VerticalAlignment="Top"
                     Style="{StaticResource CloseButtonStyle}"
-
                     Width="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=ActualHeight}"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    FontSize="12" Content="X" Click="CloseClick" />
+                    FontSize="12" Click="CloseClick">
+                <Path Data="{StaticResource CloseXIcon}" Width="10" Height="10"
+                      Stretch="Fill" Stroke="Black" StrokeThickness="2" />
+            </Button>
         </Grid>
         <TextBox x:Name="LogonNameTextBox" Grid.Row="1" Grid.Column="0" CaretBrush="#e74c3c"
                  Text="Username" BorderThickness="0"
