@@ -16,13 +16,10 @@ namespace SharedClasses
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        public ConnectedClient ConnectedClient { get; set; }
         public event EventHandler<MessageEventArgs> OnNewMessage;
 
         public void ReceiveMessages(ConnectedClient connectedClient)
         {
-            ConnectedClient = connectedClient;
-
             try
             {
                 while (true)
@@ -31,16 +28,16 @@ namespace SharedClasses
 
                     ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-                    IMessage message = serialiser.Deserialise(ConnectedClient.TcpClient.GetStream());
+                    IMessage message = serialiser.Deserialise(connectedClient.TcpClient.GetStream());
 
-                    OnNewMessage(this, new MessageEventArgs(message, ConnectedClient));
+                    OnNewMessage(this, new MessageEventArgs(message, connectedClient));
                 }
             }
             catch (IOException ioException)
             {
                 Log.Error("Couldn't send message across stream, removing client from server", ioException);
                 IMessage message = new ClientDisconnection();
-                OnNewMessage(this, new MessageEventArgs(message, ConnectedClient));
+                OnNewMessage(this, new MessageEventArgs(message, connectedClient));
             }
         }
     }
