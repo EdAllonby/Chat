@@ -57,7 +57,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Windows\Styles\ControlStyles.xaml">
+    <Page Include="Views\ResourceDictionaries\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ResourceDictionaries\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -87,7 +91,7 @@
     </Compile>
     <Compile Include="Client.cs" />
     <Compile Include="ClientLoginParser.cs" />
-    <Compile Include="Windows\ControlExtenders\ListBoxExtenders.cs" />
+    <Compile Include="Views\ControlExtenders\ListBoxExtenders.cs" />
     <Compile Include="Views\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -105,6 +109,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -118,7 +123,6 @@
     </None>
     <AppDesigner Include="Properties\" />
     <Resource Include="Resources\Roboto-Thin.ttf" />
-    <Resource Include="Resources\Walkway.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
