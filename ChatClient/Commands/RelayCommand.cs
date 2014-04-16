@@ -23,7 +23,9 @@ namespace ChatClient.Commands
         public RelayCommand(Action execute, Func<Boolean> canExecute)
         {
             if (execute == null)
+            {
                 throw new ArgumentNullException("execute");
+            }
             this.execute = execute;
             this.canExecute = canExecute;
         }
@@ -37,12 +39,16 @@ namespace ChatClient.Commands
             add
             {
                 if (canExecute != null)
+                {
                     CommandManager.RequerySuggested += value;
+                }
             }
             remove
             {
                 if (canExecute != null)
+                {
                     CommandManager.RequerySuggested -= value;
+                }
             }
         }
 
