@@ -59,7 +59,6 @@ namespace Server
                     var loginRequest = (LoginRequest) message;
                     var newUser = new User(loginRequest.UserName);
                     NotifyClientsOfNewUser(newUser);
-                    UpdateMessageReceiverConnectedClient(e.ConnectedClient.TcpClient, newUser);
                     break;
                 case MessageNumber.UserNotification:
                     Log.Warn("Client should not be sending User Notification Message if following protocol");
@@ -78,12 +77,6 @@ namespace Server
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
-        }
-
-        private void UpdateMessageReceiverConnectedClient(TcpClient tcpClient, User user)
-        {
-            messageReceiver.ConnectedClient = new ConnectedClient(tcpClient, user);
-            Log.Info("MessageReceiver for this thread has been assigned username " + user.UserName);
         }
 
         private void SendUserSnapshot(ConnectedClient connectedClient)
