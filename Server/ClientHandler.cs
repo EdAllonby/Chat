@@ -28,17 +28,45 @@ namespace Server
 
         public void CreateListenerThreadForClient(TcpClient client)
         {
-            var newClient = new ConnectedClient(client, new User("Login message not yet sent for this connected client"));
-            AddConnectedClient(newClient);
+            LoginRequest clientLogin = ClientLoginCredentials(client);
 
-            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(newClient))
+            if (clientLogin != null)
             {
-                Name = "ReceiveMessageThread" + totalListenerThreads
-            };
+                var newClient = new ConnectedClient(client, new User(clientLogin.UserName));
 
-            totalListenerThreads++;
+                NotifyClientsOfNewUser(new User(clientLogin.UserName));
 
-            messageListenerThread.Start();
+                AddConnectedClient(newClient);
+
+                SendLoginResponseMessage(client);
+
+                var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(newClient))
+                {
+                    Name = "ReceiveMessageThread" + totalListenerThreads
+                };
+                messageListenerThread.Start();
+                totalListenerThreads++;
+            }
+            else
+            {
+                Log.Error("User didn't send Login Request message as first message.");
+            }
+        }
+
+        private void SendLoginResponseMessage(TcpClient client)
+        {
+            ISerialiser loginResponseSerialiser = serialiserFactory.GetSerialiser<LoginResponse>();
+            var loginResponse = new LoginResponse();
+            loginResponseSerialiser.Serialise(loginResponse, client.GetStream());
+        }
+
+        private LoginRequest ClientLoginCredentials(TcpClient client)
+        {
+            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(client.GetStream());
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            IMessage message = serialiser.Deserialise(client.GetStream());
+            return message as LoginRequest;
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -52,13 +80,10 @@ namespace Server
                     SendContributionNotificationToClients(contributionRequest);
                     break;
                 case MessageNumber.ContributionNotification:
-                    Log.Warn("Client should not be sending UserNotification Message if following protocol");
+                    Log.Warn("Client should not be sending User Notification Message if following protocol");
                     break;
                 case MessageNumber.LoginRequest:
-                    UpdateConnectClients((LoginRequest) message, e.ConnectedClient);
-                    var loginRequest = (LoginRequest) message;
-                    var newUser = new User(loginRequest.UserName);
-                    NotifyClientsOfNewUser(newUser);
+                    Log.Warn("Client should not be sending Login Request Message if following protocol");
                     break;
                 case MessageNumber.UserNotification:
                     Log.Warn("Client should not be sending User Notification Message if following protocol");
@@ -113,14 +138,6 @@ namespace Server
             }
         }
 
-        private void UpdateConnectClients(LoginRequest loginRequest, ConnectedClient newClient)
-        {
-            foreach (ConnectedClient client in connectedClients.Where(client => newClient.TcpClient.Equals(client.TcpClient)))
-            {
-                client.User = new User(loginRequest.UserName);
-            }
-        }
-
         private void SendContributionNotificationToClients(ContributionRequest message)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
@@ -145,7 +162,9 @@ namespace Server
         {
             ConnectedClient disconnectedClient = null;
 
-            foreach (ConnectedClient connectedClient in connectedClients.Where(connectedClient => connectedClient.User.UserName == client.User.UserName))
+            foreach (
+                ConnectedClient connectedClient in
+                    connectedClients.Where(connectedClient => connectedClient.User.UserName == client.User.UserName))
             {
                 disconnectedClient = connectedClient;
             }

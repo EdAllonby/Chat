@@ -21,7 +21,6 @@ namespace ChatClient
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private static Client uniqueClientInstance;
-        public readonly string UserName;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -39,18 +38,20 @@ namespace ChatClient
             ConnectToServer();
         }
 
-        public event NewContributionHandler OnNewContributionNotification;
-        public event UserListHandler OnNewUser;
+        public string UserName { get; private set; }
+
+        public event NewContributionHandler OnNewContributionNotification = delegate { };
+        public event UserListHandler OnNewUser = delegate { };
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(connectedUsers, null);
+            OnNewUser(connectedUsers, EventArgs.Empty);
             Log.Info("User changed event fired");
         }
 
         private void NotifyClientOfContributionNotification(ContributionNotification contributionNotification)
         {
-            OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), null);
+            OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), EventArgs.Empty);
             Log.Info("New contribution notification event fired");
         }
 
@@ -93,14 +94,23 @@ namespace ChatClient
 
             Log.Info("Created stream with Server");
 
-            var messageListenerThread = new Thread(ReceiveMessageListener)
-            {
-                Name = "ReceiveMessageThread"
-            };
-            messageListenerThread.Start();
-
             SendLoginRequest();
-            SendUserSnaphotRequest();
+
+            bool isSuccessfulLogin = ListenForLoginResponse(serverConnection);
+            if (isSuccessfulLogin)
+            {
+                var messageListenerThread = new Thread(ReceiveMessageListener)
+                {
+                    Name = "ReceiveMessageThread"
+                };
+                messageListenerThread.Start();
+
+                SendUserSnaphotRequest();
+            }
+            else
+            {
+                throw new Exception("Didn't receive expected LoginResponse message");
+            }
         }
 
         private void SendLoginRequest()
@@ -108,6 +118,16 @@ namespace ChatClient
             ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
             var loginRequest = new LoginRequest(UserName);
             loginRequestSerialiser.Serialise(loginRequest, client.TcpClient.GetStream());
+        }
+
+        private bool ListenForLoginResponse(TcpClient serverConnection)
+        {
+            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            IMessage message = serialiser.Deserialise(serverConnection.GetStream());
+            var loginResponse = message as LoginResponse;
+            return loginResponse != null;
         }
 
         private void SendUserSnaphotRequest()
