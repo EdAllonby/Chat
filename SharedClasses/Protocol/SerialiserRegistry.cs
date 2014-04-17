@@ -13,6 +13,7 @@ namespace SharedClasses.Protocol
             {typeof (ContributionRequest), MessageNumber.ContributionRequest},
             {typeof (ContributionNotification), MessageNumber.ContributionNotification},
             {typeof (LoginRequest), MessageNumber.LoginRequest},
+            {typeof (LoginResponse), MessageNumber.LoginResponse},
             {typeof (UserNotification), MessageNumber.UserNotification},
             {typeof (UserSnapshotRequest), MessageNumber.UserSnapshotRequest},
             {typeof (UserSnapshot), MessageNumber.UserSnapshot}
@@ -23,6 +24,7 @@ namespace SharedClasses.Protocol
             {MessageNumber.ContributionRequest, typeof (ContributionRequest)},
             {MessageNumber.ContributionNotification, typeof (ContributionNotification)},
             {MessageNumber.LoginRequest, typeof (LoginRequest)},
+            {MessageNumber.LoginResponse, typeof (LoginResponse)},
             {MessageNumber.UserNotification, typeof (UserNotification)},
             {MessageNumber.UserSnapshotRequest, typeof (UserSnapshotRequest)},
             {MessageNumber.UserSnapshot, typeof (UserSnapshot)}
@@ -33,6 +35,7 @@ namespace SharedClasses.Protocol
             {MessageNumber.ContributionRequest, new ContributionRequestSerialiser()},
             {MessageNumber.ContributionNotification, new ContributionNotificationSerialiser()},
             {MessageNumber.LoginRequest, new LoginRequestSerialiser()},
+            {MessageNumber.LoginResponse, new LoginResponseSerialiser()},
             {MessageNumber.UserNotification, new UserNotificationSerialiser()},
             {MessageNumber.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
             {MessageNumber.UserSnapshot, new UserSnapshotSerialiser()}
@@ -43,6 +46,7 @@ namespace SharedClasses.Protocol
             {typeof (ContributionRequest), new ContributionRequestSerialiser()},
             {typeof (ContributionNotification), new ContributionNotificationSerialiser()},
             {typeof (LoginRequest), new LoginRequestSerialiser()},
+            {typeof (LoginResponse), new LoginResponseSerialiser()},
             {typeof (UserNotification), new UserNotificationSerialiser()},
             {typeof (UserSnapshotRequest), new UserSnapshotRequestSerialiser()},
             {typeof (UserSnapshot), new UserSnapshotSerialiser()}

@@ -17,6 +17,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Canvas Width="50" Margin="10,0,0,0" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                     HorizontalAlignment="Left">
@@ -24,10 +25,10 @@
                       Stretch="Fill" Stroke="Black" StrokeThickness="1" Width="50" Height="38" Canvas.Top="18.5"
                       Fill="#e74c3c" />
             </Canvas>
-            <Label Content="Chat Room" VerticalContentAlignment="Center"
+            <Label Content="{Binding Title}" VerticalContentAlignment="Center"
                    FontFamily="Myriad Pro" FontSize="22" />
         </StackPanel>
-        
+
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -37,14 +38,13 @@
                 <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
 
-            <ListBox x:Name="ChatTextBlock"
-                     controlExtenders:ListBoxExtenders.AutoScrollToEnd="True"
+            <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True"
                      Grid.Column="0"
                      Background="AliceBlue"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
                      ItemsSource="{Binding Messages}" />
-            <ListBox x:Name="ConnectedUsersListBox"
-                     ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
+
+            <ListBox ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
                      Grid.Column="1"
                      Margin="10"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -56,8 +56,8 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
         </Grid>
+
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -69,21 +69,23 @@
 
             <TextBox Grid.Column="0"
                      Text="{Binding MessageToSendToClient,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
-                     x:Name="ContributionRequestTextBox"
                      DockPanel.Dock="Left"
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
+                     SpellCheck.IsEnabled="True" Language="EN-UK"
                      Margin="10" TextWrapping="Wrap">
                 <TextBox.InputBindings>
                     <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
                 </TextBox.InputBindings>
             </TextBox>
+
             <Button
-                x:Name="SendNotificationRequestButton"
                 Width="50" Height="20"
                 Content="Send" Margin="0,90,130,10" Grid.Column="1"
                 Command="{Binding SendMessage}" />
         </Grid>
+
     </Grid>
+
 </Window>

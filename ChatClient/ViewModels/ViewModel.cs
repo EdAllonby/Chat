@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
-using ChatClient.Properties;
+using System.Runtime.CompilerServices;
+using ChatClient.Annotations;
 
 namespace ChatClient.ViewModels
 {
@@ -8,12 +9,10 @@ namespace ChatClient.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
