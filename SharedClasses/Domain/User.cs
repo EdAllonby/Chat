@@ -6,13 +6,31 @@ namespace SharedClasses.Domain
     ///     Models a user in the system.
     /// </summary>
     [Serializable]
-    public class User
+    public sealed class User
     {
-        public User(string username)
+        private int id;
+
+        public User(string username, int id)
         {
             UserName = username;
+            ID = id;
         }
 
         public string UserName { get; private set; }
+
+        public int ID
+        {
+            get { return id; }
+
+            private set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                id = value;
+            }
+        }
     }
 }

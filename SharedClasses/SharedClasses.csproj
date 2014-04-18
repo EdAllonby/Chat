@@ -68,6 +68,7 @@
     <Compile Include="Protocol\UserSnapshotRequest.cs" />
     <Compile Include="Protocol\UserSnapshotRequestSerialiser.cs" />
     <Compile Include="Protocol\UserSnapshotSerialiser.cs" />
+    <Compile Include="UserFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
