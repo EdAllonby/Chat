@@ -17,6 +17,7 @@ namespace Server
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly UserFactory userFactory = new UserFactory();
 
         private int totalListenerThreads = 1;
 
@@ -32,13 +33,15 @@ namespace Server
 
             if (clientLogin != null)
             {
-                var newClient = new ConnectedClient(client, new User(clientLogin.UserName));
+                User newConnectedUser = userFactory.CreateUser(clientLogin.UserName);
 
-                NotifyClientsOfNewUser(new User(clientLogin.UserName));
+                var newClient = new ConnectedClient(client, newConnectedUser);
+
+                NotifyClientsOfNewUser(newConnectedUser);
 
                 AddConnectedClient(newClient);
 
-                SendLoginResponseMessage(client);
+                SendLoginResponseMessage(newClient);
 
                 var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(newClient))
                 {
@@ -53,11 +56,11 @@ namespace Server
             }
         }
 
-        private void SendLoginResponseMessage(TcpClient client)
+        private void SendLoginResponseMessage(ConnectedClient client)
         {
             ISerialiser loginResponseSerialiser = serialiserFactory.GetSerialiser<LoginResponse>();
-            var loginResponse = new LoginResponse();
-            loginResponseSerialiser.Serialise(loginResponse, client.GetStream());
+            var loginResponse = new LoginResponse(client.User.ID);
+            loginResponseSerialiser.Serialise(loginResponse, client.TcpClient.GetStream());
         }
 
         private LoginRequest ClientLoginCredentials(TcpClient client)

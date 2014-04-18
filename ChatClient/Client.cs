@@ -65,71 +65,6 @@ namespace ChatClient
             return uniqueClientInstance ?? (uniqueClientInstance = new Client("unassigned", new IPAddress(127000000000), 5004));
         }
 
-        private void ConnectToServer()
-        {
-            Log.Info("Client looking for server");
-
-            var serverConnection = new TcpClient();
-
-            IAsyncResult asyncResult = serverConnection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
-            WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
-            try
-            {
-                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(LogonTimeout), false))
-                {
-                    serverConnection.Close();
-                    throw new TimeoutException();
-                }
-
-                serverConnection.EndConnect(asyncResult);
-            }
-            finally
-            {
-                waitHandle.Close();
-            }
-
-            Log.Info("Client found server, connection created");
-
-            client = new ConnectedClient(serverConnection, new User(UserName));
-
-            Log.Info("Created stream with Server");
-
-            SendLoginRequest();
-
-            bool isSuccessfulLogin = ListenForLoginResponse(serverConnection);
-            if (isSuccessfulLogin)
-            {
-                var messageListenerThread = new Thread(ReceiveMessageListener)
-                {
-                    Name = "ReceiveMessageThread"
-                };
-                messageListenerThread.Start();
-
-                SendUserSnaphotRequest();
-            }
-            else
-            {
-                throw new Exception("Didn't receive expected LoginResponse message");
-            }
-        }
-
-        private void SendLoginRequest()
-        {
-            ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
-            var loginRequest = new LoginRequest(UserName);
-            loginRequestSerialiser.Serialise(loginRequest, client.TcpClient.GetStream());
-        }
-
-        private bool ListenForLoginResponse(TcpClient serverConnection)
-        {
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-            IMessage message = serialiser.Deserialise(serverConnection.GetStream());
-            var loginResponse = message as LoginResponse;
-            return loginResponse != null;
-        }
-
         private void SendUserSnaphotRequest()
         {
             ISerialiser userSnapshotRequestSerialiser = serialiserFactory.GetSerialiser<UserSnapshotRequest>();
@@ -237,5 +172,80 @@ namespace ChatClient
                 Log.Info("User " + userNotification.User.UserName + " logged out. Removing from connectedClients list");
             }
         }
+
+        #region Login Procedure Methods
+
+        private void ConnectToServer()
+        {
+            Log.Info("Client looking for server");
+
+            var serverConnection = new TcpClient();
+
+            IAsyncResult asyncResult = serverConnection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
+            WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
+            try
+            {
+                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(LogonTimeout), false))
+                {
+                    serverConnection.Close();
+                    throw new TimeoutException();
+                }
+
+                serverConnection.EndConnect(asyncResult);
+            }
+            finally
+            {
+                waitHandle.Close();
+            }
+
+            Log.Info("Client found server, connection created");
+
+            SendLoginRequest(serverConnection);
+
+            LoginResponse loginResponse = GetLoginResponse(serverConnection);
+
+            if (loginResponse != null)
+            {
+                client = CreateConnectedClient(loginResponse, serverConnection);
+
+                var messageListenerThread = new Thread(ReceiveMessageListener)
+                {
+                    Name = "ReceiveMessageThread"
+                };
+                messageListenerThread.Start();
+
+                SendUserSnaphotRequest();
+            }
+            else
+            {
+                throw new Exception("Client did not receive expected LoginResponse message");
+            }
+        }
+
+        private void SendLoginRequest(TcpClient serverConnection)
+        {
+            ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
+            var loginRequest = new LoginRequest(UserName);
+            loginRequestSerialiser.Serialise(loginRequest, serverConnection.GetStream());
+        }
+
+        private LoginResponse GetLoginResponse(TcpClient serverConnection)
+        {
+            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            IMessage message = serialiser.Deserialise(serverConnection.GetStream());
+            var loginResponse = message as LoginResponse;
+            return loginResponse;
+        }
+
+        private ConnectedClient CreateConnectedClient(LoginResponse loginResponse, TcpClient serverConnection)
+        {
+            var user = new User(UserName, loginResponse.UserID);
+            var connectedClient = new ConnectedClient(serverConnection, user);
+            return connectedClient;
+        }
+
+        #endregion
     }
 }
