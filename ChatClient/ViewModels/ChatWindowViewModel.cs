@@ -10,7 +10,7 @@ namespace ChatClient.ViewModels
 {
     public class ChatWindowViewModel : ViewModel
     {
-        private readonly Client client = Client.GetInstance();
+        public readonly Client Client = Client.GetInstance();
 
         private string messageToSendToClient;
         private ObservableCollection<Contribution> messages;
@@ -19,9 +19,9 @@ namespace ChatClient.ViewModels
 
         public ChatWindowViewModel()
         {
-            client.OnNewUser += client_OnNewUser;
-            client.OnNewContributionNotification += client_OnNewContributionNotification;
-            Title = "Welcome to chat, " + client.UserName;
+            Client.OnNewUser += client_OnNewUser;
+            Client.OnNewContributionNotification += client_OnNewContributionNotification;
+            Title = "Welcome to chat, " + Client.UserName;
             Messages = new ObservableCollection<Contribution>();
         }
 
@@ -78,7 +78,7 @@ namespace ChatClient.ViewModels
 
         private void NewContributionNotification()
         {
-            client.SendContributionRequestMessage(MessageToSendToClient);
+            Client.SendContributionRequestMessage(MessageToSendToClient);
 
             messageToSendToClient = string.Empty;
             OnPropertyChanged("MessageToSendToClient");
