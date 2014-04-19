@@ -58,7 +58,6 @@ namespace ChatClient.ViewModels
             }
         }
 
-
         public string MessageToSendToClient
         {
             get { return messageToSendToClient; }
@@ -80,6 +79,9 @@ namespace ChatClient.ViewModels
         private void NewContributionNotification()
         {
             client.SendContributionRequestMessage(MessageToSendToClient);
+
+            messageToSendToClient = string.Empty;
+            OnPropertyChanged("MessageToSendToClient");
         }
 
         private bool CanSendContributionRequest()
