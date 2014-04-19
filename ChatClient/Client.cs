@@ -20,6 +20,7 @@ namespace ChatClient
         private const int LogonTimeout = 5;
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+
         private static Client uniqueClientInstance;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
@@ -27,6 +28,7 @@ namespace ChatClient
 
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
+
         private ConnectedClient client;
         private IList<User> connectedUsers = new List<User>();
 
@@ -51,6 +53,7 @@ namespace ChatClient
 
         private void NotifyClientOfContributionNotification(ContributionNotification contributionNotification)
         {
+            Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
             OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), EventArgs.Empty);
             Log.Info("New contribution notification event fired");
         }
@@ -62,7 +65,12 @@ namespace ChatClient
 
         public static Client GetInstance()
         {
-            return uniqueClientInstance ?? (uniqueClientInstance = new Client("unassigned", new IPAddress(127000000000), 5004));
+            if (uniqueClientInstance == null)
+            {
+                throw new NullReferenceException("Can't instantiate Client Class with this method. Use overloaded GetInstance() method");
+            }
+
+            return uniqueClientInstance;
         }
 
         private void SendUserSnaphotRequest()
@@ -96,24 +104,20 @@ namespace ChatClient
                     Log.Warn("Server shouldn't be sending a ContributionRequest message to a client if following protocol");
                     break;
                 case MessageNumber.ContributionNotification: //Contribution Notification
-                    var contributionNotification = (ContributionNotification) message;
-                    Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
-                    NotifyClientOfContributionNotification(contributionNotification);
+                    NotifyClientOfContributionNotification((ContributionNotification)message);
                     break;
                 case MessageNumber.LoginRequest: //Login Request
                     Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
                     break;
                 case MessageNumber.UserNotification: //User Notification
-                    var userNotification = (UserNotification) message;
-                    UpdateUserCollections(userNotification);
+                    UpdateUserCollections((UserNotification)message);
                     NotifyClientOfUserChange();
                     break;
                 case MessageNumber.UserSnapshotRequest: //User Snapshot Request
                     Log.Warn("Server shouldn't be sending a User Snapshot Request message to a client if following protocol");
                     break;
                 case MessageNumber.UserSnapshot: //User Snapshot
-                    var userSnapshot = (UserSnapshot) message;
-                    ListCurrentUsers(userSnapshot);
+                    ListCurrentUsers((UserSnapshot)message);
                     break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
