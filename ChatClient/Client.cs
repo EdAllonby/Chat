@@ -11,7 +11,7 @@ using SharedClasses.Protocol;
 
 namespace ChatClient
 {
-    internal sealed class Client
+    public sealed class Client
     {
         public delegate void NewContributionHandler(Contribution contribution, EventArgs e);
 
