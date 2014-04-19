@@ -13,7 +13,7 @@ namespace ChatClient
 {
     internal sealed class Client
     {
-        public delegate void NewContributionHandler(string contribution, EventArgs e);
+        public delegate void NewContributionHandler(Contribution contribution, EventArgs e);
 
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
@@ -53,8 +53,8 @@ namespace ChatClient
 
         private void NotifyClientOfContributionNotification(ContributionNotification contributionNotification)
         {
-            Log.Info("Server sent: " + contributionNotification.Contribution.GetMessage());
-            OnNewContributionNotification(contributionNotification.Contribution.GetMessage(), EventArgs.Empty);
+            Log.Info("Server sent: " + contributionNotification.Contribution);
+            OnNewContributionNotification(contributionNotification.Contribution, EventArgs.Empty);
             Log.Info("New contribution notification event fired");
         }
 
