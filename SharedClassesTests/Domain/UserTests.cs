@@ -51,5 +51,21 @@ namespace SharedClassesTests.Domain
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new User("user", -4));
         }
+
+        [Test]
+        public void UsersWithSameNameAndSameIDEqualityTest()
+        {
+            var user1 = new User("User", 2);
+            var user2 = new User("User", 2);
+            Assert.AreEqual(user1, user2);
+        }
+
+        [Test]
+        public void UsersWithSameNameHaveDifferentIDsEqualityTest()
+        {
+            var user1 = new User("User", 1);
+            var user2 = new User("User", 2);
+            Assert.AreNotEqual(user1, user2);
+        }
     }
 }

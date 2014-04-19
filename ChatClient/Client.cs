@@ -104,20 +104,20 @@ namespace ChatClient
                     Log.Warn("Server shouldn't be sending a ContributionRequest message to a client if following protocol");
                     break;
                 case MessageNumber.ContributionNotification: //Contribution Notification
-                    NotifyClientOfContributionNotification((ContributionNotification)message);
+                    NotifyClientOfContributionNotification((ContributionNotification) message);
                     break;
                 case MessageNumber.LoginRequest: //Login Request
                     Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
                     break;
                 case MessageNumber.UserNotification: //User Notification
-                    UpdateUserCollections((UserNotification)message);
+                    UpdateUserCollections((UserNotification) message);
                     NotifyClientOfUserChange();
                     break;
                 case MessageNumber.UserSnapshotRequest: //User Snapshot Request
                     Log.Warn("Server shouldn't be sending a User Snapshot Request message to a client if following protocol");
                     break;
                 case MessageNumber.UserSnapshot: //User Snapshot
-                    ListCurrentUsers((UserSnapshot)message);
+                    ListCurrentUsers((UserSnapshot) message);
                     break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
