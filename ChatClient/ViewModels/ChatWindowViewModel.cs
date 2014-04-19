@@ -13,7 +13,7 @@ namespace ChatClient.ViewModels
         private readonly Client client = Client.GetInstance();
 
         private string messageToSendToClient;
-        private ObservableCollection<string> messages;
+        private ObservableCollection<Contribution> messages;
         private string title;
         private ObservableCollection<User> users;
 
@@ -22,7 +22,7 @@ namespace ChatClient.ViewModels
             client.OnNewUser += client_OnNewUser;
             client.OnNewContributionNotification += client_OnNewContributionNotification;
             Title = "Welcome to chat, " + client.UserName;
-            Messages = new ObservableCollection<string>();
+            Messages = new ObservableCollection<Contribution>();
         }
 
         public String Title
@@ -47,7 +47,7 @@ namespace ChatClient.ViewModels
             }
         }
 
-        public ObservableCollection<String> Messages
+        public ObservableCollection<Contribution> Messages
         {
             get { return messages; }
             set
@@ -96,7 +96,7 @@ namespace ChatClient.ViewModels
             Users = new ObservableCollection<User>(users);
         }
 
-        private void client_OnNewContributionNotification(string contribution, EventArgs e)
+        private void client_OnNewContributionNotification(Contribution contribution, EventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() => Messages.Add(contribution));
         }

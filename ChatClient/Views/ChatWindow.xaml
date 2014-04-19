@@ -42,8 +42,16 @@
                      Grid.Column="0"
                      Background="AliceBlue"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
-                     ItemsSource="{Binding Messages}" />
-
+                     ItemsSource="{Binding Messages}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Text}" />
+                            <TextBlock Text="{Binding MessageTimeStamp}" FontSize="10" Foreground="Gray" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
             <ListBox ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
                      Grid.Column="1"
                      Margin="10"

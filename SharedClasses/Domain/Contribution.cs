@@ -11,18 +11,18 @@ namespace SharedClasses.Domain
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
-        private DateTime messageTimeStamp;
-        private string text;
-
         public Contribution(string text)
         {
             CreateMessage(text);
             Log.Debug("Contribution created");
         }
 
-        public string GetMessage()
+        public DateTime MessageTimeStamp { get; private set; }
+        public string Text { get; private set; }
+
+        public override string ToString()
         {
-            return text + " @ " + messageTimeStamp;
+            return Text + " @ " + MessageTimeStamp;
         }
 
         private void CreateMessage(string messageText)
@@ -33,14 +33,14 @@ namespace SharedClasses.Domain
 
         private void SetTextOfMessage(string messageText)
         {
-            text = messageText;
-            Log.Debug("Contribution text set: " + text);
+            Text = messageText;
+            Log.Debug("Contribution text set: " + Text);
         }
 
         private void SetTimeStampOfMessage()
         {
-            messageTimeStamp = DateTime.Now;
-            Log.Debug("Time stamp created: " + messageTimeStamp);
+            MessageTimeStamp = DateTime.Now;
+            Log.Debug("Time stamp created: " + MessageTimeStamp);
         }
     }
 }
