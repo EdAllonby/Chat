@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using log4net;
 
 namespace SharedClasses.Domain
@@ -11,14 +12,28 @@ namespace SharedClasses.Domain
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
-        public Contribution(string text)
+        public Contribution(User contributor, string text)
         {
+            Contributor = contributor;
             CreateMessage(text);
             Log.Debug("Contribution created");
         }
 
+        /// <summary>
+        /// The Conversation this Contribution belongs to
+        /// </summary>
+        public Conversation Conversation { get; set; }
+
+        /// <summary>
+        /// The User who sent this Contribution message
+        /// </summary>
+        public User Contributor { get; set; }
+
         public DateTime MessageTimeStamp { get; private set; }
+
         public string Text { get; private set; }
+
+        public string SenderInformation { get { return Contributor.UserName + " sent message at: " + MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")); } }
 
         public override string ToString()
         {

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
         xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders"
-        Title="Chat With People" Height="600" Width="504.507"
+        Title="Chat With People" Height="500" Width="350"
         WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <viewModels:ChatWindowViewModel />
@@ -34,16 +34,16 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True" Margin="10,10,110,10"
+            <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True" Margin="10"
                      Grid.Column="0"
                      Background="AliceBlue"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      ItemsSource="{Binding Messages}">
-                <ListBox.ItemTemplate>
+                    <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="{Binding Text}" />
-                            <TextBlock Text="{Binding MessageTimeStamp}" FontSize="10" Foreground="Gray" />
+                            <TextBlock Text="{Binding SenderInformation}" FontSize="10" Foreground="Gray" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -56,7 +56,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="70" />
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
@@ -72,9 +72,8 @@
                 </TextBox.InputBindings>
             </TextBox>
 
-            <Button
-                Width="50" Height="20"
-                Content="Send" VerticalAlignment="Bottom" Margin="0,0,30,10" Grid.Column="1"
+            <Button Height="20" Width="50"
+                Content="Send" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,10" Grid.Column="1"
                 Command="{Binding SendMessage}" />
         </Grid>
 
