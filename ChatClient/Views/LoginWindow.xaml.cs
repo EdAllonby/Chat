@@ -5,8 +5,8 @@ using log4net;
 namespace ChatClient.Views
 {
     /// <summary>
-    ///     This code behind the WPF window is to add and remove text as the user focuses on textboxes.
-    ///     Currently trying to find a way to move this logic to the View Model.
+    /// This code behind the WPF window is to add and remove text as the user focuses on textboxes.
+    /// Currently trying to find a way to move this logic to the View Model.
     /// </summary>
     public partial class LoginWindow
     {

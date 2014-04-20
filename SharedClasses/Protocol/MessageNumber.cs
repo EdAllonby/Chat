@@ -1,7 +1,7 @@
 ﻿namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Gives definitions for the numbers, avoiding the introduction of Magic Numbers
+    /// Gives definitions for the numbers, avoiding the introduction of Magic Numbers
     /// </summary>
     public static class MessageNumber
     {

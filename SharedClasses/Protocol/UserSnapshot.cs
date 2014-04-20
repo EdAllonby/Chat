@@ -5,7 +5,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Sends a list of currently connected users to the recently logged in Client
+    /// Sends a list of currently connected users to the recently logged in Client
     /// </summary>
     [Serializable]
     public class UserSnapshot : IMessage

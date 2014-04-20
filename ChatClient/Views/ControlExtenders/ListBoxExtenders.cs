@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ChatClient.Windows.ControlExtenders
+namespace ChatClient.Views.ControlExtenders
 {
     /// <summary>
-    ///     This class contains a few useful extenders for the ListBox
+    /// This class contains a few useful extenders for the ListBox
     /// </summary>
     public class ListBoxExtenders : DependencyObject
     {
@@ -14,7 +14,7 @@ namespace ChatClient.Windows.ControlExtenders
                 new UIPropertyMetadata(default(bool), OnAutoScrollToEndChanged));
 
         /// <summary>
-        ///     Returns the value of the AutoScrollToEndProperty
+        /// Returns the value of the AutoScrollToEndProperty
         /// </summary>
         /// <param name="obj">The dependency-object which value should be returned</param>
         /// <returns>The value of the given property</returns>
@@ -24,7 +24,7 @@ namespace ChatClient.Windows.ControlExtenders
         }
 
         /// <summary>
-        ///     Sets the value of the AutoScrollToEndProperty
+        /// Sets the value of the AutoScrollToEndProperty
         /// </summary>
         /// <param name="obj">The dependency-object which value should be set</param>
         /// <param name="value">The value which should be assigned to the AutoScrollToEndProperty</param>
@@ -34,8 +34,8 @@ namespace ChatClient.Windows.ControlExtenders
         }
 
         /// <summary>
-        ///     This method will be called when the AutoScrollToEnd
-        ///     property was changed
+        /// This method will be called when the AutoScrollToEnd
+        /// property was changed
         /// </summary>
         /// <param name="s">The sender (the ListBox)</param>
         /// <param name="e">Some additional information</param>

@@ -4,7 +4,7 @@ using log4net;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Used to serialise and deserialise a <see cref="ContributionNotification" /> object
+    /// Used to serialise and deserialise a <see cref="ContributionNotification" /> object
     /// </summary>
     public class ContributionNotificationSerialiser : ISerialiser<ContributionNotification>
     {

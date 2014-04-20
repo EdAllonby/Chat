@@ -3,7 +3,7 @@
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     This class contains a username packaged as a request a client sends to log in to a server
+    /// This class contains a username packaged as a request a client sends to log in to a server
     /// </summary>
     [Serializable]
     public class LoginRequest : IMessage

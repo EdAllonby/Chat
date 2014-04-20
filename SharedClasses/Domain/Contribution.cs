@@ -4,7 +4,7 @@ using log4net;
 namespace SharedClasses.Domain
 {
     /// <summary>
-    ///     Used as the fundamental object needed to hold a text message and its timestamp
+    /// Used as the fundamental object needed to hold a text message and its timestamp
     /// </summary>
     [Serializable]
     public class Contribution
