@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
 using ChatClient.Annotations;
+using ChatClient.Commands;
 
 namespace ChatClient.ViewModels
 {
@@ -14,5 +17,14 @@ namespace ChatClient.ViewModels
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        #region Close Command
+
+        public ICommand CloseWindow
+        {
+            get { return new RelayCommand(() => Application.Current.MainWindow.Close()); }
+        }
+
+        #endregion
     }
 }

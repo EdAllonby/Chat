@@ -30,7 +30,6 @@ namespace ChatClient
         private readonly int targetPort;
 
         private ConnectedClient client;
-        private IList<User> connectedUsers = new List<User>();
 
         private Client(string userName, IPAddress targetAddress, int targetPort)
         {
@@ -40,6 +39,8 @@ namespace ChatClient
             ConnectToServer();
         }
 
+        public IList<User> ConnectedUsers { get; private set; }
+
         public string UserName { get; private set; }
 
         public event NewContributionHandler OnNewContributionNotification = delegate { };
@@ -47,7 +48,7 @@ namespace ChatClient
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(connectedUsers, EventArgs.Empty);
+            OnNewUser(ConnectedUsers, EventArgs.Empty);
             Log.Info("User changed event fired");
         }
 
@@ -127,7 +128,7 @@ namespace ChatClient
 
         private void ListCurrentUsers(UserSnapshot userSnapshot)
         {
-            connectedUsers = userSnapshot.Users;
+            ConnectedUsers = userSnapshot.Users;
 
             Log.Info("Currently connected users: ");
             foreach (User user in userSnapshot.Users)
@@ -135,7 +136,7 @@ namespace ChatClient
                 Log.Info(user.UserName);
             }
 
-            OnNewUser(connectedUsers, null);
+            OnNewUser(ConnectedUsers, null);
         }
 
         private void UpdateUserCollections(UserNotification userNotification)
@@ -153,9 +154,9 @@ namespace ChatClient
 
         private void AddUser(UserNotification userNotification)
         {
-            connectedUsers.Add(userNotification.User);
+            ConnectedUsers.Add(userNotification.User);
             Log.Info("New user logged in successfully, currently connected users: ");
-            foreach (User user in connectedUsers)
+            foreach (User user in ConnectedUsers)
             {
                 Log.Info("User: " + user.UserName);
             }
@@ -165,14 +166,14 @@ namespace ChatClient
         {
             User disconnectedUser = null;
 
-            foreach (User user in connectedUsers.Where(user => user.UserName == userNotification.User.UserName))
+            foreach (User user in ConnectedUsers.Where(user => user.UserName == userNotification.User.UserName))
             {
                 disconnectedUser = user;
             }
 
             if (disconnectedUser != null)
             {
-                connectedUsers.Remove(disconnectedUser);
+                ConnectedUsers.Remove(disconnectedUser);
                 Log.Info("User " + userNotification.User.UserName + " logged out. Removing from connectedClients list");
             }
         }

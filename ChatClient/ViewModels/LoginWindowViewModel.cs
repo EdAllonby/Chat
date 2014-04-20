@@ -10,7 +10,7 @@ using log4net;
 
 namespace ChatClient.ViewModels
 {
-    internal class LoginWindowViewModel : ViewModel
+    public class LoginWindowViewModel : ViewModel
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
 
@@ -22,6 +22,7 @@ namespace ChatClient.ViewModels
 
         private string ipAddress = "IP Address";
         private string port = "Port";
+        private UserListWindow userListWindow;
         private string username = "Username";
 
         public LoginWindowViewModel()
@@ -86,19 +87,6 @@ namespace ChatClient.ViewModels
             }
         }
 
-        private void ParseDetails()
-        {
-            bool result = loginParser.ParseLogonDetails(username, ipAddress, port);
-            if (result)
-            {
-                AttemptLogin();
-            }
-            else
-            {
-                MessageBox.Show("One or more entries were invalid, double check the formatting");
-            }
-        }
-
         private void AttemptLogin()
         {
             try
@@ -121,8 +109,10 @@ namespace ChatClient.ViewModels
         private void OpenChatWindow()
         {
             chatWindow = new ChatWindow();
+            userListWindow = new UserListWindow();
             Application.Current.MainWindow.Close();
             chatWindow.Show();
+            userListWindow.Show();
         }
 
         #region Commands
@@ -136,22 +126,20 @@ namespace ChatClient.ViewModels
 
         private void LoginToChat()
         {
-            ParseDetails();
-            OpenChatWindow();
+            bool result = loginParser.ParseLogonDetails(username, ipAddress, port);
+            if (result)
+            {
+                AttemptLogin();
+            }
+            else
+            {
+                MessageBox.Show("One or more entries were invalid, double check the formatting");
+            }
         }
 
         private bool CanLogin()
         {
             return !(String.IsNullOrEmpty(Username) || String.IsNullOrEmpty(IPAddress) || String.IsNullOrEmpty(Port));
-        }
-
-        #endregion
-
-        #region Close Command
-
-        public ICommand CloseWindow
-        {
-            get { return new RelayCommand(() => Application.Current.MainWindow.Close()); }
         }
 
         #endregion

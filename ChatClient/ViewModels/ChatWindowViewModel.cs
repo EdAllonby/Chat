@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -13,16 +12,13 @@ namespace ChatClient.ViewModels
         public readonly Client Client = Client.GetInstance();
 
         private string messageToSendToClient;
-        private ObservableCollection<Contribution> messages;
+        private ObservableCollection<Contribution> messages = new ObservableCollection<Contribution>();
         private string title;
-        private ObservableCollection<User> users;
 
         public ChatWindowViewModel()
         {
-            Client.OnNewUser += client_OnNewUser;
-            Client.OnNewContributionNotification += client_OnNewContributionNotification;
+            Client.OnNewContributionNotification += NewContributionNotification;
             Title = "Welcome to chat, " + Client.UserName;
-            Messages = new ObservableCollection<Contribution>();
         }
 
         public String Title
@@ -32,17 +28,6 @@ namespace ChatClient.ViewModels
             {
                 if (value == title) return;
                 title = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<User> Users
-        {
-            get { return users; }
-            set
-            {
-                if (Equals(value, users)) return;
-                users = value;
                 OnPropertyChanged();
             }
         }
@@ -91,12 +76,7 @@ namespace ChatClient.ViewModels
 
         #endregion
 
-        private void client_OnNewUser(IList<User> users, EventArgs e)
-        {
-            Users = new ObservableCollection<User>(users);
-        }
-
-        private void client_OnNewContributionNotification(Contribution contribution, EventArgs e)
+        private void NewContributionNotification(Contribution contribution, EventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() => Messages.Add(contribution));
         }

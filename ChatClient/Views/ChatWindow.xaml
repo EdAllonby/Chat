@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
         xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders"
-        Title="Chat With People" Height="600" Width="800"
+        Title="Chat With People" Height="600" Width="504.507"
         WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <viewModels:ChatWindowViewModel />
@@ -33,33 +33,17 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="200" />
-            </Grid.ColumnDefinitions>
 
-            <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True"
+            <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True" Margin="10,10,110,10"
                      Grid.Column="0"
                      Background="AliceBlue"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      ItemsSource="{Binding Messages}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="{Binding Text}" />
                             <TextBlock Text="{Binding MessageTimeStamp}" FontSize="10" Foreground="Gray" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <ListBox ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
-                     Grid.Column="1"
-                     Margin="10"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding UserName}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -72,7 +56,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
@@ -90,7 +74,7 @@
 
             <Button
                 Width="50" Height="20"
-                Content="Send" Margin="0,90,130,10" Grid.Column="1"
+                Content="Send" VerticalAlignment="Bottom" Margin="0,0,30,10" Grid.Column="1"
                 Command="{Binding SendMessage}" />
         </Grid>
 
