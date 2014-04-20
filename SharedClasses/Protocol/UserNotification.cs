@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Used to show that a new user has logged on
+    /// Used to show that a new user has logged on
     /// </summary>
     [Serializable]
     public class UserNotification : IMessage

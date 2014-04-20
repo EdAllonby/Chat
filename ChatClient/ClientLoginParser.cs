@@ -6,7 +6,7 @@ using log4net;
 namespace ChatClient
 {
     /// <summary>
-    ///     This class is used to Parse the IPAddress, Port and Username with validation
+    /// This class is used to Parse the IPAddress, Port and Username with validation
     /// </summary>
     internal class ClientLoginParser
     {

@@ -5,8 +5,8 @@ using log4net;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     This static class is used define what message gets what identifier,
-    ///     and used to serialise and deserialise Message Identifiers to their related Typed
+    /// This static class is used define what message gets what identifier,
+    /// and used to serialise and deserialise Message Identifiers to their related Typed
     /// </summary>
     public class MessageIdentifierSerialiser
     {

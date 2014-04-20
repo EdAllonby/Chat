@@ -6,7 +6,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Used to Serialise and Deserialise a <see cref="User" /> Domain object.
+    /// Used to Serialise and Deserialise a <see cref="User" /> Domain object.
     /// </summary>
     internal class UserNotificationSerialiser : ISerialiser<UserNotification>
     {

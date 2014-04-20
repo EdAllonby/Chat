@@ -3,7 +3,7 @@
 namespace SharedClasses.Domain
 {
     /// <summary>
-    ///     Models a user in the system.
+    /// Models a user in the system.
     /// </summary>
     [Serializable]
     public sealed class User : IEquatable<User>

@@ -4,7 +4,7 @@ using SharedClasses.Protocol;
 namespace SharedClasses
 {
     /// <summary>
-    ///     Used as a holder of the <see cref="IMessage" /> object when an event is fired so spectators can use it
+    /// Used as a holder of the <see cref="IMessage" /> object when an event is fired so spectators can use it
     /// </summary>
     public class MessageEventArgs : EventArgs
     {

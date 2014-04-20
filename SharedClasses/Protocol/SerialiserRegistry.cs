@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Defines various relationships of message types, identifiers and serialisers
+    /// Defines various relationships of message types, identifiers and serialisers
     /// </summary>
     public static class SerialiserRegistry
     {

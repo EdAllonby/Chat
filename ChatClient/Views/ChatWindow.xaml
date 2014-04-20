@@ -1,8 +1,8 @@
 ﻿<Window x:Class="ChatClient.Views.ChatWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controlExtenders="clr-namespace:ChatClient.Windows.ControlExtenders"
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
+        xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders"
         Title="Chat With People" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
     <Window.DataContext>

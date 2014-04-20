@@ -5,7 +5,7 @@ using log4net;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Used to Serialise and Deserialise a <see cref="LoginRequest" /> object
+    /// Used to Serialise and Deserialise a <see cref="LoginRequest" /> object
     /// </summary>
     public class LoginRequestSerialiser : ISerialiser<LoginRequest>
     {

@@ -6,9 +6,9 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     Used to serialise and deserialise the <see cref="Contribution" /> Domain object
-    ///     Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class to do the main
-    ///     serialisation work
+    /// Used to serialise and deserialise the <see cref="Contribution" /> Domain object
+    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class to do the main
+    /// serialisation work
     /// </summary>
     internal class ContributionSerialiser
     {

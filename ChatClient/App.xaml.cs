@@ -2,21 +2,20 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
-using ChatClient.Views;
 using log4net;
 using log4net.Config;
 
 namespace ChatClient
 {
     /// <summary>
-    ///     Interaction logic for App.xaml
+    /// Interaction logic for App.xaml
     /// </summary>
     public partial class App
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (App));
 
         /// <summary>
-        ///     Method used to get the command line arguments of the project.
+        /// Method used to get the command line arguments of the project.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
@@ -30,7 +29,6 @@ namespace ChatClient
             Console.Title = "Client";
 
             Thread.CurrentThread.Name = "Main Thread";
-            LoginWindow.CommandLineArguments = e.Args;
             base.OnStartup(e);
         }
 

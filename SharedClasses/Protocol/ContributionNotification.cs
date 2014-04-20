@@ -3,7 +3,7 @@
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    ///     A <see cref="Contribution" /> packaged as a Notification for the server to send to clients
+    /// A <see cref="Contribution" /> packaged as a Notification for the server to send to clients
     /// </summary>
     public class ContributionNotification : IMessage
     {
