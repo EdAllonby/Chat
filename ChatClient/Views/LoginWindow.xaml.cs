@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using log4net;
 
 namespace ChatClient.Views
@@ -59,6 +60,14 @@ namespace ChatClient.Views
                     lostFocusTextBox.Text = "Port";
                     Log.Debug("Default text added back to textbox");
                 }
+            }
+        }
+
+        private void MoveWindow(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                DragMove();
             }
         }
     }
