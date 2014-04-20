@@ -83,7 +83,7 @@ namespace ChatClient
 
         public void SendContributionRequestMessage(string message)
         {
-            var clientContribution = new ContributionRequest(new Contribution(message));
+            var clientContribution = new ContributionRequest(new Contribution(client.User, message));
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(clientContribution, client.TcpClient.GetStream());
         }

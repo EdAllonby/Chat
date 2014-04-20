@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectedClient.cs" />
+    <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />

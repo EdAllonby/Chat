@@ -34,12 +34,6 @@ namespace SharedClasses.Protocol
 
         public Contribution Deserialise(NetworkStream networkStream)
         {
-            if (!networkStream.CanRead)
-            {
-                //TODO: What to return
-                return new Contribution(string.Empty);
-            }
-
             var message = (Contribution) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a Contribution object");
             return message;
