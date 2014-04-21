@@ -27,7 +27,7 @@ namespace Server
             {
                 TcpClient client = clientListener.AcceptTcpClient();
                 Log.Info("New client connected");
-                
+
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
                 clientHandler.CreateListenerThreadForClient(client);
