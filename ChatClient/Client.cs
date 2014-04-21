@@ -231,6 +231,8 @@ namespace ChatClient
 
             var serverConnection = new TcpClient();
 
+            serverConnection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
             IAsyncResult asyncResult = serverConnection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
             WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
             try
