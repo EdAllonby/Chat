@@ -14,12 +14,13 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly IList<ConnectedClient> connectedClients = new List<ConnectedClient>();
-        private readonly ConversationFactory conversationFactory = new ConversationFactory();
+        private readonly ContributionIDGenerator contributionIDGenerator = new ContributionIDGenerator();
+        private readonly ConversationIDGenerator conversationIDGenerator = new ConversationIDGenerator();
         private readonly IList<Conversation> conversations = new List<Conversation>();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-        private readonly UserFactory userFactory = new UserFactory();
+        private readonly UserIDGenerator userIDGenerator = new UserIDGenerator();
 
         private int totalListenerThreads = 1;
 
@@ -35,7 +36,7 @@ namespace Server
 
             if (clientLogin != null)
             {
-                User newConnectedUser = userFactory.CreateUser(clientLogin.UserName);
+                User newConnectedUser = userIDGenerator.CreateUser(clientLogin.UserName);
 
                 var newClient = new ConnectedClient(client, newConnectedUser);
 
@@ -149,7 +150,7 @@ namespace Server
             User firstParticipant = connectedClients.FindByUserID(conversationRequest.SenderID).User;
             User secondParticipant = connectedClients.FindByUserID(conversationRequest.ReceiverID).User;
 
-            Conversation newConversation = conversationFactory.CreateConversation(firstParticipant, secondParticipant);
+            Conversation newConversation = conversationIDGenerator.CreateConversation(firstParticipant, secondParticipant);
             conversations.Add(newConversation);
             return newConversation;
         }
@@ -169,11 +170,8 @@ namespace Server
 
         private Contribution CreateContribution(ContributionRequest contributionRequest)
         {
-            var contribution = new Contribution(connectedClients.FindByUserID(contributionRequest.SenderID).User, contributionRequest.Message);
-
             Conversation targetedConversation = conversations.FirstOrDefault(x => x.ID == contributionRequest.ConversationID);
-
-            contribution.Conversation = targetedConversation;
+            Contribution contribution = contributionIDGenerator.CreateConversation(connectedClients.FindByUserID(contributionRequest.SenderID).User, contributionRequest.Message, targetedConversation);
             return contribution;
         }
 
@@ -182,16 +180,16 @@ namespace Server
             contribution.Conversation.Contributions.Add(contribution);
         }
 
-        private void SendContributionNotificationToParticipants(Contribution message)
+        private void SendContributionNotificationToParticipants(Contribution contribution)
         {
             ISerialiser contributionNotificationSerialiser = serialiserFactory.GetSerialiser<ContributionNotification>();
 
-            var contributionNotification = new ContributionNotification(message.Conversation.ID, message.Contributor.ID, message.Text);
+            var contributionNotification = new ContributionNotification(contribution.ID, contribution.Conversation.ID, contribution.Contributor.ID, contribution.Text);
 
-            ConnectedClient senderClient = connectedClients.FindByUserID(message.Conversation.FirstParticipant.ID);
+            ConnectedClient senderClient = connectedClients.FindByUserID(contribution.Conversation.FirstParticipant.ID);
             contributionNotificationSerialiser.Serialise(contributionNotification, senderClient.TcpClient.GetStream());
 
-            ConnectedClient receiverClient = connectedClients.FindByUserID(message.Conversation.SecondParticipant.ID);
+            ConnectedClient receiverClient = connectedClients.FindByUserID(contribution.Conversation.SecondParticipant.ID);
             contributionNotificationSerialiser.Serialise(contributionNotification, receiverClient.TcpClient.GetStream());
         }
 

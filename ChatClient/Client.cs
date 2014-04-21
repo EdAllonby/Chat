@@ -156,13 +156,10 @@ namespace ChatClient
             OnNewConversationNotification(conversation);
         }
 
-        private Contribution CreateContribution(ContributionNotification contributionRequest)
+        private Contribution CreateContribution(ContributionNotification contributionNotification)
         {
-            var contribution = new Contribution(ConnectedUsers.FindByUserID(contributionRequest.SenderID), contributionRequest.Message);
-
-            Conversation targetedConversation = Conversations.FirstOrDefault(x => x.ID == contributionRequest.ConversationID);
-
-            contribution.Conversation = targetedConversation;
+            Conversation targetedConversation = Conversations.FirstOrDefault(x => x.ID == contributionNotification.ConversationID);
+            var contribution = new Contribution(contributionNotification.ContributionID, ConnectedUsers.FindByUserID(contributionNotification.SenderID), contributionNotification.Message, targetedConversation);
             return contribution;
         }
 
