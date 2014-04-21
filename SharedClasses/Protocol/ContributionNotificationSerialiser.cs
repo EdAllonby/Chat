@@ -17,7 +17,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream stream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionNotificationMessage.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ContributionNotification, stream);
 
             Log.Debug("Waiting for a contribution notification message to serialise");
             serialiser.Serialise(contributionNotificationMessage.Contribution, stream);

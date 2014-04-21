@@ -8,7 +8,7 @@ namespace SharedClasses.Domain
     /// Used as the fundamental object needed to hold a text message and its timestamp
     /// </summary>
     [Serializable]
-    public class Contribution
+    public sealed class Contribution
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
@@ -29,11 +29,21 @@ namespace SharedClasses.Domain
         /// </summary>
         public User Contributor { get; set; }
 
+        /// <summary>
+        /// The time that the message was created
+        /// TODO: Create the time in the server, as user's PCs can have different/incorrect local times
+        /// </summary>
         public DateTime MessageTimeStamp { get; private set; }
 
+        /// <summary>
+        /// The contribution text
+        /// </summary>
         public string Text { get; private set; }
 
-        public string SenderInformation { get { return Contributor.UserName + " sent message at: " + MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")); } }
+        public string SenderInformation
+        {
+            get { return Contributor.UserName + " sent message at: " + MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")); }
+        }
 
         public override string ToString()
         {

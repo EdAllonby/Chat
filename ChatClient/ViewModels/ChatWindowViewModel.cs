@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
@@ -65,7 +63,7 @@ namespace ChatClient.ViewModels
 
         private void NewContributionNotification()
         {
-            Client.SendContributionRequestMessage(MessageToSendToClient);
+            Client.SendContributionRequest(MessageToSendToClient);
 
             messageToSendToClient = string.Empty;
             OnPropertyChanged("MessageToSendToClient");

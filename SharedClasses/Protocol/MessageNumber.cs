@@ -13,5 +13,7 @@
         public const int UserSnapshotRequest = 6;
         public const int UserSnapshot = 7;
         public const int ClientDisconnection = 8;
+        public const int ConversationRequest = 9;
+        public const int ConversationNotification = 10;
     }
 }

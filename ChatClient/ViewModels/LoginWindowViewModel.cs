@@ -16,8 +16,6 @@ namespace ChatClient.ViewModels
 
         private readonly ClientLoginParser loginParser = new ClientLoginParser();
 
-        private ChatWindow chatWindow;
-
         [UsedImplicitly] private Client client;
 
         private string ipAddress = "IP Address";
@@ -92,7 +90,7 @@ namespace ChatClient.ViewModels
             try
             {
                 client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
-                OpenChatWindow();
+                OpenUserListWindow();
             }
             catch (TimeoutException timeoutException)
             {
@@ -106,12 +104,10 @@ namespace ChatClient.ViewModels
             }
         }
 
-        private void OpenChatWindow()
+        private void OpenUserListWindow()
         {
-            chatWindow = new ChatWindow();
             userListWindow = new UserListWindow();
             Application.Current.MainWindow.Close();
-            chatWindow.Show();
             userListWindow.Show();
         }
 

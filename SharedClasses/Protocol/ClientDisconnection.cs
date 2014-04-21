@@ -1,6 +1,9 @@
 ﻿namespace SharedClasses.Protocol
 {
-    internal class ClientDisconnection : IMessage
+    /// <summary>
+    /// Used to describe a client disconnection
+    /// </summary>
+    internal sealed class ClientDisconnection : IMessage
     {
         public ClientDisconnection()
         {

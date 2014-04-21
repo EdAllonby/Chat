@@ -18,10 +18,9 @@ namespace SharedClasses.Protocol
         public void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.Identifier, stream);
-            ContributionRequest message = contributionRequest;
 
             Log.Debug("Waiting for contribution request message to serialise");
-            serialiser.Serialise(message.Contribution, stream);
+            serialiser.Serialise(contributionRequest.Contribution, stream);
             Log.Info("Contribution request message serialised");
         }
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SharedClasses.Domain
 {
@@ -22,11 +24,28 @@ namespace SharedClasses.Domain
             this.id = id;
         }
 
+        /// <summary>
+        /// The name of the User
+        /// </summary>
         public string UserName { get; private set; }
 
+        /// <summary>
+        /// A Unique number used to identify the User.
+        /// </summary>
         public int ID
         {
             get { return id; }
+        }
+
+        /// <summary>
+        /// Find a User in a List of Users by its ID.
+        /// </summary>
+        /// <param name="connectedUserCollection">The collection of Users that will be searched</param>
+        /// <param name="userID">The User ID to find in the User collection</param>
+        /// <returns>The User that matches the User ID</returns>
+        public static User FindByUserID(IEnumerable<User> connectedUserCollection, int userID)
+        {
+            return connectedUserCollection.FirstOrDefault(s => s.ID.Equals(userID));
         }
 
         #region IEquatable Implementation
@@ -40,15 +59,8 @@ namespace SharedClasses.Domain
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
             return obj is User && Equals((User) obj);
         }
 
@@ -56,7 +68,7 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (id*397) ^ UserName.GetHashCode();
+                return (id*397) ^ (UserName != null ? UserName.GetHashCode() : 0);
             }
         }
 
