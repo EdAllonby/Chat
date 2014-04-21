@@ -1629,24 +1629,1610 @@
         isAbstract="false"
         isLeaf="false"
         isReentrant="false">
+        <ownedCommentsInternal>
+          <comment
+            Id="b29b019e-3991-4be0-947e-d36557ad5e0d">
+            <body>Create conversation request message with Client's ID and Receiver's ID.</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="353920b5-eecb-4463-b7f4-332a8c76c072"
+                LastKnownName="BehaviorExecutionSpecification1"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+          <comment
+            Id="84f5fb38-5b0f-40e9-9ffa-d86795ef81e4">
+            <body>Make sure that the new Conversation request is unique in the system. If it isn't unique, there's no need to create it.</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="f333ac6e-ca84-4f00-9672-ab9ac1df47d9"
+                LastKnownName="BehaviorExecutionSpecification3"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+          <comment
+            Id="7d8d0798-2a28-4eaa-ba6b-fe8c743eef6d">
+            <body>Build the conversation object using the server's ConnectedClients list and add conversation to Server's list of Conversations</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="6313df88-8ab0-414a-b2c6-fbb0ebd75ffe"
+                LastKnownName="BehaviorExecutionSpecification4"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+          <comment
+            Id="3050c344-9013-42e1-8e4a-492703eda840">
+            <body>Send the built conversation (now with a unique ID created by the last step) to the sender and receiver.
+</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="6109d404-948c-422c-b168-5483a0197885"
+                LastKnownName="BehaviorExecutionSpecification2"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+          <comment
+            Id="dc3c0969-f460-47e6-afcc-67a90071ac90">
+            <body>Build Conversation from Conversation Notification. Conversation notification contains Conversation ID, sender ID and Receiver ID.</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="c9a00c76-ad78-4d55-90f9-73837ba31abf"
+                LastKnownName="BehaviorExecutionSpecification9"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+          <comment
+            Id="d2780bd4-13c7-4da3-a2b0-43f3f85fee2f">
+            <body>Clients also have a conversation list which is relevant to them. This means 1 client can have many ongoing conversations.</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="12dba9e4-b35e-46aa-916d-6f86363dcd98"
+                LastKnownName="BehaviorExecutionSpecification11"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+          <comment
+            Id="3da59c16-07e8-4bfd-bbe0-e43fe4a4c9d6">
+            <body>In order for the View to know that a new Conversation has been added, an Event is fired.</body>
+            <annotatedElements>
+              <behaviorExecutionSpecificationMoniker
+                Id="974efd20-d18f-43a6-ac45-8d34c85f834f"
+                LastKnownName="BehaviorExecutionSpecification13"
+                LastKnownLocation="Chat Program Models.uml" />
+            </annotatedElements>
+          </comment>
+        </ownedCommentsInternal>
+        <fragments>
+          <messageOccurrenceSpecification
+            Id="d253ce65-9fa0-42ff-aa70-e2c279a17e1c"
+            name="MessageOccurrenceSpecification1">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="353920b5-eecb-4463-b7f4-332a8c76c072"
+            name="BehaviorExecutionSpecification1">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="edb17140-6141-4092-993f-002395bb46d4"
+                LastKnownName="ExecutionOccurrenceSpecification2"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="7ee4d6d7-316d-4161-a200-9204f5b4a1a9"
+                LastKnownName="ExecutionOccurrenceSpecification1"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="f13ef900-6769-43a6-99a8-ad76573f0221"
+                LastKnownName="MessageOccurrenceSpecification2"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="1b9f8d1e-617a-434e-b722-6320e2b9ae59"
+                LastKnownName="MessageOccurrenceSpecification3"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="7ee4d6d7-316d-4161-a200-9204f5b4a1a9"
+            name="ExecutionOccurrenceSpecification1">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="251a9e9e-8e6c-46da-ab76-d240fb93a8f7"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="f13ef900-6769-43a6-99a8-ad76573f0221"
+            name="MessageOccurrenceSpecification2">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="6109d404-948c-422c-b168-5483a0197885"
+            name="BehaviorExecutionSpecification2">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="2a4d2061-e974-472d-835b-d5ed23bfe500"
+                LastKnownName="ExecutionOccurrenceSpecification4"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="11989c52-91f8-423e-91aa-d4a2425bfa90"
+                LastKnownName="ExecutionOccurrenceSpecification3"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="a57421f6-7232-4575-b46b-4d80ec21e7c4"
+                LastKnownName="MessageOccurrenceSpecification4"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="62922031-4ad5-4bcd-8629-a9a320c5b3ab"
+                LastKnownName="MessageOccurrenceSpecification5"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="0b15309c-5d1c-462e-9466-fbb7c59e004d"
+                LastKnownName="ExecutionOccurrenceSpecification5"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="df4b49e7-3b73-49fa-bd02-773d4fb7ecfc"
+                LastKnownName="ExecutionOccurrenceSpecification6"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="3856e4d1-db2b-4f92-b8e1-bf835b421cd7"
+                LastKnownName="MessageOccurrenceSpecification7"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="d7ce5c5a-4502-4089-b72f-ce038d4b0ff4"
+                LastKnownName="ExecutionOccurrenceSpecification7"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="3b9f856d-3be7-49ee-a14c-9085c4aba85e"
+                LastKnownName="ExecutionOccurrenceSpecification8"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="dd030ec6-9e64-4ced-9aa8-f57f360542e7"
+                LastKnownName="MessageOccurrenceSpecification12"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="8aa3c8b2-e37d-451d-b231-ee0033541c81"
+                LastKnownName="MessageOccurrenceSpecification14"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="11989c52-91f8-423e-91aa-d4a2425bfa90"
+            name="ExecutionOccurrenceSpecification3">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="c6b5bd00-d259-47d5-892d-e653631fb745"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="1b9f8d1e-617a-434e-b722-6320e2b9ae59"
+            name="MessageOccurrenceSpecification3">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="a57421f6-7232-4575-b46b-4d80ec21e7c4"
+            name="MessageOccurrenceSpecification4">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="edb17140-6141-4092-993f-002395bb46d4"
+            name="ExecutionOccurrenceSpecification2">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="abc08b56-8cac-4b02-9d64-c68873524b4a"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="62922031-4ad5-4bcd-8629-a9a320c5b3ab"
+            name="MessageOccurrenceSpecification5">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="f333ac6e-ca84-4f00-9672-ab9ac1df47d9"
+            name="BehaviorExecutionSpecification3">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="df4b49e7-3b73-49fa-bd02-773d4fb7ecfc"
+                LastKnownName="ExecutionOccurrenceSpecification6"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="0b15309c-5d1c-462e-9466-fbb7c59e004d"
+                LastKnownName="ExecutionOccurrenceSpecification5"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="0cc46996-fa76-45d0-a0fb-c5bc4e2b59de"
+                LastKnownName="MessageOccurrenceSpecification6"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="0b15309c-5d1c-462e-9466-fbb7c59e004d"
+            name="ExecutionOccurrenceSpecification5">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="14bff10b-2b3c-43bc-be98-122ddf8c38d5"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="0cc46996-fa76-45d0-a0fb-c5bc4e2b59de"
+            name="MessageOccurrenceSpecification6">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="df4b49e7-3b73-49fa-bd02-773d4fb7ecfc"
+            name="ExecutionOccurrenceSpecification6">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="b61d8ea1-3bb1-43e3-8e1b-e5bb75bb0e8c"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="3856e4d1-db2b-4f92-b8e1-bf835b421cd7"
+            name="MessageOccurrenceSpecification7">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="6313df88-8ab0-414a-b2c6-fbb0ebd75ffe"
+            name="BehaviorExecutionSpecification4">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="3b9f856d-3be7-49ee-a14c-9085c4aba85e"
+                LastKnownName="ExecutionOccurrenceSpecification8"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="d7ce5c5a-4502-4089-b72f-ce038d4b0ff4"
+                LastKnownName="ExecutionOccurrenceSpecification7"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="e1bce151-bf86-4492-a093-a3ec28d4d284"
+                LastKnownName="MessageOccurrenceSpecification8"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="d7ce5c5a-4502-4089-b72f-ce038d4b0ff4"
+            name="ExecutionOccurrenceSpecification7">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="87da128d-d437-45a0-a998-6331738e7e11"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="e1bce151-bf86-4492-a093-a3ec28d4d284"
+            name="MessageOccurrenceSpecification8">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="3b9f856d-3be7-49ee-a14c-9085c4aba85e"
+            name="ExecutionOccurrenceSpecification8">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="930289b6-b750-4569-a76f-3b80b0031561"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="950b6dd6-4cab-427e-ad90-597a06dbb8c0"
+            name="BehaviorExecutionSpecification6">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="ccf1e304-94eb-4290-b385-3e25963b6d4e"
+                LastKnownName="ExecutionOccurrenceSpecification12"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="11de8f53-7d56-4a36-b5dc-978ded4f2752"
+                LastKnownName="ExecutionOccurrenceSpecification11"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="ac8ed59c-fd8e-4eda-85fc-d473ff5394ef"
+                LastKnownName="MessageOccurrenceSpecification13"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="b395c5bf-8970-4c19-982b-df6953585700"
+                LastKnownName="MessageOccurrenceSpecification16"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="a93e216c-bb5e-41e4-9c7c-00ffb82c0d32"
+                LastKnownName="ExecutionOccurrenceSpecification15"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="20ce4455-d0c8-4c0c-8e23-1b2987c7035a"
+                LastKnownName="ExecutionOccurrenceSpecification16"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="020a0ae6-d905-4d8b-810d-cddfa49be3e7"
+                LastKnownName="MessageOccurrenceSpecification20"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="c7cf68bf-b03d-417f-a27f-ca5777e81b53"
+                LastKnownName="ExecutionOccurrenceSpecification19"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="83520f00-3c78-45ef-b960-63bfb7385278"
+                LastKnownName="ExecutionOccurrenceSpecification20"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="31496e2b-2f2d-4fb0-9699-a55ac90d0e78"
+                LastKnownName="MessageOccurrenceSpecification24"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="13c5212e-31f1-4222-891f-b6d8fdc7df4c"
+                LastKnownName="ExecutionOccurrenceSpecification23"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="17db5e6f-ff8f-4bd2-b310-2d4ba75bc2cb"
+                LastKnownName="ExecutionOccurrenceSpecification24"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="11de8f53-7d56-4a36-b5dc-978ded4f2752"
+            name="ExecutionOccurrenceSpecification11">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="82998596-f8f1-4d10-8183-8820780b5a6f"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="ac8ed59c-fd8e-4eda-85fc-d473ff5394ef"
+            name="MessageOccurrenceSpecification13">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="dd030ec6-9e64-4ced-9aa8-f57f360542e7"
+            name="MessageOccurrenceSpecification12">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="b395c5bf-8970-4c19-982b-df6953585700"
+            name="MessageOccurrenceSpecification16">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="e3fe8a07-f942-4a63-9d00-9ecfc32c9977"
+            name="BehaviorExecutionSpecification7">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="e7b63a7b-4423-4fb0-a0f1-8e4c2cbc3c45"
+                LastKnownName="ExecutionOccurrenceSpecification14"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="f5f59b66-251b-4984-853e-78cd5c59b30a"
+                LastKnownName="ExecutionOccurrenceSpecification13"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="bce81663-2b49-4276-85a1-dd39f4afc789"
+                LastKnownName="MessageOccurrenceSpecification15"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="8c03a6a4-fd70-47b3-acfb-3e9515c4bfc2"
+                LastKnownName="MessageOccurrenceSpecification18"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="f938291c-b3d2-42be-ad81-f4e023121954"
+                LastKnownName="ExecutionOccurrenceSpecification17"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="21dc228d-6ea9-40ab-afa4-fd0a78b91d6a"
+                LastKnownName="ExecutionOccurrenceSpecification18"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="2bb194c8-89f4-4b6e-bee4-3ca03043de0f"
+                LastKnownName="MessageOccurrenceSpecification22"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="dbbde102-f191-4bf8-b05c-ae42cb9fe04a"
+                LastKnownName="ExecutionOccurrenceSpecification21"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="c9982a88-c361-4eeb-9559-89585702b476"
+                LastKnownName="ExecutionOccurrenceSpecification22"
+                LastKnownLocation="Chat Program Models.uml" />
+              <messageOccurrenceSpecificationMoniker
+                Id="830750aa-c764-4e2d-bb09-74fff1b811ff"
+                LastKnownName="MessageOccurrenceSpecification26"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="7c0bc865-57b6-4332-8ffc-e4272680ce6f"
+                LastKnownName="ExecutionOccurrenceSpecification25"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="f805891b-fb63-403d-8ece-c46f67d8441f"
+                LastKnownName="ExecutionOccurrenceSpecification26"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="f5f59b66-251b-4984-853e-78cd5c59b30a"
+            name="ExecutionOccurrenceSpecification13">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="c3dc9cb3-3ff5-4f67-b816-03a6dbf8bfde"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="8aa3c8b2-e37d-451d-b231-ee0033541c81"
+            name="MessageOccurrenceSpecification14">
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="bce81663-2b49-4276-85a1-dd39f4afc789"
+            name="MessageOccurrenceSpecification15">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="75dc3e59-a392-4722-b066-ca08ef154f4d"
+            name="BehaviorExecutionSpecification8">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="20ce4455-d0c8-4c0c-8e23-1b2987c7035a"
+                LastKnownName="ExecutionOccurrenceSpecification16"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="a93e216c-bb5e-41e4-9c7c-00ffb82c0d32"
+                LastKnownName="ExecutionOccurrenceSpecification15"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="69687b01-eac6-476f-a542-242a4b536e38"
+                LastKnownName="MessageOccurrenceSpecification17"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="a93e216c-bb5e-41e4-9c7c-00ffb82c0d32"
+            name="ExecutionOccurrenceSpecification15">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="a68f262f-5ce0-4bdc-9a29-67f25074e120"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="69687b01-eac6-476f-a542-242a4b536e38"
+            name="MessageOccurrenceSpecification17">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="8c03a6a4-fd70-47b3-acfb-3e9515c4bfc2"
+            name="MessageOccurrenceSpecification18">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="c9a00c76-ad78-4d55-90f9-73837ba31abf"
+            name="BehaviorExecutionSpecification9">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="21dc228d-6ea9-40ab-afa4-fd0a78b91d6a"
+                LastKnownName="ExecutionOccurrenceSpecification18"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="f938291c-b3d2-42be-ad81-f4e023121954"
+                LastKnownName="ExecutionOccurrenceSpecification17"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="3c23b650-2e22-436f-9510-1c4182ab054c"
+                LastKnownName="MessageOccurrenceSpecification19"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="f938291c-b3d2-42be-ad81-f4e023121954"
+            name="ExecutionOccurrenceSpecification17">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="d5cbd584-4559-4878-83f6-856bfeeeccb6"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="3c23b650-2e22-436f-9510-1c4182ab054c"
+            name="MessageOccurrenceSpecification19">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="20ce4455-d0c8-4c0c-8e23-1b2987c7035a"
+            name="ExecutionOccurrenceSpecification16">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="6bb42364-518b-4867-b9ea-e0dd66718517"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="020a0ae6-d905-4d8b-810d-cddfa49be3e7"
+            name="MessageOccurrenceSpecification20">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="21dc228d-6ea9-40ab-afa4-fd0a78b91d6a"
+            name="ExecutionOccurrenceSpecification18">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="de97823e-ffe8-4555-baaf-60f01c28ea03"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="0cfcdf43-b173-43fe-952c-5b9074e1e582"
+            name="BehaviorExecutionSpecification10">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="83520f00-3c78-45ef-b960-63bfb7385278"
+                LastKnownName="ExecutionOccurrenceSpecification20"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="c7cf68bf-b03d-417f-a27f-ca5777e81b53"
+                LastKnownName="ExecutionOccurrenceSpecification19"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="d4d137b8-1d17-4afe-ab4d-91593a30a113"
+                LastKnownName="MessageOccurrenceSpecification21"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="c7cf68bf-b03d-417f-a27f-ca5777e81b53"
+            name="ExecutionOccurrenceSpecification19">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="e74a8118-ca38-41f7-ad55-5513c8629391"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="d4d137b8-1d17-4afe-ab4d-91593a30a113"
+            name="MessageOccurrenceSpecification21">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="2a4d2061-e974-472d-835b-d5ed23bfe500"
+            name="ExecutionOccurrenceSpecification4">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="17ab6e2c-4fcd-47dd-8fe2-b22989bbde0b"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+                LastKnownName="Server"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="2bb194c8-89f4-4b6e-bee4-3ca03043de0f"
+            name="MessageOccurrenceSpecification22">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="12dba9e4-b35e-46aa-916d-6f86363dcd98"
+            name="BehaviorExecutionSpecification11">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="c9982a88-c361-4eeb-9559-89585702b476"
+                LastKnownName="ExecutionOccurrenceSpecification22"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="dbbde102-f191-4bf8-b05c-ae42cb9fe04a"
+                LastKnownName="ExecutionOccurrenceSpecification21"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="dfd99296-7ecc-49b6-a65f-3915a485c392"
+                LastKnownName="MessageOccurrenceSpecification23"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="dbbde102-f191-4bf8-b05c-ae42cb9fe04a"
+            name="ExecutionOccurrenceSpecification21">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="7dbedcb1-7ce3-4d72-b18d-1865555cf75d"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="dfd99296-7ecc-49b6-a65f-3915a485c392"
+            name="MessageOccurrenceSpecification23">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="83520f00-3c78-45ef-b960-63bfb7385278"
+            name="ExecutionOccurrenceSpecification20">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="61953152-2257-41d5-888d-258cda20ef75"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="31496e2b-2f2d-4fb0-9699-a55ac90d0e78"
+            name="MessageOccurrenceSpecification24">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="c9982a88-c361-4eeb-9559-89585702b476"
+            name="ExecutionOccurrenceSpecification22">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="2579eadb-fc65-47f7-aa06-212d390c2d08"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="15bab765-ee96-49f3-b297-0c5055b8f974"
+            name="BehaviorExecutionSpecification12">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="17db5e6f-ff8f-4bd2-b310-2d4ba75bc2cb"
+                LastKnownName="ExecutionOccurrenceSpecification24"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="13c5212e-31f1-4222-891f-b6d8fdc7df4c"
+                LastKnownName="ExecutionOccurrenceSpecification23"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="450e1791-ef3c-440e-8c72-821eb1983659"
+                LastKnownName="MessageOccurrenceSpecification25"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="13c5212e-31f1-4222-891f-b6d8fdc7df4c"
+            name="ExecutionOccurrenceSpecification23">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="2b212509-089e-4da4-89c6-8f5fc32045cb"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="450e1791-ef3c-440e-8c72-821eb1983659"
+            name="MessageOccurrenceSpecification25">
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="830750aa-c764-4e2d-bb09-74fff1b811ff"
+            name="MessageOccurrenceSpecification26">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <behaviorExecutionSpecification
+            Id="974efd20-d18f-43a6-ac45-8d34c85f834f"
+            name="BehaviorExecutionSpecification13">
+            <coveredLifelines>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </coveredLifelines>
+            <finish>
+              <executionOccurrenceSpecificationMoniker
+                Id="f805891b-fb63-403d-8ece-c46f67d8441f"
+                LastKnownName="ExecutionOccurrenceSpecification26"
+                LastKnownLocation="Chat Program Models.uml" />
+            </finish>
+            <start>
+              <executionOccurrenceSpecificationMoniker
+                Id="7c0bc865-57b6-4332-8ffc-e4272680ce6f"
+                LastKnownName="ExecutionOccurrenceSpecification25"
+                LastKnownLocation="Chat Program Models.uml" />
+            </start>
+            <nestedOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="3c7248f4-8ea6-480f-aae9-828528ee521a"
+                LastKnownName="MessageOccurrenceSpecification27"
+                LastKnownLocation="Chat Program Models.uml" />
+            </nestedOccurrences>
+          </behaviorExecutionSpecification>
+          <executionOccurrenceSpecification
+            Id="7c0bc865-57b6-4332-8ffc-e4272680ce6f"
+            name="ExecutionOccurrenceSpecification25">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="8e2fedc4-03ce-43f0-b0e4-d637172504b4"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <messageOccurrenceSpecification
+            Id="3c7248f4-8ea6-480f-aae9-828528ee521a"
+            name="MessageOccurrenceSpecification27">
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </messageOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="17db5e6f-ff8f-4bd2-b310-2d4ba75bc2cb"
+            name="ExecutionOccurrenceSpecification24">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="0f2cf9e5-2e2f-41af-b950-49bd966a33a1"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="ccf1e304-94eb-4290-b385-3e25963b6d4e"
+            name="ExecutionOccurrenceSpecification12">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="29fa3675-2c51-4179-84fd-7b6ea61024e8"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+                LastKnownName="Sender Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="f805891b-fb63-403d-8ece-c46f67d8441f"
+            name="ExecutionOccurrenceSpecification26">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="887c28cd-1a18-4527-8c4e-0706bd37256e"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+          <executionOccurrenceSpecification
+            Id="e7b63a7b-4423-4fb0-a0f1-8e4c2cbc3c45"
+            name="ExecutionOccurrenceSpecification14">
+            <event>
+              <executionOccurrenceSpecificationReferencesEvent>
+                <executionEventMoniker
+                  Id="4ef3df4e-9d9b-4f6a-a181-ce15c2aa2e72"
+                  LastKnownName="ExecutionEvent"
+                  LastKnownLocation="Chat Program Models.uml" />
+              </executionOccurrenceSpecificationReferencesEvent>
+            </event>
+            <covered>
+              <lifelineMoniker
+                Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+                LastKnownName="Receiver Client"
+                LastKnownLocation="Chat Program Models.uml" />
+            </covered>
+          </executionOccurrenceSpecification>
+        </fragments>
         <lifelines>
           <lifeline
             Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
             name="Sender Client"
             isActor="false"
-            lifelineDisplayName="Sender Client" />
+            lifelineDisplayName="Sender Client">
+            <topLevelOccurrences>
+              <messageOccurrenceSpecificationMoniker
+                Id="d253ce65-9fa0-42ff-aa70-e2c279a17e1c"
+                LastKnownName="MessageOccurrenceSpecification1"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="7ee4d6d7-316d-4161-a200-9204f5b4a1a9"
+                LastKnownName="ExecutionOccurrenceSpecification1"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="edb17140-6141-4092-993f-002395bb46d4"
+                LastKnownName="ExecutionOccurrenceSpecification2"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="11de8f53-7d56-4a36-b5dc-978ded4f2752"
+                LastKnownName="ExecutionOccurrenceSpecification11"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="ccf1e304-94eb-4290-b385-3e25963b6d4e"
+                LastKnownName="ExecutionOccurrenceSpecification12"
+                LastKnownLocation="Chat Program Models.uml" />
+            </topLevelOccurrences>
+          </lifeline>
           <lifeline
             Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
             name="Server"
             isActor="false"
-            lifelineDisplayName="Server" />
+            lifelineDisplayName="Server">
+            <topLevelOccurrences>
+              <executionOccurrenceSpecificationMoniker
+                Id="11989c52-91f8-423e-91aa-d4a2425bfa90"
+                LastKnownName="ExecutionOccurrenceSpecification3"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="2a4d2061-e974-472d-835b-d5ed23bfe500"
+                LastKnownName="ExecutionOccurrenceSpecification4"
+                LastKnownLocation="Chat Program Models.uml" />
+            </topLevelOccurrences>
+          </lifeline>
           <lifeline
             Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
             name="Receiver Client"
             isActor="false"
-            lifelineDisplayName="Receiver Client" />
+            lifelineDisplayName="Receiver Client">
+            <topLevelOccurrences>
+              <executionOccurrenceSpecificationMoniker
+                Id="f5f59b66-251b-4984-853e-78cd5c59b30a"
+                LastKnownName="ExecutionOccurrenceSpecification13"
+                LastKnownLocation="Chat Program Models.uml" />
+              <executionOccurrenceSpecificationMoniker
+                Id="e7b63a7b-4423-4fb0-a0f1-8e4c2cbc3c45"
+                LastKnownName="ExecutionOccurrenceSpecification14"
+                LastKnownLocation="Chat Program Models.uml" />
+            </topLevelOccurrences>
+          </lifeline>
         </lifelines>
+        <messages>
+          <message
+            Id="890097bc-d27b-4a58-9c90-93beaff4b312"
+            name="SendConversationRequest(int receiverID)"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="d253ce65-9fa0-42ff-aa70-e2c279a17e1c"
+                LastKnownName="MessageOccurrenceSpecification1"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="f13ef900-6769-43a6-99a8-ad76573f0221"
+                LastKnownName="MessageOccurrenceSpecification2"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="147ebd2e-98eb-48fc-ba62-3393e63ee6bc"
+            name="            serialiser.Serialise();"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="false">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="1b9f8d1e-617a-434e-b722-6320e2b9ae59"
+                LastKnownName="MessageOccurrenceSpecification3"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="a57421f6-7232-4575-b46b-4d80ec21e7c4"
+                LastKnownName="MessageOccurrenceSpecification4"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="fd982bf6-3b75-4680-8cb7-b5830bb0631c"
+            name="CheckConversationIsUnique(conversationRequest)"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="62922031-4ad5-4bcd-8629-a9a320c5b3ab"
+                LastKnownName="MessageOccurrenceSpecification5"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="0cc46996-fa76-45d0-a0fb-c5bc4e2b59de"
+                LastKnownName="MessageOccurrenceSpecification6"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="0bf08c92-6b37-4488-8cd7-c1d0fa2d3f22"
+            name="AddConversation(conversationRequest)"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="3856e4d1-db2b-4f92-b8e1-bf835b421cd7"
+                LastKnownName="MessageOccurrenceSpecification7"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="e1bce151-bf86-4492-a093-a3ec28d4d284"
+                LastKnownName="MessageOccurrenceSpecification8"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="e2df0e25-50f3-482d-a7c1-03af2757dccc"
+            name="SendConversationNotification(conversation);"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="false">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="dd030ec6-9e64-4ced-9aa8-f57f360542e7"
+                LastKnownName="MessageOccurrenceSpecification12"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="ac8ed59c-fd8e-4eda-85fc-d473ff5394ef"
+                LastKnownName="MessageOccurrenceSpecification13"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="fda134bf-a935-4141-996a-5d9f4d1183ba"
+            name="SendConversationNotification(conversation);"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="false">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="8aa3c8b2-e37d-451d-b231-ee0033541c81"
+                LastKnownName="MessageOccurrenceSpecification14"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="bce81663-2b49-4276-85a1-dd39f4afc789"
+                LastKnownName="MessageOccurrenceSpecification15"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="2333a6bc-caf0-4664-b38e-48d7d93b7566"
+            name="CreateContribution"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="b395c5bf-8970-4c19-982b-df6953585700"
+                LastKnownName="MessageOccurrenceSpecification16"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="69687b01-eac6-476f-a542-242a4b536e38"
+                LastKnownName="MessageOccurrenceSpecification17"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="02699a1c-33a8-4b2d-8144-924105a0c5d3"
+            name="CreateContribution"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="8c03a6a4-fd70-47b3-acfb-3e9515c4bfc2"
+                LastKnownName="MessageOccurrenceSpecification18"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="3c23b650-2e22-436f-9510-1c4182ab054c"
+                LastKnownName="MessageOccurrenceSpecification19"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="f4bb652b-a8b9-4b68-ae42-4d7068309424"
+            name="AddContributionToConversation"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="020a0ae6-d905-4d8b-810d-cddfa49be3e7"
+                LastKnownName="MessageOccurrenceSpecification20"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="d4d137b8-1d17-4afe-ab4d-91593a30a113"
+                LastKnownName="MessageOccurrenceSpecification21"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="f03fe69b-24cd-4d4b-987b-cd7f80966a5d"
+            name="AddContributionToConversation"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="2bb194c8-89f4-4b6e-bee4-3ca03043de0f"
+                LastKnownName="MessageOccurrenceSpecification22"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="dfd99296-7ecc-49b6-a65f-3915a485c392"
+                LastKnownName="MessageOccurrenceSpecification23"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="0c1319ac-17e8-4bbe-88a1-cd4d32ff6769"
+            name="NotifyClientOfNewNotification"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="31496e2b-2f2d-4fb0-9699-a55ac90d0e78"
+                LastKnownName="MessageOccurrenceSpecification24"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="450e1791-ef3c-440e-8c72-821eb1983659"
+                LastKnownName="MessageOccurrenceSpecification25"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+          <message
+            Id="5ec65da2-1fad-48bb-bf09-7b243e0530a0"
+            name="NotifyClientOfNewNotification"
+            messageKind="Complete"
+            messageSort="AsynchCall"
+            createSelfMessage="true">
+            <sendEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="830750aa-c764-4e2d-bb09-74fff1b811ff"
+                LastKnownName="MessageOccurrenceSpecification26"
+                LastKnownLocation="Chat Program Models.uml" />
+            </sendEvent>
+            <receiveEvent>
+              <messageOccurrenceSpecificationMoniker
+                Id="3c7248f4-8ea6-480f-aae9-828528ee521a"
+                LastKnownName="MessageOccurrenceSpecification27"
+                LastKnownLocation="Chat Program Models.uml" />
+            </receiveEvent>
+          </message>
+        </messages>
       </interaction>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="251a9e9e-8e6c-46da-ab76-d240fb93a8f7"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="abc08b56-8cac-4b02-9d64-c68873524b4a"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="c6b5bd00-d259-47d5-892d-e653631fb745"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="17ab6e2c-4fcd-47dd-8fe2-b22989bbde0b"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="14bff10b-2b3c-43bc-be98-122ddf8c38d5"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="b61d8ea1-3bb1-43e3-8e1b-e5bb75bb0e8c"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="87da128d-d437-45a0-a998-6331738e7e11"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="930289b6-b750-4569-a76f-3b80b0031561"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="c3dc9cb3-3ff5-4f67-b816-03a6dbf8bfde"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="4ef3df4e-9d9b-4f6a-a181-ce15c2aa2e72"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="82998596-f8f1-4d10-8183-8820780b5a6f"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="29fa3675-2c51-4179-84fd-7b6ea61024e8"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="a68f262f-5ce0-4bdc-9a29-67f25074e120"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="6bb42364-518b-4867-b9ea-e0dd66718517"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="d5cbd584-4559-4878-83f6-856bfeeeccb6"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="de97823e-ffe8-4555-baaf-60f01c28ea03"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="e74a8118-ca38-41f7-ad55-5513c8629391"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="61953152-2257-41d5-888d-258cda20ef75"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="7dbedcb1-7ce3-4d72-b18d-1865555cf75d"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="2579eadb-fc65-47f7-aa06-212d390c2d08"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="2b212509-089e-4da4-89c6-8f5fc32045cb"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="0f2cf9e5-2e2f-41af-b950-49bd966a33a1"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="8e2fedc4-03ce-43f0-b0e4-d637172504b4"
+        name="ExecutionEvent" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <executionEvent
+        Id="887c28cd-1a18-4527-8c4e-0706bd37256e"
+        name="ExecutionEvent" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType
