@@ -21,7 +21,7 @@ namespace SharedClassesTests.Domain
         [Test]
         public void NoUniqueUserTest()
         {
-            var userFactory = new UserFactory();
+            var userFactory = new UserIDGenerator();
             User user1 = userFactory.CreateUser("User1");
 
             Assert.AreEqual(user1.ID, 0);
@@ -32,7 +32,7 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UserIDIterationTest()
         {
-            var userFactory = new UserFactory();
+            var userFactory = new UserIDGenerator();
             User user = null;
 
             for (int i = 0; i <= 100; i++)

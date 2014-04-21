@@ -12,17 +12,24 @@ namespace SharedClasses.Domain
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
 
-        public Contribution(User contributor, string text)
+        public Contribution(int id, User contributor, string text, Conversation conversation)
         {
+            ID = id;
             Contributor = contributor;
             CreateMessage(text);
+            Conversation = conversation;
             Log.Debug("Contribution created");
         }
 
         /// <summary>
         /// The Conversation this Contribution belongs to
         /// </summary>
-        public Conversation Conversation { get; set; }
+        public Conversation Conversation { get; private set; }
+
+        /// <summary>
+        /// The Unique ID of this Contribution
+        /// </summary>
+        public int ID { get; private set; }
 
         /// <summary>
         /// The User who sent this Contribution message

@@ -2,7 +2,7 @@
 
 namespace SharedClasses
 {
-    public sealed class ConversationFactory
+    public sealed class ConversationIDGenerator
     {
         public int NextID { get; private set; }
 
