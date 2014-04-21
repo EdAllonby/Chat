@@ -1,4 +1,5 @@
 ﻿using System;
+using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
@@ -8,10 +9,11 @@ namespace SharedClasses.Protocol
     [Serializable]
     public sealed class ConversationNotification : IMessage
     {
-        public ConversationNotification(ConversationRequest conversationRequest)
+        public ConversationNotification(Conversation conversation)
         {
-            SenderID = conversationRequest.SenderID;
-            ReceiverID = conversationRequest.ReceiverID;
+            SenderID = conversation.FirstParticipant.ID;
+            ReceiverID = conversation.SecondParticipant.ID;
+            ConversationID = conversation.ID;
 
             Identifier = MessageNumber.ConversationNotification;
         }

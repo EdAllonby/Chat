@@ -13,7 +13,9 @@ namespace ChatClient
 {
     public sealed class Client
     {
-        public delegate void NewContributionHandler(Contribution contribution, EventArgs e);
+        public delegate void NewConversationHandler(Conversation conversation);
+
+        public delegate void NewcontributionNotification(Contribution contribution);
 
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
@@ -22,7 +24,6 @@ namespace ChatClient
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
         private static Client uniqueClientInstance;
-        private readonly IList<Conversation> conversations = new List<Conversation>();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -37,27 +38,24 @@ namespace ChatClient
             UserName = userName;
             this.targetAddress = targetAddress;
             this.targetPort = targetPort;
+            Conversations = new List<Conversation>();
             ConnectToServer();
         }
 
         public IList<User> ConnectedUsers { get; private set; }
 
+        public IList<Conversation> Conversations { get; private set; }
+
         public string UserName { get; private set; }
 
-        public event NewContributionHandler OnNewContributionNotification = delegate { };
         public event UserListHandler OnNewUser = delegate { };
+        public event NewConversationHandler OnNewConversationNotification = delegate { };
+        public event NewcontributionNotification OnNewContribution = delegate { };
 
         private void NotifyClientOfUserChange()
         {
             OnNewUser(ConnectedUsers, EventArgs.Empty);
             Log.Info("User changed event fired");
-        }
-
-        private void NotifyClientOfContributionNotification(ContributionNotification contributionNotification)
-        {
-            Log.Info("Server sent: " + contributionNotification.Contribution);
-            OnNewContributionNotification(contributionNotification.Contribution, EventArgs.Empty);
-            Log.Info("New contribution notification event fired");
         }
 
         public static Client GetInstance(string username, IPAddress targetAddress, int targetPort)
@@ -82,9 +80,9 @@ namespace ChatClient
             userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, client.TcpClient.GetStream());
         }
 
-        public void SendContributionRequest(string message)
+        public void SendConversationContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(new Contribution(client.User, message));
+            var clientContribution = new ContributionRequest(conversationID, client.User.ID, message);
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(clientContribution, client.TcpClient.GetStream());
         }
@@ -113,7 +111,9 @@ namespace ChatClient
                     Log.Warn("Server shouldn't be sending a ContributionRequest message to a client if following protocol");
                     break;
                 case MessageNumber.ContributionNotification: //Contribution Notification
-                    NotifyClientOfContributionNotification((ContributionNotification) message);
+                    Contribution contribution = CreateContribution((ContributionNotification) message);
+                    AddContributionToConversation(contribution);
+                    NotifyClientOfNewNotification(contribution);
                     break;
                 case MessageNumber.LoginRequest: //Login Request
                     Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
@@ -140,6 +140,11 @@ namespace ChatClient
             }
         }
 
+        private void NotifyClientOfNewNotification(Contribution contribution)
+        {
+            OnNewContribution(contribution);
+        }
+
         private void AddConversation(ConversationNotification message)
         {
             User firstParticipant = User.FindByUserID(ConnectedUsers, message.SenderID);
@@ -147,7 +152,23 @@ namespace ChatClient
 
             var conversation = new Conversation(message.ConversationID, firstParticipant, secondParticipant);
 
-            conversations.Add(conversation);
+            Conversations.Add(conversation);
+            OnNewConversationNotification(conversation);
+        }
+
+        private Contribution CreateContribution(ContributionNotification contributionRequest)
+        {
+            var contribution = new Contribution(User.FindByUserID(ConnectedUsers, contributionRequest.SenderID), contributionRequest.Message);
+
+            Conversation targetedConversation = Conversations.FirstOrDefault(x => x.ID == contributionRequest.ConversationID);
+
+            contribution.Conversation = targetedConversation;
+            return contribution;
+        }
+
+        private static void AddContributionToConversation(Contribution contribution)
+        {
+            contribution.Conversation.Contributions.Add(contribution);
         }
 
         private void ListCurrentUsers(UserSnapshot userSnapshot)

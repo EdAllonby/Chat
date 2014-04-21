@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
         xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders"
-        Title="Chat With People" Height="500" Width="350"
+        Title="{Binding WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <viewModels:ChatWindowViewModel />
@@ -38,7 +38,7 @@
                      Grid.Column="0"
                      Background="AliceBlue"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     ItemsSource="{Binding Messages}">
+                     ItemsSource="{Binding Contributions, UpdateSourceTrigger=Default}">
                     <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
@@ -60,7 +60,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
-                     Text="{Binding MessageToSendToClient,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                     Text="{Binding MessageToAddToConversation,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
                      DockPanel.Dock="Left"
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Stretch"

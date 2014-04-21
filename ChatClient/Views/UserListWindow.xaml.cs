@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using ChatClient.ViewModels;
 
 namespace ChatClient.Views
 {
@@ -17,6 +19,27 @@ namespace ChatClient.Views
             if (e.ChangedButton == MouseButton.Left)
             {
                 DragMove();
+            }
+        }
+
+        /// <summary>
+        /// There's no good way of doing this directly with MVVM and bindings.
+        /// Succumbed to creating the click event in the code-behind and then delegating the work off to the viewmodel.
+        /// </summary>
+        /// <param name="sender">The textblock clicked on</param>
+        /// <param name="e">Mouse events for the selected textblock</param>
+        private void OnNewUserSelection(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
+            {
+                var userClicked = (StackPanel) sender;
+                var userID = (int) userClicked.Tag;
+                var viewmodel = DataContext as UserListViewModel;
+
+                if (viewmodel != null)
+                {
+                    viewmodel.NewConversation(userID);
+                }
             }
         }
     }

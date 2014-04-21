@@ -16,7 +16,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -50,18 +49,19 @@
                       Stretch="Fill" Stroke="Black" StrokeThickness="2" />
             </Button>
         </Grid>
-        <ListBox Grid.Row="1" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
-                     Foreground="White" Grid.Column="0"
-                     Margin="10"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <ListBox x:Name="UserListBox" Grid.Row="1" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
+                    Foreground="White" Grid.Column="0"
+                    Margin="10"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding UserName}" />
+                    <StackPanel Width="250" Tag="{Binding ID}" MouseLeftButtonDown="OnNewUserSelection">
+                        <TextBlock Text="{Binding UserName}"  FontSize="16" Height="30" TextAlignment="Center" Padding="3" 
+/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Grid.Row="2" Content="Conversation Test" Command="{Binding StartConversationTest}"  HorizontalAlignment="Right" Width="120" Margin="15" Height="20"/>
     </Grid>
 </Window>

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sequenceDesignerDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Start Conversation Procedure">
+  <SequenceDesignerModelMoniker Id="2d11c732-e7f7-4604-a8d6-085eb2565fe0" />
+  <nestedChildShapes>
+    <lifelineShape Id="f8a7a429-4b23-4a23-aeac-6110af2342c8" absoluteBounds="3.604166666666667, 1, 0.15, 7" visible="true" visualStyleMode="Modified">
+      <lifelineMoniker Id="9a33648b-689d-4b7a-8673-bf857a2fc076" LastKnownName="Sender Client" />
+      <relativeChildShapes>
+        <umlLifelineHeadShape Id="b6120172-51f8-4501-b1b0-2712e918522c" absoluteBounds="3.170122992197673, 0.6, 1.0180873489379883, 0.4" customColor="White" visualStyleMode="Modified">
+          <lifelineMoniker Id="9a33648b-689d-4b7a-8673-bf857a2fc076" LastKnownName="Sender Client" />
+          <relativeChildShapes />
+        </umlLifelineHeadShape>
+        <lifelineHoverShape Id="6b5222a4-6ca1-4bd5-8921-5d6fa1ff0689" absoluteBounds="3.604166666666667, 1, 0, 7">
+          <lifelineMoniker Id="9a33648b-689d-4b7a-8673-bf857a2fc076" LastKnownName="Sender Client" />
+        </lifelineHoverShape>
+      </relativeChildShapes>
+    </lifelineShape>
+    <lifelineShape Id="2e8d3bfb-f7ec-4d42-9fe3-4559691f158d" absoluteBounds="6.3333334922790527, 1, 0.15, 7" visible="true" visualStyleMode="Modified">
+      <lifelineMoniker Id="d79ab2ae-9c45-4124-a35e-8d5e02948ec1" LastKnownName="Server" />
+      <relativeChildShapes>
+        <umlLifelineHeadShape Id="dcb170ce-9c13-4e62-9f7d-dc4126b5f120" absoluteBounds="5.9083334922790529, 0.6, 1, 0.4" customColor="White" visualStyleMode="Modified">
+          <lifelineMoniker Id="d79ab2ae-9c45-4124-a35e-8d5e02948ec1" LastKnownName="Server" />
+          <relativeChildShapes />
+        </umlLifelineHeadShape>
+        <lifelineHoverShape Id="9d7990ab-ffda-4b09-b9ed-50fee6201c2c" absoluteBounds="6.3333334922790527, 1, 0, 7">
+          <lifelineMoniker Id="d79ab2ae-9c45-4124-a35e-8d5e02948ec1" LastKnownName="Server" />
+        </lifelineHoverShape>
+      </relativeChildShapes>
+    </lifelineShape>
+    <lifelineShape Id="aaad6351-e0bc-4205-8591-264456bf11f1" absoluteBounds="9.4270830154418945, 1, 0.15, 7" visible="true" visualStyleMode="Modified">
+      <lifelineMoniker Id="f5fe2b18-2dd7-4f90-a5d1-0ddda8f81aff" LastKnownName="Receiver Client" />
+      <relativeChildShapes>
+        <umlLifelineHeadShape Id="e3b9be2b-71da-4292-83f1-39294c97b0e0" absoluteBounds="8.9458388400077826, 0.6, 1.1124883508682251, 0.4" customColor="White" visualStyleMode="Modified">
+          <lifelineMoniker Id="f5fe2b18-2dd7-4f90-a5d1-0ddda8f81aff" LastKnownName="Receiver Client" />
+          <relativeChildShapes />
+        </umlLifelineHeadShape>
+        <lifelineHoverShape Id="3df6bc0c-4eb3-48d7-bdf9-770144e7978f" absoluteBounds="9.4270830154418945, 1, 0, 7">
+          <lifelineMoniker Id="f5fe2b18-2dd7-4f90-a5d1-0ddda8f81aff" LastKnownName="Receiver Client" />
+        </lifelineHoverShape>
+      </relativeChildShapes>
+    </lifelineShape>
+  </nestedChildShapes>
+</sequenceDesignerDiagram>
