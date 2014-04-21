@@ -24,7 +24,7 @@
         /// <returns></returns>
         public ISerialiser GetSerialiser(int identifier)
         {
-            return SerialiserRegistry.GetSerialisersByMessageIdentifier(identifier);
+            return SerialiserRegistry.SerialisersByMessageIdentifier[identifier];
         }
     }
 }

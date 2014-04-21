@@ -8,33 +8,7 @@ namespace SharedClasses.Protocol
     /// </summary>
     public static class SerialiserRegistry
     {
-        public static readonly Dictionary<Type, int> IdentifiersByMessageType = new Dictionary<Type, int>
-        {
-            {typeof (ContributionRequest), MessageNumber.ContributionRequest},
-            {typeof (ContributionNotification), MessageNumber.ContributionNotification},
-            {typeof (LoginRequest), MessageNumber.LoginRequest},
-            {typeof (LoginResponse), MessageNumber.LoginResponse},
-            {typeof (UserNotification), MessageNumber.UserNotification},
-            {typeof (UserSnapshotRequest), MessageNumber.UserSnapshotRequest},
-            {typeof (UserSnapshot), MessageNumber.UserSnapshot},
-            {typeof (ConversationRequest), MessageNumber.ConversationRequest},
-            {typeof (ConversationNotification), MessageNumber.ConversationNotification}
-        };
-
-        public static readonly Dictionary<int, Type> MessageTypesByIdentifiers = new Dictionary<int, Type>
-        {
-            {MessageNumber.ContributionRequest, typeof (ContributionRequest)},
-            {MessageNumber.ContributionNotification, typeof (ContributionNotification)},
-            {MessageNumber.LoginRequest, typeof (LoginRequest)},
-            {MessageNumber.LoginResponse, typeof (LoginResponse)},
-            {MessageNumber.UserNotification, typeof (UserNotification)},
-            {MessageNumber.UserSnapshotRequest, typeof (UserSnapshotRequest)},
-            {MessageNumber.UserSnapshot, typeof (UserSnapshot)},
-            {MessageNumber.ConversationRequest, typeof (ConversationRequest)},
-            {MessageNumber.ConversationNotification, typeof (ConversationNotification)}
-        };
-
-        private static readonly Dictionary<int, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<int, ISerialiser>
+        public static readonly Dictionary<int, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<int, ISerialiser>
         {
             {MessageNumber.ContributionRequest, new ContributionRequestSerialiser()},
             {MessageNumber.ContributionNotification, new ContributionNotificationSerialiser()},
@@ -59,18 +33,5 @@ namespace SharedClasses.Protocol
             {typeof (ConversationRequest), new ConversationRequestSerialiser()},
             {typeof (ConversationNotification), new ConversationNotificationSerialiser()}
         };
-
-        public static ISerialiser GetSerialisersByMessageIdentifier(int identifier)
-        {
-            ISerialiser serialiser;
-            bool keyExists = SerialisersByMessageIdentifier.TryGetValue(identifier, out serialiser);
-
-            if (!keyExists)
-            {
-                throw new KeyNotFoundException("Serialiser not found for message identifier: " + identifier);
-            }
-
-            return serialiser;
-        }
     }
 }

@@ -34,12 +34,6 @@ namespace SharedClasses.Protocol
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            if (!networkStream.CanRead)
-            {
-                //TODO: Don't return null
-                return null;
-            }
-
             var userSnapshot = (UserSnapshot) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a UserSnapshot object");
             return userSnapshot;
