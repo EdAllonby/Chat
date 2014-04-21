@@ -147,8 +147,8 @@ namespace ChatClient
 
         private void AddConversation(ConversationNotification message)
         {
-            User firstParticipant = User.FindByUserID(ConnectedUsers, message.SenderID);
-            User secondParticipant = User.FindByUserID(ConnectedUsers, message.ReceiverID);
+            User firstParticipant = ConnectedUsers.FindByUserID(message.SenderID);
+            User secondParticipant = ConnectedUsers.FindByUserID(message.ReceiverID);
 
             var conversation = new Conversation(message.ConversationID, firstParticipant, secondParticipant);
 
@@ -158,7 +158,7 @@ namespace ChatClient
 
         private Contribution CreateContribution(ContributionNotification contributionRequest)
         {
-            var contribution = new Contribution(User.FindByUserID(ConnectedUsers, contributionRequest.SenderID), contributionRequest.Message);
+            var contribution = new Contribution(ConnectedUsers.FindByUserID(contributionRequest.SenderID), contributionRequest.Message);
 
             Conversation targetedConversation = Conversations.FirstOrDefault(x => x.ID == contributionRequest.ConversationID);
 
