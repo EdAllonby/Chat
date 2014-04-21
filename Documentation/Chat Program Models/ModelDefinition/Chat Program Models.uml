@@ -1620,6 +1620,34 @@
         Id="dac8baff-8a94-4bce-9df2-8f74bdf7c335"
         name="ExecutionEvent" />
     </packageHasNamedElement>
+    <packageHasNamedElement>
+      <interaction
+        Id="8c2ea5e0-58b8-4bde-bc07-54ef68f419d1"
+        name="Start Conversation Procedure"
+        collapseFragmentsFlag="false"
+        isActiveClass="false"
+        isAbstract="false"
+        isLeaf="false"
+        isReentrant="false">
+        <lifelines>
+          <lifeline
+            Id="b2c9b6d4-1737-4ba0-99cd-7854faf105c8"
+            name="Sender Client"
+            isActor="false"
+            lifelineDisplayName="Sender Client" />
+          <lifeline
+            Id="6d00cfea-77fb-41c2-a7e1-7cba2ff06640"
+            name="Server"
+            isActor="false"
+            lifelineDisplayName="Server" />
+          <lifeline
+            Id="68630fdd-5b3d-41a4-a11b-cc55fc08de01"
+            name="Receiver Client"
+            isActor="false"
+            lifelineDisplayName="Receiver Client" />
+        </lifelines>
+      </interaction>
+    </packageHasNamedElement>
   </packagedElements>
   <primitiveType
     Id="220a3521-e091-4221-bae9-3ef9018e845c"

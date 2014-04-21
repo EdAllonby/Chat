@@ -10,6 +10,7 @@ namespace SharedClasses.Domain
     public sealed class Conversation
     {
         private readonly int id;
+        private IList<Contribution> contributions = new List<Contribution>();
 
         public Conversation(int id, User firstParticipant, User secondParticipant)
         {
@@ -45,6 +46,10 @@ namespace SharedClasses.Domain
         /// <summary>
         /// A list of <see cref="Contributions"/> of the Conversation
         /// </summary>
-        public IList<Contribution> Contributions { get; set; }
+        public IList<Contribution> Contributions
+        {
+            get { return contributions; }
+            set { contributions = value; }
+        }
     }
 }

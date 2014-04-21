@@ -9,17 +9,55 @@ namespace ChatClient.ViewModels
 {
     public class ChatWindowViewModel : ViewModel
     {
-        public readonly Client Client = Client.GetInstance();
-
-        private string messageToSendToClient;
-        private ObservableCollection<Contribution> messages = new ObservableCollection<Contribution>();
+        private readonly Client client = Client.GetInstance();
+        private ObservableCollection<Contribution> contributions;
+        private Conversation conversation;
+        private string messageToAddToConversation;
         private string title;
+        private string windowTitle;
+
 
         public ChatWindowViewModel()
         {
-            Client.OnNewContributionNotification += NewContributionNotification;
-            Title = "Welcome to chat, " + Client.UserName;
+            windowTitle = client.UserName;
+
+            client.OnNewContribution += client_OnNewContribution;
         }
+
+        public string WindowTitle
+        {
+            get { return windowTitle; }
+            set
+            {
+                if (value == windowTitle) return;
+                windowTitle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Conversation Conversation
+        {
+            get { return conversation; }
+            set
+            {
+                if (Equals(value, conversation)) return;
+                conversation = value;
+                OnPropertyChanged();
+                Title = "Chat between " + conversation.FirstParticipant.UserName + " and " + conversation.SecondParticipant.UserName;
+            }
+        }
+
+        public ObservableCollection<Contribution> Contributions
+        {
+            get { return contributions; }
+            set
+            {
+                if (Equals(value, contributions)) return;
+                contributions = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public String Title
         {
@@ -32,24 +70,13 @@ namespace ChatClient.ViewModels
             }
         }
 
-        public ObservableCollection<Contribution> Messages
+        public string MessageToAddToConversation
         {
-            get { return messages; }
+            get { return messageToAddToConversation; }
             set
             {
-                if (Equals(value, messages)) return;
-                messages = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string MessageToSendToClient
-        {
-            get { return messageToSendToClient; }
-            set
-            {
-                if (value == messageToSendToClient) return;
-                messageToSendToClient = value;
+                if (value == messageToAddToConversation) return;
+                messageToAddToConversation = value;
                 OnPropertyChanged();
             }
         }
@@ -58,27 +85,33 @@ namespace ChatClient.ViewModels
 
         public ICommand SendMessage
         {
-            get { return new RelayCommand(NewContributionNotification, CanSendContributionRequest); }
+            get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
         }
 
-        private void NewContributionNotification()
+        private void NewConversationContributionRequest()
         {
-            Client.SendContributionRequest(MessageToSendToClient);
+            client.SendConversationContributionRequest(conversation.ID, MessageToAddToConversation);
 
-            messageToSendToClient = string.Empty;
-            OnPropertyChanged("MessageToSendToClient");
+            messageToAddToConversation = string.Empty;
+            OnPropertyChanged("MessageToAddToConversation");
         }
 
-        private bool CanSendContributionRequest()
+        private bool CanSendConversationContributionRequest()
         {
-            return !String.IsNullOrEmpty(MessageToSendToClient);
+            return !String.IsNullOrEmpty(MessageToAddToConversation);
         }
 
         #endregion
 
-        private void NewContributionNotification(Contribution contribution, EventArgs e)
+        private void client_OnNewContribution(Contribution contribution)
         {
-            Application.Current.Dispatcher.Invoke(() => Messages.Add(contribution));
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                if (contribution.Conversation.ID.Equals(conversation.ID))
+                {
+                    Contributions.Add(contribution);
+                }
+            });
         }
     }
 }

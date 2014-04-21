@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
-using ChatClient.Commands;
+using System.Windows;
+using ChatClient.Views;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels
@@ -20,10 +20,10 @@ namespace ChatClient.ViewModels
             {
                 users = new ObservableCollection<User>(Client.ConnectedUsers);
             }
-            else
-            {
-                Client.OnNewUser += OnNewUser;
-            }
+
+            Client.OnNewUser += OnNewUser;
+
+            Client.OnNewConversationNotification += OnNewConversationNotification;
         }
 
         public ObservableCollection<User> Users
@@ -37,28 +37,23 @@ namespace ChatClient.ViewModels
             }
         }
 
+        private static void OnNewConversationNotification(Conversation conversation)
+        {
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                var chatWindow = new ChatWindow(conversation);
+                chatWindow.Show();
+            });
+        }
+
         private void OnNewUser(IList<User> newUser, EventArgs e)
         {
             Users = new ObservableCollection<User>(newUser);
         }
 
-        #region Login Command
-
-        public ICommand StartConversationTest
+        public void NewConversation(int userID)
         {
-            get { return new RelayCommand(NewConversation, CanLogin); }
+            Client.SendConversationRequest(userID);
         }
-
-        private void NewConversation()
-        {
-            Client.SendConversationRequest(1);
-        }
-
-        private bool CanLogin()
-        {
-            return true;
-        }
-
-        #endregion
     }
 }

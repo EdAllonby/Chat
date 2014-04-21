@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 
 namespace SharedClasses.Protocol
@@ -11,7 +12,7 @@ namespace SharedClasses.Protocol
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionRequestSerialiser));
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-        private readonly ContributionSerialiser serialiser = new ContributionSerialiser();
+        private readonly BinaryFormatter serialiser = new BinaryFormatter();
 
         #region Serialise
 
@@ -20,7 +21,7 @@ namespace SharedClasses.Protocol
             messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.Identifier, stream);
 
             Log.Debug("Waiting for contribution request message to serialise");
-            serialiser.Serialise(contributionRequest.Contribution, stream);
+            serialiser.Serialize(stream, contributionRequest);
             Log.Info("Contribution request message serialised");
         }
 
@@ -36,7 +37,7 @@ namespace SharedClasses.Protocol
         public IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            var request = new ContributionRequest(serialiser.Deserialise(networkStream));
+            var request = (ContributionRequest) serialiser.Deserialize(networkStream);
             Log.Info("Contribution request message deserialised");
             return request;
         }

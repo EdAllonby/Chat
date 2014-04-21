@@ -1,17 +1,27 @@
-﻿using SharedClasses.Domain;
+﻿using System;
+using SharedClasses.Domain;
 
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// A <see cref="Contribution" /> packaged as a Notification for the server to send to clients
+    /// Packages  <see cref="ConversationID"/>, <see cref="SenderID"/> and <see cref="Message"/> for the Server to send to the Client
     /// </summary>
+    [Serializable]
     public class ContributionNotification : IMessage
     {
-        public ContributionNotification(Contribution contribution)
+        public ContributionNotification(int conversationID, int senderID, string message)
         {
-            Contribution = contribution;
+            ConversationID = conversationID;
+            SenderID = senderID;
+            Message = message;
             Identifier = MessageNumber.ContributionNotification;
         }
+
+        public int ConversationID { get; private set; }
+
+        public int SenderID { get; private set; }
+
+        public string Message { get; private set; }
 
         public Contribution Contribution { get; private set; }
 
