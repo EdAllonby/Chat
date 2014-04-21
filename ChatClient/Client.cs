@@ -22,6 +22,7 @@ namespace ChatClient
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
         private static Client uniqueClientInstance;
+        private readonly IList<Conversation> conversations = new List<Conversation>();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -81,11 +82,18 @@ namespace ChatClient
             userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, client.TcpClient.GetStream());
         }
 
-        public void SendContributionRequestMessage(string message)
+        public void SendContributionRequest(string message)
         {
             var clientContribution = new ContributionRequest(new Contribution(client.User, message));
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(clientContribution, client.TcpClient.GetStream());
+        }
+
+        public void SendConversationRequest(int receiverID)
+        {
+            var conversationRequest = new ConversationRequest(client.User.ID, receiverID);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser<ConversationRequest>();
+            serialiser.Serialise(conversationRequest, client.TcpClient.GetStream());
         }
 
         private void ReceiveMessageListener()
@@ -120,10 +128,26 @@ namespace ChatClient
                 case MessageNumber.UserSnapshot: //User Snapshot
                     ListCurrentUsers((UserSnapshot) message);
                     break;
+                case MessageNumber.ConversationRequest:
+                    Log.Warn("Server shouldn't be sending a Conversation Request message to a client if following protocol");
+                    break;
+                case MessageNumber.ConversationNotification:
+                    AddConversation((ConversationNotification) message);
+                    break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
+        }
+
+        private void AddConversation(ConversationNotification message)
+        {
+            User firstParticipant = User.FindByUserID(ConnectedUsers, message.SenderID);
+            User secondParticipant = User.FindByUserID(ConnectedUsers, message.ReceiverID);
+
+            var conversation = new Conversation(message.ConversationID, firstParticipant, secondParticipant);
+
+            conversations.Add(conversation);
         }
 
         private void ListCurrentUsers(UserSnapshot userSnapshot)

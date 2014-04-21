@@ -11,11 +11,12 @@
     <Window.DataContext>
         <viewModels:UserListViewModel/>
     </Window.DataContext>
-    
+
     <Grid Background="#e74c3c">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -49,7 +50,7 @@
                       Stretch="Fill" Stroke="Black" StrokeThickness="2" />
             </Button>
         </Grid>
-        <ListBox  FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" Grid.Row="1" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
+        <ListBox Grid.Row="1" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
                      Foreground="White" Grid.Column="0"
                      Margin="10"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -61,5 +62,6 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Button Grid.Row="2" Content="Conversation Test" Command="{Binding StartConversationTest}"  HorizontalAlignment="Right" Width="120" Margin="15" Height="20"/>
     </Grid>
 </Window>

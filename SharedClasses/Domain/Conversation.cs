@@ -9,20 +9,38 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Conversation
     {
+        private readonly int id;
+
+        public Conversation(int id, User firstParticipant, User secondParticipant)
+        {
+            if (id < 0)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            this.id = id;
+
+            FirstParticipant = firstParticipant;
+            SecondParticipant = secondParticipant;
+        }
+
         /// <summary>
         /// Each Conversation gets a unique ID
         /// </summary>
-        public int ID { get; set; }
+        public int ID
+        {
+            get { return id; }
+        }
 
         /// <summary>
-        /// The User to initiate the conversion
+        /// The User that initiates the conversion
         /// </summary>
-        public User FirstParticipant { get; set; }
+        public User FirstParticipant { get; private set; }
 
         /// <summary>
-        /// The User who is requested by <see cref="FirstParticipant"/>
+        /// The User who <see cref="FirstParticipant"/> wants to talk to
         /// </summary>
-        public User SecondParticipant { get; set; }
+        public User SecondParticipant { get; private set; }
 
         /// <summary>
         /// A list of <see cref="Contributions"/> of the Conversation

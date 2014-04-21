@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
+using ChatClient.Commands;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels
@@ -39,5 +41,24 @@ namespace ChatClient.ViewModels
         {
             Users = new ObservableCollection<User>(newUser);
         }
+
+        #region Login Command
+
+        public ICommand StartConversationTest
+        {
+            get { return new RelayCommand(NewConversation, CanLogin); }
+        }
+
+        private void NewConversation()
+        {
+            Client.SendConversationRequest(1);
+        }
+
+        private bool CanLogin()
+        {
+            return true;
+        }
+
+        #endregion
     }
 }

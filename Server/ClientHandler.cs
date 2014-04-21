@@ -14,6 +14,8 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly IList<ConnectedClient> connectedClients = new List<ConnectedClient>();
+        private readonly ConversationFactory conversationFactory = new ConversationFactory();
+        private readonly IList<Conversation> conversations = new List<Conversation>();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -79,32 +81,70 @@ namespace Server
             switch (message.Identifier)
             {
                 case MessageNumber.ContributionRequest:
-                    var contributionRequest = (ContributionRequest) message;
-                    SendContributionNotificationToClients(contributionRequest);
+                    SendContributionNotificationToClients((ContributionRequest) message);
                     break;
                 case MessageNumber.ContributionNotification:
-                    Log.Warn("Client should not be sending User Notification Message if following protocol");
+                    Log.Warn("Client should not be sending a User Notification Message if following protocol");
                     break;
                 case MessageNumber.LoginRequest:
-                    Log.Warn("Client should not be sending Login Request Message if following protocol");
+                    Log.Warn("Client should not be sending a Login Request Message if following protocol");
                     break;
                 case MessageNumber.UserNotification:
-                    Log.Warn("Client should not be sending User Notification Message if following protocol");
+                    Log.Warn("Client should not be sending a User Notification Message if following protocol");
                     break;
                 case MessageNumber.UserSnapshotRequest:
                     SendUserSnapshot(e.ConnectedClient);
                     break;
                 case MessageNumber.UserSnapshot:
-                    Log.Warn("Client should not be sending User Snapshot Message if following protocol");
+                    Log.Warn("Client should not be sending a User Snapshot Message if following protocol");
                     break;
                 case MessageNumber.ClientDisconnection:
                     RemoveConnectedClient(e.ConnectedClient);
                     NotifyClientsOfDisconnectedUser(e.ConnectedClient.User);
                     break;
+                case MessageNumber.ConversationRequest:
+                    bool isExistingConversation = AddConversation((ConversationRequest) message);
+                    if (!isExistingConversation)
+                    {
+                        SendConversationNotification((ConversationRequest) message);
+                    }
+                    break;
+                case MessageNumber.ConversationNotification:
+                    Log.Warn("Client should not be sending a Conversation Notification Message if following protocol");
+                    break;
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
+        }
+
+        private bool AddConversation(ConversationRequest message)
+        {
+            User firstParticipant = ConnectedClient.FindByUserID(connectedClients, message.SenderID).User;
+            User secondParticipant = ConnectedClient.FindByUserID(connectedClients, message.ReceiverID).User;
+
+            bool isExistingConversation = conversations.Any(conversation => conversation.FirstParticipant.Equals(firstParticipant) || conversation.SecondParticipant.Equals(secondParticipant));
+
+            if (!isExistingConversation)
+            {
+                Conversation newConversation = conversationFactory.CreateConversation(firstParticipant, secondParticipant);
+                conversations.Add(newConversation);
+            }
+
+            return isExistingConversation;
+        }
+
+        private void SendConversationNotification(ConversationRequest message)
+        {
+            var conversationNotification = new ConversationNotification(message);
+
+            ISerialiser conversationNotificationSerialiser = serialiserFactory.GetSerialiser<ConversationNotification>();
+
+            ConnectedClient senderClient = ConnectedClient.FindByUserID(connectedClients, message.SenderID);
+            conversationNotificationSerialiser.Serialise(conversationNotification, senderClient.TcpClient.GetStream());
+
+            ConnectedClient receiverClient = ConnectedClient.FindByUserID(connectedClients, message.ReceiverID);
+            conversationNotificationSerialiser.Serialise(conversationNotification, receiverClient.TcpClient.GetStream());
         }
 
         private void SendUserSnapshot(ConnectedClient connectedClient)

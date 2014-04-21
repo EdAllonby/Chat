@@ -16,7 +16,9 @@ namespace SharedClasses.Protocol
             {typeof (LoginResponse), MessageNumber.LoginResponse},
             {typeof (UserNotification), MessageNumber.UserNotification},
             {typeof (UserSnapshotRequest), MessageNumber.UserSnapshotRequest},
-            {typeof (UserSnapshot), MessageNumber.UserSnapshot}
+            {typeof (UserSnapshot), MessageNumber.UserSnapshot},
+            {typeof (ConversationRequest), MessageNumber.ConversationRequest},
+            {typeof (ConversationNotification), MessageNumber.ConversationNotification}
         };
 
         public static readonly Dictionary<int, Type> MessageTypesByIdentifiers = new Dictionary<int, Type>
@@ -27,7 +29,9 @@ namespace SharedClasses.Protocol
             {MessageNumber.LoginResponse, typeof (LoginResponse)},
             {MessageNumber.UserNotification, typeof (UserNotification)},
             {MessageNumber.UserSnapshotRequest, typeof (UserSnapshotRequest)},
-            {MessageNumber.UserSnapshot, typeof (UserSnapshot)}
+            {MessageNumber.UserSnapshot, typeof (UserSnapshot)},
+            {MessageNumber.ConversationRequest, typeof (ConversationRequest)},
+            {MessageNumber.ConversationNotification, typeof (ConversationNotification)}
         };
 
         private static readonly Dictionary<int, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<int, ISerialiser>
@@ -38,7 +42,9 @@ namespace SharedClasses.Protocol
             {MessageNumber.LoginResponse, new LoginResponseSerialiser()},
             {MessageNumber.UserNotification, new UserNotificationSerialiser()},
             {MessageNumber.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
-            {MessageNumber.UserSnapshot, new UserSnapshotSerialiser()}
+            {MessageNumber.UserSnapshot, new UserSnapshotSerialiser()},
+            {MessageNumber.ConversationRequest, new ConversationRequestSerialiser()},
+            {MessageNumber.ConversationNotification, new ConversationNotificationSerialiser()}
         };
 
         public static readonly Dictionary<Type, ISerialiser> SerialisersByMessageType = new Dictionary<Type, ISerialiser>
@@ -49,7 +55,9 @@ namespace SharedClasses.Protocol
             {typeof (LoginResponse), new LoginResponseSerialiser()},
             {typeof (UserNotification), new UserNotificationSerialiser()},
             {typeof (UserSnapshotRequest), new UserSnapshotRequestSerialiser()},
-            {typeof (UserSnapshot), new UserSnapshotSerialiser()}
+            {typeof (UserSnapshot), new UserSnapshotSerialiser()},
+            {typeof (ConversationRequest), new ConversationRequestSerialiser()},
+            {typeof (ConversationNotification), new ConversationNotificationSerialiser()}
         };
 
         public static ISerialiser GetSerialisersByMessageIdentifier(int identifier)

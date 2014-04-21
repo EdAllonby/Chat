@@ -34,9 +34,9 @@ namespace SharedClasses.Protocol
 
         public Contribution Deserialise(NetworkStream networkStream)
         {
-            var message = (Contribution) binaryFormatter.Deserialize(networkStream);
+            var contribution = (Contribution) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a Contribution object");
-            return message;
+            return contribution;
         }
 
         #endregion

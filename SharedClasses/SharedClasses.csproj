@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectedClient.cs" />
+    <Compile Include="ConversationFactory.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="MessageEventArgs.cs" />
@@ -52,6 +53,11 @@
     <Compile Include="Domain\Contribution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ContributionSerialiser.cs" />
+    <Compile Include="Protocol\ConversationNotification.cs" />
+    <Compile Include="Protocol\ConversationNotificationSerialiser.cs" />
+    <Compile Include="Protocol\ConversationRequest.cs" />
+    <Compile Include="Protocol\ConversationRequestSerialiser.cs" />
+    <Compile Include="Protocol\ConversationSerialiser.cs" />
     <Compile Include="Protocol\IMessage.cs" />
     <Compile Include="Protocol\ISerialiser.cs" />
     <Compile Include="Protocol\LoginRequest.cs" />
