@@ -37,17 +37,6 @@ namespace SharedClasses.Domain
             get { return id; }
         }
 
-        /// <summary>
-        /// Find a User in a List of Users by its ID.
-        /// </summary>
-        /// <param name="connectedUserCollection">The collection of Users that will be searched</param>
-        /// <param name="userID">The User ID to find in the User collection</param>
-        /// <returns>The User that matches the User ID</returns>
-        public static User FindByUserID(IEnumerable<User> connectedUserCollection, int userID)
-        {
-            return connectedUserCollection.FirstOrDefault(s => s.ID.Equals(userID));
-        }
-
         #region IEquatable Implementation
 
         public bool Equals(User other)

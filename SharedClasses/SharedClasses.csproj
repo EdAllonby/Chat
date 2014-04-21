@@ -43,6 +43,7 @@
     <Compile Include="ConversationFactory.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\User.cs" />
+    <Compile Include="ListExtensionMethods.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />
     <Compile Include="Protocol\ClientDisconnection.cs" />

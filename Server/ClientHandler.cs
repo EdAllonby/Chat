@@ -124,8 +124,8 @@ namespace Server
 
         private bool CheckConversationIsUnique(ConversationRequest message)
         {
-            User firstParticipant = ConnectedClient.FindByUserID(connectedClients, message.SenderID).User;
-            User secondParticipant = ConnectedClient.FindByUserID(connectedClients, message.ReceiverID).User;
+            User firstParticipant = connectedClients.FindByUserID(message.SenderID).User;
+            User secondParticipant = connectedClients.FindByUserID(message.ReceiverID).User;
 
             bool isExistingConversation = conversations.Any(conversation => (conversation.FirstParticipant.Equals(firstParticipant) && conversation.SecondParticipant.Equals(secondParticipant) ||
                                                                              conversation.FirstParticipant.Equals(secondParticipant) && conversation.SecondParticipant.Equals(firstParticipant)));
@@ -146,8 +146,8 @@ namespace Server
 
         private Conversation AddConversation(ConversationRequest conversationRequest)
         {
-            User firstParticipant = ConnectedClient.FindByUserID(connectedClients, conversationRequest.SenderID).User;
-            User secondParticipant = ConnectedClient.FindByUserID(connectedClients, conversationRequest.ReceiverID).User;
+            User firstParticipant = connectedClients.FindByUserID(conversationRequest.SenderID).User;
+            User secondParticipant = connectedClients.FindByUserID(conversationRequest.ReceiverID).User;
 
             Conversation newConversation = conversationFactory.CreateConversation(firstParticipant, secondParticipant);
             conversations.Add(newConversation);
@@ -160,16 +160,16 @@ namespace Server
 
             ISerialiser conversationNotificationSerialiser = serialiserFactory.GetSerialiser<ConversationNotification>();
 
-            ConnectedClient senderClient = ConnectedClient.FindByUserID(connectedClients, conversation.FirstParticipant.ID);
+            ConnectedClient senderClient = connectedClients.FindByUserID(conversation.FirstParticipant.ID);
             conversationNotificationSerialiser.Serialise(conversationNotification, senderClient.TcpClient.GetStream());
 
-            ConnectedClient receiverClient = ConnectedClient.FindByUserID(connectedClients, conversation.SecondParticipant.ID);
+            ConnectedClient receiverClient = connectedClients.FindByUserID(conversation.SecondParticipant.ID);
             conversationNotificationSerialiser.Serialise(conversationNotification, receiverClient.TcpClient.GetStream());
         }
 
         private Contribution CreateContribution(ContributionRequest contributionRequest)
         {
-            var contribution = new Contribution(ConnectedClient.FindByUserID(connectedClients, contributionRequest.SenderID).User, contributionRequest.Message);
+            var contribution = new Contribution(connectedClients.FindByUserID(contributionRequest.SenderID).User, contributionRequest.Message);
 
             Conversation targetedConversation = conversations.FirstOrDefault(x => x.ID == contributionRequest.ConversationID);
 
@@ -188,10 +188,10 @@ namespace Server
 
             var contributionNotification = new ContributionNotification(message.Conversation.ID, message.Contributor.ID, message.Text);
 
-            ConnectedClient senderClient = ConnectedClient.FindByUserID(connectedClients, message.Conversation.FirstParticipant.ID);
+            ConnectedClient senderClient = connectedClients.FindByUserID(message.Conversation.FirstParticipant.ID);
             contributionNotificationSerialiser.Serialise(contributionNotification, senderClient.TcpClient.GetStream());
 
-            ConnectedClient receiverClient = ConnectedClient.FindByUserID(connectedClients, message.Conversation.SecondParticipant.ID);
+            ConnectedClient receiverClient = connectedClients.FindByUserID(message.Conversation.SecondParticipant.ID);
             contributionNotificationSerialiser.Serialise(contributionNotification, receiverClient.TcpClient.GetStream());
         }
 
