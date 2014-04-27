@@ -77,9 +77,8 @@ namespace Server
 
         private void SendLoginResponseMessage(ConnectedClient client)
         {
-            ISerialiser loginResponseSerialiser = serialiserFactory.GetSerialiser<LoginResponse>();
             var loginResponse = new LoginResponse(client.User);
-            loginResponseSerialiser.Serialise(loginResponse, client.TcpClient.GetStream());
+            SendMessage(loginResponse, client.User.UserId);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -104,7 +103,7 @@ namespace Server
                     break;
 
                 case MessageNumber.ConversationRequest:
-                    if (CheckConversationIsValid((ConversationRequest)message))
+                    if (CheckConversationIsValid((ConversationRequest) message))
                     {
                         Conversation conversation = CreateConversationEntity((ConversationRequest) message);
                         AddConversationToRepository(conversation);
@@ -139,16 +138,23 @@ namespace Server
         private void SendConversationNotificationToClients(Conversation conversation)
         {
             var conversationNotification = new ConversationNotification(conversation);
-            SendMessageToUserByUserId(conversationNotification, conversation.FirstParticipantUserId);
-            SendMessageToUserByUserId(conversationNotification, conversation.SecondParticipantUserId);
+            SendMessage(conversationNotification, conversation.FirstParticipantUserId);
+            SendMessage(conversationNotification, conversation.SecondParticipantUserId);
         }
 
-        private void SendMessageToUserByUserId(IMessage message, int userId)
+        private void SendMessage(IMessage message, int userId)
         {
-            ISerialiser conversationNotificationSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
-            TcpClient firstParticipant = connectedClients.FindConnectedClientByUserId(userId).TcpClient;
-            conversationNotificationSerialiser.Serialise(message, firstParticipant.GetStream());
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            TcpClient client = connectedClients.FindConnectedClientByUserId(userId).TcpClient;
+            messageSerialiser.Serialise(message, client.GetStream());
             Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + userId);
+        }
+
+        private void SendUserSnapshot(ConnectedClient connectedClient)
+        {
+            IList<User> currentUsers = connectedClients.Select(client => client.User).ToList();
+            var userSnapshot = new UserSnapshot(currentUsers);
+            SendMessage(userSnapshot, connectedClient.User.UserId);
         }
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
@@ -169,41 +175,25 @@ namespace Server
         {
             var contributionNotification = new ContributionNotification(contribution);
             Conversation contributionConversation = conversationRepository.FindConversationById(contribution.ConversationId);
-            SendMessageToUserByUserId(contributionNotification, contributionConversation.FirstParticipantUserId);
-            SendMessageToUserByUserId(contributionNotification, contributionConversation.SecondParticipantUserId);
-        }
-
-        private void SendUserSnapshot(ConnectedClient connectedClient)
-        {
-            ISerialiser userSnapshotSerialiser = serialiserFactory.GetSerialiser<UserSnapshot>();
-
-            IList<User> currentUsers = connectedClients.Select(client => client.User).ToList();
-            var userSnapshot = new UserSnapshot(currentUsers);
-
-            userSnapshotSerialiser.Serialise(userSnapshot, connectedClient.TcpClient.GetStream());
+            SendMessage(contributionNotification, contributionConversation.FirstParticipantUserId);
+            SendMessage(contributionNotification, contributionConversation.SecondParticipantUserId);
         }
 
         private void NotifyClientsOfNewUser(User newUser)
         {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<UserNotification>();
-
             foreach (ConnectedClient client in connectedClients)
             {
-                NetworkStream clientStream = client.TcpClient.GetStream();
                 var userNotification = new UserNotification(newUser, NotificationType.Create);
-                messageSerialiser.Serialise(userNotification, clientStream);
+                SendMessage(userNotification, client.User.UserId);
             }
         }
 
         private void NotifyClientsOfDisconnectedUser(User disconnectedUser)
         {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser<UserNotification>();
-
             foreach (ConnectedClient client in connectedClients)
             {
-                NetworkStream clientStream = client.TcpClient.GetStream();
                 var userNotification = new UserNotification(disconnectedUser, NotificationType.Delete);
-                messageSerialiser.Serialise(userNotification, clientStream);
+                SendMessage(userNotification, client.User.UserId);
             }
         }
 

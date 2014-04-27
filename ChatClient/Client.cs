@@ -29,7 +29,8 @@ namespace ChatClient
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
 
-        private ConnectedClient client;
+        private User clientUser;
+        private TcpClient tcpClient;
 
         #region Entity Repositories
         
@@ -90,33 +91,24 @@ namespace ChatClient
             return uniqueClientInstance;
         }
 
-        private void SendUserSnaphotRequest()
-        {
-            ISerialiser userSnapshotRequestSerialiser = serialiserFactory.GetSerialiser<UserSnapshotRequest>();
-            var userSnapshotRequest = new UserSnapshotRequest();
-            userSnapshotRequestSerialiser.Serialise(userSnapshotRequest, client.TcpClient.GetStream());
-        }
-
         public void SendConversationContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(conversationID, client.User.UserId, message);
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
-            serialiser.Serialise(clientContribution, client.TcpClient.GetStream());
+            var clientContribution = new ContributionRequest(conversationID, clientUser.UserId, message);
+            SendMessage(clientContribution);
         }
 
         public void SendConversationRequest(int receiverId)
         {
-            var conversation = new Conversation(client.User.UserId, receiverId);
+            var conversation = new Conversation(clientUser.UserId, receiverId);
             var conversationRequest = new ConversationRequest(conversation);
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ConversationRequest>();
-            serialiser.Serialise(conversationRequest, client.TcpClient.GetStream());
+            SendMessage(conversationRequest);
         }
 
         private void ReceiveMessageListener()
         {
             Log.Info("Message listener thread started");
             messageReceiver.OnNewMessage += NewMessageReceived;
-            messageReceiver.ReceiveMessages(client);
+            messageReceiver.ReceiveMessages(new ConnectedClient(tcpClient, clientUser));
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -208,13 +200,13 @@ namespace ChatClient
 
         private void ConnectToServer()
         {
-            TcpClient serverConnection = CreateConnection();
+            CreateConnection();
 
-            SendLoginRequest(serverConnection);
+            SendMessage(new LoginRequest(UserName));
 
-            LoginResponse loginResponse = GetLoginResponse(serverConnection);
+            LoginResponse loginResponse = GetLoginResponse();
 
-            client = CreateConnectedClient(loginResponse, serverConnection);
+            clientUser = loginResponse.User;
 
             var messageListenerThread = new Thread(ReceiveMessageListener)
             {
@@ -223,10 +215,10 @@ namespace ChatClient
 
             messageListenerThread.Start();
 
-            SendUserSnaphotRequest();
+            SendMessage(new UserSnapshotRequest());
         }
 
-        private TcpClient CreateConnection()
+        private void CreateConnection()
         {
             const int timeoutSeconds = 5;
 
@@ -253,30 +245,23 @@ namespace ChatClient
                 waitHandle.Close();
             }
 
+            tcpClient = serverConnection;
             Log.Info("Client found server, connection created");
-
-            return serverConnection;
         }
 
-        private void SendLoginRequest(TcpClient serverConnection)
+        private void SendMessage(IMessage message)
         {
-            ISerialiser loginRequestSerialiser = serialiserFactory.GetSerialiser<LoginRequest>();
-            var loginRequest = new LoginRequest(UserName);
-            loginRequestSerialiser.Serialise(loginRequest, serverConnection.GetStream());
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            messageSerialiser.Serialise(message, tcpClient.GetStream());
+            Log.Debug("Sent message with identifier " + message.Identifier + " to server");
         }
 
-        private LoginResponse GetLoginResponse(TcpClient serverConnection)
+        private LoginResponse GetLoginResponse()
         {
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
+            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-            return (LoginResponse) serialiser.Deserialise(serverConnection.GetStream());
-        }
-
-        private ConnectedClient CreateConnectedClient(LoginResponse loginResponse, TcpClient serverConnection)
-        {
-            var connectedClient = new ConnectedClient(serverConnection, loginResponse.User);
-            return connectedClient;
+            return (LoginResponse) serialiser.Deserialise(tcpClient.GetStream());
         }
 
         #endregion
