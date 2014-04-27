@@ -1,16 +1,12 @@
-﻿using SharedClasses.Domain;
-
-namespace SharedClasses
+﻿namespace SharedClasses
 {
     public sealed class ContributionIDGenerator
     {
-        public int NextID { get; private set; }
+        private int nextID;
 
-        public Contribution CreateConversation(User contributor, string message, Conversation conversation)
+        public int CreateConversationId()
         {
-            var contribution = new Contribution(NextID, contributor, message, conversation);
-            NextID++;
-            return contribution;
+            return nextID++;
         }
     }
 }

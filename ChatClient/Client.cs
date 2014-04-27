@@ -19,8 +19,6 @@ namespace ChatClient
 
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
-        private const int LogonTimeout = 5;
-
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
         private static Client uniqueClientInstance;
@@ -33,18 +31,36 @@ namespace ChatClient
 
         private ConnectedClient client;
 
+        #region Entity Repositories
+        
+        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly ContributionRepository contributionRepository = new ContributionRepository();
+        private readonly UserRepository userRepository = new UserRepository();
+        
+        #endregion
+
         private Client(string userName, IPAddress targetAddress, int targetPort)
         {
             UserName = userName;
             this.targetAddress = targetAddress;
             this.targetPort = targetPort;
-            Conversations = new List<Conversation>();
             ConnectToServer();
         }
 
-        public IList<User> ConnectedUsers { get; private set; }
+        public ConversationRepository ConversationRepository
+        {
+            get { return conversationRepository; }
+        }
 
-        public IList<Conversation> Conversations { get; private set; }
+        public ContributionRepository ContributionRepository
+        {
+            get { return contributionRepository; }
+        }
+
+        public UserRepository UserRepository
+        {
+            get { return userRepository; }
+        }
 
         public string UserName { get; private set; }
 
@@ -54,7 +70,8 @@ namespace ChatClient
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(ConnectedUsers, EventArgs.Empty);
+            // TODO: Make this work
+            OnNewUser(UserRepository.UsersIndexedById.Values.ToList(), EventArgs.Empty);
             Log.Info("User changed event fired");
         }
 
@@ -82,14 +99,15 @@ namespace ChatClient
 
         public void SendConversationContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(conversationID, client.User.ID, message);
+            var clientContribution = new ContributionRequest(conversationID, client.User.UserId, message);
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ContributionRequest>();
             serialiser.Serialise(clientContribution, client.TcpClient.GetStream());
         }
 
-        public void SendConversationRequest(int receiverID)
+        public void SendConversationRequest(int receiverId)
         {
-            var conversationRequest = new ConversationRequest(client.User.ID, receiverID);
+            var conversation = new Conversation(client.User.UserId, receiverId);
+            var conversationRequest = new ConversationRequest(conversation);
             ISerialiser serialiser = serialiserFactory.GetSerialiser<ConversationRequest>();
             serialiser.Serialise(conversationRequest, client.TcpClient.GetStream());
         }
@@ -107,33 +125,25 @@ namespace ChatClient
 
             switch (message.Identifier)
             {
-                case MessageNumber.ContributionRequest: //Contribution Request
-                    Log.Warn("Server shouldn't be sending a ContributionRequest message to a client if following protocol");
-                    break;
-                case MessageNumber.ContributionNotification: //Contribution Notification
+                case MessageNumber.ContributionNotification:
                     Contribution contribution = CreateContribution((ContributionNotification) message);
-                    AddContributionToConversation(contribution);
+                    AddContributionToRepository(contribution);
                     NotifyClientOfNewNotification(contribution);
                     break;
-                case MessageNumber.LoginRequest: //Login Request
-                    Log.Warn("Server shouldn't be sending a LoginRequest message to a client if following protocol");
-                    break;
-                case MessageNumber.UserNotification: //User Notification
-                    UpdateUserCollections((UserNotification) message);
+
+                case MessageNumber.UserNotification:
+                    UpdateUserRepository((UserNotification) message);
                     NotifyClientOfUserChange();
                     break;
-                case MessageNumber.UserSnapshotRequest: //User Snapshot Request
-                    Log.Warn("Server shouldn't be sending a User Snapshot Request message to a client if following protocol");
+
+                case MessageNumber.UserSnapshot:
+                    AddUserListToRepository((UserSnapshot) message);
                     break;
-                case MessageNumber.UserSnapshot: //User Snapshot
-                    ListCurrentUsers((UserSnapshot) message);
-                    break;
-                case MessageNumber.ConversationRequest:
-                    Log.Warn("Server shouldn't be sending a Conversation Request message to a client if following protocol");
-                    break;
+
                 case MessageNumber.ConversationNotification:
-                    AddConversation((ConversationNotification) message);
+                    AddConversationToRepository((ConversationNotification) message);
                     break;
+
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
@@ -145,43 +155,33 @@ namespace ChatClient
             OnNewContribution(contribution);
         }
 
-        private void AddConversation(ConversationNotification message)
+        private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
-            User firstParticipant = ConnectedUsers.FindByUserID(message.SenderID);
-            User secondParticipant = ConnectedUsers.FindByUserID(message.ReceiverID);
-
-            var conversation = new Conversation(message.ConversationID, firstParticipant, secondParticipant);
-
-            Conversations.Add(conversation);
-            OnNewConversationNotification(conversation);
+            conversationRepository.AddConversation(conversationNotification.Conversation);
+            OnNewConversationNotification(conversationNotification.Conversation);
         }
 
-        private Contribution CreateContribution(ContributionNotification contributionNotification)
+        private static Contribution CreateContribution(ContributionNotification contributionNotification)
         {
-            Conversation targetedConversation = Conversations.FirstOrDefault(x => x.ID == contributionNotification.ConversationID);
-            var contribution = new Contribution(contributionNotification.ContributionID, ConnectedUsers.FindByUserID(contributionNotification.SenderID), contributionNotification.Message, targetedConversation);
-            return contribution;
+            return contributionNotification.Contribution;
         }
 
-        private static void AddContributionToConversation(Contribution contribution)
+        private void AddContributionToRepository(Contribution contribution)
         {
-            contribution.Conversation.Contributions.Add(contribution);
+            contributionRepository.AddContribution(contribution);
         }
 
-        private void ListCurrentUsers(UserSnapshot userSnapshot)
+        private void AddUserListToRepository(UserSnapshot userSnapshot)
         {
-            ConnectedUsers = userSnapshot.Users;
-
-            Log.Info("Currently connected users: ");
             foreach (User user in userSnapshot.Users)
             {
-                Log.Info(user.UserName);
+                userRepository.AddUser(user);
             }
 
-            OnNewUser(ConnectedUsers, null);
+            OnNewUser(userRepository.UsersIndexedById.Values.ToList(), null);
         }
 
-        private void UpdateUserCollections(UserNotification userNotification)
+        private void UpdateUserRepository(UserNotification userNotification)
         {
             switch (userNotification.Notification)
             {
@@ -196,34 +196,40 @@ namespace ChatClient
 
         private void AddUser(UserNotification userNotification)
         {
-            ConnectedUsers.Add(userNotification.User);
-            Log.Info("New user logged in successfully, currently connected users: ");
-            foreach (User user in ConnectedUsers)
-            {
-                Log.Info("User: " + user.UserName);
-            }
+            userRepository.AddUser(userNotification.User);
         }
 
         private void RemoveUser(UserNotification userNotification)
         {
-            User disconnectedUser = null;
-
-            foreach (User user in ConnectedUsers.Where(user => user.UserName == userNotification.User.UserName))
-            {
-                disconnectedUser = user;
-            }
-
-            if (disconnectedUser != null)
-            {
-                ConnectedUsers.Remove(disconnectedUser);
-                Log.Info("User " + userNotification.User.UserName + " logged out. Removing from connectedClients list");
-            }
+            userRepository.RemoveUser(userNotification.User.UserId);
         }
 
         #region Login Procedure Methods
 
         private void ConnectToServer()
         {
+            TcpClient serverConnection = CreateConnection();
+
+            SendLoginRequest(serverConnection);
+
+            LoginResponse loginResponse = GetLoginResponse(serverConnection);
+
+            client = CreateConnectedClient(loginResponse, serverConnection);
+
+            var messageListenerThread = new Thread(ReceiveMessageListener)
+            {
+                Name = "ReceiveMessageThread"
+            };
+
+            messageListenerThread.Start();
+
+            SendUserSnaphotRequest();
+        }
+
+        private TcpClient CreateConnection()
+        {
+            const int timeoutSeconds = 5;
+
             Log.Info("Client looking for server");
 
             var serverConnection = new TcpClient();
@@ -234,7 +240,7 @@ namespace ChatClient
             WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
             try
             {
-                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(LogonTimeout), false))
+                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(timeoutSeconds), false))
                 {
                     serverConnection.Close();
                     throw new TimeoutException();
@@ -249,26 +255,7 @@ namespace ChatClient
 
             Log.Info("Client found server, connection created");
 
-            SendLoginRequest(serverConnection);
-
-            LoginResponse loginResponse = GetLoginResponse(serverConnection);
-
-            if (loginResponse != null)
-            {
-                client = CreateConnectedClient(loginResponse, serverConnection);
-
-                var messageListenerThread = new Thread(ReceiveMessageListener)
-                {
-                    Name = "ReceiveMessageThread"
-                };
-                messageListenerThread.Start();
-
-                SendUserSnaphotRequest();
-            }
-            else
-            {
-                throw new Exception("Client did not receive expected LoginResponse message");
-            }
+            return serverConnection;
         }
 
         private void SendLoginRequest(TcpClient serverConnection)
@@ -283,15 +270,12 @@ namespace ChatClient
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
             int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-            IMessage message = serialiser.Deserialise(serverConnection.GetStream());
-            var loginResponse = message as LoginResponse;
-            return loginResponse;
+            return (LoginResponse) serialiser.Deserialise(serverConnection.GetStream());
         }
 
         private ConnectedClient CreateConnectedClient(LoginResponse loginResponse, TcpClient serverConnection)
         {
-            var user = new User(UserName, loginResponse.UserID);
-            var connectedClient = new ConnectedClient(serverConnection, user);
+            var connectedClient = new ConnectedClient(serverConnection, loginResponse.User);
             return connectedClient;
         }
 

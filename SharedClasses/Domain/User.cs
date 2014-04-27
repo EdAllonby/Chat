@@ -3,45 +3,56 @@
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Models a user in the system.
+    /// Models a user in the system as an entity class (has identity)
     /// </summary>
     [Serializable]
     public sealed class User : IEquatable<User>
     {
-        private readonly int id;
+        // User should be immutable, once made it will never change
+        private readonly int userId;
+        private readonly string username;
 
-        public User(string username, int id)
+        public User(string username, int userId)
         {
-            UserName = username;
+            this.username = username;
 
-            if (id < 0)
+            if (userId < 0)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            this.id = id;
+            this.userId = userId;
         }
 
         /// <summary>
         /// The name of the User
         /// </summary>
-        public string UserName { get; private set; }
+        public string Username
+        {
+            get { return username; }
+        }
 
         /// <summary>
         /// A Unique number used to identify the User.
         /// </summary>
-        public int ID
+        public int UserId
         {
-            get { return id; }
+            get { return userId; }
         }
-
-        #region IEquatable Implementation
 
         public bool Equals(User other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return id == other.id && string.Equals(UserName, other.UserName);
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return userId == other.userId;
         }
 
         public override bool Equals(object obj)
@@ -53,12 +64,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (id*397) ^ (UserName != null ? UserName.GetHashCode() : 0);
-            }
+            return userId;
         }
-
-        #endregion
     }
 }

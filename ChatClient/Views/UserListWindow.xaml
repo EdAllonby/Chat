@@ -56,8 +56,8 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Width="250" Tag="{Binding ID}" MouseLeftButtonDown="OnNewUserSelection">
-                        <TextBlock Text="{Binding UserName}"  FontSize="16" Height="30" TextAlignment="Center" Padding="3" 
+                    <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection">
+                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" TextAlignment="Center" Padding="3" 
 />
                     </StackPanel>
                 </DataTemplate>

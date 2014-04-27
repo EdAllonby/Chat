@@ -18,12 +18,12 @@ namespace SharedClasses.Protocol
 
         #region Serialise
 
-        public void Serialise(Contribution clientContribution, NetworkStream stream)
+        public void Serialise(Contribution contribution, NetworkStream stream)
         {
             if (stream.CanWrite)
             {
                 Log.Info("Attempt to serialise Contribution and send to stream");
-                binaryFormatter.Serialize(stream, clientContribution);
+                binaryFormatter.Serialize(stream, contribution);
                 Log.Info("Contribution serialised and sent to network stream");
             }
         }

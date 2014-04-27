@@ -10,7 +10,7 @@ namespace ChatClient.ViewModels
     public class ChatWindowViewModel : ViewModel
     {
         private readonly Client client = Client.GetInstance();
-        private ObservableCollection<Contribution> contributions;
+        private ObservableCollection<Contribution> contributions = new ObservableCollection<Contribution>();
         private Conversation conversation;
         private string messageToAddToConversation;
         private string title;
@@ -43,7 +43,8 @@ namespace ChatClient.ViewModels
                 if (Equals(value, conversation)) return;
                 conversation = value;
                 OnPropertyChanged();
-                Title = "Chat between " + conversation.FirstParticipant.UserName + " and " + conversation.SecondParticipant.UserName;
+                Title = "Chat between " + client.UserRepository.FindUserByID(conversation.FirstParticipantUserId).Username + " and " +
+                        client.UserRepository.FindUserByID(conversation.SecondParticipantUserId).Username;
             }
         }
 
@@ -90,7 +91,7 @@ namespace ChatClient.ViewModels
 
         private void NewConversationContributionRequest()
         {
-            client.SendConversationContributionRequest(conversation.ID, MessageToAddToConversation);
+            client.SendConversationContributionRequest(conversation.ConversationId, MessageToAddToConversation);
 
             messageToAddToConversation = string.Empty;
             OnPropertyChanged("MessageToAddToConversation");
@@ -105,13 +106,10 @@ namespace ChatClient.ViewModels
 
         private void client_OnNewContribution(Contribution contribution)
         {
-            Application.Current.Dispatcher.Invoke(delegate
+            if (contribution.ConversationId == conversation.ConversationId)
             {
-                if (contribution.Conversation.ID.Equals(conversation.ID))
-                {
-                    Contributions.Add(contribution);
-                }
-            });
+                Application.Current.Dispatcher.Invoke(() => Contributions.Add(contribution));
+            }
         }
     }
 }

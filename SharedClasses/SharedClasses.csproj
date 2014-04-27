@@ -39,12 +39,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectionExtensions.cs" />
     <Compile Include="ConnectedClient.cs" />
     <Compile Include="ContributionIDGenerator.cs" />
     <Compile Include="ConversationIDGenerator.cs" />
+    <Compile Include="Domain\ContributionRepository.cs" />
     <Compile Include="Domain\Conversation.cs" />
+    <Compile Include="Domain\ConversationRepository.cs" />
     <Compile Include="Domain\User.cs" />
-    <Compile Include="CollectionExtensions.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />
     <Compile Include="Protocol\ClientDisconnection.cs" />
@@ -73,11 +75,13 @@
     <Compile Include="Protocol\SerialiserRegistry.cs" />
     <Compile Include="Protocol\UserNotification.cs" />
     <Compile Include="Protocol\UserNotificationSerialiser.cs" />
+    <Compile Include="Protocol\UserSerialiser.cs" />
     <Compile Include="Protocol\UserSnapshot.cs" />
     <Compile Include="Protocol\UserSnapshotRequest.cs" />
     <Compile Include="Protocol\UserSnapshotRequestSerialiser.cs" />
     <Compile Include="Protocol\UserSnapshotSerialiser.cs" />
     <Compile Include="UserIDGenerator.cs" />
+    <Compile Include="Domain\UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
