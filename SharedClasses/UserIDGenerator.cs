@@ -1,16 +1,12 @@
-﻿using SharedClasses.Domain;
-
-namespace SharedClasses
+﻿namespace SharedClasses
 {
     public sealed class UserIDGenerator
     {
-        public int NextID { get; private set; }
+        private int nextId;
 
-        public User CreateUser(string username)
+        public int CreateUserId()
         {
-            var user = new User(username, NextID);
-            NextID++;
-            return user;
+            return nextId++;
         }
     }
 }

@@ -15,18 +15,19 @@ namespace SharedClassesTests.Domain
         public void CustomUserIDTest(int id)
         {
             var user = new User("user", id);
-            Assert.AreEqual(user.ID, id);
+            Assert.AreEqual(user.UserId, id);
         }
 
         [Test]
         public void NoUniqueUserTest()
         {
             var userFactory = new UserIDGenerator();
-            User user1 = userFactory.CreateUser("User1");
+            var user1 = new User("User1",userFactory.CreateUserId());
 
-            Assert.AreEqual(user1.ID, 0);
-            User user2 = userFactory.CreateUser("User2");
-            Assert.AreNotSame(user1.ID, user2.ID);
+            Assert.AreEqual(user1.UserId, 0);
+
+            var user2 = new User("User2", userFactory.CreateUserId());
+            Assert.AreNotSame(user1.UserId, user2.UserId);
         }
 
         [Test]
@@ -37,12 +38,12 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i <= 100; i++)
             {
-                user = userFactory.CreateUser("user");
+                user = new User("User", userFactory.CreateUserId());
             }
 
             if (user != null)
             {
-                Assert.AreEqual(user.ID, 100);
+                Assert.AreEqual(user.UserId, 100);
             }
         }
 
@@ -50,6 +51,14 @@ namespace SharedClassesTests.Domain
         public void UserIDLowerThanZeroTest()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new User("user", -4));
+        }
+
+        [Test]
+        public void UserWithSameIdentityChangesNameEqualityTest()
+        {
+            var user1 = new User("Tim", 1);
+            var user2 = new User("Eric", 1);
+            Assert.AreEqual(user1, user2);
         }
 
         [Test]

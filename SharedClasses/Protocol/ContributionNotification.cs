@@ -9,22 +9,11 @@ namespace SharedClasses.Protocol
     [Serializable]
     public class ContributionNotification : IMessage
     {
-        public ContributionNotification(int contributionID, int conversationID, int senderID, string message)
+        public ContributionNotification(Contribution contribution)
         {
-            ContributionID = contributionID;
-            ConversationID = conversationID;
-            SenderID = senderID;
-            Message = message;
+            Contribution = contribution;
             Identifier = MessageNumber.ContributionNotification;
         }
-
-        public int ContributionID { get; private set; }
-
-        public int ConversationID { get; private set; }
-
-        public int SenderID { get; private set; }
-
-        public string Message { get; private set; }
 
         public Contribution Contribution { get; private set; }
 

@@ -17,7 +17,6 @@ namespace ChatClient.Views
             if (viewModel != null)
             {
                 viewModel.Conversation = conversation;
-                viewModel.Contributions = new ObservableCollection<Contribution>(conversation.Contributions);
             }
         }
     }

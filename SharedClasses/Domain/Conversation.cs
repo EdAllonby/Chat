@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace SharedClasses.Domain
 {
@@ -9,47 +8,51 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Conversation
     {
-        private readonly int id;
-        private IList<Contribution> contributions = new List<Contribution>();
+        // Immutable domain entity class
+        private readonly int conversationId;
+        private readonly int firstParticipantUserId;
+        private readonly int secondParticipantUserId;
 
-        public Conversation(int id, User firstParticipant, User secondParticipant)
+        public Conversation(int conversationId, int firstParticipantUserId, int secondParticipantUserId)
         {
-            if (id < 0)
+            if (conversationId < 0)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            this.id = id;
+            this.conversationId = conversationId;
+            this.firstParticipantUserId = firstParticipantUserId;
+            this.secondParticipantUserId = secondParticipantUserId;
+        }
 
-            FirstParticipant = firstParticipant;
-            SecondParticipant = secondParticipant;
+        public Conversation(int firstParticipantUserId, int secondParticipantUserId)
+        {
+            this.firstParticipantUserId = firstParticipantUserId;
+            this.secondParticipantUserId = secondParticipantUserId;
         }
 
         /// <summary>
-        /// Each Conversation gets a unique ID
+        /// Conversation is a domain entity class and gets a unique ID
         /// </summary>
-        public int ID
+        public int ConversationId
         {
-            get { return id; }
+            get { return conversationId; }
         }
 
         /// <summary>
-        /// The User that initiates the conversion
+        /// The identity of the user that initiates the conversation
         /// </summary>
-        public User FirstParticipant { get; private set; }
-
-        /// <summary>
-        /// The User who <see cref="FirstParticipant"/> wants to talk to
-        /// </summary>
-        public User SecondParticipant { get; private set; }
-
-        /// <summary>
-        /// A list of <see cref="Contributions"/> of the Conversation
-        /// </summary>
-        public IList<Contribution> Contributions
+        public int FirstParticipantUserId
         {
-            get { return contributions; }
-            set { contributions = value; }
+            get { return firstParticipantUserId; }
+        }
+
+        /// <summary>
+        /// The identity of the User who <see cref="FirstParticipantUserId"/> wants to talk to
+        /// </summary>
+        public int SecondParticipantUserId
+        {
+            get { return secondParticipantUserId; }
         }
     }
 }
