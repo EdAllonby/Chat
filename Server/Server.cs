@@ -17,9 +17,8 @@ namespace Server
     {
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
-        private readonly IList<ClientHandler> clientHandlers = new List<ClientHandler>();
 
-        private readonly TcpListener clientListener = new TcpListener(IPAddress.Any, PortNumber);
+        private readonly IList<ClientHandler> clientHandlers = new List<ClientHandler>();
 
         private readonly ContributionIDGenerator contributionIDGenerator = new ContributionIDGenerator();
         private readonly ContributionRepository contributionRepository = new ContributionRepository();
@@ -36,6 +35,7 @@ namespace Server
 
         private void ListenForNewClients()
         {
+            var clientListener = new TcpListener(IPAddress.Any, PortNumber);
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");
 
@@ -44,37 +44,71 @@ namespace Server
                 TcpClient client = clientListener.AcceptTcpClient();
                 Log.Info("New client connected");
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                var newClientThread = new Thread(() => ClientThread(client));
+                var newClientThread = new Thread(() => InitialiseNewClient(client));
                 newClientThread.Start();
             }
         }
 
-        private void ClientThread(TcpClient client)
+        private void InitialiseNewClient(TcpClient tcpClient)
         {
-            var clientHandler = new ClientHandler(client);
+            User newUser = CreateUserEntity(GetClientLoginCredentials(tcpClient));
 
-            User user = CreateUserEntity(clientHandler.GetClientLoginCredentials());
+            var clientHandler = new ClientHandler(newUser, tcpClient);
 
-            clientHandler.AddUserToClientHandler(user);
-
-            NotifyClientsOfNewUser(user);
+            NotifyClientsOfNewUser(clientHandler.ClientUser);
 
             clientHandlers.Add(clientHandler);
 
-            var loginResponse = new LoginResponse(user);
+            var loginResponse = new LoginResponse(clientHandler.ClientUser);
 
             clientHandler.SendMessage(loginResponse);
 
             clientHandler.OnNewMessage += NewMessageReceived;
 
-            clientHandler.CreateListenerThreadForClient(client);
+            clientHandler.CreateListenerThreadForClient(tcpClient);
+        }
+
+        private static LoginRequest GetClientLoginCredentials(TcpClient tcpClient)
+        {
+            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            var serialiserFactory = new SerialiserFactory();
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            var loginRequest = (LoginRequest) serialiser.Deserialise(tcpClient.GetStream());
+            return loginRequest;
         }
 
         private User CreateUserEntity(LoginRequest clientLogin)
         {
-            var user = new User(clientLogin.UserName, userIDGenerator.CreateUserId());
-            userRepository.AddUser(user);
-            return user;
+            var newUser = new User(clientLogin.UserName, userIDGenerator.CreateUserId());
+
+            userRepository.AddUser(newUser);
+
+            return newUser;
+        }
+
+        private Conversation CreateConversationEntity(ConversationRequest conversationRequest)
+        {
+            var newConversation = new Conversation(conversationIDGenerator.CreateConversationId(),
+                conversationRequest.Conversation.FirstParticipantUserId,
+                conversationRequest.Conversation.SecondParticipantUserId);
+
+            conversationRepository.AddConversation(newConversation);
+
+            return newConversation;
+        }
+
+        private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
+        {
+            var newContribution = new Contribution(
+                contributionIDGenerator.CreateConversationId(),
+                contributionRequest.SenderID,
+                contributionRequest.Message,
+                contributionRequest.ConversationID);
+
+            contributionRepository.AddContribution(newContribution);
+
+            return newContribution;
         }
 
         private void NotifyClientsOfNewUser(User user)
@@ -94,7 +128,6 @@ namespace Server
             {
                 case MessageNumber.ContributionRequest:
                     Contribution contribution = CreateContributionEntity((ContributionRequest) message);
-                    AddContributionToRepository(contribution);
                     SendContributionNotificationToParticipants(contribution);
                     break;
 
@@ -111,7 +144,6 @@ namespace Server
                     if (CheckConversationIsValid((ConversationRequest) message))
                     {
                         Conversation conversation = CreateConversationEntity((ConversationRequest) message);
-                        AddConversationToRepository(conversation);
                         SendConversationNotificationToClients(conversation);
                     }
                     break;
@@ -132,19 +164,13 @@ namespace Server
 
         private static bool CheckConversationIsValid(ConversationRequest conversationRequest)
         {
-            return conversationRequest.Conversation.FirstParticipantUserId != conversationRequest.Conversation.SecondParticipantUserId;
-        }
+            if (conversationRequest.Conversation.FirstParticipantUserId == conversationRequest.Conversation.SecondParticipantUserId)
+            {
+                Log.Warn("Cannot make a conversation between two users of same id of " + conversationRequest.Conversation.FirstParticipantUserId);
+                return false;
+            }
 
-        private Conversation CreateConversationEntity(ConversationRequest conversationRequest)
-        {
-            return new Conversation(conversationIDGenerator.CreateConversationId(),
-                conversationRequest.Conversation.FirstParticipantUserId,
-                conversationRequest.Conversation.SecondParticipantUserId);
-        }
-
-        private void AddConversationToRepository(Conversation conversation)
-        {
-            conversationRepository.AddConversation(conversation);
+            return true;
         }
 
         private void SendConversationNotificationToClients(Conversation conversation)
@@ -155,20 +181,6 @@ namespace Server
 
             ClientHandler secondParticipantClientHandler = clientHandlers.FindClientHandlerByUserId(conversation.SecondParticipantUserId);
             secondParticipantClientHandler.SendMessage(conversationNotification);
-        }
-
-        private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
-        {
-            return new Contribution(
-                contributionIDGenerator.CreateConversationId(),
-                contributionRequest.SenderID,
-                contributionRequest.Message,
-                contributionRequest.ConversationID);
-        }
-
-        private void AddContributionToRepository(Contribution contribution)
-        {
-            contributionRepository.AddContribution(contribution);
         }
 
         private void SendContributionNotificationToParticipants(Contribution contribution)
@@ -185,16 +197,17 @@ namespace Server
 
         private void RemoveClientHandler(User clientUser)
         {
-            ClientHandler disconnectedUser = null;
+            ClientHandler disconnectedClientHandler = null;
 
             foreach (ClientHandler clientHandler in clientHandlers.Where(clientHandler => clientHandler.ClientUser.UserId == clientUser.UserId))
             {
-                disconnectedUser = clientHandler;
+                disconnectedClientHandler = clientHandler;
             }
 
-            if (disconnectedUser != null)
+            if (disconnectedClientHandler != null)
             {
-                clientHandlers.Remove(disconnectedUser);
+                disconnectedClientHandler.Dispose();
+                clientHandlers.Remove(disconnectedClientHandler);
                 Log.Info("User with id " + clientUser.UserId + " logged out. Removing from Server's ClientHandler list");
             }
         }
