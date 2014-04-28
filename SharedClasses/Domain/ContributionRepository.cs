@@ -9,16 +9,15 @@ namespace SharedClasses.Domain
 
         public void AddContribution(Contribution contribution)
         {
-
             if (contributionsIndexedByConversationId.ContainsKey(contribution.ConversationId))
             {
                 contributionsIndexedByConversationId[contribution.ConversationId].Add(contribution);
             }
             else
             {
-                contributionsIndexedByConversationId.Add(contribution.ConversationId, new List<Contribution> { contribution });
+                contributionsIndexedByConversationId.Add(contribution.ConversationId, new List<Contribution> {contribution});
             }
-            
+
             contributionsIndexedById[contribution.ContributionId] = contribution;
         }
 

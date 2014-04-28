@@ -33,11 +33,11 @@ namespace ChatClient
         private TcpClient tcpClient;
 
         #region Entity Repositories
-        
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+
         private readonly ContributionRepository contributionRepository = new ContributionRepository();
+        private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly UserRepository userRepository = new UserRepository();
-        
+
         #endregion
 
         private Client(string userName, IPAddress targetAddress, int targetPort)
@@ -108,7 +108,7 @@ namespace ChatClient
         {
             Log.Info("Message listener thread started");
             messageReceiver.OnNewMessage += NewMessageReceived;
-            messageReceiver.ReceiveMessages(new ConnectedClient(tcpClient, clientUser));
+            messageReceiver.ReceiveMessages(clientUser, tcpClient);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)

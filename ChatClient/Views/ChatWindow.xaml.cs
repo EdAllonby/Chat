@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using ChatClient.ViewModels;
+﻿using ChatClient.ViewModels;
 using SharedClasses.Domain;
 
 namespace ChatClient.Views

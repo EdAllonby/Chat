@@ -39,8 +39,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CollectionExtensions.cs" />
-    <Compile Include="ConnectedClient.cs" />
     <Compile Include="ContributionIDGenerator.cs" />
     <Compile Include="ConversationIDGenerator.cs" />
     <Compile Include="Domain\ContributionRepository.cs" />
