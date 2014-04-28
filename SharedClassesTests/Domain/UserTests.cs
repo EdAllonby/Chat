@@ -22,7 +22,7 @@ namespace SharedClassesTests.Domain
         public void NoUniqueUserTest()
         {
             var userFactory = new UserIDGenerator();
-            var user1 = new User("User1",userFactory.CreateUserId());
+            var user1 = new User("User1", userFactory.CreateUserId());
 
             Assert.AreEqual(user1.UserId, 0);
 

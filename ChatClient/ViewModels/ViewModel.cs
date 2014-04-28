@@ -22,7 +22,7 @@ namespace ChatClient.ViewModels
 
         public ICommand CloseWindow
         {
-            get { return new RelayCommand(() => Application.Current.MainWindow.Close()); }
+            get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
         #endregion
