@@ -11,7 +11,7 @@ namespace SharedClasses
     /// A class to listen for incoming messages from the wire. When a new <see cref="IMessage" /> is received,
     /// it will then fire off an <see cref="OnNewMessage" /> event where subscribers will be notified.
     /// </summary>
-    public class MessageReceiver
+    public sealed class MessageReceiver
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageReceiver));
 
@@ -35,9 +35,9 @@ namespace SharedClasses
                     OnNewMessage(this, new MessageEventArgs(message, clientUser));
                 }
             }
-            catch (IOException ioException)
+            catch (IOException)
             {
-                Log.Error("Couldn't send message across stream, removing client from server", ioException);
+                Log.Info("Detected client disconnection, sending ClientDisconnection object to Server");
                 IMessage message = new ClientDisconnection();
                 OnNewMessage(this, new MessageEventArgs(message, clientUser));
             }

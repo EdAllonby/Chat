@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using SharedClasses;
+using Server;
 using SharedClasses.Domain;
 
 namespace SharedClassesTests.Domain

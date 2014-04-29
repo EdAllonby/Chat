@@ -8,12 +8,11 @@
         public const int ContributionRequest = 1;
         public const int ContributionNotification = 2;
         public const int LoginRequest = 3;
-        public const int LoginResponse = 4;
-        public const int UserNotification = 5;
-        public const int UserSnapshotRequest = 6;
-        public const int UserSnapshot = 7;
-        public const int ClientDisconnection = 8;
-        public const int ConversationRequest = 9;
-        public const int ConversationNotification = 10;
+        public const int UserNotification = 4;
+        public const int UserSnapshotRequest = 5;
+        public const int UserSnapshot = 6;
+        public const int ClientDisconnection = 7;
+        public const int ConversationRequest = 8;
+        public const int ConversationNotification = 9;
     }
 }

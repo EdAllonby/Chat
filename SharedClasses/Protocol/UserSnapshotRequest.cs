@@ -2,8 +2,11 @@
 
 namespace SharedClasses.Protocol
 {
+    /// <summary>
+    /// Requests a list of currently connected users
+    /// </summary>
     [Serializable]
-    public class UserSnapshotRequest : IMessage
+    public sealed class UserSnapshotRequest : IMessage
     {
         public UserSnapshotRequest()
         {

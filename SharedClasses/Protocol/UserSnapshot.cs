@@ -8,7 +8,7 @@ namespace SharedClasses.Protocol
     /// Sends a list of currently connected users to the recently logged in Client
     /// </summary>
     [Serializable]
-    public class UserSnapshot : IMessage
+    public sealed class UserSnapshot : IMessage
     {
         public UserSnapshot(IEnumerable<User> users)
         {

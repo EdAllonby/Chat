@@ -8,7 +8,7 @@ namespace ChatClient
     /// <summary>
     /// This class is used to Parse the IPAddress, Port and Username with validation
     /// </summary>
-    internal class ClientLoginParser
+    internal sealed class ClientLoginParser
     {
         private const int PortMaxBound = 65535;
         private const int PortMinBound = 0;

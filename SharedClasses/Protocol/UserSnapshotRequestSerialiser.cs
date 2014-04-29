@@ -4,7 +4,10 @@ using log4net;
 
 namespace SharedClasses.Protocol
 {
-    internal class UserSnapshotRequestSerialiser : ISerialiser<UserSnapshotRequest>
+    /// <summary>
+    /// Used to Serialise and Deserialise a <see cref="UserSnapshotRequest" /> object.
+    /// </summary>
+    internal sealed class UserSnapshotRequestSerialiser : ISerialiser<UserSnapshotRequest>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserSnapshotRequest));
 

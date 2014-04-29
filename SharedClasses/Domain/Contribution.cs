@@ -16,9 +16,19 @@ namespace SharedClasses.Domain
         private readonly int contributorUserId;
         private readonly int conversationId;
 
-        public Contribution(int contributionId, int contributorUserId, string text, int conversationId)
+        public Contribution(int contributionId, Contribution incompleteContribution)
         {
             ContributionId = contributionId;
+            contributorUserId = incompleteContribution.contributorUserId;
+            CreateMessage(incompleteContribution.Message);
+            conversationId = incompleteContribution.conversationId;
+        }
+
+        /// <summary>
+        /// Not a complete Contribution yet, still needs its ID
+        /// </summary>
+        public Contribution(int contributorUserId, string text, int conversationId)
+        {
             this.contributorUserId = contributorUserId;
             CreateMessage(text);
             this.conversationId = conversationId;
@@ -54,7 +64,7 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The contribution text
         /// </summary>
-        public string Text { get; private set; }
+        public string Message { get; private set; }
 
         public string SenderInformation
         {
@@ -82,7 +92,7 @@ namespace SharedClasses.Domain
 
         public override string ToString()
         {
-            return Text + " @ " + MessageTimeStamp;
+            return Message + " @ " + MessageTimeStamp;
         }
 
         private void CreateMessage(string messageText)
@@ -93,8 +103,8 @@ namespace SharedClasses.Domain
 
         private void SetTextOfMessage(string messageText)
         {
-            Text = messageText;
-            Log.Debug("Contribution text set: " + Text);
+            Message = messageText;
+            Log.Debug("Contribution text set: " + Message);
         }
 
         private void SetTimeStampOfMessage()

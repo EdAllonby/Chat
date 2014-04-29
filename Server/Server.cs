@@ -59,13 +59,13 @@ namespace Server
 
             clientHandlers.Add(clientHandler);
 
-            var loginResponse = new LoginResponse(clientHandler.ClientUser);
+            var userNotification = new UserNotification(clientHandler.ClientUser, NotificationType.Create);
 
-            clientHandler.SendMessage(loginResponse);
+            clientHandler.SendMessage(userNotification);
 
             clientHandler.OnNewMessage += NewMessageReceived;
 
-            clientHandler.CreateListenerThreadForClient(tcpClient);
+            clientHandler.CreateListenerThreadForClient();
         }
 
         private static LoginRequest GetClientLoginCredentials(TcpClient tcpClient)
@@ -80,7 +80,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin)
         {
-            var newUser = new User(clientLogin.UserName, userIDGenerator.CreateUserId());
+            var newUser = new User(clientLogin.User.Username, userIDGenerator.CreateUserId());
 
             userRepository.AddUser(newUser);
 
@@ -102,9 +102,7 @@ namespace Server
         {
             var newContribution = new Contribution(
                 contributionIDGenerator.CreateConversationId(),
-                contributionRequest.SenderID,
-                contributionRequest.Message,
-                contributionRequest.ConversationID);
+                contributionRequest.Contribution);
 
             contributionRepository.AddContribution(newContribution);
 

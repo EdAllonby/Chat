@@ -4,10 +4,10 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// Packages  <see cref="ConversationID"/>, <see cref="SenderID"/> and <see cref="Message"/> for the Server to send to the Client
+    /// Packages a <see cref="Contribution"/> for the Server to send to the Client
     /// </summary>
     [Serializable]
-    public class ContributionNotification : IMessage
+    public sealed class ContributionNotification : IMessage
     {
         public ContributionNotification(Contribution contribution)
         {

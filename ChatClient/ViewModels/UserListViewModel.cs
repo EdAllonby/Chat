@@ -8,14 +8,14 @@ namespace ChatClient.ViewModels
 {
     internal class UserListViewModel : ViewModel
     {
-        public readonly Client Client = Client.GetInstance();
+        private readonly Client client = Client.GetInstance();
         private IList<User> users = new List<User>();
 
         public UserListViewModel()
         {
-            Client.OnNewUser += OnNewUser;
+            client.OnNewUser += OnNewUser;
 
-            Client.OnNewConversationNotification += OnNewConversationNotification;
+            client.OnNewConversationNotification += OnNewConversationNotification;
         }
 
         public IList<User> Users
@@ -45,7 +45,7 @@ namespace ChatClient.ViewModels
 
         public void NewConversation(int userID)
         {
-            Client.SendConversationRequest(userID);
+            client.SendConversationRequest(userID);
         }
     }
 }

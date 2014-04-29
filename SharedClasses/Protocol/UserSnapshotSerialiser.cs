@@ -4,15 +4,16 @@ using log4net;
 
 namespace SharedClasses.Protocol
 {
-    internal class UserSnapshotSerialiser : ISerialiser<UserSnapshot>
+    /// <summary>
+    /// Used to Serialise and Deserialise a <see cref="UserSnapshot" /> object.
+    /// </summary>
+    internal sealed class UserSnapshotSerialiser : ISerialiser<UserSnapshot>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserSnapshotSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        #region Serialise
 
         public void Serialise(UserSnapshot message, NetworkStream stream)
         {
@@ -28,17 +29,11 @@ namespace SharedClasses.Protocol
             Serialise((UserSnapshot) message, stream);
         }
 
-        #endregion
-
-        #region Deserialise
-
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var userSnapshot = (UserSnapshot) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a UserSnapshot object");
             return userSnapshot;
         }
-
-        #endregion
     }
 }

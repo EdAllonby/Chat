@@ -8,13 +8,11 @@ namespace SharedClasses.Protocol
     /// <summary>
     /// Used to serialise and deserialise the <see cref="User" /> Domain object
     /// </summary>
-    internal class UserSerialiser
+    internal sealed class UserSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-        #region Serialise
 
         public void Serialise(User user, NetworkStream stream)
         {
@@ -26,17 +24,11 @@ namespace SharedClasses.Protocol
             }
         }
 
-        #endregion
-
-        #region Deserialise
-
         public User Deserialise(NetworkStream networkStream)
         {
             var user = (User) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a User object");
             return user;
         }
-
-        #endregion
     }
 }
