@@ -25,6 +25,14 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
+        /// Incomplete user
+        /// </summary>
+        public User(string username)
+        {
+            this.username = username;
+        }
+
+        /// <summary>
         /// The name of the User
         /// </summary>
         public string Username

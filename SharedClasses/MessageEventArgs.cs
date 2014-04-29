@@ -7,7 +7,7 @@ namespace SharedClasses
     /// <summary>
     /// Holds an <see cref="IMessage"/> and the <see cref="ClientUser"/> who sent it
     /// </summary>
-    public class MessageEventArgs : EventArgs
+    public sealed class MessageEventArgs : EventArgs
     {
         public MessageEventArgs(IMessage message, User clientUser)
         {

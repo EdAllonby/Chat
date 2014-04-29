@@ -8,7 +8,7 @@ namespace SharedClasses.Protocol
     /// This static class is used define what message gets what identifier,
     /// and used to serialise and deserialise Message Identifiers to their related Typed
     /// </summary>
-    public class MessageIdentifierSerialiser
+    public sealed class MessageIdentifierSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 

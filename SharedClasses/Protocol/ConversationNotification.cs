@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// Transforms a <see cref="ConversationRequest"/> for the server to send to a client
+    /// Packages a <see cref="Conversation"/> for the Server to send to the Client
     /// </summary>
     [Serializable]
     public sealed class ConversationNotification : IMessage
@@ -16,6 +16,7 @@ namespace SharedClasses.Protocol
         }
 
         public Conversation Conversation { get; private set; }
+
         public int Identifier { get; private set; }
     }
 }

@@ -42,7 +42,7 @@
                     <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock Text="{Binding Text}" />
+                            <TextBlock Text="{Binding Message}" />
                             <TextBlock Text="{Binding SenderInformation}" FontSize="10" Foreground="Gray" />
                         </StackPanel>
                     </DataTemplate>

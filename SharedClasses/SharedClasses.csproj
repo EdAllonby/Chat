@@ -39,8 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContributionIDGenerator.cs" />
-    <Compile Include="ConversationIDGenerator.cs" />
+    <Compile Include="ClientHandler.cs" />
     <Compile Include="Domain\ContributionRepository.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\ConversationRepository.cs" />
@@ -64,8 +63,6 @@
     <Compile Include="Protocol\ISerialiser.cs" />
     <Compile Include="Protocol\LoginRequest.cs" />
     <Compile Include="Protocol\LoginRequestSerialiser.cs" />
-    <Compile Include="Protocol\LoginResponse.cs" />
-    <Compile Include="Protocol\LoginResponseSerialiser.cs" />
     <Compile Include="Protocol\MessageIdentifierSerialiser.cs" />
     <Compile Include="Protocol\MessageNumber.cs" />
     <Compile Include="Protocol\NotificationType.cs" />
@@ -78,7 +75,6 @@
     <Compile Include="Protocol\UserSnapshotRequest.cs" />
     <Compile Include="Protocol\UserSnapshotRequestSerialiser.cs" />
     <Compile Include="Protocol\UserSnapshotSerialiser.cs" />
-    <Compile Include="UserIDGenerator.cs" />
     <Compile Include="Domain\UserRepository.cs" />
   </ItemGroup>
   <ItemGroup>

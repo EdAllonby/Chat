@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Protocol
 {
     /// <summary>
-    /// Packages <see cref="SenderID"/> and <see cref="ReceiverID"/> for the client to send to the server
+    /// Packages a <see cref="Contribution"/> without an Id for the Client to send to the Server
     /// </summary>
     [Serializable]
     public sealed class ConversationRequest : IMessage

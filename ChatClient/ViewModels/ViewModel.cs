@@ -12,7 +12,7 @@ namespace ChatClient.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -20,7 +20,7 @@ namespace ChatClient.ViewModels
 
         #region Close Command
 
-        public ICommand CloseWindow
+        public static ICommand CloseWindow
         {
             get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }

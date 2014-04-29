@@ -7,7 +7,7 @@ namespace SharedClasses.Protocol
     /// Used to show that a new user has logged on
     /// </summary>
     [Serializable]
-    public class UserNotification : IMessage
+    public sealed class UserNotification : IMessage
     {
         public UserNotification(User user, NotificationType notificationType)
         {
@@ -16,9 +16,9 @@ namespace SharedClasses.Protocol
             Identifier = MessageNumber.UserNotification;
         }
 
-        public NotificationType Notification { get; set; }
+        public NotificationType Notification { get; private set; }
 
-        public User User { get; set; }
+        public User User { get; private set; }
 
         public int Identifier { get; private set; }
     }

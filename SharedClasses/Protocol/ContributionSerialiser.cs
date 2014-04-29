@@ -7,16 +7,14 @@ namespace SharedClasses.Protocol
 {
     /// <summary>
     /// Used to serialise and deserialise the <see cref="Contribution" /> Domain object
-    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class to do the main
-    /// serialisation work
+    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class
+    /// to do its the main serialisation work
     /// </summary>
-    internal class ContributionSerialiser
+    internal sealed class ContributionSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-        #region Serialise
 
         public void Serialise(Contribution contribution, NetworkStream stream)
         {
@@ -28,17 +26,11 @@ namespace SharedClasses.Protocol
             }
         }
 
-        #endregion
-
-        #region Deserialise
-
         public Contribution Deserialise(NetworkStream networkStream)
         {
             var contribution = (Contribution) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a Contribution object");
             return contribution;
         }
-
-        #endregion
     }
 }

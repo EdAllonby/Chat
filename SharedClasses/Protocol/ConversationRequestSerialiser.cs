@@ -1,27 +1,26 @@
 ﻿using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 
 namespace SharedClasses.Protocol
 {
     /// <summary>
     /// Used to serialise and deserialise a <see cref="ConversationRequest" /> message
+    /// Uses <see cref="ConversationSerialiser" /> for its underlying serialiser
     /// </summary>
-    internal class ConversationRequestSerialiser : ISerialiser<ConversationRequest>
+    internal sealed class ConversationRequestSerialiser : ISerialiser<ConversationRequest>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRequestSerialiser));
 
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+        private readonly ConversationSerialiser conversationSerialiser = new ConversationSerialiser();
 
-        #region Serialise
+        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
         public void Serialise(ConversationRequest message, NetworkStream stream)
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationRequest, stream);
 
             Log.Debug("Waiting for conversation request message to serialise");
-            binaryFormatter.Serialize(stream, message);
+            conversationSerialiser.Serialise(message.Conversation, stream);
             Log.Info("Conversation request message serialised");
         }
 
@@ -30,17 +29,11 @@ namespace SharedClasses.Protocol
             Serialise((ConversationRequest) message, stream);
         }
 
-        #endregion
-
-        #region Deserialise
-
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            var request = (ConversationRequest) binaryFormatter.Deserialize(networkStream);
+            var request = new ConversationRequest(conversationSerialiser.Deserialise(networkStream));
             Log.Info("Conversation request message deserialised");
             return request;
         }
-
-        #endregion
     }
 }

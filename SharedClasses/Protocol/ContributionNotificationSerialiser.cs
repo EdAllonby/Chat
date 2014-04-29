@@ -1,28 +1,24 @@
 ﻿using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 
 namespace SharedClasses.Protocol
 {
     /// <summary>
     /// Used to serialise and deserialise a <see cref="ContributionNotification" /> object
+    /// Uses <see cref="ContributionSerialiser" /> for its underlying serialiser
     /// </summary>
-    public class ContributionNotificationSerialiser : ISerialiser<ContributionNotification>
+    internal sealed class ContributionNotificationSerialiser : ISerialiser<ContributionNotification>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionNotificationSerialiser));
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-        private readonly BinaryFormatter serialiser = new BinaryFormatter();
+        private readonly ContributionSerialiser contributionSerialiser = new ContributionSerialiser();
 
-        #region Serialise
+        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
         public void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream stream)
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ContributionNotification, stream);
-
-            Log.Debug("Waiting for a contribution notification message to serialise");
-            serialiser.Serialize(stream, contributionNotificationMessage);
-            Log.Info("Contribution notification message serialised");
+            contributionSerialiser.Serialise(contributionNotificationMessage.Contribution, stream);
         }
 
         public void Serialise(IMessage contributionNotificationMessage, NetworkStream stream)
@@ -30,18 +26,12 @@ namespace SharedClasses.Protocol
             Serialise((ContributionNotification) contributionNotificationMessage, stream);
         }
 
-        #endregion
-
-        #region Deserialise
-
         public IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution notification message to deserialise");
-            var notification = (ContributionNotification) serialiser.Deserialize(networkStream);
+            var notification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream));
             Log.Info("Contribution notification message deserialised");
             return notification;
         }
-
-        #endregion
     }
 }

@@ -16,7 +16,6 @@ namespace ChatClient.ViewModels
         private string title;
         private string windowTitle;
 
-
         public ChatWindowViewModel()
         {
             windowTitle = client.UserName;
@@ -37,7 +36,6 @@ namespace ChatClient.ViewModels
 
         public Conversation Conversation
         {
-            get { return conversation; }
             set
             {
                 if (Equals(value, conversation)) return;

@@ -3,7 +3,7 @@
     /// <summary>
     /// Class to get the correct serialiser for the given <see cref="IMessage" /> identifier
     /// </summary>
-    public class SerialiserFactory
+    public sealed class SerialiserFactory
     {
         /// <summary>
         /// Returns the correct serialiser for the <see cref="IMessage" /> object identifier

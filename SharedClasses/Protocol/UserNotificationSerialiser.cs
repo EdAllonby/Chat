@@ -8,15 +8,13 @@ namespace SharedClasses.Protocol
     /// <summary>
     /// Used to Serialise and Deserialise a <see cref="User" /> Domain object.
     /// </summary>
-    internal class UserNotificationSerialiser : ISerialiser<UserNotification>
+    internal sealed class UserNotificationSerialiser : ISerialiser<UserNotification>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserNotificationSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        #region Serialise
 
         public void Serialise(UserNotification message, NetworkStream stream)
         {
@@ -32,17 +30,11 @@ namespace SharedClasses.Protocol
             Serialise((UserNotification) message, stream);
         }
 
-        #endregion
-
-        #region Deserialise
-
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var userNotification = (UserNotification) binaryFormatter.Deserialize(networkStream);
             Log.Info("Network stream has received data and deserialised to a UserNotification object");
             return userNotification;
         }
-
-        #endregion
     }
 }
