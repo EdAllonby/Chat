@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using log4net;
 
 namespace SharedClasses.Domain
 {
-    public class ContributionRepository
+    public sealed class ContributionRepository
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ContributionRepository));
+
         private readonly Dictionary<int, List<Contribution>> contributionsIndexedByConversationId = new Dictionary<int, List<Contribution>>();
         private readonly Dictionary<int, Contribution> contributionsIndexedById = new Dictionary<int, Contribution>();
 
@@ -19,11 +23,7 @@ namespace SharedClasses.Domain
             }
 
             contributionsIndexedById[contribution.ContributionId] = contribution;
-        }
-
-        public void RemoveContributionById(int contributionId)
-        {
-            // Remove contribution to indices
+            Log.Debug("Contribution with Id " + contribution.ContributionId + " added to user repository");
         }
 
         public Contribution FindContributionById(int contributionId)

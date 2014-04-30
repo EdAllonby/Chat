@@ -1,19 +1,24 @@
 ﻿using System.Collections.Generic;
+using log4net;
 
 namespace SharedClasses.Domain
 {
-    public class ConversationRepository
+    public sealed class ConversationRepository
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConversationRepository));
+
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
         public void AddConversation(Conversation conversation)
         {
             conversationsIndexedById[conversation.ConversationId] = conversation;
+            Log.Debug("Conversation with Id " + conversation.ConversationId + " added to user repository");
         }
 
-        public void RemoveConversation(Conversation conversation)
+        public void RemoveConversation(int conversationId)
         {
-            // Remove conversation
+            conversationsIndexedById.Remove(conversationId);
+            Log.Debug("Conversation with Id " + conversationId + " removed from Conversation repository");
         }
 
         public Conversation FindConversationById(int conversationId)
