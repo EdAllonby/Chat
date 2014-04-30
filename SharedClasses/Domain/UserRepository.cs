@@ -4,7 +4,7 @@ using log4net;
 
 namespace SharedClasses.Domain
 {
-    public class UserRepository
+    public sealed class UserRepository
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
@@ -30,20 +30,18 @@ namespace SharedClasses.Domain
             }
         }
 
-
         public void RemoveUser(int userId)
         {
             usersIndexedById.Remove(userId);
             Log.Debug("User with Id " + userId + " removed from user repository");
         }
 
-        public IEnumerable<User> AllUsers()
+        public IEnumerable<User> RetrieveAllUsers()
         {
-            List<User> users = usersIndexedById.Select(user => user.Value).ToList();
-            return users;
+            return usersIndexedById.Values.ToList();
         }
 
-        public User FindUserByID(int userId)
+        public User FindUserById(int userId)
         {
             return usersIndexedById[userId];
         }

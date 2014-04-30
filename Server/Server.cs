@@ -135,12 +135,12 @@ namespace Server
                     break;
 
                 case MessageNumber.UserSnapshotRequest:
-                    SendUserSnapshot(userRepository.FindUserByID(e.ClientUserId));
+                    SendUserSnapshot(userRepository.FindUserById(e.ClientUserId));
                     break;
 
                 case MessageNumber.ClientDisconnection:
-                    RemoveClientHandler(userRepository.FindUserByID(e.ClientUserId));
-                    NotifyClientsOfDisconnectedUser(userRepository.FindUserByID(e.ClientUserId));
+                    RemoveClientHandler(userRepository.FindUserById(e.ClientUserId));
+                    NotifyClientsOfDisconnectedUser(userRepository.FindUserById(e.ClientUserId));
                     break;
 
                 case MessageNumber.ConversationRequest:
@@ -159,7 +159,7 @@ namespace Server
 
         private void SendUserSnapshot(User clientUser)
         {
-            IEnumerable<User> currentUsers = userRepository.AllUsers();
+            IEnumerable<User> currentUsers = userRepository.RetrieveAllUsers();
             var userSnapshot = new UserSnapshot(currentUsers);
             ClientHandler clientHandler = clientHandlersIndexedByUserId[clientUser.UserId];
             clientHandler.SendMessage(userSnapshot);

@@ -41,8 +41,8 @@ namespace ChatClient.ViewModels
                 if (Equals(value, conversation)) return;
                 conversation = value;
                 OnPropertyChanged();
-                Title = "Chat between " + client.UserRepository.FindUserByID(conversation.FirstParticipantUserId).Username + " and " +
-                        client.UserRepository.FindUserByID(conversation.SecondParticipantUserId).Username;
+                Title = "Chat between " + client.UserRepository.FindUserById(conversation.FirstParticipantUserId).Username + " and " +
+                        client.UserRepository.FindUserById(conversation.SecondParticipantUserId).Username;
             }
         }
 
