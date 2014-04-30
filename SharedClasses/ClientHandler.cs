@@ -15,30 +15,28 @@ namespace SharedClasses
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientHandler));
         private static int totalListenerThreads;
-        private readonly User clientUser;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
+        private readonly int clientUserId;
         private readonly TcpClient tcpClient;
 
-        public ClientHandler(User user, TcpClient client)
+        public ClientHandler(int UserId, TcpClient client)
         {
             tcpClient = client;
-            clientUser = user;
+            clientUserId = UserId;
             Log.Info("New client handler created");
         }
 
-        public User ClientUser
+        public int ClientUserId
         {
-            get { return clientUser; }
+            get
+            {
+                return clientUserId;
+            }
         }
-
-        public void Dispose()
-        {
-            tcpClient.Close();
-        }
-
+        
         public event EventHandler<MessageEventArgs> OnNewMessage
         {
             add { messageReceiver.OnNewMessage += value; }
@@ -47,7 +45,7 @@ namespace SharedClasses
 
         public void CreateListenerThreadForClient()
         {
-            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(ClientUser, tcpClient))
+            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
             {
                 Name = "ReceiveMessageThread" + (totalListenerThreads++)
             };
@@ -58,7 +56,12 @@ namespace SharedClasses
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
-            Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + ClientUser.UserId);
+            Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + clientUserId);
+        }
+
+        public void Dispose()
+        {
+            tcpClient.Close();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace SharedClasses
 
         public event EventHandler<MessageEventArgs> OnNewMessage;
 
-        public void ReceiveMessages(User clientUser, TcpClient tcpClient)
+        public void ReceiveMessages(int clientUserId, TcpClient tcpClient)
         {
             try
             {
@@ -32,14 +32,14 @@ namespace SharedClasses
 
                     IMessage message = serialiser.Deserialise(tcpClient.GetStream());
 
-                    OnNewMessage(this, new MessageEventArgs(message, clientUser));
+                    OnNewMessage(this, new MessageEventArgs(message, clientUserId));
                 }
             }
             catch (IOException)
             {
                 Log.Info("Detected client disconnection, sending ClientDisconnection object to Server");
                 IMessage message = new ClientDisconnection();
-                OnNewMessage(this, new MessageEventArgs(message, clientUser));
+                OnNewMessage(this, new MessageEventArgs(message, clientUserId));
             }
         }
     }

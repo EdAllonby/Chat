@@ -23,13 +23,15 @@ namespace ChatClient
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+
         private static Client uniqueClientInstance;
 
         private readonly ContributionRepository contributionRepository = new ContributionRepository();
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly UserRepository userRepository = new UserRepository();
+
         private readonly IPAddress targetAddress;
         private readonly int targetPort;
-        private readonly UserRepository userRepository = new UserRepository();
         private ClientHandler clientHandler;
 
         private Client(string userName, IPAddress targetAddress, int targetPort)
@@ -81,9 +83,7 @@ namespace ChatClient
 
             UserNotification userNotification = GetUserNotification(tcpClient);
 
-            User clientUser = userNotification.User;
-
-            clientHandler = new ClientHandler(clientUser, tcpClient);
+            clientHandler = new ClientHandler(userNotification.User.UserId, tcpClient);
 
             clientHandler.SendMessage(new UserSnapshotRequest());
 
@@ -94,7 +94,7 @@ namespace ChatClient
 
         private TcpClient CreateConnection()
         {
-            const int timeoutSeconds = 5;
+            const int TimeoutSeconds = 5;
 
             Log.Info("Client looking for server");
 
@@ -106,7 +106,7 @@ namespace ChatClient
             WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
             try
             {
-                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(timeoutSeconds), false))
+                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(TimeoutSeconds), false))
                 {
                     serverConnection.Close();
                     throw new TimeoutException();
@@ -174,13 +174,13 @@ namespace ChatClient
 
         public void SendConversationContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(conversationID, clientHandler.ClientUser.UserId, message);
+            var clientContribution = new ContributionRequest(conversationID, clientHandler.ClientUserId, message);
             clientHandler.SendMessage(clientContribution);
         }
 
         public void SendConversationRequest(int receiverId)
         {
-            var conversation = new Conversation(clientHandler.ClientUser.UserId, receiverId);
+            var conversation = new Conversation(clientHandler.ClientUserId, receiverId);
             var conversationRequest = new ConversationRequest(conversation);
             clientHandler.SendMessage(conversationRequest);
         }
@@ -218,10 +218,7 @@ namespace ChatClient
 
         private void AddUserListToRepository(UserSnapshot userSnapshot)
         {
-            foreach (User user in userSnapshot.Users)
-            {
-                userRepository.AddUser(user);
-            }
+            userRepository.AddUsers(userSnapshot.Users);
 
             OnNewUser(userRepository.UsersIndexedById.Values.ToList(), null);
         }
