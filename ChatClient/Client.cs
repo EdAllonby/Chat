@@ -24,23 +24,11 @@ namespace ChatClient
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private static Client uniqueClientInstance;
-
         private readonly ContributionRepository contributionRepository = new ContributionRepository();
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly UserRepository userRepository = new UserRepository();
 
-        private readonly IPAddress targetAddress;
-        private readonly int targetPort;
         private ClientHandler clientHandler;
-
-        private Client(string userName, IPAddress targetAddress, int targetPort)
-        {
-            UserName = userName;
-            this.targetAddress = targetAddress;
-            this.targetPort = targetPort;
-            ConnectToServer();
-        }
 
         public UserRepository UserRepository
         {
@@ -59,26 +47,12 @@ namespace ChatClient
             Log.Info("User changed event fired");
         }
 
-        public static Client GetInstance(string username, IPAddress targetAddress, int targetPort)
+        public void ConnectToServer(string userName, IPAddress targetAddress, int targetPort)
         {
-            return uniqueClientInstance ?? (uniqueClientInstance = new Client(username, targetAddress, targetPort));
-        }
+            UserName = userName;
 
-        public static Client GetInstance()
-        {
-            if (uniqueClientInstance == null)
-            {
-                throw new NullReferenceException(
-                    "Can't instantiate Client Class with this method. Use overloaded GetInstance() method");
-            }
-
-            return uniqueClientInstance;
-        }
-
-        private void ConnectToServer()
-        {
-            TcpClient tcpClient = CreateConnection();
-
+            TcpClient tcpClient = CreateConnection(targetAddress, targetPort);
+            
             SendUserRequest(tcpClient, UserName);
 
             UserNotification userNotification = GetUserNotification(tcpClient);
@@ -92,7 +66,7 @@ namespace ChatClient
             clientHandler.CreateListenerThreadForClient();
         }
 
-        private TcpClient CreateConnection()
+        private TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
         {
             const int TimeoutSeconds = 5;
 
@@ -148,9 +122,10 @@ namespace ChatClient
             switch (message.Identifier)
             {
                 case MessageNumber.ContributionNotification:
-                    Contribution contribution = CreateContribution((ContributionNotification) message);
-                    AddContributionToRepository(contribution);
-                    NotifyClientOfNewNotification(contribution);
+                    var contributionNotification = (ContributionNotification) message;
+                    Contribution contribution = contributionNotification.Contribution;
+                    contributionRepository.AddContribution(contribution);
+                    OnNewContribution(contribution);
                     break;
 
                 case MessageNumber.UserNotification:
@@ -185,35 +160,10 @@ namespace ChatClient
             clientHandler.SendMessage(conversationRequest);
         }
 
-        private void NotifyClientOfNewNotification(Contribution contribution)
-        {
-            OnNewContribution(contribution);
-        }
-
-        private void AddUserToRepository(UserNotification userNotification)
-        {
-            userRepository.AddUser(userNotification.User);
-        }
-
-        private void RemoveUserFromRepository(UserNotification userNotification)
-        {
-            userRepository.RemoveUser(userNotification.User.UserId);
-        }
-
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             conversationRepository.AddConversation(conversationNotification.Conversation);
             OnNewConversationNotification(conversationNotification.Conversation);
-        }
-
-        private void AddContributionToRepository(Contribution contribution)
-        {
-            contributionRepository.AddContribution(contribution);
-        }
-
-        private static Contribution CreateContribution(ContributionNotification contributionNotification)
-        {
-            return contributionNotification.Contribution;
         }
 
         private void AddUserListToRepository(UserSnapshot userSnapshot)
@@ -228,10 +178,10 @@ namespace ChatClient
             switch (userNotification.Notification)
             {
                 case NotificationType.Create:
-                    AddUserToRepository(userNotification);
+                    userRepository.AddUser(userNotification.User);
                     break;
                 case NotificationType.Delete:
-                    RemoveUserFromRepository(userNotification);
+                    userRepository.RemoveUser(userNotification.User.UserId);
                     break;
             }
         }
