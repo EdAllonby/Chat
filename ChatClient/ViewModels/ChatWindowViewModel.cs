@@ -9,7 +9,6 @@ namespace ChatClient.ViewModels
 {
     public class ChatWindowViewModel : ViewModel
     {
-        private readonly Client client = Client.GetInstance();
         private ObservableCollection<Contribution> contributions = new ObservableCollection<Contribution>();
         private Conversation conversation;
         private string messageToAddToConversation;
@@ -18,9 +17,9 @@ namespace ChatClient.ViewModels
 
         public ChatWindowViewModel()
         {
-            windowTitle = client.UserName;
+            windowTitle = Client.UserName;
 
-            client.OnNewContribution += client_OnNewContribution;
+            Client.OnNewContribution += client_OnNewContribution;
         }
 
         public string WindowTitle
@@ -41,8 +40,8 @@ namespace ChatClient.ViewModels
                 if (Equals(value, conversation)) return;
                 conversation = value;
                 OnPropertyChanged();
-                Title = "Chat between " + client.UserRepository.FindUserById(conversation.FirstParticipantUserId).Username + " and " +
-                        client.UserRepository.FindUserById(conversation.SecondParticipantUserId).Username;
+                Title = "Chat between " + Client.UserRepository.FindUserById(conversation.FirstParticipantUserId).Username + " and " +
+                        Client.UserRepository.FindUserById(conversation.SecondParticipantUserId).Username;
             }
         }
 
@@ -89,7 +88,7 @@ namespace ChatClient.ViewModels
 
         private void NewConversationContributionRequest()
         {
-            client.SendConversationContributionRequest(conversation.ConversationId, MessageToAddToConversation);
+            Client.SendConversationContributionRequest(conversation.ConversationId, MessageToAddToConversation);
 
             messageToAddToConversation = string.Empty;
             OnPropertyChanged("MessageToAddToConversation");

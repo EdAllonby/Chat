@@ -16,8 +16,6 @@ namespace ChatClient.ViewModels
 
         private readonly ClientLoginParser loginParser = new ClientLoginParser();
 
-        [UsedImplicitly] private Client client;
-
         private string ipAddress = "IP Address";
         private string port = "Port";
         private UserListWindow userListWindow;
@@ -89,7 +87,7 @@ namespace ChatClient.ViewModels
         {
             try
             {
-                client = Client.GetInstance(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+                Client.ConnectToServer(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
                 OpenUserListWindow();
             }
             catch (TimeoutException timeoutException)
@@ -98,7 +96,7 @@ namespace ChatClient.ViewModels
                 MessageBox.Show("Could not find server, check the IP Address");
             }
             catch (SocketException socketException)
-            {
+            { 
                 Log.Error("Port is incorrect", socketException);
                 MessageBox.Show("Could log in to server, check the port");
             }
