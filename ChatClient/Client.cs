@@ -12,7 +12,7 @@ using SharedClasses.Protocol;
 namespace ChatClient
 {
     /// <summary>
-    /// Handles the logic for incoming <see cref="IMessage" /> passed from ClientHandler
+    /// Handles the logic for <see cref="IMessage"/>
     /// </summary>
     public sealed class Client
     {
@@ -23,12 +23,17 @@ namespace ChatClient
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+        private static int totalListenerThreads;
 
         private readonly ContributionRepository contributionRepository = new ContributionRepository();
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
+
+        private readonly MessageReceiver messageReceiver = new MessageReceiver();
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly UserRepository userRepository = new UserRepository();
 
-        private ClientHandler clientHandler;
+        private int clientUserId;
+        private TcpClient tcpClient;
 
         public UserRepository UserRepository
         {
@@ -51,19 +56,35 @@ namespace ChatClient
         {
             UserName = userName;
 
-            TcpClient tcpClient = CreateConnection(targetAddress, targetPort);
-            
-            SendUserRequest(tcpClient, UserName);
+            tcpClient = CreateConnection(targetAddress, targetPort);
+
+            SendLoginRequest(tcpClient, UserName);
 
             UserNotification userNotification = GetUserNotification(tcpClient);
 
-            clientHandler = new ClientHandler(userNotification.User.UserId, tcpClient);
+            clientUserId = userNotification.User.UserId;
 
-            clientHandler.SendMessage(new UserSnapshotRequest());
+            SendMessage(new UserSnapshotRequest());
 
-            clientHandler.OnNewMessage += NewMessageReceived;
+            messageReceiver.OnNewMessage += NewMessageReceived;
 
-            clientHandler.CreateListenerThreadForClient();
+            CreateListenerThreadForClient();
+        }
+
+        private void CreateListenerThreadForClient()
+        {
+            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
+            {
+                Name = "ReceiveMessageThread" + (totalListenerThreads++)
+            };
+            messageListenerThread.Start();
+        }
+
+        public void SendMessage(IMessage message)
+        {
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            messageSerialiser.Serialise(message, tcpClient.GetStream());
+            Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + clientUserId);
         }
 
         private TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
@@ -97,7 +118,7 @@ namespace ChatClient
             return serverConnection;
         }
 
-        private static void SendUserRequest(TcpClient tcpClient, string username)
+        private static void SendLoginRequest(TcpClient tcpClient, string username)
         {
             IMessage userRequest = new LoginRequest(new User(username));
             var serialiserFactory = new SerialiserFactory();
@@ -149,15 +170,15 @@ namespace ChatClient
 
         public void SendConversationContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(conversationID, clientHandler.ClientUserId, message);
-            clientHandler.SendMessage(clientContribution);
+            var clientContribution = new ContributionRequest(conversationID, clientUserId, message);
+            SendMessage(clientContribution);
         }
 
         public void SendConversationRequest(int receiverId)
         {
-            var conversation = new Conversation(clientHandler.ClientUserId, receiverId);
+            var conversation = new Conversation(clientUserId, receiverId);
             var conversationRequest = new ConversationRequest(conversation);
-            clientHandler.SendMessage(conversationRequest);
+            SendMessage(conversationRequest);
         }
 
         private void AddConversationToRepository(ConversationNotification conversationNotification)

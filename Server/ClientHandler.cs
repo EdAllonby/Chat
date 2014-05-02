@@ -2,10 +2,10 @@
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses.Domain;
+using SharedClasses;
 using SharedClasses.Protocol;
 
-namespace SharedClasses
+namespace Server
 {
     /// <summary>
     /// The Client handler is in charge of abstracting away the TcpClient work
@@ -22,10 +22,10 @@ namespace SharedClasses
         private readonly int clientUserId;
         private readonly TcpClient tcpClient;
 
-        public ClientHandler(int UserId, TcpClient client)
+        public ClientHandler(int userId, TcpClient client)
         {
             tcpClient = client;
-            clientUserId = UserId;
+            clientUserId = userId;
             Log.Info("New client handler created");
         }
 
