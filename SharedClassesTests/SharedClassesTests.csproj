@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Server\Server.csproj">
-      <Project>{80807b49-4920-4680-9034-7bb27f7ef566}</Project>
+      <Project>{abc9cfe2-4ced-4504-ba0a-9a33cce30d4c}</Project>
       <Name>Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharedClasses\SharedClasses.csproj">
@@ -67,6 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

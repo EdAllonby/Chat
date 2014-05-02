@@ -139,8 +139,9 @@ namespace Server
                     break;
 
                 case MessageNumber.ClientDisconnection:
-                    RemoveClientHandler(userRepository.FindUserById(e.ClientUserId));
+                    RemoveClientHandler(e.ClientUserId);
                     NotifyClientsOfDisconnectedUser(userRepository.FindUserById(e.ClientUserId));
+                    userRepository.RemoveUser(e.ClientUserId);
                     break;
 
                 case MessageNumber.ConversationRequest:
@@ -198,11 +199,10 @@ namespace Server
             secondParticipantClientHandler.SendMessage(contributionNotification);
         }
 
-        private void RemoveClientHandler(User clientUser)
+        private void RemoveClientHandler(int userId)
         {
-            clientHandlersIndexedByUserId.Remove(clientUser.UserId);
-
-            Log.Info("User with id " + clientUser.UserId + " logged out. Removing from Server's ClientHandler list");
+            clientHandlersIndexedByUserId.Remove(userId);
+            Log.Info("User with id " + userId + " logged out. Removing from Server's ClientHandler list");
 
         }
 
