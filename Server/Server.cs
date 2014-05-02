@@ -59,9 +59,9 @@ namespace Server
 
             clientHandlersIndexedByUserId[newUser.UserId] = clientHandler;
 
-            var userNotification = new UserNotification(newUser, NotificationType.Create);
+            var loginResponse = new LoginResponse(newUser);
 
-            clientHandler.SendMessage(userNotification);
+            clientHandler.SendMessage(loginResponse);
 
             clientHandler.OnNewMessage += NewMessageReceived;
 
