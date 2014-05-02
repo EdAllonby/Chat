@@ -58,17 +58,11 @@ namespace ChatClient
 
             tcpClient = CreateConnection(targetAddress, targetPort);
 
-            SendLoginRequest(tcpClient, UserName);
-
-            UserNotification userNotification = GetUserNotification(tcpClient);
-
-            clientUserId = userNotification.User.UserId;
-
-            SendMessage(new UserSnapshotRequest());
-
             messageReceiver.OnNewMessage += NewMessageReceived;
 
             CreateListenerThreadForClient();
+
+            SendLoginRequest(tcpClient, UserName);
         }
 
         private void CreateListenerThreadForClient()
@@ -148,8 +142,7 @@ namespace ChatClient
                     contributionRepository.AddContribution(contribution);
                     OnNewContribution(contribution);
                     break;
-
-                case MessageNumber.UserNotification:
+                  case MessageNumber.UserNotification:
                     UpdateUserRepository((UserNotification) message);
                     NotifyClientOfUserChange();
                     break;
@@ -162,10 +155,20 @@ namespace ChatClient
                     AddConversationToRepository((ConversationNotification) message);
                     break;
 
+                case MessageNumber.LoginResponse:
+                    GetClientUserId((LoginResponse)message);
+                    SendMessage(new UserSnapshotRequest());
+                    break;
+
                 default:
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
+        }
+
+        private void GetClientUserId(LoginResponse message)
+        {
+            clientUserId = message.User.UserId;
         }
 
         public void SendConversationContributionRequest(int conversationID, string message)

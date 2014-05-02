@@ -14,5 +14,6 @@
         public const int ClientDisconnection = 7;
         public const int ConversationRequest = 8;
         public const int ConversationNotification = 9;
+        public const int LoginResponse = 10;
     }
 }

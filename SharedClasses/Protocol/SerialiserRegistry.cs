@@ -17,7 +17,8 @@ namespace SharedClasses.Protocol
             {MessageNumber.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
             {MessageNumber.UserSnapshot, new UserSnapshotSerialiser()},
             {MessageNumber.ConversationRequest, new ConversationRequestSerialiser()},
-            {MessageNumber.ConversationNotification, new ConversationNotificationSerialiser()}
+            {MessageNumber.ConversationNotification, new ConversationNotificationSerialiser()},
+            {MessageNumber.LoginResponse, new LoginResponseSerialiser()}
         };
 
         public static readonly Dictionary<Type, ISerialiser> SerialisersByMessageType = new Dictionary<Type, ISerialiser>
@@ -29,7 +30,8 @@ namespace SharedClasses.Protocol
             {typeof (UserSnapshotRequest), new UserSnapshotRequestSerialiser()},
             {typeof (UserSnapshot), new UserSnapshotSerialiser()},
             {typeof (ConversationRequest), new ConversationRequestSerialiser()},
-            {typeof (ConversationNotification), new ConversationNotificationSerialiser()}
+            {typeof (ConversationNotification), new ConversationNotificationSerialiser()},
+            {typeof (LoginResponse), new LoginResponseSerialiser()}
         };
     }
 }
