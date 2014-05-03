@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Input;
-using ChatClient.Annotations;
 using ChatClient.Commands;
 using ChatClient.Views;
 using log4net;
@@ -96,7 +95,7 @@ namespace ChatClient.ViewModels
                 MessageBox.Show("Could not find server, check the IP Address");
             }
             catch (SocketException socketException)
-            { 
+            {
                 Log.Error("Port is incorrect", socketException);
                 MessageBox.Show("Could log in to server, check the port");
             }

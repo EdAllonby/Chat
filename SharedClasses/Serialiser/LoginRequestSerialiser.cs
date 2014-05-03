@@ -1,7 +1,8 @@
 ﻿using System.Net.Sockets;
 using log4net;
+using SharedClasses.Message;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Used to Serialise and Deserialise a <see cref="LoginRequest" /> object
@@ -11,9 +12,8 @@ namespace SharedClasses.Protocol
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginRequestSerialiser));
 
-        private readonly UserSerialiser userSerialiser = new UserSerialiser();
-
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+        private readonly UserSerialiser userSerialiser = new UserSerialiser();
 
         public void Serialise(LoginRequest message, NetworkStream stream)
         {

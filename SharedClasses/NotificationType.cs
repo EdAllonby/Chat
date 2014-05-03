@@ -1,4 +1,4 @@
-﻿namespace SharedClasses.Protocol
+﻿namespace SharedClasses
 {
     /// <summary>
     /// Used to determine whether a notification message is for creation of deletion

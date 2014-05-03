@@ -5,16 +5,16 @@ using System.Threading;
 
 namespace Server
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main()
+        private static void Main()
         {
-            var servicesToRun = new ServiceBase[] 
-            { 
-                new ServerService() 
+            var servicesToRun = new ServiceBase[]
+            {
+                new ServerService()
             };
             if (Environment.UserInteractive)
             {
@@ -23,17 +23,17 @@ namespace Server
             ServiceBase.Run(servicesToRun);
         }
 
-        static void RunInteractive(ServiceBase[] servicesToRun)
+        private static void RunInteractive(ServiceBase[] servicesToRun)
         {
             Console.WriteLine("Services running in interactive mode.");
             Console.WriteLine();
 
-            MethodInfo onStartMethod = typeof(ServiceBase).GetMethod("OnStart",
+            MethodInfo onStartMethod = typeof (ServiceBase).GetMethod("OnStart",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (ServiceBase service in servicesToRun)
             {
                 Console.Write("Starting {0}...", service.ServiceName);
-                onStartMethod.Invoke(service, new object[] { new string[] { } });
+                onStartMethod.Invoke(service, new object[] {new string[] {}});
                 Console.Write("Started");
             }
 
@@ -44,7 +44,7 @@ namespace Server
             Console.ReadKey();
             Console.WriteLine();
 
-            MethodInfo onStopMethod = typeof(ServiceBase).GetMethod("OnStop",
+            MethodInfo onStopMethod = typeof (ServiceBase).GetMethod("OnStop",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (ServiceBase service in servicesToRun)
             {

@@ -5,7 +5,7 @@ namespace SharedClasses.Domain
 {
     public sealed class ConversationRepository
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(ConversationRepository));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRepository));
 
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 

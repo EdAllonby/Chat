@@ -1,7 +1,7 @@
 ﻿using System;
 using SharedClasses.Domain;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Message
 {
     /// <summary>
     /// Packages a <see cref="User"/> for the Client to send to the Server

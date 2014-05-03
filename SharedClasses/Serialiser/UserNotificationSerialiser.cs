@@ -2,8 +2,9 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Used to Serialise and Deserialise a <see cref="User" /> Domain object.

@@ -23,7 +23,7 @@ namespace SharedClasses.Domain
 
         public void AddUsers(IEnumerable<User> users)
         {
-            foreach (var user in users)
+            foreach (User user in users)
             {
                 usersIndexedById[user.UserId] = user;
                 Log.Debug("User with Id " + user.UserId + " added to user repository");

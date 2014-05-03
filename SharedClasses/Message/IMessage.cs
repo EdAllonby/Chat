@@ -1,4 +1,6 @@
-﻿namespace SharedClasses.Protocol
+﻿using SharedClasses.Serialiser;
+
+namespace SharedClasses.Message
 {
     /// <summary>
     /// Used to group the message objects into one type.

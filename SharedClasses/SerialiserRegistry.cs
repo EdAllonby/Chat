@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using SharedClasses.Message;
+using SharedClasses.Serialiser;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses
 {
     /// <summary>
     /// Defines various relationships of message types, identifiers and serialisers

@@ -3,7 +3,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Used to serialise and deserialise the <see cref="User" /> Domain object
