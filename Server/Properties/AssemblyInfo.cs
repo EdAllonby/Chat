@@ -1,10 +1,8 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
-// General Information about an assembly is controlled through the following 
+﻿// General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+using System.Reflection;
+using System.Runtime.InteropServices;
 using log4net.Config;
 
 [assembly: AssemblyTitle("Server")]
@@ -19,9 +17,11 @@ using log4net.Config;
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
+
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
+
 [assembly: Guid("8116a546-b7f2-4248-bfef-52c95bb77cae")]
 
 // Set the project to watch the log4net.config file and reload of the config changes when needed.
@@ -38,5 +38,6 @@ using log4net.Config;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
+
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

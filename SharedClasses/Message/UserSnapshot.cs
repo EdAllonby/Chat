@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SharedClasses.Domain;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Message
 {
     /// <summary>
     /// Sends a list of currently connected users to the recently logged in Client

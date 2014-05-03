@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Protocol;
+using SharedClasses.Message;
+using SharedClasses.Serialiser;
 
 namespace Server
 {
@@ -44,7 +45,7 @@ namespace Server
                 TcpClient client = clientListener.AcceptTcpClient();
                 Log.Info("New client connected");
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                var clientLoginWorkerThread = new Thread(() => InitialiseNewClient(client)) { Name = "Client Login Worker Thread"};
+                var clientLoginWorkerThread = new Thread(() => InitialiseNewClient(client)) {Name = "Client Login Worker Thread"};
                 clientLoginWorkerThread.Start();
             }
         }
@@ -53,19 +54,17 @@ namespace Server
         {
             User newUser = CreateUserEntity(GetClientLoginCredentials(tcpClient));
 
-            var clientHandler = new ClientHandler(newUser.UserId, tcpClient);
-
             NotifyClientsOfNewUser(newUser);
 
-            clientHandlersIndexedByUserId[newUser.UserId] = clientHandler;
-
             var loginResponse = new LoginResponse(newUser);
+
+            var clientHandler = new ClientHandler(newUser.UserId, tcpClient);
+
+            clientHandlersIndexedByUserId[newUser.UserId] = clientHandler;
 
             clientHandler.SendMessage(loginResponse);
 
             clientHandler.OnNewMessage += NewMessageReceived;
-
-            clientHandler.CreateListenerThreadForClient();
         }
 
         private static LoginRequest GetClientLoginCredentials(TcpClient tcpClient)
@@ -203,7 +202,6 @@ namespace Server
         {
             clientHandlersIndexedByUserId.Remove(userId);
             Log.Info("User with id " + userId + " logged out. Removing from Server's ClientHandler list");
-
         }
 
         private void NotifyClientsOfDisconnectedUser(User disconnectedUser)

@@ -1,4 +1,4 @@
-﻿namespace SharedClasses.Protocol
+﻿namespace SharedClasses
 {
     /// <summary>
     /// Gives definitions for the numbers, avoiding the introduction of Magic Numbers

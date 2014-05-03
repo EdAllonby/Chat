@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using log4net;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// This static class is used define what message gets what identifier,

@@ -4,8 +4,6 @@ using System.Threading;
 using System.Windows;
 using log4net;
 using log4net.Config;
-using log4net.Core;
-using log4net.Repository;
 
 namespace ChatClient
 {

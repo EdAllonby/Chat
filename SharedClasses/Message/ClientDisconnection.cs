@@ -1,4 +1,6 @@
-﻿namespace SharedClasses.Protocol
+﻿using SharedClasses.Serialiser;
+
+namespace SharedClasses.Message
 {
     /// <summary>
     /// Used to describe a client disconnection

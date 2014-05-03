@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
+using SharedClasses.Message;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Groups the message serialisers together.

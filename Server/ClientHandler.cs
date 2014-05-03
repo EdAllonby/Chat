@@ -3,7 +3,8 @@ using System.Net.Sockets;
 using System.Threading;
 using log4net;
 using SharedClasses;
-using SharedClasses.Protocol;
+using SharedClasses.Message;
+using SharedClasses.Serialiser;
 
 namespace Server
 {
@@ -15,11 +16,11 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientHandler));
         private static int totalListenerThreads;
+        private readonly int clientUserId;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        private readonly int clientUserId;
         private readonly TcpClient tcpClient;
 
         public ClientHandler(int userId, TcpClient client)
@@ -27,23 +28,21 @@ namespace Server
             tcpClient = client;
             clientUserId = userId;
             Log.Info("New client handler created");
+            CreateListenerThreadForClient();
         }
 
-        public int ClientUserId
+        public void Dispose()
         {
-            get
-            {
-                return clientUserId;
-            }
+            tcpClient.Close();
         }
-        
+
         public event EventHandler<MessageEventArgs> OnNewMessage
         {
             add { messageReceiver.OnNewMessage += value; }
             remove { messageReceiver.OnNewMessage -= value; }
         }
 
-        public void CreateListenerThreadForClient()
+        private void CreateListenerThreadForClient()
         {
             var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
             {
@@ -57,11 +56,6 @@ namespace Server
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
             Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + clientUserId);
-        }
-
-        public void Dispose()
-        {
-            tcpClient.Close();
         }
     }
 }

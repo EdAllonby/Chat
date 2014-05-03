@@ -1,6 +1,5 @@
 ﻿using System;
-using SharedClasses.Domain;
-using SharedClasses.Protocol;
+using SharedClasses.Message;
 
 namespace SharedClasses
 {

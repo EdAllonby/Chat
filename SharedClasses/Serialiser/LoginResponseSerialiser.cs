@@ -1,7 +1,8 @@
 ﻿using System.Net.Sockets;
 using log4net;
+using SharedClasses.Message;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Used to Serialise and Deserialise a <see cref="LoginResponse" /> object
@@ -9,11 +10,10 @@ namespace SharedClasses.Protocol
     /// </summary>
     public sealed class LoginResponseSerialiser : ISerialiser<LoginResponse>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(LoginResponseSerialiser));
-
-        private readonly UserSerialiser userSerialiser = new UserSerialiser();
+        private static readonly ILog Log = LogManager.GetLogger(typeof (LoginResponseSerialiser));
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+        private readonly UserSerialiser userSerialiser = new UserSerialiser();
 
         public void Serialise(LoginResponse message, NetworkStream stream)
         {
@@ -29,7 +29,7 @@ namespace SharedClasses.Protocol
 
         public void Serialise(IMessage loginRequestMessage, NetworkStream stream)
         {
-            Serialise((LoginResponse)loginRequestMessage, stream);
+            Serialise((LoginResponse) loginRequestMessage, stream);
         }
 
         public IMessage Deserialise(NetworkStream networkStream)

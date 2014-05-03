@@ -1,8 +1,9 @@
 ﻿using System.Net.Sockets;
 using log4net;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Used to serialise and deserialise a <see cref="ContributionRequest" /> message

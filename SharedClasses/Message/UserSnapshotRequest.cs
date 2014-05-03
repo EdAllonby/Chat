@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Message
 {
     /// <summary>
     /// Requests a list of currently connected users

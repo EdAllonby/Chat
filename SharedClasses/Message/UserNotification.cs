@@ -1,7 +1,7 @@
 ﻿using System;
 using SharedClasses.Domain;
 
-namespace SharedClasses.Protocol
+namespace SharedClasses.Message
 {
     /// <summary>
     /// Used to show that a new user has logged on

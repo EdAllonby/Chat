@@ -7,7 +7,8 @@ using System.Threading;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Protocol;
+using SharedClasses.Message;
+using SharedClasses.Serialiser;
 
 namespace ChatClient
 {
@@ -142,7 +143,7 @@ namespace ChatClient
                     contributionRepository.AddContribution(contribution);
                     OnNewContribution(contribution);
                     break;
-                  case MessageNumber.UserNotification:
+                case MessageNumber.UserNotification:
                     UpdateUserRepository((UserNotification) message);
                     NotifyClientOfUserChange();
                     break;
@@ -156,7 +157,7 @@ namespace ChatClient
                     break;
 
                 case MessageNumber.LoginResponse:
-                    GetClientUserId((LoginResponse)message);
+                    GetClientUserId((LoginResponse) message);
                     SendMessage(new UserSnapshotRequest());
                     break;
 
