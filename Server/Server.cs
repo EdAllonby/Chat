@@ -60,11 +60,11 @@ namespace Server
 
             var clientHandler = new ClientHandler(newUser.UserId, tcpClient);
 
+            clientHandler.OnNewMessage += NewMessageReceived;
+
             clientHandlersIndexedByUserId[newUser.UserId] = clientHandler;
 
             clientHandler.SendMessage(loginResponse);
-
-            clientHandler.OnNewMessage += NewMessageReceived;
         }
 
         private static LoginRequest GetClientLoginCredentials(TcpClient tcpClient)
@@ -115,11 +115,11 @@ namespace Server
 
         private void NotifyClientsOfNewUser(User user)
         {
-            foreach (ClientHandler handler in clientHandlersIndexedByUserId.Values)
+            Parallel.ForEach(clientHandlersIndexedByUserId.Values, handler =>
             {
                 var userNotification = new UserNotification(user, NotificationType.Create);
                 handler.SendMessage(userNotification);
-            }
+            });
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
