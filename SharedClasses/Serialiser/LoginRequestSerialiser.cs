@@ -21,7 +21,6 @@ namespace SharedClasses.Serialiser
             {
                 messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-                Log.Info("Attempt to serialise LoginRequest and send to stream");
                 userSerialiser.Serialise(message.User, stream);
                 Log.Info("LoginRequest serialised and sent to network stream");
             }

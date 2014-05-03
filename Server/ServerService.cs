@@ -10,11 +10,6 @@ namespace Server
             InitializeComponent();
         }
 
-        public void OnDebug()
-        {
-            OnStart(null);
-        }
-
         protected override void OnStart(string[] args)
         {
             var serverThread = new Thread(StartServer);

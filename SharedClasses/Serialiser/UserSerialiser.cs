@@ -18,16 +18,15 @@ namespace SharedClasses.Serialiser
         {
             if (stream.CanWrite)
             {
-                Log.Info("Attempt to serialise User and send to stream");
                 binaryFormatter.Serialize(stream, user);
-                Log.Info("User serialised and sent to network stream");
+                Log.Debug("User serialised and sent to network stream");
             }
         }
 
         public User Deserialise(NetworkStream networkStream)
         {
             var user = (User) binaryFormatter.Deserialize(networkStream);
-            Log.Info("Network stream has received data and deserialised to a User object");
+            Log.Debug("Network stream has received data and deserialised to a User object");
             return user;
         }
     }

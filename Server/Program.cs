@@ -2,11 +2,14 @@
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
+using log4net;
 
 namespace Server
 {
     internal static class Program
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -25,22 +28,19 @@ namespace Server
 
         private static void RunInteractive(ServiceBase[] servicesToRun)
         {
-            Console.WriteLine("Services running in interactive mode.");
-            Console.WriteLine();
+            Log.Debug("Services running in interactive mode.");
 
             MethodInfo onStartMethod = typeof (ServiceBase).GetMethod("OnStart",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (ServiceBase service in servicesToRun)
             {
-                Console.Write("Starting {0}...", service.ServiceName);
+                Log.DebugFormat("Starting {0}...", service.ServiceName);
                 onStartMethod.Invoke(service, new object[] {new string[] {}});
-                Console.Write("Started");
+                Log.Debug("Started");
             }
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(
-                "Press any key to stop the services and end the process...");
+
+            Log.Debug("Press any key to stop the services and end the process...");
             Console.ReadKey();
             Console.WriteLine();
 
@@ -48,12 +48,12 @@ namespace Server
                 BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (ServiceBase service in servicesToRun)
             {
-                Console.Write("Stopping {0}...", service.ServiceName);
+                Log.DebugFormat("Stopping {0}...", service.ServiceName);
                 onStopMethod.Invoke(service, null);
-                Console.WriteLine("Stopped");
+                Log.Info("Server Stopped");
             }
 
-            Console.WriteLine("All services stopped.");
+            Log.Info("All services stopped.");
             // Keep the console alive for a second to allow the user to see the message.
             Thread.Sleep(1000);
         }
