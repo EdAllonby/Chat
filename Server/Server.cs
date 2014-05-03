@@ -53,7 +53,7 @@ namespace Server
         private void InitialiseNewClient(TcpClient tcpClient)
         {
             User newUser = CreateUserEntity(GetClientLoginCredentials(tcpClient));
-
+            
             NotifyClientsOfNewUser(newUser);
 
             var loginResponse = new LoginResponse(newUser);
