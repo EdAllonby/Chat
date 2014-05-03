@@ -61,6 +61,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AudioPlayer.cs" />
+    <Compile Include="IAudioPlayer.cs" />
     <Compile Include="ViewModels\UserListViewModel.cs" />
     <Compile Include="Views\UserListWindow.xaml.cs">
       <DependentUpon>UserListWindow.xaml</DependentUpon>
@@ -148,6 +150,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\chat_icon_256px.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Chat-Notification-Sound.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

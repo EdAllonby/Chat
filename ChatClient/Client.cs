@@ -33,13 +33,14 @@ namespace ChatClient
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly UserRepository userRepository = new UserRepository();
 
-        private int clientUserId;
         private TcpClient tcpClient;
 
         public UserRepository UserRepository
         {
             get { return userRepository; }
         }
+
+        public int ClientUserId { get; private set; }
 
         public string UserName { get; private set; }
 
@@ -68,18 +69,17 @@ namespace ChatClient
 
         private void CreateListenerThreadForClient()
         {
-            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
+            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(ClientUserId, tcpClient))
             {
                 Name = "ReceiveMessageThread" + (totalListenerThreads++)
             };
             messageListenerThread.Start();
         }
 
-        public void SendMessage(IMessage message)
+        private void SendMessage(IMessage message)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
-            Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + clientUserId);
         }
 
         private TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
@@ -119,16 +119,6 @@ namespace ChatClient
             var serialiserFactory = new SerialiserFactory();
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(userRequest.Identifier);
             messageSerialiser.Serialise(userRequest, tcpClient.GetStream());
-            Log.Debug("Sent message with identifier " + userRequest.Identifier + " to server");
-        }
-
-        private static UserNotification GetUserNotification(TcpClient tcpClient)
-        {
-            var serialiserFactory = new SerialiserFactory();
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-            return (UserNotification) serialiser.Deserialise(tcpClient.GetStream());
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -169,18 +159,18 @@ namespace ChatClient
 
         private void GetClientUserId(LoginResponse message)
         {
-            clientUserId = message.User.UserId;
+            ClientUserId = message.User.UserId;
         }
 
         public void SendConversationContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(conversationID, clientUserId, message);
+            var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
             SendMessage(clientContribution);
         }
 
         public void SendConversationRequest(int receiverId)
         {
-            var conversation = new Conversation(clientUserId, receiverId);
+            var conversation = new Conversation(ClientUserId, receiverId);
             var conversationRequest = new ConversationRequest(conversation);
             SendMessage(conversationRequest);
         }

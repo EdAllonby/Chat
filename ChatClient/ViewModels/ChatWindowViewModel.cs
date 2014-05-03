@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
+using ChatClient.Properties;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels
@@ -15,11 +16,13 @@ namespace ChatClient.ViewModels
         private string title;
         private string windowTitle;
 
+       private readonly IAudioPlayer audioPlayer = new AudioPlayer();
+
         public ChatWindowViewModel()
         {
             windowTitle = Client.UserName;
 
-            Client.OnNewContribution += client_OnNewContribution;
+            Client.OnNewContribution += NewContributionReceived;
         }
 
         public string WindowTitle
@@ -55,7 +58,6 @@ namespace ChatClient.ViewModels
                 OnPropertyChanged();
             }
         }
-
 
         public String Title
         {
@@ -101,11 +103,15 @@ namespace ChatClient.ViewModels
 
         #endregion
 
-        private void client_OnNewContribution(Contribution contribution)
+        private void NewContributionReceived(Contribution contribution)
         {
             if (contribution.ConversationId == conversation.ConversationId)
             {
                 Application.Current.Dispatcher.Invoke(() => Contributions.Add(contribution));
+                if (contribution.ContributorUserId != Client.ClientUserId)
+                {
+                    audioPlayer.Play(Resources.Chat_Notification_Sound);
+                }
             }
         }
     }
