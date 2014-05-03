@@ -41,6 +41,7 @@
             // 
             this.serviceInstaller1.Description = "Server service that is used to connect clients.";
             this.serviceInstaller1.ServiceName = "Chat Client Server Service";
+            this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
             // 

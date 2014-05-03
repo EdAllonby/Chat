@@ -16,11 +16,14 @@ namespace SharedClasses.Domain
         private readonly int contributorUserId;
         private readonly int conversationId;
 
+        private DateTime messageTimeStamp;
+
         public Contribution(int contributionId, Contribution incompleteContribution)
         {
             ContributionId = contributionId;
             contributorUserId = incompleteContribution.contributorUserId;
             CreateMessage(incompleteContribution.Message);
+            SetTimeStampOfMessage();
             conversationId = incompleteContribution.conversationId;
         }
 
@@ -56,19 +59,13 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The time that the message was created
-        /// TODO: Create the time in the server, as user's PCs can have different/incorrect local times
-        /// </summary>
-        public DateTime MessageTimeStamp { get; private set; }
-
-        /// <summary>
         /// The contribution text
         /// </summary>
         public string Message { get; private set; }
 
         public string SenderInformation
         {
-            get { return ContributorUserId + " sent message at: " + MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")); }
+            get { return ContributorUserId + " sent message at: " + messageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")); }
         }
 
         public bool Equals(Contribution other)
@@ -92,13 +89,12 @@ namespace SharedClasses.Domain
 
         public override string ToString()
         {
-            return Message + " @ " + MessageTimeStamp;
+            return Message + " @ " + messageTimeStamp;
         }
 
         private void CreateMessage(string messageText)
         {
             SetTextOfMessage(messageText ?? String.Empty);
-            SetTimeStampOfMessage();
         }
 
         private void SetTextOfMessage(string messageText)
@@ -109,8 +105,8 @@ namespace SharedClasses.Domain
 
         private void SetTimeStampOfMessage()
         {
-            MessageTimeStamp = DateTime.Now;
-            Log.Debug("Time stamp created: " + MessageTimeStamp);
+            messageTimeStamp = DateTime.Now;
+            Log.Debug("Time stamp created: " + messageTimeStamp);
         }
     }
 }
