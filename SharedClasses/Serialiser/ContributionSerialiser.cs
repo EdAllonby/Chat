@@ -21,16 +21,15 @@ namespace SharedClasses.Serialiser
         {
             if (stream.CanWrite)
             {
-                Log.Info("Attempt to serialise Contribution and send to stream");
                 binaryFormatter.Serialize(stream, contribution);
-                Log.Info("Contribution serialised and sent to network stream");
+                Log.Debug("Contribution serialised and sent to network stream");
             }
         }
 
         public Contribution Deserialise(NetworkStream networkStream)
         {
             var contribution = (Contribution) binaryFormatter.Deserialize(networkStream);
-            Log.Info("Network stream has received data and deserialised to a Contribution object");
+            Log.Debug("Network stream has received data and deserialised to a Contribution object");
             return contribution;
         }
     }

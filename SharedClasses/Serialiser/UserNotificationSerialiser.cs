@@ -21,7 +21,6 @@ namespace SharedClasses.Serialiser
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-            Log.Info("Attempt to serialise UserNotification and send to stream");
             binaryFormatter.Serialize(stream, message);
             Log.Info("UserNotification serialised and sent to network stream");
         }

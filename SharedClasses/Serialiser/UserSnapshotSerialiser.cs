@@ -20,7 +20,6 @@ namespace SharedClasses.Serialiser
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
-            Log.Info("Attempt to serialise UserSnapshot and send to stream");
             binaryFormatter.Serialize(stream, message);
             Log.Info("UserSnapshot serialised and sent to network stream");
         }
