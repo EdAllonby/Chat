@@ -20,7 +20,6 @@ namespace SharedClasses.Serialiser
             if (stream.CanWrite)
             {
                 messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
-
                 userSerialiser.Serialise(message.User, stream);
                 Log.Info("LoginResponse serialised and sent to network stream");
             }

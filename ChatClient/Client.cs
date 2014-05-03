@@ -60,11 +60,25 @@ namespace ChatClient
 
             tcpClient = CreateConnection(targetAddress, targetPort);
 
+            SendLoginRequest(tcpClient, UserName);
+
+            LoginResponse loginResponse = GetLoginResponse();
+
+            GetClientUserId(loginResponse);
+
+            SendMessage(new UserSnapshotRequest());
+             
             messageReceiver.OnNewMessage += NewMessageReceived;
 
             CreateListenerThreadForClient();
+        }
 
-            SendLoginRequest(tcpClient, UserName);
+        private LoginResponse GetLoginResponse()
+        {
+            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            return (LoginResponse)serialiser.Deserialise(tcpClient.GetStream());
         }
 
         private void CreateListenerThreadForClient()
@@ -82,7 +96,7 @@ namespace ChatClient
             messageSerialiser.Serialise(message, tcpClient.GetStream());
         }
 
-        private TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
+        private static TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
         {
             const int TimeoutSeconds = 5;
 
@@ -144,11 +158,6 @@ namespace ChatClient
 
                 case MessageNumber.ConversationNotification:
                     AddConversationToRepository((ConversationNotification) message);
-                    break;
-
-                case MessageNumber.LoginResponse:
-                    GetClientUserId((LoginResponse) message);
-                    SendMessage(new UserSnapshotRequest());
                     break;
 
                 default:
