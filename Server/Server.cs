@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
@@ -54,7 +53,7 @@ namespace Server
         {
             User newUser = CreateUserEntity(GetClientLoginCredentials(tcpClient));
             
-            NotifyClientsOfNewUser(newUser);
+            NotifyClientsOfUserChange(newUser);
 
             var loginResponse = new LoginResponse(newUser);
 
@@ -113,13 +112,14 @@ namespace Server
             return newContribution;
         }
 
-        private void NotifyClientsOfNewUser(User user)
+        private void NotifyClientsOfUserChange(User user)
         {
-            Parallel.ForEach(clientHandlersIndexedByUserId.Values, handler =>
+            var userNotification = new UserNotification(user, NotificationType.Create);
+
+            foreach (var handler in clientHandlersIndexedByUserId.Values)
             {
-                var userNotification = new UserNotification(user, NotificationType.Create);
                 handler.SendMessage(userNotification);
-            });
+            }
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -139,7 +139,7 @@ namespace Server
 
                 case MessageNumber.ClientDisconnection:
                     RemoveClientHandler(e.ClientUserId);
-                    NotifyClientsOfDisconnectedUser(userRepository.FindUserById(e.ClientUserId));
+                    NotifyClientsOfUserChange(userRepository.FindUserById(e.ClientUserId));
                     userRepository.RemoveUser(e.ClientUserId);
                     break;
 
@@ -202,13 +202,6 @@ namespace Server
         {
             clientHandlersIndexedByUserId.Remove(userId);
             Log.Info("User with id " + userId + " logged out. Removing from Server's ClientHandler list");
-        }
-
-        private void NotifyClientsOfDisconnectedUser(User disconnectedUser)
-        {
-            var userNotification = new UserNotification(disconnectedUser, NotificationType.Delete);
-
-            Parallel.ForEach(clientHandlersIndexedByUserId.Values, clientHandler => clientHandler.SendMessage(userNotification));
         }
     }
 }
