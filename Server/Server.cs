@@ -20,8 +20,6 @@ namespace Server
 
         private readonly IDictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
 
-        private readonly ContributionIDGenerator contributionIDGenerator = new ContributionIDGenerator();
-        private readonly ContributionRepository contributionRepository = new ContributionRepository();
         private readonly ConversationIDGenerator conversationIDGenerator = new ConversationIDGenerator();
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly UserIDGenerator userIDGenerator = new UserIDGenerator();
@@ -52,7 +50,7 @@ namespace Server
         private void InitialiseNewClient(TcpClient tcpClient)
         {
             User newUser = CreateUserEntity(GetClientLoginCredentials(tcpClient));
-            
+
             NotifyClientsOfUserChange(newUser);
 
             var loginResponse = new LoginResponse(newUser);
@@ -103,20 +101,16 @@ namespace Server
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            var newContribution = new Contribution(
-                contributionIDGenerator.CreateConversationId(),
-                contributionRequest.Contribution);
+            Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
 
-            contributionRepository.AddContribution(newContribution);
-
-            return newContribution;
+            return conversation.AddContribution(contributionRequest);
         }
 
         private void NotifyClientsOfUserChange(User user)
         {
             var userNotification = new UserNotification(user, NotificationType.Create);
 
-            foreach (var handler in clientHandlersIndexedByUserId.Values)
+            foreach (ClientHandler handler in clientHandlersIndexedByUserId.Values)
             {
                 handler.SendMessage(userNotification);
             }

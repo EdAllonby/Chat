@@ -10,13 +10,12 @@ namespace ChatClient.ViewModels
 {
     public class ChatWindowViewModel : ViewModel
     {
+        private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private ObservableCollection<Contribution> contributions = new ObservableCollection<Contribution>();
         private Conversation conversation;
         private string messageToAddToConversation;
         private string title;
         private string windowTitle;
-
-       private readonly IAudioPlayer audioPlayer = new AudioPlayer();
 
         public ChatWindowViewModel()
         {

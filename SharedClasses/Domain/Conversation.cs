@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using SharedClasses.Message;
 
 namespace SharedClasses.Domain
 {
@@ -9,6 +11,10 @@ namespace SharedClasses.Domain
     public sealed class Conversation
     {
         // Immutable domain entity class
+        private readonly Dictionary<int, Contribution> contributionsIndexedByContributionID = new Dictionary<int, Contribution>();
+
+        private int nextContributionId;
+
         private readonly int conversationId;
         private readonly int firstParticipantUserId;
         private readonly int secondParticipantUserId;
@@ -53,6 +59,22 @@ namespace SharedClasses.Domain
         public int SecondParticipantUserId
         {
             get { return secondParticipantUserId; }
+        }
+
+        public Contribution AddContribution(ContributionRequest contribution)
+        {
+            var newContribution = new Contribution(nextContributionId, contribution.Contribution);
+
+            contributionsIndexedByContributionID[newContribution.ContributionId] = newContribution;
+
+            nextContributionId++;
+
+            return newContribution;
+        }
+
+        public void AddContribution(Contribution contribution)
+        {
+            contributionsIndexedByContributionID[contribution.ContributionId] = contribution;
         }
     }
 }
