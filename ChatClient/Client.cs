@@ -26,7 +26,6 @@ namespace ChatClient
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
         private static int totalListenerThreads;
 
-        private readonly ContributionRepository contributionRepository = new ContributionRepository();
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
@@ -67,7 +66,7 @@ namespace ChatClient
             GetClientUserId(loginResponse);
 
             SendMessage(new UserSnapshotRequest());
-             
+
             messageReceiver.OnNewMessage += NewMessageReceived;
 
             CreateListenerThreadForClient();
@@ -78,7 +77,7 @@ namespace ChatClient
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
             int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-            return (LoginResponse)serialiser.Deserialise(tcpClient.GetStream());
+            return (LoginResponse) serialiser.Deserialise(tcpClient.GetStream());
         }
 
         private void CreateListenerThreadForClient()
@@ -144,7 +143,7 @@ namespace ChatClient
                 case MessageNumber.ContributionNotification:
                     var contributionNotification = (ContributionNotification) message;
                     Contribution contribution = contributionNotification.Contribution;
-                    contributionRepository.AddContribution(contribution);
+                    AddContributionToConversation(contribution);
                     OnNewContribution(contribution);
                     break;
                 case MessageNumber.UserNotification:
@@ -164,6 +163,12 @@ namespace ChatClient
                     Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
                     break;
             }
+        }
+
+        private void AddContributionToConversation(Contribution contribution)
+        {
+            Conversation conversation = conversationRepository.FindConversationById(contribution.ConversationId);
+            conversation.AddContribution(contribution);
         }
 
         private void GetClientUserId(LoginResponse message)

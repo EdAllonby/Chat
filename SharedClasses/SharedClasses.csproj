@@ -39,7 +39,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\ContributionRepository.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\ConversationRepository.cs" />
     <Compile Include="Domain\User.cs" />
