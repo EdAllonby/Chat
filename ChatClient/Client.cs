@@ -59,7 +59,8 @@ namespace ChatClient
 
             tcpClient = CreateConnection(targetAddress, targetPort);
 
-            SendLoginRequest(tcpClient, UserName);
+            IMessage userRequest = new LoginRequest(new User(UserName));
+            SendMessage(userRequest);
 
             LoginResponse loginResponse = GetLoginResponse();
 
@@ -124,14 +125,6 @@ namespace ChatClient
 
             Log.Info("Client found server, connection created");
             return serverConnection;
-        }
-
-        private static void SendLoginRequest(TcpClient tcpClient, string username)
-        {
-            IMessage userRequest = new LoginRequest(new User(username));
-            var serialiserFactory = new SerialiserFactory();
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(userRequest.Identifier);
-            messageSerialiser.Serialise(userRequest, tcpClient.GetStream());
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
