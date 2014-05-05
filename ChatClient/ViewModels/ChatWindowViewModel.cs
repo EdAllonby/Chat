@@ -24,11 +24,6 @@ namespace ChatClient.ViewModels
             Client.OnNewContribution += NewContributionReceived;
         }
 
-        public void InitialiseChat()
-        {
-            Contributions = conversation.GetAllContributions();
-        }
-
         public string WindowTitle
         {
             get { return windowTitle; }
@@ -106,6 +101,11 @@ namespace ChatClient.ViewModels
         }
 
         #endregion
+
+        public void InitialiseChat()
+        {
+            Contributions = conversation.GetAllContributions();
+        }
 
         private void NewContributionReceived(Conversation updatedConversation)
         {

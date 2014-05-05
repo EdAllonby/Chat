@@ -19,7 +19,6 @@ namespace ChatClient.Views
                 viewModel.Conversation = conversation;
                 viewModel.InitialiseChat();
             }
-
         }
     }
 }

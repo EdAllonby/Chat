@@ -102,7 +102,7 @@ namespace Server
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-             Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
+            Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
 
             return conversation.AddContribution(contributionRequest);
         }

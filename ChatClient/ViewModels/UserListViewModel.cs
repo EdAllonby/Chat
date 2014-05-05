@@ -51,7 +51,7 @@ namespace ChatClient.ViewModels
 
         public void NewConversation(int secondParticipantUserID)
         {
-            foreach (var conversation in Client.ConversationRepository.GetAllConversations()
+            foreach (Conversation conversation in Client.ConversationRepository.GetAllConversations()
                 .Where(conversation => (Client.ClientUserId == conversation.FirstParticipantUserId ||
                                         Client.ClientUserId == conversation.SecondParticipantUserId) &&
                                        (secondParticipantUserID == conversation.FirstParticipantUserId ||
