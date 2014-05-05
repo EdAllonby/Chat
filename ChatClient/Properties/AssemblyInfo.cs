@@ -23,8 +23,12 @@ using log4net.Config;
 [assembly: ComVisible(false)]
 
 // Set the project to watch the log4net.config file and reload of the config changes when needed.
+#if DEBUG
+[assembly: XmlConfigurator(ConfigFile = "log4netDebug.config", Watch = true)]
+#else
 
-[assembly: XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
+[assembly: XmlConfigurator(ConfigFile = "log4netRelease.config", Watch = true)]
+#endif
 
 //In order to begin building localizable applications, set 
 //<UICulture>CultureYouAreCodingWith</UICulture> in your .csproj file
