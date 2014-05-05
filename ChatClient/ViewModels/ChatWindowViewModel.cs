@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
@@ -11,7 +12,7 @@ namespace ChatClient.ViewModels
     public class ChatWindowViewModel : ViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private ObservableCollection<Contribution> contributions = new ObservableCollection<Contribution>();
+        private IList<Contribution> contributions = new List<Contribution>();
         private Conversation conversation;
         private string messageToAddToConversation;
         private string title;
@@ -47,7 +48,7 @@ namespace ChatClient.ViewModels
             }
         }
 
-        public ObservableCollection<Contribution> Contributions
+        public IList<Contribution> Contributions
         {
             get { return contributions; }
             set
@@ -89,7 +90,7 @@ namespace ChatClient.ViewModels
 
         private void NewConversationContributionRequest()
         {
-            Client.SendConversationContributionRequest(conversation.ConversationId, MessageToAddToConversation);
+            Client.SendContributionRequest(conversation.ConversationId, MessageToAddToConversation);
 
             messageToAddToConversation = string.Empty;
             OnPropertyChanged("MessageToAddToConversation");
@@ -102,12 +103,12 @@ namespace ChatClient.ViewModels
 
         #endregion
 
-        private void NewContributionReceived(Contribution contribution)
+        private void NewContributionReceived(Conversation updatedConversation)
         {
-            if (contribution.ConversationId == conversation.ConversationId)
+            if (updatedConversation.ConversationId == conversation.ConversationId)
             {
-                Application.Current.Dispatcher.Invoke(() => Contributions.Add(contribution));
-                if (contribution.ContributorUserId != Client.ClientUserId)
+                Application.Current.Dispatcher.Invoke(() => Contributions = updatedConversation.GetAllContributions());
+                if (updatedConversation.GetAllContributions().Last().ContributorUserId != Client.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }

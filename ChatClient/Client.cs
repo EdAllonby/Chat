@@ -17,9 +17,9 @@ namespace ChatClient
     /// </summary>
     public sealed class Client
     {
-        public delegate void NewConversationHandler(Conversation conversation);
+        public delegate void NewContributionNotificationHandler(Conversation contributions);
 
-        public delegate void NewcontributionNotification(Contribution contribution);
+        public delegate void NewConversationHandler(Conversation conversation);
 
         public delegate void UserListHandler(IList<User> users, EventArgs e);
 
@@ -45,11 +45,11 @@ namespace ChatClient
 
         public event UserListHandler OnNewUser = delegate { };
         public event NewConversationHandler OnNewConversationNotification = delegate { };
-        public event NewcontributionNotification OnNewContribution = delegate { };
+        public event NewContributionNotificationHandler OnNewContribution = delegate { };
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(UserRepository.UsersIndexedById.Values.ToList(), EventArgs.Empty);
+            OnNewUser(userRepository.UsersIndexedById.Values.ToList(), EventArgs.Empty);
             Log.Info("User changed event fired");
         }
 
@@ -137,7 +137,6 @@ namespace ChatClient
                     var contributionNotification = (ContributionNotification) message;
                     Contribution contribution = contributionNotification.Contribution;
                     AddContributionToConversation(contribution);
-                    OnNewContribution(contribution);
                     break;
                 case MessageNumber.UserNotification:
                     UpdateUserRepository((UserNotification) message);
@@ -162,6 +161,7 @@ namespace ChatClient
         {
             Conversation conversation = conversationRepository.FindConversationById(contribution.ConversationId);
             conversation.AddContribution(contribution);
+            OnNewContribution(conversation);
         }
 
         private void GetClientUserId(LoginResponse message)
@@ -169,7 +169,7 @@ namespace ChatClient
             ClientUserId = message.User.UserId;
         }
 
-        public void SendConversationContributionRequest(int conversationID, string message)
+        public void SendContributionRequest(int conversationID, string message)
         {
             var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
             SendMessage(clientContribution);

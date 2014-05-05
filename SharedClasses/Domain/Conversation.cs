@@ -13,11 +13,10 @@ namespace SharedClasses.Domain
         // Immutable domain entity class
         private readonly Dictionary<int, Contribution> contributionsIndexedByContributionID = new Dictionary<int, Contribution>();
 
-        private int nextContributionId;
-
         private readonly int conversationId;
         private readonly int firstParticipantUserId;
         private readonly int secondParticipantUserId;
+        private int nextContributionId;
 
         public Conversation(int conversationId, int firstParticipantUserId, int secondParticipantUserId)
         {
@@ -75,6 +74,11 @@ namespace SharedClasses.Domain
         public void AddContribution(Contribution contribution)
         {
             contributionsIndexedByContributionID[contribution.ContributionId] = contribution;
+        }
+
+        public List<Contribution> GetAllContributions()
+        {
+            return new List<Contribution>(contributionsIndexedByContributionID.Values);
         }
     }
 }
