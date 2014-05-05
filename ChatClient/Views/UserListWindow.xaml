@@ -54,16 +54,20 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Connected Users:"
                    FontFamily="/ChatClient;component/Resources/#Roboto Thin"
                    Foreground="White" FontSize="20" Margin="10,0,0,0"/>
-        
+
         <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
                     Foreground="White"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection">
-                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" TextAlignment="Center" Padding="3" 
-/>
+                    <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection" Orientation="Horizontal">
+                        <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
+                            HorizontalAlignment="Left">
+                            <Path Data="{StaticResource PersonIcon}"
+                            Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
+                        </Canvas>
+                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" TextAlignment="Center" Padding="3" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
