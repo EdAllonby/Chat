@@ -39,6 +39,11 @@ namespace ChatClient
             get { return userRepository; }
         }
 
+        public ConversationRepository ConversationRepository
+        {
+            get { return conversationRepository; }
+        }
+
         public int ClientUserId { get; private set; }
 
         public string UserName { get; private set; }

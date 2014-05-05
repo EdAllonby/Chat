@@ -49,9 +49,19 @@ namespace ChatClient.ViewModels
             Users = newUserList;
         }
 
-        public void NewConversation(int userID)
+        public void NewConversation(int secondParticipantUserID)
         {
-            Client.SendConversationRequest(userID);
+            foreach (var conversation in Client.ConversationRepository.GetAllConversations()
+                .Where(conversation => (Client.ClientUserId == conversation.FirstParticipantUserId ||
+                                        Client.ClientUserId == conversation.SecondParticipantUserId) &&
+                                       (secondParticipantUserID == conversation.FirstParticipantUserId ||
+                                        secondParticipantUserID == conversation.SecondParticipantUserId)))
+            {
+                OnNewConversationNotification(conversation);
+                return;
+            }
+
+            Client.SendConversationRequest(secondParticipantUserID);
         }
     }
 }

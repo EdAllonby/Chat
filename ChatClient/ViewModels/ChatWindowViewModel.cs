@@ -21,8 +21,12 @@ namespace ChatClient.ViewModels
         public ChatWindowViewModel()
         {
             windowTitle = Client.UserName;
-
             Client.OnNewContribution += NewContributionReceived;
+        }
+
+        public void InitialiseChat()
+        {
+            Contributions = conversation.GetAllContributions();
         }
 
         public string WindowTitle
