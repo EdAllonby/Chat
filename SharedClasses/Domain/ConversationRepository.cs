@@ -25,5 +25,10 @@ namespace SharedClasses.Domain
         {
             return conversationsIndexedById.ContainsKey(conversationId) ? conversationsIndexedById[conversationId] : null;
         }
+
+        public IEnumerable<Conversation> GetAllConversations()
+        {
+            return conversationsIndexedById.Values;
+        }
     }
 }

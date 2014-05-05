@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -101,7 +102,7 @@ namespace Server
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
+             Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
 
             return conversation.AddContribution(contributionRequest);
         }
@@ -159,11 +160,20 @@ namespace Server
             clientHandler.SendMessage(userSnapshot);
         }
 
-        private static bool CheckConversationIsValid(ConversationRequest conversationRequest)
+        private bool CheckConversationIsValid(ConversationRequest conversationRequest)
         {
             if (conversationRequest.Conversation.FirstParticipantUserId == conversationRequest.Conversation.SecondParticipantUserId)
             {
                 Log.Warn("Cannot make a conversation between two users of same id of " + conversationRequest.Conversation.FirstParticipantUserId);
+                return false;
+            }
+
+            if (conversationRepository.GetAllConversations().Any(conversation => (conversationRequest.Conversation.FirstParticipantUserId == conversation.FirstParticipantUserId ||
+                                                                                  conversationRequest.Conversation.FirstParticipantUserId == conversation.SecondParticipantUserId) &&
+                                                                                 (conversationRequest.Conversation.SecondParticipantUserId == conversation.FirstParticipantUserId ||
+                                                                                  conversationRequest.Conversation.SecondParticipantUserId == conversation.SecondParticipantUserId)))
+            {
+                Log.Warn("Conversation already exists between these two users. Server will not create a new one.");
                 return false;
             }
 

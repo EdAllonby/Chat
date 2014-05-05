@@ -11,12 +11,15 @@ namespace ChatClient.Views
         public ChatWindow(Conversation conversation)
         {
             InitializeComponent();
+
             var viewModel = DataContext as ChatWindowViewModel;
 
             if (viewModel != null)
             {
                 viewModel.Conversation = conversation;
+                viewModel.InitialiseChat();
             }
+
         }
     }
 }

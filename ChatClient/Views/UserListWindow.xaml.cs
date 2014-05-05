@@ -23,7 +23,7 @@ namespace ChatClient.Views
         }
 
         /// <summary>
-        /// There's no good way of doing this directly with MVVM and bindings.
+        /// I can't find a good way of doing this directly with MVVM and bindings.
         /// Succumbed to creating the click event in the code-behind and then delegating the work off to the viewmodel.
         /// </summary>
         /// <param name="sender">The textblock clicked on</param>
