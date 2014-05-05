@@ -15,6 +15,7 @@
     <Grid Background="#e74c3c">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -32,12 +33,12 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0" Grid.Row="0" x:Name="Label"
+            <Label Grid.Column="0" Grid.Row="0"
                    FontFamily="/ChatClient;component/Resources/#Roboto Thin"
                    HorizontalContentAlignment="Left"
                    Foreground="White"
                    Margin="10,0,0,0"
-                   VerticalContentAlignment="Center" Content="Connected Users" FontSize="32" />
+                   VerticalContentAlignment="Center" Content="{Binding Username}" FontSize="32" />
             <Button Grid.Column="2" Padding="0"
                     Height="25" VerticalAlignment="Top"
                     Style="{StaticResource CloseButtonStyle}"
@@ -50,9 +51,13 @@
             </Button>
         </Grid>
 
-        <ListBox x:Name="UserListBox" Grid.Row="1" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
-                    Foreground="White" Grid.Column="0"
-                    Margin="10"
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Connected Users:"
+                   FontFamily="/ChatClient;component/Resources/#Roboto Thin"
+                   Foreground="White" FontSize="20" Margin="10,0,0,0"/>
+        
+        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
+                    Foreground="White"
+                    Margin="10,0,10,10"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>

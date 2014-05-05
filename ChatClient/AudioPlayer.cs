@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Media;
 
 namespace ChatClient
 {
-    public class AudioPlayer : IAudioPlayer
+    public class AudioPlayer : IAudioPlayer, IDisposable
     {
         private readonly SoundPlayer player = new SoundPlayer();
 
@@ -14,6 +15,11 @@ namespace ChatClient
                 player.Stream = resource;
                 player.Play();
             }
+        }
+
+        public void Dispose()
+        {
+            player.Dispose();
         }
     }
 }
