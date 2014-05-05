@@ -44,7 +44,7 @@ namespace ChatClient.ViewModels
 
         private void OnNewUser(IList<User> newUser, EventArgs e)
         {
-            var newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
+            List<User> newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
 
             Users = newUserList;
         }
