@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using ChatClient.Views;
 using SharedClasses.Domain;
@@ -15,7 +16,11 @@ namespace ChatClient.ViewModels
             Client.OnNewUser += OnNewUser;
 
             Client.OnNewConversationNotification += OnNewConversationNotification;
+
+            Username = Client.UserName;
         }
+
+        public string Username { get; private set; }
 
         public IList<User> Users
         {
@@ -39,7 +44,9 @@ namespace ChatClient.ViewModels
 
         private void OnNewUser(IList<User> newUser, EventArgs e)
         {
-            Users = newUser;
+            var newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
+
+            Users = newUserList;
         }
 
         public void NewConversation(int userID)
