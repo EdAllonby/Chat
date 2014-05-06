@@ -103,8 +103,7 @@ namespace Server
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
             Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
-
-            return conversation.AddContribution(contributionRequest);
+            return conversation.CreateContributionEntity(contributionRequest);
         }
 
         private void NotifyClientsOfUserChange(User user)

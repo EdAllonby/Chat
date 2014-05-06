@@ -60,22 +60,37 @@ namespace SharedClasses.Domain
             get { return secondParticipantUserId; }
         }
 
-        public Contribution AddContribution(ContributionRequest contribution)
+        /// <summary>
+        /// Adds a <see cref="Contribution"/> from a new <see cref="ContributionRequest"/> 
+        /// First assigns a Contribution Id and then adds this to the contribution repository.
+        /// </summary>
+        /// <param name="contributionRequest"></param>
+        /// <returns></returns>
+        public Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            var newContribution = new Contribution(nextContributionId, contribution.Contribution);
+            var contribution = new Contribution(nextContributionId, contributionRequest.Contribution);
 
-            contributionsIndexedByContributionID[newContribution.ContributionId] = newContribution;
+            contributionsIndexedByContributionID[contribution.ContributionId] = contribution;
 
             nextContributionId++;
 
-            return newContribution;
+            return contribution;
         }
 
-        public void AddContribution(Contribution contribution)
+        /// <summary>
+        /// Adds a <see cref="Contribution"/> from an incoming <see cref="ContributionNotification"/>
+        /// The <see cref="ContributionNotification"/> must have an ID otherwise it is not following the protocol
+        /// </summary>
+        /// <param name="contributionNotification"></param>
+        public void AddContribution(ContributionNotification contributionNotification)
         {
-            contributionsIndexedByContributionID[contribution.ContributionId] = contribution;
+            contributionsIndexedByContributionID[contributionNotification.Contribution.ContributionId] = contributionNotification.Contribution;
         }
 
+        /// <summary>
+        /// Returns a list of <see cref="Contribution"/>s which are held in this <see cref="Conversation"/> entity
+        /// </summary>
+        /// <returns></returns>
         public List<Contribution> GetAllContributions()
         {
             return new List<Contribution>(contributionsIndexedByContributionID.Values);
