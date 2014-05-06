@@ -140,8 +140,7 @@ namespace ChatClient
             {
                 case MessageNumber.ContributionNotification:
                     var contributionNotification = (ContributionNotification) message;
-                    Contribution contribution = contributionNotification.Contribution;
-                    AddContributionToConversation(contribution);
+                    AddContributionToConversation(contributionNotification);
                     break;
                 case MessageNumber.UserNotification:
                     UpdateUserRepository((UserNotification) message);
@@ -162,10 +161,10 @@ namespace ChatClient
             }
         }
 
-        private void AddContributionToConversation(Contribution contribution)
+        private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
-            Conversation conversation = conversationRepository.FindConversationById(contribution.ConversationId);
-            conversation.AddContribution(contribution);
+            Conversation conversation = conversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
+            conversation.AddContribution(contributionNotification);
             OnNewContribution(conversation);
         }
 
