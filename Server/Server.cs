@@ -21,9 +21,10 @@ namespace Server
 
         private readonly IDictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
 
-        private readonly ConversationIDGenerator conversationIDGenerator = new ConversationIDGenerator();
+        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
+        private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
+
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
-        private readonly UserIDGenerator userIDGenerator = new UserIDGenerator();
         private readonly UserRepository userRepository = new UserRepository();
 
         public Server()
@@ -82,7 +83,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin)
         {
-            var newUser = new User(clientLogin.User.Username, userIDGenerator.CreateUserId());
+            var newUser = new User(clientLogin.User.Username, userIDGenerator.AssignEntityId());
 
             userRepository.AddUser(newUser);
 
@@ -91,7 +92,7 @@ namespace Server
 
         private Conversation CreateConversationEntity(ConversationRequest conversationRequest)
         {
-            var newConversation = new Conversation(conversationIDGenerator.CreateConversationId(),
+            var newConversation = new Conversation(conversationIDGenerator.AssignEntityId(),
                 conversationRequest.Conversation.FirstParticipantUserId,
                 conversationRequest.Conversation.SecondParticipantUserId);
 

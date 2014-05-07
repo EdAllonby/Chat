@@ -21,24 +21,24 @@ namespace SharedClassesTests.Domain
         [Test]
         public void NoUniqueUserTest()
         {
-            var userFactory = new UserIDGenerator();
-            var user1 = new User("User1", userFactory.CreateUserId());
+            var userFactory = new EntityIDGenerator();
+            var user1 = new User("User1", userFactory.AssignEntityId());
 
             Assert.AreEqual(user1.UserId, 0);
 
-            var user2 = new User("User2", userFactory.CreateUserId());
+            var user2 = new User("User2", userFactory.AssignEntityId());
             Assert.AreNotSame(user1.UserId, user2.UserId);
         }
 
         [Test]
         public void UserIDIterationTest()
         {
-            var userFactory = new UserIDGenerator();
+            var userFactory = new EntityIDGenerator();
             User user = null;
 
             for (int i = 0; i <= 100; i++)
             {
-                user = new User("User", userFactory.CreateUserId());
+                user = new User("User", userFactory.AssignEntityId());
             }
 
             if (user != null)
