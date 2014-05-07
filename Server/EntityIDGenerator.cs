@@ -1,10 +1,10 @@
 ﻿namespace Server
 {
-    internal sealed class ConversationIDGenerator
+    public sealed class EntityIDGenerator
     {
         private int nextId;
 
-        public int CreateConversationId()
+        public int AssignEntityId()
         {
             return nextId++;
         }
