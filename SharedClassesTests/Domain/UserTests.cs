@@ -18,6 +18,16 @@ namespace SharedClassesTests.Domain
             Assert.AreEqual(user.UserId, id);
         }
 
+        [TestCase("Tim", "Eric", 3)]
+        [TestCase("Tim", "Tim", 3)]
+        public void UsersWithSameIDEqualityTest(string user1Username, string user2Username, int userID)
+        {
+            var user1 = new User(user1Username, userID);
+            var user2 = new User(user2Username, userID);
+
+            Assert.AreEqual(user1, user2);
+        }
+
         [Test]
         public void IDEqualityTest()
         {
@@ -51,16 +61,6 @@ namespace SharedClassesTests.Domain
         public void UserIDLowerThanZeroThrowsExceptionTest()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new User("user", -4));
-        }
-
-        [TestCase("Tim", "Eric", 3)]
-        [TestCase("Tim", "Tim", 3)]
-        public void UsersWithSameIDEqualityTest(string user1Username, string user2Username, int userID)
-        {
-            var user1 = new User(user1Username, userID);
-            var user2 = new User(user2Username, userID);
-
-            Assert.AreEqual(user1, user2);
         }
 
         [Test]

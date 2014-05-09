@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using SharedClasses.Message;
 
@@ -21,10 +20,7 @@ namespace SharedClasses.Domain
 
         public Conversation(int conversationId, int firstParticipantUserId, int secondParticipantUserId)
         {
-            if (conversationId < 0)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            Contract.Requires(conversationId > 0);
 
             this.conversationId = conversationId;
             this.firstParticipantUserId = firstParticipantUserId;
