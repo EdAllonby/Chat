@@ -21,7 +21,7 @@ namespace SharedClasses.Domain
 
         public Contribution(int contributionId, Contribution incompleteContribution)
         {
-            Contract.Requires(incompleteContribution!=null);
+            Contract.Requires(incompleteContribution != null);
 
             ContributionId = contributionId;
             contributorUserId = incompleteContribution.contributorUserId;

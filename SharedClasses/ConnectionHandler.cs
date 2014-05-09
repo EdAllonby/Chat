@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
-using SharedClasses;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
 
-namespace Server
+namespace SharedClasses
 {
     /// <summary>
-    /// The Client handler is in charge of abstracting away the TcpClient work
+    /// This is in charge of abstracting away the TcpClient work
     /// This class has no logic other than to send and receive messages.
     /// </summary>
-    public sealed class ClientHandler : IDisposable
+    public sealed class ConnectionHandler : IDisposable
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ClientHandler));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ConnectionHandler));
         private static int totalListenerThreads;
         private readonly int clientUserId;
 
@@ -23,7 +23,7 @@ namespace Server
 
         private readonly TcpClient tcpClient;
 
-        public ClientHandler(int userId, TcpClient client)
+        public ConnectionHandler(int userId, TcpClient client)
         {
             tcpClient = client;
             clientUserId = userId;
@@ -53,6 +53,8 @@ namespace Server
 
         public void SendMessage(IMessage message)
         {
+            Contract.Requires(message != null);
+
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
             Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + clientUserId);

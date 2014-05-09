@@ -12,20 +12,20 @@ using SharedClasses.Serialiser;
 namespace Server
 {
     /// <summary>
-    /// Handles the logic for incoming <see cref="IMessage"/> passed from ClientHandler.
+    /// Handles the logic for incoming <see cref="IMessage"/> passed from ConnectionHandler.
     /// </summary>
     internal sealed class Server
     {
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        private readonly IDictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
+        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
 
-        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
         private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
+        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
 
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
         private readonly UserRepository userRepository = new UserRepository();
 
         public Server()
@@ -58,13 +58,13 @@ namespace Server
 
             var loginResponse = new LoginResponse(newUser);
 
-            var clientHandler = new ClientHandler(newUser.UserId, tcpClient);
+            var connectionHandler = new ConnectionHandler(newUser.UserId, tcpClient);
 
-            clientHandler.OnNewMessage += NewMessageReceived;
+            connectionHandler.OnNewMessage += NewMessageReceived;
 
-            clientHandlersIndexedByUserId[newUser.UserId] = clientHandler;
+            clientConnectionHandlersIndexedByUserId[newUser.UserId] = connectionHandler;
 
-            clientHandler.SendMessage(loginResponse);
+            connectionHandler.SendMessage(loginResponse);
         }
 
         private static LoginRequest GetClientLoginCredentials(TcpClient tcpClient)
@@ -117,7 +117,7 @@ namespace Server
         {
             var userNotification = new UserNotification(user, NotificationType.Create);
 
-            foreach (ClientHandler handler in clientHandlersIndexedByUserId.Values)
+            foreach (ConnectionHandler handler in clientConnectionHandlersIndexedByUserId.Values)
             {
                 handler.SendMessage(userNotification);
             }
@@ -162,8 +162,8 @@ namespace Server
         {
             IEnumerable<User> currentUsers = userRepository.RetrieveAllUsers();
             var userSnapshot = new UserSnapshot(currentUsers);
-            ClientHandler clientHandler = clientHandlersIndexedByUserId[clientUser.UserId];
-            clientHandler.SendMessage(userSnapshot);
+            ConnectionHandler connectionHandler = clientConnectionHandlersIndexedByUserId[clientUser.UserId];
+            connectionHandler.SendMessage(userSnapshot);
         }
 
         private bool CheckConversationIsValid(ConversationRequest conversationRequest)
@@ -189,11 +189,11 @@ namespace Server
         private void SendConversationNotificationToClients(Conversation conversation)
         {
             var conversationNotification = new ConversationNotification(conversation);
-            ClientHandler firstParticipantClientHandler = clientHandlersIndexedByUserId[conversation.FirstParticipantUserId];
-            firstParticipantClientHandler.SendMessage(conversationNotification);
+            ConnectionHandler firstParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[conversation.FirstParticipantUserId];
+            firstParticipantConnectionHandler.SendMessage(conversationNotification);
 
-            ClientHandler secondParticipantClientHandler = clientHandlersIndexedByUserId[conversation.SecondParticipantUserId];
-            secondParticipantClientHandler.SendMessage(conversationNotification);
+            ConnectionHandler secondParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[conversation.SecondParticipantUserId];
+            secondParticipantConnectionHandler.SendMessage(conversationNotification);
         }
 
         private void SendContributionNotificationToParticipants(Contribution contribution)
@@ -201,17 +201,17 @@ namespace Server
             var contributionNotification = new ContributionNotification(contribution);
             Conversation contributionConversation = conversationRepository.FindConversationById(contribution.ConversationId);
 
-            ClientHandler firstParticipantClientHandler = clientHandlersIndexedByUserId[contributionConversation.FirstParticipantUserId];
-            firstParticipantClientHandler.SendMessage(contributionNotification);
+            ConnectionHandler firstParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[contributionConversation.FirstParticipantUserId];
+            firstParticipantConnectionHandler.SendMessage(contributionNotification);
 
-            ClientHandler secondParticipantClientHandler = clientHandlersIndexedByUserId[contributionConversation.SecondParticipantUserId];
-            secondParticipantClientHandler.SendMessage(contributionNotification);
+            ConnectionHandler secondParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[contributionConversation.SecondParticipantUserId];
+            secondParticipantConnectionHandler.SendMessage(contributionNotification);
         }
 
         private void RemoveClientHandler(int userId)
         {
-            clientHandlersIndexedByUserId.Remove(userId);
-            Log.Info("User with id " + userId + " logged out. Removing from Server's ClientHandler list");
+            clientConnectionHandlersIndexedByUserId.Remove(userId);
+            Log.Info("User with id " + userId + " logged out. Removing from Server's ConnectionHandler list");
         }
     }
 }
