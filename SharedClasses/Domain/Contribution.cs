@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using log4net;
 
@@ -20,6 +21,8 @@ namespace SharedClasses.Domain
 
         public Contribution(int contributionId, Contribution incompleteContribution)
         {
+            Contract.Requires(incompleteContribution!=null);
+
             ContributionId = contributionId;
             contributorUserId = incompleteContribution.contributorUserId;
             CreateMessage(incompleteContribution.Message);
@@ -32,6 +35,9 @@ namespace SharedClasses.Domain
         /// </summary>
         public Contribution(int contributorUserId, string text, int conversationId)
         {
+            Contract.Requires(contributorUserId > 0);
+            Contract.Requires(conversationId > 0);
+
             this.contributorUserId = contributorUserId;
             CreateMessage(text);
             this.conversationId = conversationId;

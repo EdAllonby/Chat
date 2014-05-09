@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using SharedClasses.Domain;
 
 namespace SharedClasses.Message
@@ -11,6 +12,9 @@ namespace SharedClasses.Message
     {
         public ContributionRequest(int conversationID, int senderID, string message)
         {
+            Contract.Requires(senderID > 0);
+            Contract.Requires(conversationID > 0);
+
             Contribution = new Contribution(senderID, message, conversationID);
             Identifier = MessageNumber.ContributionRequest;
         }

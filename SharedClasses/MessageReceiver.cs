@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net.Sockets;
 using log4net;
@@ -22,6 +23,8 @@ namespace SharedClasses
 
         public void ReceiveMessages(int clientUserId, TcpClient tcpClient)
         {
+            Contract.Requires(tcpClient != null);
+
             try
             {
                 while (true)

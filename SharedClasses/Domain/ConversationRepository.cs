@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using log4net;
 
 namespace SharedClasses.Domain
@@ -11,6 +12,8 @@ namespace SharedClasses.Domain
 
         public void AddConversation(Conversation conversation)
         {
+            Contract.Requires(conversation != null);
+
             conversationsIndexedById[conversation.ConversationId] = conversation;
             Log.Debug("Conversation with Id " + conversation.ConversationId + " added to user repository");
         }

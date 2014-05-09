@@ -12,21 +12,21 @@ namespace SharedClassesTests.Domain
         [TestCase(4)]
         [TestCase(5)]
         [TestCase(8)]
-        public void CustomUserIDTest(int id)
+        public void AssignCustomIDtoUserTest(int id)
         {
             var user = new User("user", id);
             Assert.AreEqual(user.UserId, id);
         }
 
         [Test]
-        public void NoUniqueUserTest()
+        public void IDEqualityTest()
         {
             var userFactory = new EntityIDGenerator();
-            var user1 = new User("User1", userFactory.AssignEntityId());
+            var user1 = new User("User1", userFactory.AssignEntityID());
 
             Assert.AreEqual(user1.UserId, 0);
 
-            var user2 = new User("User2", userFactory.AssignEntityId());
+            var user2 = new User("User2", userFactory.AssignEntityID());
             Assert.AreNotSame(user1.UserId, user2.UserId);
         }
 
@@ -38,7 +38,7 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i <= 100; i++)
             {
-                user = new User("User", userFactory.AssignEntityId());
+                user = new User("User", userFactory.AssignEntityID());
             }
 
             if (user != null)
@@ -48,24 +48,18 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void UserIDLowerThanZeroTest()
+        public void UserIDLowerThanZeroThrowsExceptionTest()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new User("user", -4));
         }
 
-        [Test]
-        public void UserWithSameIdentityChangesNameEqualityTest()
+        [TestCase("Tim", "Eric", 3)]
+        [TestCase("Tim", "Tim", 3)]
+        public void UsersWithSameIDEqualityTest(string user1Username, string user2Username, int userID)
         {
-            var user1 = new User("Tim", 1);
-            var user2 = new User("Eric", 1);
-            Assert.AreEqual(user1, user2);
-        }
+            var user1 = new User(user1Username, userID);
+            var user2 = new User(user2Username, userID);
 
-        [Test]
-        public void UsersWithSameNameAndSameIDEqualityTest()
-        {
-            var user1 = new User("User", 2);
-            var user2 = new User("User", 2);
             Assert.AreEqual(user1, user2);
         }
 

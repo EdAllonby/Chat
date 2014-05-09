@@ -13,7 +13,7 @@ namespace SharedClassesTests.Domain
         private User user2;
 
         [TestFixtureSetUp]
-        public void CreateRepository()
+        public void FixtureSetup()
         {
             userRepository = new UserRepository();
 

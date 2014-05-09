@@ -23,6 +23,7 @@ namespace Server
 
         private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
         private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
+        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
 
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly UserRepository userRepository = new UserRepository();
@@ -83,7 +84,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin)
         {
-            var newUser = new User(clientLogin.User.Username, userIDGenerator.AssignEntityId());
+            var newUser = new User(clientLogin.User.Username, userIDGenerator.AssignEntityID());
 
             userRepository.AddUser(newUser);
 
@@ -92,7 +93,7 @@ namespace Server
 
         private Conversation CreateConversationEntity(ConversationRequest conversationRequest)
         {
-            var newConversation = new Conversation(conversationIDGenerator.AssignEntityId(),
+            var newConversation = new Conversation(conversationIDGenerator.AssignEntityID(),
                 conversationRequest.Conversation.FirstParticipantUserId,
                 conversationRequest.Conversation.SecondParticipantUserId);
 
@@ -103,8 +104,13 @@ namespace Server
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            Conversation conversation = conversationRepository.FindConversationById(contributionRequest.Contribution.ConversationId);
-            return conversation.CreateContributionEntity(contributionRequest);
+            var newContribution = new Contribution(contributionIDGenerator.AssignEntityID(), contributionRequest.Contribution);
+
+            Conversation conversation = conversationRepository.FindConversationById(newContribution.ConversationId);
+
+            conversation.AddContribution(newContribution);
+
+            return newContribution;
         }
 
         private void NotifyClientsOfUserChange(User user)
