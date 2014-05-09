@@ -2,11 +2,11 @@
 {
     public sealed class EntityIDGenerator
     {
-        private int nextId;
+        private int nextID;
 
-        public int AssignEntityId()
+        public int AssignEntityID()
         {
-            return nextId++;
+            return ++nextID;
         }
     }
 }

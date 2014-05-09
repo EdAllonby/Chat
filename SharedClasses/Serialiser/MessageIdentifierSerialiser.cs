@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Net.Sockets;
 using log4net;
 
@@ -16,6 +17,8 @@ namespace SharedClasses.Serialiser
 
         public void SerialiseMessageIdentifier(int messageIdentifier, NetworkStream stream)
         {
+            Contract.Requires(stream != null);
+
             stream.Write(BitConverter.GetBytes(messageIdentifier), 0, 4);
             Log.Debug("Sent Message Identifier: " + messageIdentifier + " to stream");
         }
@@ -26,6 +29,8 @@ namespace SharedClasses.Serialiser
 
         public int DeserialiseMessageIdentifier(NetworkStream stream)
         {
+            Contract.Requires(stream != null);
+
             var messageTypeBuffer = new byte[4];
             stream.Read(messageTypeBuffer, 0, 4);
             int messageIdentifier = BitConverter.ToInt32(messageTypeBuffer, 0);

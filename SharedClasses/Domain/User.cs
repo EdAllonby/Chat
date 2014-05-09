@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace SharedClasses.Domain
 {
@@ -14,13 +15,9 @@ namespace SharedClasses.Domain
 
         public User(string username, int userId)
         {
+            Contract.Requires(userId > 0);
+
             this.username = username;
-
-            if (userId < 0)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
             this.userId = userId;
         }
 

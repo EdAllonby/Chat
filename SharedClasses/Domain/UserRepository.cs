@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
 
@@ -17,12 +18,16 @@ namespace SharedClasses.Domain
 
         public void AddUser(User user)
         {
+            Contract.Requires(user != null);
+
             usersIndexedById[user.UserId] = user;
             Log.Debug("User with Id " + user.UserId + " added to user repository");
         }
 
         public void AddUsers(IEnumerable<User> users)
         {
+            Contract.Requires(users != null);
+
             foreach (User user in users)
             {
                 usersIndexedById[user.UserId] = user;

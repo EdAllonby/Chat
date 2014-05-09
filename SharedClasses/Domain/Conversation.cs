@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using SharedClasses.Message;
 
 namespace SharedClasses.Domain
@@ -16,7 +18,6 @@ namespace SharedClasses.Domain
         private readonly int conversationId;
         private readonly int firstParticipantUserId;
         private readonly int secondParticipantUserId;
-        private int nextContributionId;
 
         public Conversation(int conversationId, int firstParticipantUserId, int secondParticipantUserId)
         {
@@ -61,20 +62,15 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Adds a <see cref="Contribution"/> from a new <see cref="ContributionRequest"/> 
-        /// First assigns a Contribution Id and then adds this to the contribution repository.
+        /// Adds a <see cref="Contribution"/> entity to the dictionary indexed by ids.
         /// </summary>
-        /// <param name="contributionRequest"></param>
         /// <returns></returns>
-        public Contribution CreateContributionEntity(ContributionRequest contributionRequest)
+        public void AddContribution(Contribution newContribution)
         {
-            var contribution = new Contribution(nextContributionId, contributionRequest.Contribution);
+            Contract.Requires(newContribution != null);
+            Contract.Requires(newContribution.ContributionId > 0);
 
-            contributionsIndexedByContributionID[contribution.ContributionId] = contribution;
-
-            nextContributionId++;
-
-            return contribution;
+            contributionsIndexedByContributionID[newContribution.ContributionId] = newContribution;
         }
 
         /// <summary>
@@ -84,6 +80,8 @@ namespace SharedClasses.Domain
         /// <param name="contributionNotification"></param>
         public void AddContribution(ContributionNotification contributionNotification)
         {
+            Contract.Requires(contributionNotification != null);
+
             contributionsIndexedByContributionID[contributionNotification.Contribution.ContributionId] = contributionNotification.Contribution;
         }
 
