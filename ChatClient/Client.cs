@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -22,24 +21,23 @@ namespace ChatClient
 
         public delegate void NewConversationHandler(Conversation conversation);
 
-        public delegate void UserListHandler(IList<User> users, EventArgs e);
+        public delegate void UserListHandler(IEnumerable<User> users);
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-        private readonly UserRepository userRepository = new UserRepository();
         private ConnectionHandler connectionHandler;
 
-        public UserRepository UserRepository
+        public IEntityRepository<User> UserRepository
         {
-            get { return userRepository; }
+            get { return repositoryFactory.GetRepository<User>(); }
         }
 
-        public ConversationRepository ConversationRepository
+        public IEntityRepository<Conversation> ConversationRepository
         {
-            get { return conversationRepository; }
+            get { return repositoryFactory.GetRepository<Conversation>(); }
         }
 
         public int ClientUserId { get; private set; }
@@ -52,7 +50,7 @@ namespace ChatClient
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(userRepository.UsersIndexedById.Values.ToList(), EventArgs.Empty);
+            OnNewUser(repositoryFactory.GetRepository<User>().GetAllEntities());
             Log.Info("User changed event fired");
         }
 
@@ -154,7 +152,9 @@ namespace ChatClient
 
         private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
-            Conversation conversation = conversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
+            Conversation conversation = repositoryFactory.GetRepository<Conversation>()
+                .FindEntityByID(contributionNotification.Contribution.ConversationId);
+
             conversation.AddContribution(contributionNotification);
             OnNewContribution(conversation);
         }
@@ -168,22 +168,19 @@ namespace ChatClient
         public void SendConversationRequest(int receiverId)
         {
             var conversationRequest = new ConversationRequest(ClientUserId, receiverId);
-
             connectionHandler.SendMessage(conversationRequest);
         }
 
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
-            conversationRepository.AddConversation(conversationNotification.Conversation);
-
+            repositoryFactory.GetRepository<Conversation>().AddEntity(conversationNotification.Conversation);
             OnNewConversationNotification(conversationNotification.Conversation);
         }
 
         private void AddUserListToRepository(UserSnapshot userSnapshot)
         {
-            userRepository.AddUsers(userSnapshot.Users);
-
-            OnNewUser(userRepository.UsersIndexedById.Values.ToList(), null);
+            repositoryFactory.GetRepository<User>().AddEntities(userSnapshot.Users);
+            OnNewUser(repositoryFactory.GetRepository<User>().GetAllEntities());
         }
 
         private void UpdateUserRepository(UserNotification userNotification)
@@ -191,10 +188,10 @@ namespace ChatClient
             switch (userNotification.Notification)
             {
                 case NotificationType.Create:
-                    userRepository.AddUser(userNotification.User);
+                    repositoryFactory.GetRepository<User>().AddEntity(userNotification.User);
                     break;
                 case NotificationType.Delete:
-                    userRepository.RemoveUser(userNotification.User.UserId);
+                    repositoryFactory.GetRepository<User>().RemoveEntity(userNotification.User.UserId);
                     break;
             }
         }

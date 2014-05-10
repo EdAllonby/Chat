@@ -21,12 +21,12 @@ namespace Server
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
 
-        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
+        private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
 
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
-        private readonly UserRepository userRepository = new UserRepository();
+        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
+        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
+
 
         public Server()
         {
@@ -86,7 +86,7 @@ namespace Server
         {
             var newUser = new User(clientLogin.User.Username, userIDGenerator.AssignEntityID());
 
-            userRepository.AddUser(newUser);
+            repositoryFactory.GetRepository<User>().AddEntity(newUser);
 
             return newUser;
         }
@@ -97,7 +97,7 @@ namespace Server
                 conversationRequest.Conversation.FirstParticipantUserId,
                 conversationRequest.Conversation.SecondParticipantUserId);
 
-            conversationRepository.AddConversation(newConversation);
+            repositoryFactory.GetRepository<Conversation>().AddEntity(newConversation);
 
             return newConversation;
         }
@@ -106,7 +106,7 @@ namespace Server
         {
             var newContribution = new Contribution(contributionIDGenerator.AssignEntityID(), contributionRequest.Contribution);
 
-            Conversation conversation = conversationRepository.FindConversationById(newContribution.ConversationId);
+            Conversation conversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(newContribution.ConversationId);
 
             conversation.AddContribution(newContribution);
 
@@ -135,13 +135,15 @@ namespace Server
                     break;
 
                 case MessageNumber.UserSnapshotRequest:
-                    SendUserSnapshot(userRepository.FindUserById(e.ClientUserId));
+                    SendUserSnapshot(repositoryFactory.GetRepository<User>().FindEntityByID(e.ClientUserId));
                     break;
 
                 case MessageNumber.ClientDisconnection:
                     RemoveClientHandler(e.ClientUserId);
-                    NotifyClientsOfUserChange(userRepository.FindUserById(e.ClientUserId));
-                    userRepository.RemoveUser(e.ClientUserId);
+
+                    IEntityRepository<User> userRepository = repositoryFactory.GetRepository<User>();
+                    NotifyClientsOfUserChange(userRepository.FindEntityByID(e.ClientUserId));
+                    userRepository.RemoveEntity(e.ClientUserId);
                     break;
 
                 case MessageNumber.ConversationRequest:
@@ -160,7 +162,7 @@ namespace Server
 
         private void SendUserSnapshot(User clientUser)
         {
-            IEnumerable<User> currentUsers = userRepository.RetrieveAllUsers();
+            IEnumerable<User> currentUsers = repositoryFactory.GetRepository<User>().GetAllEntities();
             var userSnapshot = new UserSnapshot(currentUsers);
             ConnectionHandler connectionHandler = clientConnectionHandlersIndexedByUserId[clientUser.UserId];
             connectionHandler.SendMessage(userSnapshot);
@@ -174,10 +176,11 @@ namespace Server
                 return false;
             }
 
-            if (conversationRepository.GetAllConversations().Any(conversation => (conversationRequest.Conversation.FirstParticipantUserId == conversation.FirstParticipantUserId ||
-                                                                                  conversationRequest.Conversation.FirstParticipantUserId == conversation.SecondParticipantUserId) &&
-                                                                                 (conversationRequest.Conversation.SecondParticipantUserId == conversation.FirstParticipantUserId ||
-                                                                                  conversationRequest.Conversation.SecondParticipantUserId == conversation.SecondParticipantUserId)))
+            IEnumerable<Conversation> conversations = repositoryFactory.GetRepository<Conversation>().GetAllEntities();
+            if (conversations.Any(conversation => (conversationRequest.Conversation.FirstParticipantUserId == conversation.FirstParticipantUserId ||
+                                                   conversationRequest.Conversation.FirstParticipantUserId == conversation.SecondParticipantUserId) &&
+                                                  (conversationRequest.Conversation.SecondParticipantUserId == conversation.FirstParticipantUserId ||
+                                                   conversationRequest.Conversation.SecondParticipantUserId == conversation.SecondParticipantUserId)))
             {
                 Log.Warn("Conversation already exists between these two users. Server will not create a new one.");
                 return false;
@@ -199,7 +202,7 @@ namespace Server
         private void SendContributionNotificationToParticipants(Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution);
-            Conversation contributionConversation = conversationRepository.FindConversationById(contribution.ConversationId);
+            Conversation contributionConversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(contribution.ConversationId);
 
             ConnectionHandler firstParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[contributionConversation.FirstParticipantUserId];
             firstParticipantConnectionHandler.SendMessage(contributionNotification);
