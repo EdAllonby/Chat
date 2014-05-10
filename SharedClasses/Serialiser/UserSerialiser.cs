@@ -16,11 +16,8 @@ namespace SharedClasses.Serialiser
 
         public void Serialise(User user, NetworkStream stream)
         {
-            if (stream.CanWrite)
-            {
-                binaryFormatter.Serialize(stream, user);
-                Log.Debug("User serialised and sent to network stream");
-            }
+            binaryFormatter.Serialize(stream, user);
+            Log.Debug("User serialised and sent to network stream");
         }
 
         public User Deserialise(NetworkStream networkStream)

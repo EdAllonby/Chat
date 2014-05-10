@@ -20,7 +20,7 @@ namespace ChatClient.ViewModels
 
         public ChatWindowViewModel()
         {
-            windowTitle = Client.UserName;
+            windowTitle = Client.Username;
             Client.OnNewContribution += NewContributionReceived;
         }
 

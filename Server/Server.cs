@@ -153,7 +153,7 @@ namespace Server
                     break;
 
                 default:
-                    Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
+                    Log.Warn("Server is not supposed to handle message with identifier: " + message.Identifier);
                     break;
             }
         }

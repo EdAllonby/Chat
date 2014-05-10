@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using SharedClasses.Domain;
 
 namespace SharedClasses.Message
@@ -11,6 +12,9 @@ namespace SharedClasses.Message
     {
         public ConversationNotification(Conversation conversation)
         {
+            Contract.Requires(conversation != null);
+            Contract.Requires(conversation.ConversationId > 0);
+
             Conversation = conversation;
             Identifier = MessageNumber.ConversationNotification;
         }

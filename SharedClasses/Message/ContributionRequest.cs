@@ -16,6 +16,7 @@ namespace SharedClasses.Message
             Contract.Requires(conversationID > 0);
 
             Contribution = new Contribution(senderID, message, conversationID);
+
             Identifier = MessageNumber.ContributionRequest;
         }
 

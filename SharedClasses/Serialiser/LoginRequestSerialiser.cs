@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using log4net;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser
@@ -33,7 +34,8 @@ namespace SharedClasses.Serialiser
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            var loginRequest = new LoginRequest(userSerialiser.Deserialise(networkStream));
+            User user = userSerialiser.Deserialise(networkStream);
+            var loginRequest = new LoginRequest(user.Username);
             Log.Info("Network stream has received data and deserialised to a LoginRequest object");
             return loginRequest;
         }

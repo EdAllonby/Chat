@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using log4net;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser
@@ -32,7 +33,8 @@ namespace SharedClasses.Serialiser
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            var request = new ConversationRequest(conversationSerialiser.Deserialise(networkStream));
+            Conversation conversation = conversationSerialiser.Deserialise(networkStream);
+            var request = new ConversationRequest(conversation.FirstParticipantUserId, conversation.SecondParticipantUserId);
             Log.Info("Conversation request message deserialised");
             return request;
         }

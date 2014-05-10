@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using SharedClasses.Domain;
 
 namespace SharedClasses.Message
@@ -9,9 +10,11 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class LoginRequest : IMessage
     {
-        public LoginRequest(User user)
+        public LoginRequest(string username)
         {
-            User = user;
+            Contract.Requires(username != null);
+
+            User = new User(username);
             Identifier = MessageNumber.LoginRequest;
         }
 
