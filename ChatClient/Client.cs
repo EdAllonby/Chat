@@ -44,7 +44,7 @@ namespace ChatClient
 
         public int ClientUserId { get; private set; }
 
-        public string UserName { get; private set; }
+        public string Username { get; private set; }
 
         public event UserListHandler OnNewUser = delegate { };
         public event NewConversationHandler OnNewConversationNotification = delegate { };
@@ -56,13 +56,13 @@ namespace ChatClient
             Log.Info("User changed event fired");
         }
 
-        public void ConnectToServer(string userName, IPAddress targetAddress, int targetPort)
+        public void ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
-            UserName = userName;
+            Username = username;
 
             TcpClient tcpClient = CreateConnection(targetAddress, targetPort);
 
-            IMessage userRequest = new LoginRequest(new User(UserName));
+            IMessage userRequest = new LoginRequest(Username);
 
             SendLoginRequestMessage(userRequest, tcpClient);
 
@@ -95,7 +95,7 @@ namespace ChatClient
         {
             const int TimeoutSeconds = 5;
 
-            Log.Info("Client looking for server");
+            Log.Info("Client looking for server with address: " + targetAddress + " and port: " + targetPort);
 
             var serverConnection = new TcpClient();
 
@@ -132,6 +132,7 @@ namespace ChatClient
                     var contributionNotification = (ContributionNotification) message;
                     AddContributionToConversation(contributionNotification);
                     break;
+
                 case MessageNumber.UserNotification:
                     UpdateUserRepository((UserNotification) message);
                     NotifyClientOfUserChange();
@@ -146,7 +147,7 @@ namespace ChatClient
                     break;
 
                 default:
-                    Log.Warn("Shared classes assembly does not have a definition for message identifier: " + message.Identifier);
+                    Log.Warn("Client is not supposed to handle message with identifier: " + message.Identifier);
                     break;
             }
         }
@@ -166,14 +167,15 @@ namespace ChatClient
 
         public void SendConversationRequest(int receiverId)
         {
-            var conversation = new Conversation(ClientUserId, receiverId);
-            var conversationRequest = new ConversationRequest(conversation);
+            var conversationRequest = new ConversationRequest(ClientUserId, receiverId);
+
             connectionHandler.SendMessage(conversationRequest);
         }
 
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             conversationRepository.AddConversation(conversationNotification.Conversation);
+
             OnNewConversationNotification(conversationNotification.Conversation);
         }
 

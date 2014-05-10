@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using SharedClasses.Domain;
 
 namespace SharedClasses.Message
@@ -9,9 +10,12 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class ConversationRequest : IMessage
     {
-        public ConversationRequest(Conversation conversation)
+        public ConversationRequest(int clientUserId, int receiverId)
         {
-            Conversation = conversation;
+            Contract.Requires(clientUserId > 0);
+            Contract.Requires(receiverId > 0);
+
+            Conversation = new Conversation(clientUserId, receiverId);
 
             Identifier = MessageNumber.ConversationRequest;
         }

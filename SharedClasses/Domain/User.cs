@@ -15,6 +15,7 @@ namespace SharedClasses.Domain
 
         public User(string username, int userId)
         {
+            Contract.Requires(username != null);
             Contract.Requires(userId > 0);
 
             this.username = username;

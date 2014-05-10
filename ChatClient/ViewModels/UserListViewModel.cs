@@ -17,7 +17,7 @@ namespace ChatClient.ViewModels
 
             Client.OnNewConversationNotification += OnNewConversationNotification;
 
-            Username = Client.UserName;
+            Username = Client.Username;
         }
 
         public string Username { get; private set; }
