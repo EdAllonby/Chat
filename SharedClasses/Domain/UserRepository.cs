@@ -1,33 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
 
 namespace SharedClasses.Domain
 {
-    public sealed class UserRepository
+    internal sealed class UserRepository : IEntityRepository<User>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
-        public Dictionary<int, User> UsersIndexedById
+        public void AddEntity(User user)
         {
-            get { return usersIndexedById; }
-        }
-
-        public void AddUser(User user)
-        {
-            Contract.Requires(user != null);
-
             usersIndexedById[user.UserId] = user;
             Log.Debug("User with Id " + user.UserId + " added to user repository");
         }
 
-        public void AddUsers(IEnumerable<User> users)
+        public void AddEntities(IEnumerable<User> users)
         {
-            Contract.Requires(users != null);
-
             foreach (User user in users)
             {
                 usersIndexedById[user.UserId] = user;
@@ -35,20 +25,30 @@ namespace SharedClasses.Domain
             }
         }
 
-        public void RemoveUser(int userId)
+        public void AddEntity(object entity)
+        {
+            AddEntity((User) entity);
+        }
+
+        public void AddEntities(IEnumerable<object> entities)
+        {
+            AddEntities((IEnumerable<User>) entities);
+        }
+
+        public void RemoveEntity(int userId)
         {
             usersIndexedById.Remove(userId);
             Log.Debug("User with Id " + userId + " removed from user repository");
         }
 
-        public IEnumerable<User> RetrieveAllUsers()
-        {
-            return usersIndexedById.Values.ToList();
-        }
-
-        public User FindUserById(int userId)
+        public User FindEntityByID(int userId)
         {
             return usersIndexedById[userId];
+        }
+
+        public IEnumerable<User> GetAllEntities()
+        {
+            return usersIndexedById.Values.ToList();
         }
     }
 }

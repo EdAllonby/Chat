@@ -26,7 +26,7 @@
                       Fill="#e74c3c" />
             </Canvas>
             <Label Content="{Binding Title}" VerticalContentAlignment="Center"
-                   FontFamily="Myriad Pro" FontSize="22" />
+                   FontFamily="Myriad Pro" FontSize="16" />
         </StackPanel>
 
         <Grid Grid.Row="1">
@@ -35,11 +35,11 @@
             </Grid.RowDefinitions>
 
             <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True" Margin="10"
-                     Grid.Column="0"
-                     Background="AliceBlue"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     ItemsSource="{Binding Contributions, UpdateSourceTrigger=Default}">
-                    <ListBox.ItemTemplate>
+                                 Grid.Column="0"
+                                 Background="AliceBlue"
+                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                 ItemsSource="{Binding Contributions, UpdateSourceTrigger=Default}">
+                <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="{Binding Message}" />
@@ -70,7 +70,7 @@
                 <TextBox.InputBindings>
                     <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
                 </TextBox.InputBindings>
-            </TextBox>
+            </TextBox> 
 
             <Button Height="20" Width="50"
                 Content="Send" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,10" Grid.Column="1"

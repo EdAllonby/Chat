@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Server;
 using SharedClasses.Domain;
 
@@ -31,36 +30,30 @@ namespace SharedClassesTests.Domain
         [Test]
         public void IDEqualityTest()
         {
-            var userFactory = new EntityIDGenerator();
-            var user1 = new User("User1", userFactory.AssignEntityID());
+            var userIDGenerator = new EntityIDGenerator();
+            var user1 = new User("User1", userIDGenerator.AssignEntityID());
 
-            Assert.AreEqual(user1.UserId, 0);
+            Assert.AreEqual(user1.UserId, 1);
 
-            var user2 = new User("User2", userFactory.AssignEntityID());
+            var user2 = new User("User2", userIDGenerator.AssignEntityID());
             Assert.AreNotSame(user1.UserId, user2.UserId);
         }
 
         [Test]
         public void UserIDIterationTest()
         {
-            var userFactory = new EntityIDGenerator();
+            var userIDGenerator = new EntityIDGenerator();
             User user = null;
 
-            for (int i = 0; i <= 100; i++)
+            for (int i = 0; i < 100; i++)
             {
-                user = new User("User", userFactory.AssignEntityID());
+                user = new User("User", userIDGenerator.AssignEntityID());
             }
 
             if (user != null)
             {
                 Assert.AreEqual(user.UserId, 100);
             }
-        }
-
-        [Test]
-        public void UserIDLowerThanZeroThrowsExceptionTest()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new User("user", -4));
         }
 
         [Test]

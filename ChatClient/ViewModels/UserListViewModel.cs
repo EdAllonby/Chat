@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using ChatClient.Views;
@@ -42,7 +41,7 @@ namespace ChatClient.ViewModels
             });
         }
 
-        private void OnNewUser(IList<User> newUser, EventArgs e)
+        private void OnNewUser(IEnumerable<User> newUser)
         {
             List<User> newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
 
@@ -51,7 +50,7 @@ namespace ChatClient.ViewModels
 
         public void NewConversation(int secondParticipantUserID)
         {
-            foreach (Conversation conversation in Client.ConversationRepository.GetAllConversations()
+            foreach (Conversation conversation in Client.ConversationRepository.GetAllEntities()
                 .Where(conversation => (Client.ClientUserId == conversation.FirstParticipantUserId ||
                                         Client.ClientUserId == conversation.SecondParticipantUserId) &&
                                        (secondParticipantUserID == conversation.FirstParticipantUserId ||

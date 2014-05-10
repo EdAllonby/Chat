@@ -1,35 +1,51 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using log4net;
 
 namespace SharedClasses.Domain
 {
-    public sealed class ConversationRepository
+    internal sealed class ConversationRepository : IEntityRepository<Conversation>
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRepository));
 
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
-        public void AddConversation(Conversation conversation)
+        public void AddEntity(Conversation conversation)
         {
-            Contract.Requires(conversation != null);
-
             conversationsIndexedById[conversation.ConversationId] = conversation;
             Log.Debug("Conversation with Id " + conversation.ConversationId + " added to user repository");
         }
 
-        public void RemoveConversation(int conversationId)
+        public void AddEntities(IEnumerable<Conversation> conversations)
+        {
+            foreach (Conversation conversation in conversations)
+            {
+                conversationsIndexedById[conversation.ConversationId] = conversation;
+                Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
+            }
+        }
+
+        public void AddEntity(object entity)
+        {
+            AddEntity((Conversation) entity);
+        }
+
+        public void AddEntities(IEnumerable<object> entities)
+        {
+            AddEntities((IEnumerable<Conversation>) entities);
+        }
+
+        public void RemoveEntity(int conversationId)
         {
             conversationsIndexedById.Remove(conversationId);
             Log.Debug("Conversation with Id " + conversationId + " removed from Conversation repository");
         }
 
-        public Conversation FindConversationById(int conversationId)
+        public Conversation FindEntityByID(int conversationID)
         {
-            return conversationsIndexedById.ContainsKey(conversationId) ? conversationsIndexedById[conversationId] : null;
+            return conversationsIndexedById.ContainsKey(conversationID) ? conversationsIndexedById[conversationID] : null;
         }
 
-        public IEnumerable<Conversation> GetAllConversations()
+        public IEnumerable<Conversation> GetAllEntities()
         {
             return conversationsIndexedById.Values;
         }
