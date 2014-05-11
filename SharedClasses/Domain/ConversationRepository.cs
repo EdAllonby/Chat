@@ -24,16 +24,6 @@ namespace SharedClasses.Domain
             }
         }
 
-        public void AddEntity(object entity)
-        {
-            AddEntity((Conversation) entity);
-        }
-
-        public void AddEntities(IEnumerable<object> entities)
-        {
-            AddEntities((IEnumerable<Conversation>) entities);
-        }
-
         public void RemoveEntity(int conversationId)
         {
             conversationsIndexedById.Remove(conversationId);

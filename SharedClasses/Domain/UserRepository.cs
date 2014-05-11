@@ -25,16 +25,6 @@ namespace SharedClasses.Domain
             }
         }
 
-        public void AddEntity(object entity)
-        {
-            AddEntity((User) entity);
-        }
-
-        public void AddEntities(IEnumerable<object> entities)
-        {
-            AddEntities((IEnumerable<User>) entities);
-        }
-
         public void RemoveEntity(int userId)
         {
             usersIndexedById.Remove(userId);
