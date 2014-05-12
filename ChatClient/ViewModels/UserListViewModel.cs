@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using ChatClient.Commands;
 using ChatClient.Views;
 using SharedClasses.Domain;
 
@@ -15,6 +17,8 @@ namespace ChatClient.ViewModels
             Client.OnNewUser += OnNewUser;
 
             Client.OnNewConversationNotification += OnNewConversationNotification;
+
+            Client.OnNewContributionNotification += OnNewContributionNotification;
 
             Username = Client.Username;
         }
@@ -34,11 +38,27 @@ namespace ChatClient.ViewModels
 
         private static void OnNewConversationNotification(Conversation conversation)
         {
-            Application.Current.Dispatcher.Invoke(delegate
+            CreateNewConversationWindow(conversation);
+        }
+
+        private static void OnNewContributionNotification(Conversation contributions)
+        {
+            CreateNewConversationWindow(contributions);
+        }
+
+        private static void CreateNewConversationWindow(Conversation conversation)
+        {
+            // Check if conversation window already exists
+            if (ConversationWindowsStatus.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
             {
-                var chatWindow = new ChatWindow(conversation);
-                chatWindow.Show();
-            });
+                Application.Current.Dispatcher.Invoke(delegate
+                {
+                    var chatWindow = new ChatWindow(conversation);
+                    chatWindow.Show();
+                });
+
+                ConversationWindowsStatus.SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
+            }
         }
 
         private void OnNewUser(IEnumerable<User> newUser)
@@ -46,6 +66,11 @@ namespace ChatClient.ViewModels
             List<User> newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
 
             Users = newUserList;
+        }
+
+        public static ICommand Closing
+        {
+            get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
         public void NewConversation(int secondParticipantUserID)

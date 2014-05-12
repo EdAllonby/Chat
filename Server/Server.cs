@@ -20,12 +20,12 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
+        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
+        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
 
         private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
 
         private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
 
 
         public Server()

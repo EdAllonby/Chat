@@ -4,7 +4,7 @@
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
         xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders"
         Title="{Binding WindowTitle}" Height="500" Width="350"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Window.DataContext>
         <viewModels:ChatWindowViewModel />
     </Window.DataContext>
@@ -70,11 +70,13 @@
                 <TextBox.InputBindings>
                     <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
                 </TextBox.InputBindings>
-            </TextBox> 
-
-            <Button Height="20" Width="50"
-                Content="Send" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,10" Grid.Column="1"
-                Command="{Binding SendMessage}" />
+            </TextBox>
+            
+            <Button Height="20" Width="55"
+                Style="{StaticResource RoundButtonStyle}"
+                Content="Send" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5,0,10,10" Grid.Column="1"
+                Command="{Binding SendMessage}"
+                FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="10"/>
         </Grid>
 
     </Grid>

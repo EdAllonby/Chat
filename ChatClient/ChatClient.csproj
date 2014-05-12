@@ -61,9 +61,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AudioPlayer.cs" />
-    <Compile Include="IAudioPlayer.cs" />
+    <Compile Include="ViewModels\AudioPlayer.cs" />
+    <Compile Include="ViewModels\IAudioPlayer.cs" />
+    <Compile Include="ViewModels\ConversationWindowsStatus.cs" />
     <Compile Include="ViewModels\UserListViewModel.cs" />
+    <Compile Include="ViewModels\WindowStatus.cs" />
     <Compile Include="Views\UserListWindow.xaml.cs">
       <DependentUpon>UserListWindow.xaml</DependentUpon>
     </Compile>

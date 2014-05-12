@@ -20,5 +20,14 @@ namespace ChatClient.Views
                 viewModel.InitialiseChat();
             }
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var viewModel = DataContext as ChatWindowViewModel;
+            if (viewModel != null)
+            {
+                viewModel.Closing.Execute(null);
+            }
+        }
     }
 }

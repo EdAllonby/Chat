@@ -46,7 +46,7 @@ namespace ChatClient
 
         public event UserListHandler OnNewUser = delegate { };
         public event NewConversationHandler OnNewConversationNotification = delegate { };
-        public event NewContributionNotificationHandler OnNewContribution = delegate { };
+        public event NewContributionNotificationHandler OnNewContributionNotification = delegate { };
 
         private void NotifyClientOfUserChange()
         {
@@ -156,7 +156,7 @@ namespace ChatClient
                 .FindEntityByID(contributionNotification.Contribution.ConversationId);
 
             conversation.AddContribution(contributionNotification);
-            OnNewContribution(conversation);
+            OnNewContributionNotification(conversation);
         }
 
         public void SendContributionRequest(int conversationID, string message)
