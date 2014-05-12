@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
         ResizeMode="NoResize"
-        Title="Connected Users" Height="500" Width="285"
+        Title="Connected Users" Height="500" Width="300"
         WindowStartupLocation="Manual" Left="1500" Top="300"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -17,6 +17,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -45,7 +46,7 @@
                     Width="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=ActualHeight}"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                     FontSize="12"
-                    Command="{Binding CloseWindow }">
+                    Command="{Binding Closing }">
                 <Path Data="{StaticResource CloseXIcon}" Width="10" Height="10"
                       Stretch="Fill" Stroke="Black" StrokeThickness="2" />
             </Button>
@@ -62,15 +63,26 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection" Orientation="Horizontal">
+                        <CheckBox Name="UserCheckedCheckBox"  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Style="{StaticResource CheckBoxStyle}"/>
                         <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                             HorizontalAlignment="Left">
                             <Path Data="{StaticResource PersonIcon}"
                             Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
                         </Canvas>
-                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" TextAlignment="Center" Padding="3" />
+                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" Width="300"  TextAlignment="Left" Padding="3" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Label Content="Create conversation with checked users" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Content="Start!" 
+                VerticalAlignment="Top"
+                Margin="0,5,10,5"
+                Style="{StaticResource RoundButtonStyle}"
+                Height="30" Width="60"
+                FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="14" />
+        </StackPanel>
     </Grid>
 </Window>

@@ -46,7 +46,7 @@
                     Width="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=ActualHeight}"
                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                     FontSize="12"
-                    Command="{Binding CloseWindow }">
+                    Command="{Binding Closing }">
                 <Path Data="{StaticResource CloseXIcon}" Width="10" Height="10"
                       Stretch="Fill" Stroke="Black" StrokeThickness="2" />
             </Button>
@@ -101,7 +101,7 @@
                 </TextBox.InputBindings>
             </TextBox>
         </Grid>
-        <Button Grid.Row="3" Grid.Column="0" x:Name="LogInButton" Content="Login" HorizontalAlignment="Left"
+        <Button Grid.Row="3" Grid.Column="0" Content="Login" HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="30,5,0,0"
                 Style="{StaticResource RoundButtonStyle}"

@@ -1,8 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using ChatClient.Commands;
 using ChatClient.Properties;
 
 namespace ChatClient.ViewModels
@@ -12,6 +9,8 @@ namespace ChatClient.ViewModels
         // I still can't find a way of sharing this Client across. Made it static in the ViewModel for the time being.
         // I might have to investigate IoC to get the viewModels to pass this client about.
         protected static readonly Client Client = new Client();
+        protected static readonly ConversationWindowsStatus ConversationWindowsStatus = new ConversationWindowsStatus();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -20,14 +19,5 @@ namespace ChatClient.ViewModels
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #region Close Command
-
-        public static ICommand CloseWindow
-        {
-            get { return new RelayCommand(() => Application.Current.Shutdown()); }
-        }
-
-        #endregion
     }
 }

@@ -130,6 +130,11 @@ namespace ChatClient.ViewModels
             }
         }
 
+        public static ICommand Closing
+        {
+            get { return new RelayCommand(() => Application.Current.Shutdown()); }
+        }
+
         private bool CanLogin()
         {
             return !(String.IsNullOrEmpty(Username) || String.IsNullOrEmpty(IPAddress) || String.IsNullOrEmpty(Port));

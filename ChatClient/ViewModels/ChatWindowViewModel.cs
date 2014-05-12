@@ -21,7 +21,7 @@ namespace ChatClient.ViewModels
         public ChatWindowViewModel()
         {
             windowTitle = Client.Username;
-            Client.OnNewContribution += NewContributionReceived;
+            Client.OnNewContributionNotification += NewContributionNotificationReceived;
         }
 
         public string WindowTitle
@@ -100,6 +100,11 @@ namespace ChatClient.ViewModels
             return !String.IsNullOrEmpty(MessageToAddToConversation);
         }
 
+        public ICommand Closing
+        {
+            get { return new RelayCommand(() => ConversationWindowsStatus.SetWindowStatus(conversation.ConversationId, WindowStatus.Closed)); }
+        }
+
         #endregion
 
         public void InitialiseChat()
@@ -107,7 +112,7 @@ namespace ChatClient.ViewModels
             Contributions = conversation.GetAllContributions();
         }
 
-        private void NewContributionReceived(Conversation updatedConversation)
+        private void NewContributionNotificationReceived(Conversation updatedConversation)
         {
             if (updatedConversation.ConversationId == conversation.ConversationId)
             {
