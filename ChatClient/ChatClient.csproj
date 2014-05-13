@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\UserMessage.cs" />
     <Compile Include="ViewModels\AudioPlayer.cs" />
     <Compile Include="ViewModels\IAudioPlayer.cs" />
     <Compile Include="ViewModels\ConversationWindowsStatus.cs" />

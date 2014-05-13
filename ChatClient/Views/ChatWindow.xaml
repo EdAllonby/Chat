@@ -38,12 +38,12 @@
                                  Grid.Column="0"
                                  Background="AliceBlue"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                 ItemsSource="{Binding Contributions, UpdateSourceTrigger=Default}">
+                                 ItemsSource="{Binding Messages, UpdateSourceTrigger=Default}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="{Binding Message}" />
-                            <TextBlock Text="{Binding SenderInformation}" FontSize="10" Foreground="Gray" />
+                            <TextBlock Text="{Binding MessageDetails}" FontSize="10" Foreground="Gray" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
