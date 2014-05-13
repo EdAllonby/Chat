@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
+using ChatClient.Models;
 using ChatClient.Properties;
 using SharedClasses.Domain;
 
@@ -12,7 +15,7 @@ namespace ChatClient.ViewModels
     public class ChatWindowViewModel : ViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private IList<Contribution> contributions = new List<Contribution>();
+        private IList<UserMessage> messages = new List<UserMessage>(); 
         private Conversation conversation;
         private string messageToAddToConversation;
         private string title;
@@ -47,13 +50,13 @@ namespace ChatClient.ViewModels
             }
         }
 
-        public IList<Contribution> Contributions
+        public IList<UserMessage> Messages
         {
-            get { return contributions; }
+            get { return messages; }
             set
             {
-                if (Equals(value, contributions)) return;
-                contributions = value;
+                if (Equals(value, messages)) return;
+                messages = value;
                 OnPropertyChanged();
             }
         }
@@ -109,19 +112,41 @@ namespace ChatClient.ViewModels
 
         public void InitialiseChat()
         {
-            Contributions = conversation.GetAllContributions();
+            GetMessages();
         }
 
         private void NewContributionNotificationReceived(Conversation updatedConversation)
         {
             if (updatedConversation.ConversationId == conversation.ConversationId)
             {
-                Application.Current.Dispatcher.Invoke(() => Contributions = updatedConversation.GetAllContributions());
-                if (updatedConversation.GetAllContributions().Last().ContributorUserId != Client.ClientUserId)
+                Application.Current.Dispatcher.Invoke(GetMessages);
+
+                if (conversation.GetAllContributions().Last().ContributorUserId != Client.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
             }
+        }
+
+        private void GetMessages()
+        {
+            IEnumerable<Contribution> contributions = conversation.GetAllContributions();
+
+            var userMessages = new List<UserMessage>();
+
+            foreach (Contribution contribution in contributions)
+            {
+                var messageDetails = new StringBuilder();
+                messageDetails.Append(Client.UserRepository.FindEntityByID(contribution.ContributorUserId).Username);
+                messageDetails.Append(" sent at: ");
+                messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
+
+                var message = contribution.Message;
+
+                userMessages.Add(new UserMessage(message, messageDetails.ToString()));
+            }
+
+            Messages = userMessages;
         }
     }
 }

@@ -85,7 +85,7 @@ namespace SharedClasses.Domain
         /// Returns a list of <see cref="Contribution"/>s which are held in this <see cref="Conversation"/> entity
         /// </summary>
         /// <returns></returns>
-        public List<Contribution> GetAllContributions()
+        public IEnumerable<Contribution> GetAllContributions()
         {
             return new List<Contribution>(contributionsIndexedByContributionID.Values);
         }

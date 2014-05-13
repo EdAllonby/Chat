@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Globalization;
 using log4net;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Used as the fundamental object needed to hold a text message and its timestamp
+    /// A fundamental domain entity object needed to model a contribution to a conversation.
     /// </summary>
     [Serializable]
     public sealed class Contribution : IEquatable<Contribution>
@@ -16,8 +15,7 @@ namespace SharedClasses.Domain
         // Immutable domain entity class
         private readonly int contributorUserId;
         private readonly int conversationId;
-
-        private DateTime messageTimeStamp;
+        private readonly DateTime messageTimeStamp;
 
         public Contribution(int contributionId, Contribution incompleteContribution)
         {
@@ -26,12 +24,12 @@ namespace SharedClasses.Domain
             ContributionId = contributionId;
             contributorUserId = incompleteContribution.contributorUserId;
             CreateMessage(incompleteContribution.Message);
-            SetTimeStampOfMessage();
+            messageTimeStamp = DateTime.Now;
             conversationId = incompleteContribution.conversationId;
         }
 
         /// <summary>
-        /// Not a complete Contribution yet, still needs its ID
+        /// Create a contribution that will later get assigned an ID
         /// </summary>
         public Contribution(int contributorUserId, string text, int conversationId)
         {
@@ -44,7 +42,7 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The Conversation ID this Contribution belongs to
+        /// The Conversation ID this Contribution belongs to.
         /// </summary>
         public int ConversationId
         {
@@ -57,7 +55,7 @@ namespace SharedClasses.Domain
         public int ContributionId { get; private set; }
 
         /// <summary>
-        /// The User who sent this Contribution message
+        /// The User who sent this Contribution message.
         /// </summary>
         public int ContributorUserId
         {
@@ -65,13 +63,13 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The contribution text
+        /// The contribution text.
         /// </summary>
         public string Message { get; private set; }
 
-        public string SenderInformation
+        public DateTime MessageTimeStamp
         {
-            get { return ContributorUserId + " sent message at: " + messageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")); }
+            get { return messageTimeStamp; }
         }
 
         public bool Equals(Contribution other)
@@ -107,12 +105,6 @@ namespace SharedClasses.Domain
         {
             Message = messageText;
             Log.Debug("Contribution text set: " + Message);
-        }
-
-        private void SetTimeStampOfMessage()
-        {
-            messageTimeStamp = DateTime.Now;
-            Log.Debug("Time stamp created: " + messageTimeStamp);
         }
     }
 }
