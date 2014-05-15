@@ -6,7 +6,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
-using ChatClient.Models;
 using ChatClient.Properties;
 using SharedClasses.Domain;
 
@@ -15,7 +14,7 @@ namespace ChatClient.ViewModels
     public class ChatWindowViewModel : ViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private IList<UserMessage> messages = new List<UserMessage>(); 
+        private IList<UserMessageViewModel> messages = new List<UserMessageViewModel>(); 
         private Conversation conversation;
         private string messageToAddToConversation;
         private string title;
@@ -50,7 +49,7 @@ namespace ChatClient.ViewModels
             }
         }
 
-        public IList<UserMessage> Messages
+        public IList<UserMessageViewModel> Messages
         {
             get { return messages; }
             set
@@ -132,7 +131,7 @@ namespace ChatClient.ViewModels
         {
             IEnumerable<Contribution> contributions = conversation.GetAllContributions();
 
-            var userMessages = new List<UserMessage>();
+            var userMessages = new List<UserMessageViewModel>();
 
             foreach (Contribution contribution in contributions)
             {
@@ -143,7 +142,7 @@ namespace ChatClient.ViewModels
 
                 var message = contribution.Message;
 
-                userMessages.Add(new UserMessage(message, messageDetails.ToString()));
+                userMessages.Add(new UserMessageViewModel(message, messageDetails.ToString()));
             }
 
             Messages = userMessages;
