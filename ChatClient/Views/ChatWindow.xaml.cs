@@ -1,4 +1,5 @@
-﻿using ChatClient.ViewModels;
+﻿using System.ComponentModel;
+using ChatClient.ViewModels;
 using SharedClasses.Domain;
 
 namespace ChatClient.Views
@@ -21,7 +22,7 @@ namespace ChatClient.Views
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             var viewModel = DataContext as ChatWindowViewModel;
             if (viewModel != null)

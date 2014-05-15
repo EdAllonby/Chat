@@ -29,7 +29,7 @@ namespace SharedClasses
             {
                 while (true)
                 {
-                    int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+                    MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
                     ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 

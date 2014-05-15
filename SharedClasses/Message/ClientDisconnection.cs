@@ -16,6 +16,6 @@ namespace SharedClasses.Message
             Identifier = MessageNumber.ClientDisconnection;
         }
 
-        public int Identifier { get; private set; }
+        public MessageNumber Identifier { get; private set; }
     }
 }

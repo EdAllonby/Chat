@@ -14,9 +14,9 @@ namespace ChatClient.ViewModels
     public class ChatWindowViewModel : ViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private IList<UserMessageViewModel> messages = new List<UserMessageViewModel>(); 
         private Conversation conversation;
         private string messageToAddToConversation;
+        private IList<UserMessageViewModel> messages = new List<UserMessageViewModel>();
         private string title;
         private string windowTitle;
 
@@ -89,6 +89,11 @@ namespace ChatClient.ViewModels
             get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
         }
 
+        public ICommand Closing
+        {
+            get { return new RelayCommand(() => ConversationWindowsStatus.SetWindowStatus(conversation.ConversationId, WindowStatus.Closed)); }
+        }
+
         private void NewConversationContributionRequest()
         {
             Client.SendContributionRequest(conversation.ConversationId, MessageToAddToConversation);
@@ -100,11 +105,6 @@ namespace ChatClient.ViewModels
         private bool CanSendConversationContributionRequest()
         {
             return !String.IsNullOrEmpty(MessageToAddToConversation);
-        }
-
-        public ICommand Closing
-        {
-            get { return new RelayCommand(() => ConversationWindowsStatus.SetWindowStatus(conversation.ConversationId, WindowStatus.Closed)); }
         }
 
         #endregion
@@ -140,7 +140,7 @@ namespace ChatClient.ViewModels
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 
-                var message = contribution.Message;
+                string message = contribution.Message;
 
                 userMessages.Add(new UserMessageViewModel(message, messageDetails.ToString()));
             }

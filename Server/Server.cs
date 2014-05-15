@@ -71,7 +71,7 @@ namespace Server
         {
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
             var serialiserFactory = new SerialiserFactory();
 

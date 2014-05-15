@@ -31,7 +31,7 @@ namespace ChatClient.ViewModels
             get { return isMultiUserConversation; }
             set
             {
-                foreach (var connectedUser in ConnectedUsers)
+                foreach (ConnectedUserViewModel connectedUser in ConnectedUsers)
                 {
                     connectedUser.MultiUserSelectionMode = value;
                 }
@@ -41,7 +41,7 @@ namespace ChatClient.ViewModels
                 OnPropertyChanged();
             }
         }
- 
+
         public IList<ConnectedUserViewModel> ConnectedUsers
         {
             get { return connectedUsers; }
@@ -53,6 +53,16 @@ namespace ChatClient.ViewModels
             }
         }
 
+        public ICommand StartMultiUserConversation
+        {
+            get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
+        }
+
+        public static ICommand Closing
+        {
+            get { return new RelayCommand(() => Application.Current.Shutdown()); }
+        }
+
         private static void OnNewConversationNotification(Conversation conversation)
         {
             CreateNewConversationWindow(conversation);
@@ -61,11 +71,6 @@ namespace ChatClient.ViewModels
         private static void OnNewContributionNotification(Conversation contributions)
         {
             CreateNewConversationWindow(contributions);
-        }
-
-        public ICommand StartMultiUserConversation
-        {
-            get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
         }
 
         private void StartNewMultiUserConversation()
@@ -100,11 +105,6 @@ namespace ChatClient.ViewModels
             List<ConnectedUserViewModel> users = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
 
             ConnectedUsers = users;
-        }
-
-        public static ICommand Closing
-        {
-            get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
         public void NewConversation(int secondParticipantUserID)

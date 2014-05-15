@@ -78,7 +78,7 @@ namespace ChatClient
         private LoginResponse GetLoginResponse(TcpClient tcpClient)
         {
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-            int messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
             return (LoginResponse) serialiser.Deserialise(tcpClient.GetStream());
         }

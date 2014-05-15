@@ -117,6 +117,11 @@ namespace ChatClient.ViewModels
             get { return new RelayCommand(LoginToChat, CanLogin); }
         }
 
+        public static ICommand Closing
+        {
+            get { return new RelayCommand(() => Application.Current.Shutdown()); }
+        }
+
         private void LoginToChat()
         {
             bool result = loginParser.ParseLogonDetails(username, ipAddress, port);
@@ -128,11 +133,6 @@ namespace ChatClient.ViewModels
             {
                 MessageBox.Show("One or more entries were invalid, double check the formatting");
             }
-        }
-
-        public static ICommand Closing
-        {
-            get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
         private bool CanLogin()

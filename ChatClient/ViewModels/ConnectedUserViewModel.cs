@@ -8,8 +8,8 @@ namespace ChatClient.ViewModels
     public sealed class ConnectedUserViewModel : ViewModel
     {
         private readonly User user;
-        private bool multiUserSelectionMode;
         private bool isSelectedForConversation;
+        private bool multiUserSelectionMode;
 
         public ConnectedUserViewModel(User user)
         {

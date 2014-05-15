@@ -17,6 +17,6 @@ namespace SharedClasses.Message
         }
 
         public IEnumerable<User> Users { get; private set; }
-        public int Identifier { get; private set; }
+        public MessageNumber Identifier { get; private set; }
     }
 }
