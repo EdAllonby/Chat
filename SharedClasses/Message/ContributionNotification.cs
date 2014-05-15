@@ -22,6 +22,6 @@ namespace SharedClasses.Message
 
         public Contribution Contribution { get; private set; }
 
-        public int Identifier { get; private set; }
+        public MessageNumber Identifier { get; private set; }
     }
 }

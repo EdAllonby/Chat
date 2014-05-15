@@ -10,7 +10,7 @@ namespace SharedClasses
     /// </summary>
     public static class SerialiserRegistry
     {
-        public static readonly Dictionary<int, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<int, ISerialiser>
+        public static readonly Dictionary<MessageNumber, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<MessageNumber, ISerialiser>
         {
             {MessageNumber.ContributionRequest, new ContributionRequestSerialiser()},
             {MessageNumber.ContributionNotification, new ContributionNotificationSerialiser()},

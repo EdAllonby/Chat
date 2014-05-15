@@ -12,6 +12,6 @@ namespace SharedClasses.Message
         /// <summary>
         /// The identifier associated with the particular IMessage. Identifiers are found in <see cref="MessageNumber"/>
         /// </summary>
-        int Identifier { get; }
+        MessageNumber Identifier { get; }
     }
 }

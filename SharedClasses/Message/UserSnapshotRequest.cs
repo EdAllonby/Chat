@@ -13,6 +13,6 @@ namespace SharedClasses.Message
             Identifier = MessageNumber.UserSnapshotRequest;
         }
 
-        public int Identifier { get; private set; }
+        public MessageNumber Identifier { get; private set; }
     }
 }

@@ -25,7 +25,7 @@ namespace SharedClasses
         /// </summary>
         /// <param name="identifier"></param>
         /// <returns></returns>
-        public ISerialiser GetSerialiser(int identifier)
+        public ISerialiser GetSerialiser(MessageNumber identifier)
         {
             return SerialiserRegistry.SerialisersByMessageIdentifier[identifier];
         }

@@ -17,9 +17,9 @@ namespace ChatClient.ViewModels
         public WindowStatus GetWindowStatus(int conversationID)
         {
             WindowStatus windowStatus;
-            
+
             bool isFound = conversationWindowStatusesIndexedByConversationID.TryGetValue(conversationID, out windowStatus);
-            
+
             return isFound ? windowStatus : WindowStatus.Closed;
         }
 
