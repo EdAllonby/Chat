@@ -11,6 +11,9 @@
     <Window.DataContext>
         <viewModels:UserListViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="TrueToVisibleConverter"/>
+    </Window.Resources>
 
     <Grid Background="#e74c3c">
         <Grid.RowDefinitions>
@@ -52,20 +55,23 @@
             </Button>
         </Grid>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Connected Users:"
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Connected Users"
                    FontFamily="/ChatClient;component/Resources/#Roboto Thin"
-                   Foreground="White" FontSize="20" Margin="10,0,0,0"/>
+                   Foreground="White" FontSize="20" Margin="10,0,0,0" />
 
-        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c" ItemsSource="{Binding Users, UpdateSourceTrigger=Default}"
+        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c"
+                    ItemsSource="{Binding ConnectedUsers, UpdateSourceTrigger=Default}"
                     Foreground="White"
-                    Margin="10,0,10,10"
+                    Margin="10,5"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection" Orientation="Horizontal">
-                        <CheckBox Name="UserCheckedCheckBox"  HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  Style="{StaticResource CheckBoxStyle}"/>
-                        <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
+                        <CheckBox 
+                            Visibility="{Binding MultiUserSelectionMode,
+                            Converter={StaticResource TrueToVisibleConverter}}"
+                            Name="UserCheckedCheckBox"  HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsSelectedForConversation}" Style="{StaticResource CheckBoxStyle}" />
+                            <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                             HorizontalAlignment="Left">
                             <Path Data="{StaticResource PersonIcon}"
                             Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
@@ -75,14 +81,19 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Label Content="Create conversation with checked users" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" >
+            <CheckBox Content="Create Multi-User Conversation" 
+                      VerticalAlignment="Center" Style="{StaticResource CheckBoxStyle}" 
+                      Height="15" VerticalContentAlignment="Center" Margin="0,0,35,0"
+                      IsChecked="{Binding IsMultiUserConversation}"/>
+
             <Button Content="Start!" 
                 VerticalAlignment="Top"
                 Margin="0,5,10,5"
                 Style="{StaticResource RoundButtonStyle}"
                 Height="30" Width="60"
-                FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="14" />
+                FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="14"
+                Command="{Binding StartMultiUserConversation}" />
         </StackPanel>
     </Grid>
 </Window>

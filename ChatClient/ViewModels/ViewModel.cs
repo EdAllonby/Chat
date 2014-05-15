@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ChatClient.Properties;
+using ChatClient.Annotations;
 
 namespace ChatClient.ViewModels
 {

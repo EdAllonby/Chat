@@ -10,7 +10,8 @@ namespace ChatClient.ViewModels
 {
     internal class UserListViewModel : ViewModel
     {
-        private IList<User> users = new List<User>();
+        private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
+        private bool isMultiUserConversation;
 
         public UserListViewModel()
         {
@@ -25,13 +26,29 @@ namespace ChatClient.ViewModels
 
         public string Username { get; private set; }
 
-        public IList<User> Users
+        public bool IsMultiUserConversation
         {
-            get { return users; }
+            get { return isMultiUserConversation; }
             set
             {
-                if (Equals(value, users)) return;
-                users = value;
+                foreach (var connectedUser in ConnectedUsers)
+                {
+                    connectedUser.MultiUserSelectionMode = value;
+                }
+
+                if (Equals(value, isMultiUserConversation)) return;
+                isMultiUserConversation = value;
+                OnPropertyChanged();
+            }
+        }
+ 
+        public IList<ConnectedUserViewModel> ConnectedUsers
+        {
+            get { return connectedUsers; }
+            set
+            {
+                if (Equals(value, connectedUsers)) return;
+                connectedUsers = value;
                 OnPropertyChanged();
             }
         }
@@ -44,6 +61,21 @@ namespace ChatClient.ViewModels
         private static void OnNewContributionNotification(Conversation contributions)
         {
             CreateNewConversationWindow(contributions);
+        }
+
+        public ICommand StartMultiUserConversation
+        {
+            get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
+        }
+
+        private void StartNewMultiUserConversation()
+        {
+            // TODO: Create new multi user conversation
+        }
+
+        private bool CanStartNewMultiUserConversation()
+        {
+            return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
         private static void CreateNewConversationWindow(Conversation conversation)
@@ -65,7 +97,9 @@ namespace ChatClient.ViewModels
         {
             List<User> newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
 
-            Users = newUserList;
+            List<ConnectedUserViewModel> users = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
+
+            ConnectedUsers = users;
         }
 
         public static ICommand Closing
