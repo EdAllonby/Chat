@@ -7,7 +7,7 @@ using ChatClient.Commands;
 using ChatClient.Views;
 using log4net;
 
-namespace ChatClient.ViewModels
+namespace ChatClient.ViewModels.LoginWindowViewModel
 {
     public class LoginWindowViewModel : ViewModel
     {

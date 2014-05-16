@@ -86,7 +86,7 @@ namespace ChatClient.ViewModels
         private static void CreateNewConversationWindow(Conversation conversation)
         {
             // Check if conversation window already exists
-            if (ConversationWindowsStatus.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
+            if (ConversationWindowsStatusCollection.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
             {
                 Application.Current.Dispatcher.Invoke(delegate
                 {
@@ -94,7 +94,7 @@ namespace ChatClient.ViewModels
                     chatWindow.Show();
                 });
 
-                ConversationWindowsStatus.SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
+                ConversationWindowsStatusCollection.SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
             }
         }
 

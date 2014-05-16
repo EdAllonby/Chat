@@ -61,12 +61,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModels\ConnectedUserViewModel.cs" />
-    <Compile Include="ViewModels\UserMessageViewModel.cs" />
-    <Compile Include="ViewModels\AudioPlayer.cs" />
-    <Compile Include="ViewModels\IAudioPlayer.cs" />
-    <Compile Include="ViewModels\ConversationWindowsStatus.cs" />
-    <Compile Include="ViewModels\UserListViewModel.cs" />
+    <Compile Include="ViewModels\UserListViewModel\ConnectedUserViewModel.cs" />
+    <Compile Include="ViewModels\ChatWindowViewModel\UserMessageViewModel.cs" />
+    <Compile Include="AudioPlayer.cs" />
+    <Compile Include="IAudioPlayer.cs" />
+    <Compile Include="ViewModels\ConversationWindowsStatusCollection.cs" />
+    <Compile Include="ViewModels\UserListViewModel\UserListViewModel.cs" />
     <Compile Include="ViewModels\WindowStatus.cs" />
     <Compile Include="Views\UserListWindow.xaml.cs">
       <DependentUpon>UserListWindow.xaml</DependentUpon>
@@ -98,8 +98,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ChatWindowViewModel.cs" />
-    <Compile Include="ViewModels\LoginWindowViewModel.cs" />
+    <Compile Include="ViewModels\ChatWindowViewModel\ChatWindowViewModel.cs" />
+    <Compile Include="ViewModels\LoginWindowViewModel\LoginWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="Views\ChatWindow.xaml.cs">
       <DependentUpon>ChatWindow.xaml</DependentUpon>
