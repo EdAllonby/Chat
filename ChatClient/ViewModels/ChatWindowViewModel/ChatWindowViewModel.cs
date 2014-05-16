@@ -9,7 +9,7 @@ using ChatClient.Commands;
 using ChatClient.Properties;
 using SharedClasses.Domain;
 
-namespace ChatClient.ViewModels
+namespace ChatClient.ViewModels.ChatWindowViewModel
 {
     public class ChatWindowViewModel : ViewModel
     {
@@ -91,7 +91,7 @@ namespace ChatClient.ViewModels
 
         public ICommand Closing
         {
-            get { return new RelayCommand(() => ConversationWindowsStatus.SetWindowStatus(conversation.ConversationId, WindowStatus.Closed)); }
+            get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(conversation.ConversationId, WindowStatus.Closed)); }
         }
 
         private void NewConversationContributionRequest()

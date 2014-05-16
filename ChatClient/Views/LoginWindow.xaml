@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ChatClient.Views.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:viewModels="clr-namespace:ChatClient.ViewModels"
+        xmlns:loginWindowViewModel="clr-namespace:ChatClient.ViewModels.LoginWindowViewModel"
         ResizeMode="NoResize"
         Title="Login Screen" Height="210" Width="350"
         WindowStartupLocation="CenterScreen"
@@ -9,7 +9,7 @@
         AllowsTransparency="True"
         Background="Transparent" MouseDown="MoveWindow">
     <Window.DataContext>
-        <viewModels:LoginWindowViewModel />
+        <loginWindowViewModel:LoginWindowViewModel />
     </Window.DataContext>
 
     <Grid Background="#e74c3c">

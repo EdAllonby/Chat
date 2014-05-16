@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using ChatClient.ViewModels;
+using ChatClient.ViewModels.ChatWindowViewModel;
 using SharedClasses.Domain;
 
 namespace ChatClient.Views

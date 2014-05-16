@@ -5,7 +5,7 @@ namespace ChatClient.ViewModels
     /// <summary>
     /// Holds the conversation window status for each active conversation in the system.
     /// </summary>
-    public class ConversationWindowsStatus
+    public class ConversationWindowsStatusCollection
     {
         private readonly Dictionary<int, WindowStatus> conversationWindowStatusesIndexedByConversationID = new Dictionary<int, WindowStatus>();
 
