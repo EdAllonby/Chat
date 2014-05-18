@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ChatClient.ViewModels
+namespace ChatClient
 {
     public interface IAudioPlayer
     {

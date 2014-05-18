@@ -20,11 +20,10 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
-      
-        private readonly List<Participation> participations = new List<Participation>(); 
 
         private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
         private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
+        private readonly List<Participation> participations = new List<Participation>();
 
         private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
 
@@ -158,7 +157,7 @@ namespace Server
                     {
                         var conversationRequest = (ConversationRequest) message;
                         int conversationId = CreateConversationEntity(conversationRequest);
-                        SendConversationNotificationToClients(conversationRequest.ParticipantIds,  conversationId);
+                        SendConversationNotificationToClients(conversationRequest.ParticipantIds, conversationId);
                     }
                     break;
 
@@ -188,7 +187,7 @@ namespace Server
             // if conversation already exists
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
-            foreach (var participation in participations)
+            foreach (Participation participation in participations)
             {
                 if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
                 {
@@ -229,7 +228,7 @@ namespace Server
             Conversation conversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(contribution.ConversationId);
 
             // Send message to each user in conversation
-            foreach (var participant in participations.Where(x => x.ConversationId == conversation.ConversationId))
+            foreach (Participation participant in participations.Where(x => x.ConversationId == conversation.ConversationId))
             {
                 ConnectionHandler participantConnectionHandler = clientConnectionHandlersIndexedByUserId[participant.UserId];
                 participantConnectionHandler.SendMessage(contributionNotification);

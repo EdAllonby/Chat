@@ -8,8 +8,8 @@ namespace SharedClasses.Domain
     [Serializable]
     public class Participation
     {
-        private readonly int userId;
         private readonly int conversationId;
+        private readonly int userId;
 
         public Participation(int userId, int conversationId)
         {

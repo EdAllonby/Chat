@@ -138,7 +138,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 }
             }
         }
-        
+
         private void GetMessages()
         {
             IEnumerable<Contribution> contributions = conversation.GetAllContributions();

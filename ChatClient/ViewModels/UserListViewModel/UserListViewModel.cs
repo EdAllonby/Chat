@@ -7,7 +7,7 @@ using ChatClient.Views;
 using SharedClasses;
 using SharedClasses.Domain;
 
-namespace ChatClient.ViewModels
+namespace ChatClient.ViewModels.UserListViewModel
 {
     internal class UserListViewModel : ViewModel
     {
@@ -134,7 +134,7 @@ namespace ChatClient.ViewModels
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
-            foreach (var participation in Client.Participations)
+            foreach (Participation participation in Client.Participations)
             {
                 if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
                 {
@@ -147,9 +147,9 @@ namespace ChatClient.ViewModels
             foreach (KeyValuePair<int, List<int>> conversationKeyValuePair
                 in from conversationKeyValuePair
                     in userIdsIndexedByConversationId
-                   let isConversation = conversationKeyValuePair.Value.HasSameElementsAs(participantIds)
-                   where isConversation
-                   select conversationKeyValuePair)
+                    let isConversation = conversationKeyValuePair.Value.HasSameElementsAs(participantIds)
+                    where isConversation
+                    select conversationKeyValuePair)
             {
                 // Conversation has been found, create chat window
                 CreateNewConversationWindow(Client.ConversationRepository.FindEntityByID(conversationKeyValuePair.Key));

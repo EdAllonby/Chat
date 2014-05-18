@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
-using ChatClient.ViewModels;
+using ChatClient.ViewModels.UserListViewModel;
 
 namespace ChatClient.Views
 {

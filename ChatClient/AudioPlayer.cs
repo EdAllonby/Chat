@@ -2,7 +2,7 @@
 using System.IO;
 using System.Media;
 
-namespace ChatClient.ViewModels
+namespace ChatClient
 {
     public class AudioPlayer : IAudioPlayer, IDisposable
     {

@@ -33,7 +33,7 @@ namespace SharedClasses.Serialiser
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversationNotification = (ConversationNotification)binaryFormatter.Deserialize(networkStream);
+            var conversationNotification = (ConversationNotification) binaryFormatter.Deserialize(networkStream);
             Log.Info("Conversation notification message deserialised");
             return conversationNotification;
         }
