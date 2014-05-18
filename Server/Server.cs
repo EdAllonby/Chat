@@ -20,6 +20,9 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
+      
+        private readonly List<Participation> participations = new List<Participation>(); 
+
         private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
         private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
 
@@ -91,15 +94,20 @@ namespace Server
             return newUser;
         }
 
-        private Conversation CreateConversationEntity(ConversationRequest conversationRequest)
+        private int CreateConversationEntity(ConversationRequest conversationRequest)
         {
-            var newConversation = new Conversation(conversationIDGenerator.AssignEntityID(),
-                conversationRequest.Conversation.FirstParticipantUserId,
-                conversationRequest.Conversation.SecondParticipantUserId);
+            int conversationId = conversationIDGenerator.AssignEntityID();
+
+            var newConversation = new Conversation(conversationId);
+
+            foreach (int participantId in conversationRequest.ParticipantIds)
+            {
+                participations.Add(new Participation(participantId, conversationId));
+            }
 
             repositoryFactory.GetRepository<Conversation>().AddEntity(newConversation);
 
-            return newConversation;
+            return conversationId;
         }
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
@@ -140,7 +148,6 @@ namespace Server
 
                 case MessageNumber.ClientDisconnection:
                     RemoveClientHandler(e.ClientUserId);
-
                     IEntityRepository<User> userRepository = repositoryFactory.GetRepository<User>();
                     NotifyClientsOfUserChange(userRepository.FindEntityByID(e.ClientUserId));
                     userRepository.RemoveEntity(e.ClientUserId);
@@ -149,8 +156,9 @@ namespace Server
                 case MessageNumber.ConversationRequest:
                     if (CheckConversationIsValid((ConversationRequest) message))
                     {
-                        Conversation conversation = CreateConversationEntity((ConversationRequest) message);
-                        SendConversationNotificationToClients(conversation);
+                        var conversationRequest = (ConversationRequest) message;
+                        int conversationId = CreateConversationEntity(conversationRequest);
+                        SendConversationNotificationToClients(conversationRequest.ParticipantIds,  conversationId);
                     }
                     break;
 
@@ -170,17 +178,31 @@ namespace Server
 
         private bool CheckConversationIsValid(ConversationRequest conversationRequest)
         {
-            if (conversationRequest.Conversation.FirstParticipantUserId == conversationRequest.Conversation.SecondParticipantUserId)
+            // Check for no repeating users
+            if (conversationRequest.ParticipantIds.Count != conversationRequest.ParticipantIds.Distinct().Count())
             {
-                Log.Warn("Cannot make a conversation between two users of same id of " + conversationRequest.Conversation.FirstParticipantUserId);
+                Log.Warn("Cannot make a conversation between two users of same id");
                 return false;
             }
 
-            IEnumerable<Conversation> conversations = repositoryFactory.GetRepository<Conversation>().GetAllEntities();
-            if (conversations.Any(conversation => (conversationRequest.Conversation.FirstParticipantUserId == conversation.FirstParticipantUserId ||
-                                                   conversationRequest.Conversation.FirstParticipantUserId == conversation.SecondParticipantUserId) &&
-                                                  (conversationRequest.Conversation.SecondParticipantUserId == conversation.FirstParticipantUserId ||
-                                                   conversationRequest.Conversation.SecondParticipantUserId == conversation.SecondParticipantUserId)))
+            // if conversation already exists
+            var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
+
+            foreach (var participation in participations)
+            {
+                if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
+                {
+                    userIdsIndexedByConversationId[participation.ConversationId] = new List<int>();
+                }
+
+                userIdsIndexedByConversationId[participation.ConversationId].Add(participation.UserId);
+            }
+
+            if ((from conversationKeyValuePair
+                in userIdsIndexedByConversationId
+                let isConversation = conversationKeyValuePair.Value.HasSameElementsAs(conversationRequest.ParticipantIds)
+                where isConversation
+                select conversationKeyValuePair).Any())
             {
                 Log.Warn("Conversation already exists between these two users. Server will not create a new one.");
                 return false;
@@ -189,26 +211,29 @@ namespace Server
             return true;
         }
 
-        private void SendConversationNotificationToClients(Conversation conversation)
+        private void SendConversationNotificationToClients(List<int> participantIds, int conversationId)
         {
-            var conversationNotification = new ConversationNotification(conversation);
-            ConnectionHandler firstParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[conversation.FirstParticipantUserId];
-            firstParticipantConnectionHandler.SendMessage(conversationNotification);
+            var conversationNotification = new ConversationNotification(participantIds, conversationId);
 
-            ConnectionHandler secondParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[conversation.SecondParticipantUserId];
-            secondParticipantConnectionHandler.SendMessage(conversationNotification);
+            // Send message to each user in conversation
+            foreach (ConnectionHandler participantConnectionHandler in participantIds
+                .Select(participant => clientConnectionHandlersIndexedByUserId[participant]))
+            {
+                participantConnectionHandler.SendMessage(conversationNotification);
+            }
         }
 
         private void SendContributionNotificationToParticipants(Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution);
-            Conversation contributionConversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(contribution.ConversationId);
+            Conversation conversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(contribution.ConversationId);
 
-            ConnectionHandler firstParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[contributionConversation.FirstParticipantUserId];
-            firstParticipantConnectionHandler.SendMessage(contributionNotification);
-
-            ConnectionHandler secondParticipantConnectionHandler = clientConnectionHandlersIndexedByUserId[contributionConversation.SecondParticipantUserId];
-            secondParticipantConnectionHandler.SendMessage(contributionNotification);
+            // Send message to each user in conversation
+            foreach (var participant in participations.Where(x => x.ConversationId == conversation.ConversationId))
+            {
+                ConnectionHandler participantConnectionHandler = clientConnectionHandlersIndexedByUserId[participant.UserId];
+                participantConnectionHandler.SendMessage(contributionNotification);
+            }
         }
 
         private void RemoveClientHandler(int userId)

@@ -30,6 +30,8 @@ namespace ChatClient
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private ConnectionHandler connectionHandler;
 
+        private readonly List<Participation> participations = new List<Participation>(); 
+
         public IEntityRepository<User> UserRepository
         {
             get { return repositoryFactory.GetRepository<User>(); }
@@ -39,6 +41,12 @@ namespace ChatClient
         {
             get { return repositoryFactory.GetRepository<Conversation>(); }
         }
+
+        public IEnumerable<Participation> Participations
+        {
+            get { return participations; }
+        }
+
 
         public int ClientUserId { get; private set; }
 
@@ -141,12 +149,22 @@ namespace ChatClient
                     break;
 
                 case MessageNumber.ConversationNotification:
+                    var conversationNotification = (ConversationNotification) message;
+                    AddParticipants(conversationNotification);
                     AddConversationToRepository((ConversationNotification) message);
                     break;
 
                 default:
                     Log.Warn("Client is not supposed to handle message with identifier: " + message.Identifier);
                     break;
+            }
+        }
+
+        private void AddParticipants(ConversationNotification conversationNotification)
+        {
+            foreach (var participantId in conversationNotification.ParticipantIds)
+            {
+                participations.Add(new Participation(participantId, conversationNotification.ConversationId));
             }
         }
 
@@ -165,16 +183,17 @@ namespace ChatClient
             connectionHandler.SendMessage(clientContribution);
         }
 
-        public void SendConversationRequest(int receiverId)
+        public void SendConversationRequest(List<int> participantIds)
         {
-            var conversationRequest = new ConversationRequest(ClientUserId, receiverId);
+            var conversationRequest = new ConversationRequest(participantIds);
             connectionHandler.SendMessage(conversationRequest);
         }
 
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
-            repositoryFactory.GetRepository<Conversation>().AddEntity(conversationNotification.Conversation);
-            OnNewConversationNotification(conversationNotification.Conversation);
+            var conversation = new Conversation(conversationNotification.ConversationId);
+            repositoryFactory.GetRepository<Conversation>().AddEntity(conversation);
+            OnNewConversationNotification(conversation);
         }
 
         private void AddUserListToRepository(UserSnapshot userSnapshot)

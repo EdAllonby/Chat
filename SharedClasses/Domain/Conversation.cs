@@ -15,22 +15,12 @@ namespace SharedClasses.Domain
         private readonly Dictionary<int, Contribution> contributionsIndexedByContributionID = new Dictionary<int, Contribution>();
 
         private readonly int conversationId;
-        private readonly int firstParticipantUserId;
-        private readonly int secondParticipantUserId;
 
-        public Conversation(int conversationId, int firstParticipantUserId, int secondParticipantUserId)
+        public Conversation(int conversationId)
         {
             Contract.Requires(conversationId > 0);
 
             this.conversationId = conversationId;
-            this.firstParticipantUserId = firstParticipantUserId;
-            this.secondParticipantUserId = secondParticipantUserId;
-        }
-
-        public Conversation(int firstParticipantUserId, int secondParticipantUserId)
-        {
-            this.firstParticipantUserId = firstParticipantUserId;
-            this.secondParticipantUserId = secondParticipantUserId;
         }
 
         /// <summary>
@@ -39,22 +29,6 @@ namespace SharedClasses.Domain
         public int ConversationId
         {
             get { return conversationId; }
-        }
-
-        /// <summary>
-        /// The identity of the user that initiates the conversation
-        /// </summary>
-        public int FirstParticipantUserId
-        {
-            get { return firstParticipantUserId; }
-        }
-
-        /// <summary>
-        /// The identity of the User who <see cref="FirstParticipantUserId"/> wants to talk to
-        /// </summary>
-        public int SecondParticipantUserId
-        {
-            get { return secondParticipantUserId; }
         }
 
         /// <summary>

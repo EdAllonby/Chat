@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Message;
 
@@ -12,7 +13,7 @@ namespace SharedClasses.Serialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationNotificationSerialiser));
 
-        private readonly ConversationSerialiser conversationSerialiser = new ConversationSerialiser();
+        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
@@ -21,7 +22,7 @@ namespace SharedClasses.Serialiser
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationNotification, stream);
 
             Log.Debug("Waiting for a contribution notification message to serialise");
-            conversationSerialiser.Serialise(message.Conversation, stream);
+            binaryFormatter.Serialize(stream, message);
             Log.Info("Contribution notification message serialised");
         }
 
@@ -32,9 +33,9 @@ namespace SharedClasses.Serialiser
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            var notification = new ConversationNotification(conversationSerialiser.Deserialise(networkStream));
+            var conversationNotification = (ConversationNotification)binaryFormatter.Deserialize(networkStream);
             Log.Info("Conversation notification message deserialised");
-            return notification;
+            return conversationNotification;
         }
     }
 }

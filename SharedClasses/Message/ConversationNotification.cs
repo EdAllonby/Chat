@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using SharedClasses.Domain;
 
@@ -10,16 +11,20 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class ConversationNotification : IMessage
     {
-        public ConversationNotification(Conversation conversation)
+        public ConversationNotification(List<int> participantIds, int conversationId)
         {
-            Contract.Requires(conversation != null);
-            Contract.Requires(conversation.ConversationId > 0);
+            Contract.Requires(participantIds != null);
+            Contract.Requires(conversationId > 0);
 
-            Conversation = conversation;
+            ParticipantIds = participantIds;
+            ConversationId = conversationId;
+
             Identifier = MessageNumber.ConversationNotification;
         }
 
-        public Conversation Conversation { get; private set; }
+        public List<int> ParticipantIds { get; private set; }
+
+        public int ConversationId { get; private set; }
 
         public MessageNumber Identifier { get; private set; }
     }
