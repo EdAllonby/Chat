@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
 using SharedClasses.Message;
@@ -13,7 +14,7 @@ namespace SharedClasses.Serialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRequestSerialiser));
 
-        private readonly ConversationSerialiser conversationSerialiser = new ConversationSerialiser();
+        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
@@ -22,7 +23,7 @@ namespace SharedClasses.Serialiser
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationRequest, stream);
 
             Log.Debug("Waiting for conversation request message to serialise");
-            conversationSerialiser.Serialise(message.Conversation, stream);
+            binaryFormatter.Serialize(stream, message);
             Log.Info("Conversation request message serialised");
         }
 
@@ -33,10 +34,9 @@ namespace SharedClasses.Serialiser
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            Conversation conversation = conversationSerialiser.Deserialise(networkStream);
-            var request = new ConversationRequest(conversation.FirstParticipantUserId, conversation.SecondParticipantUserId);
+            var conversation = (ConversationRequest)binaryFormatter.Deserialize(networkStream);
             Log.Info("Conversation request message deserialised");
-            return request;
+            return conversation;
         }
     }
 }

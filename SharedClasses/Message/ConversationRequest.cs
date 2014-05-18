@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-using SharedClasses.Domain;
+using System.Collections.Generic;
 
 namespace SharedClasses.Message
 {
     /// <summary>
-    /// Packages a <see cref="Contribution"/> without an Id for the Client to send to the Server
+    /// Packages a List of user Ids that should be part of a conversation
     /// </summary>
     [Serializable]
     public sealed class ConversationRequest : IMessage
     {
-        public ConversationRequest(int clientUserId, int receiverId)
+        public ConversationRequest(List<int> participantIds)
         {
-            Contract.Requires(clientUserId > 0);
-            Contract.Requires(receiverId > 0);
-
-            Conversation = new Conversation(clientUserId, receiverId);
+            ParticipantIds = participantIds;
 
             Identifier = MessageNumber.ConversationRequest;
         }
 
-        public Conversation Conversation { get; private set; }
+        public List<int> ParticipantIds { get; private set; }
 
         public MessageNumber Identifier { get; private set; }
     }

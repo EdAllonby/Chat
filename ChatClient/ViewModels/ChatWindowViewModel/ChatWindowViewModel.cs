@@ -43,9 +43,21 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             {
                 if (Equals(value, conversation)) return;
                 conversation = value;
+
+                var titleBuilder = new StringBuilder();
+                titleBuilder.Append("Chat between ");
+
+                foreach (Participation participant in Client.Participations.Where(x => x.ConversationId == conversation.ConversationId))
+                {
+                    titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
+                    titleBuilder.Append(" and ");
+                }
+
+                titleBuilder.Length = titleBuilder.Length - " and ".Length;
+
+                Title = titleBuilder.ToString();
+
                 OnPropertyChanged();
-                Title = "Chat between " + Client.UserRepository.FindEntityByID(conversation.FirstParticipantUserId).Username + " and " +
-                        Client.UserRepository.FindEntityByID(conversation.SecondParticipantUserId).Username;
             }
         }
 
@@ -126,7 +138,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 }
             }
         }
-
+        
         private void GetMessages()
         {
             IEnumerable<Contribution> contributions = conversation.GetAllContributions();

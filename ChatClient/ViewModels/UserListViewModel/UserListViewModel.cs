@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
 using ChatClient.Views;
+using SharedClasses;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels
@@ -73,9 +74,21 @@ namespace ChatClient.ViewModels
             CreateNewConversationWindow(contributions);
         }
 
+        public static void StartNewSingleUserConversation(int participant)
+        {
+            var participantIds = new List<int> {Client.ClientUserId, participant};
+
+            NewConversation(participantIds);
+        }
+
         private void StartNewMultiUserConversation()
         {
-            // TODO: Create new multi user conversation
+            var participantIds = new List<int> {Client.ClientUserId};
+
+            participantIds.AddRange(connectedUsers.Where(user => user.IsSelectedForConversation)
+                .Select(connectedUser => connectedUser.UserId));
+
+            NewConversation(participantIds);
         }
 
         private bool CanStartNewMultiUserConversation()
@@ -107,19 +120,42 @@ namespace ChatClient.ViewModels
             ConnectedUsers = users;
         }
 
-        public void NewConversation(int secondParticipantUserID)
+        private static void NewConversation(List<int> participantIds)
         {
-            foreach (Conversation conversation in Client.ConversationRepository.GetAllEntities()
-                .Where(conversation => (Client.ClientUserId == conversation.FirstParticipantUserId ||
-                                        Client.ClientUserId == conversation.SecondParticipantUserId) &&
-                                       (secondParticipantUserID == conversation.FirstParticipantUserId ||
-                                        secondParticipantUserID == conversation.SecondParticipantUserId)))
+            bool isNewConversation = CheckConversationExists(participantIds);
+
+            if (isNewConversation)
             {
-                OnNewConversationNotification(conversation);
-                return;
+                Client.SendConversationRequest(participantIds);
+            }
+        }
+
+        private static bool CheckConversationExists(IEnumerable<int> participantIds)
+        {
+            var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
+
+            foreach (var participation in Client.Participations)
+            {
+                if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
+                {
+                    userIdsIndexedByConversationId[participation.ConversationId] = new List<int>();
+                }
+
+                userIdsIndexedByConversationId[participation.ConversationId].Add(participation.UserId);
             }
 
-            Client.SendConversationRequest(secondParticipantUserID);
+            foreach (KeyValuePair<int, List<int>> conversationKeyValuePair
+                in from conversationKeyValuePair
+                    in userIdsIndexedByConversationId
+                   let isConversation = conversationKeyValuePair.Value.HasSameElementsAs(participantIds)
+                   where isConversation
+                   select conversationKeyValuePair)
+            {
+                // Conversation has been found, create chat window
+                CreateNewConversationWindow(Client.ConversationRepository.FindEntityByID(conversationKeyValuePair.Key));
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using ChatClient.ViewModels;
 
 namespace ChatClient.Views
@@ -33,12 +35,12 @@ namespace ChatClient.Views
             if (e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
             {
                 var userClicked = (StackPanel) sender;
-                var userID = (int) userClicked.Tag;
+                var participantId = (int) userClicked.Tag;
                 var viewmodel = DataContext as UserListViewModel;
 
                 if (viewmodel != null)
                 {
-                    viewmodel.NewConversation(userID);
+                    UserListViewModel.StartNewSingleUserConversation(participantId);
                 }
             }
         }

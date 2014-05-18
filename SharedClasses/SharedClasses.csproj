@@ -77,6 +77,8 @@
     <Compile Include="ConnectionHandler.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\ConversationRepository.cs" />
+    <Compile Include="Domain\Participation.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="IEntityRepository.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="MessageEventArgs.cs" />
