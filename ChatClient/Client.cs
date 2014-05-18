@@ -24,13 +24,12 @@ namespace ChatClient
         public delegate void UserListHandler(IEnumerable<User> users);
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+        private readonly List<Participation> participations = new List<Participation>();
 
         private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private ConnectionHandler connectionHandler;
-
-        private readonly List<Participation> participations = new List<Participation>(); 
 
         public IEntityRepository<User> UserRepository
         {
@@ -162,7 +161,7 @@ namespace ChatClient
 
         private void AddParticipants(ConversationNotification conversationNotification)
         {
-            foreach (var participantId in conversationNotification.ParticipantIds)
+            foreach (int participantId in conversationNotification.ParticipantIds)
             {
                 participations.Add(new Participation(participantId, conversationNotification.ConversationId));
             }

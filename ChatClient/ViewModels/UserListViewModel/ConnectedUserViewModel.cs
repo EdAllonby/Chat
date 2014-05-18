@@ -1,6 +1,6 @@
 ﻿using SharedClasses.Domain;
 
-namespace ChatClient.ViewModels
+namespace ChatClient.ViewModels.UserListViewModel
 {
     /// <summary>
     /// Translates the <see cref="User"/> model for the View to use
