@@ -34,11 +34,12 @@ namespace ChatClient.Views
             {
                 var userClicked = (StackPanel) sender;
                 var participantId = (int) userClicked.Tag;
+                
                 var viewmodel = DataContext as UserListViewModel;
 
                 if (viewmodel != null)
                 {
-                    UserListViewModel.StartNewSingleUserConversation(participantId);
+                    viewmodel.StartNewSingleUserConversation(participantId);
                 }
             }
         }

@@ -74,7 +74,7 @@ namespace ChatClient.ViewModels.UserListViewModel
             CreateNewConversationWindow(contributions);
         }
 
-        public static void StartNewSingleUserConversation(int participant)
+        public void StartNewSingleUserConversation(int participant)
         {
             var participantIds = new List<int> {Client.ClientUserId, participant};
 
@@ -120,8 +120,10 @@ namespace ChatClient.ViewModels.UserListViewModel
             ConnectedUsers = users;
         }
 
-        private static void NewConversation(List<int> participantIds)
+        private void NewConversation(List<int> participantIds)
         {
+            IsMultiUserConversation = false;
+
             bool isNewConversation = CheckConversationExists(participantIds);
 
             if (isNewConversation)
