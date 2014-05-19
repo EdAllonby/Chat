@@ -22,6 +22,8 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         public LoginWindowViewModel()
         {
+            Client.OnLoginComplete += OpenUserListWindow;
+
             var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
 
             commandLineArgs.RemoveAt(0);
@@ -87,7 +89,6 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             try
             {
                 Client.ConnectToServer(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
-                OpenUserListWindow();
             }
             catch (TimeoutException timeoutException)
             {
@@ -103,9 +104,12 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void OpenUserListWindow()
         {
-            userListWindow = new UserListWindow();
-            Application.Current.MainWindow.Close();
-            userListWindow.Show();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                userListWindow = new UserListWindow();
+                Application.Current.MainWindow.Close();
+                userListWindow.Show();
+            });
         }
 
         #region Commands

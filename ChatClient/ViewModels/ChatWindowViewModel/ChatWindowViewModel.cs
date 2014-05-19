@@ -16,13 +16,14 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private Conversation conversation;
         private string messageToAddToConversation;
-        private IList<UserMessageViewModel> messages = new List<UserMessageViewModel>();
-        private string title;
+        private IList<UserMessageViewModel> chatMessages = new List<UserMessageViewModel>();
+        private string chatTitle;
         private string windowTitle;
 
         public ChatWindowViewModel()
         {
-            windowTitle = Client.Username;
+            windowTitle = Client.UserRepository.FindEntityByID(Client.ClientUserId).Username;
+
             Client.OnNewContributionNotification += NewContributionNotificationReceived;
         }
 
@@ -31,7 +32,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             get { return windowTitle; }
             set
             {
-                if (value == windowTitle) return;
+                if (value == windowTitle)
+                {
+                    return;
+                }
+
                 windowTitle = value;
                 OnPropertyChanged();
             }
@@ -41,13 +46,17 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             set
             {
-                if (Equals(value, conversation)) return;
+                if (Equals(value, conversation))
+                {
+                    return;
+                }
+
                 conversation = value;
 
                 var titleBuilder = new StringBuilder();
                 titleBuilder.Append("Chat between ");
 
-                foreach (Participation participant in Client.Participations.Where(x => x.ConversationId == conversation.ConversationId))
+                foreach (Participation participant in Client.Participations.Where(participant => participant.ConversationId == conversation.ConversationId))
                 {
                     titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
                     titleBuilder.Append(" and ");
@@ -55,30 +64,38 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 titleBuilder.Length = titleBuilder.Length - " and ".Length;
 
-                Title = titleBuilder.ToString();
+                ChatTitle = titleBuilder.ToString();
 
                 OnPropertyChanged();
             }
         }
 
-        public IList<UserMessageViewModel> Messages
+        public IList<UserMessageViewModel> ChatMessages
         {
-            get { return messages; }
+            get { return chatMessages; }
             set
             {
-                if (Equals(value, messages)) return;
-                messages = value;
+                if (Equals(value, chatMessages))
+                {
+                    return;
+                }
+
+                chatMessages = value;
                 OnPropertyChanged();
             }
         }
 
-        public String Title
+        public String ChatTitle
         {
-            get { return title; }
+            get { return chatTitle; }
             set
             {
-                if (value == title) return;
-                title = value;
+                if (value == chatTitle)
+                {
+                    return;
+                }
+
+                chatTitle = value;
                 OnPropertyChanged();
             }
         }
@@ -88,7 +105,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             get { return messageToAddToConversation; }
             set
             {
-                if (value == messageToAddToConversation) return;
+                if (value == messageToAddToConversation)
+                {
+                    return;
+                }
                 messageToAddToConversation = value;
                 OnPropertyChanged();
             }
@@ -110,8 +130,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             Client.SendContributionRequest(conversation.ConversationId, MessageToAddToConversation);
 
-            messageToAddToConversation = string.Empty;
-            OnPropertyChanged("MessageToAddToConversation");
+            MessageToAddToConversation = string.Empty;
         }
 
         private bool CanSendConversationContributionRequest()
@@ -138,7 +157,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 }
             }
         }
-
+        
         private void GetMessages()
         {
             IEnumerable<Contribution> contributions = conversation.GetAllContributions();
@@ -147,17 +166,17 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             foreach (Contribution contribution in contributions)
             {
+                string message = contribution.Message;
+
                 var messageDetails = new StringBuilder();
                 messageDetails.Append(Client.UserRepository.FindEntityByID(contribution.ContributorUserId).Username);
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 
-                string message = contribution.Message;
-
                 userMessages.Add(new UserMessageViewModel(message, messageDetails.ToString()));
             }
 
-            Messages = userMessages;
+            ChatMessages = userMessages;
         }
     }
 }

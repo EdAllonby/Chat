@@ -46,6 +46,8 @@
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityGeneratorFactory.cs" />
+    <Compile Include="EntityIDGeneratorRegistry.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

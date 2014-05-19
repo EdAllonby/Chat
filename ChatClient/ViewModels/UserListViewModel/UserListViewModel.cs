@@ -16,16 +16,19 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public UserListViewModel()
         {
+            GetAllUsers(Client.UserRepository.GetAllEntities());
+
             Client.OnNewUser += OnNewUser;
 
             Client.OnNewConversationNotification += OnNewConversationNotification;
 
             Client.OnNewContributionNotification += OnNewContributionNotification;
-
-            Username = Client.Username;
         }
 
-        public string Username { get; private set; }
+        public string Username
+        {
+            get { return Client.UserRepository.FindEntityByID(Client.ClientUserId).Username; }
+        }
 
         public bool IsMultiUserConversation
         {
@@ -37,7 +40,11 @@ namespace ChatClient.ViewModels.UserListViewModel
                     connectedUser.MultiUserSelectionMode = value;
                 }
 
-                if (Equals(value, isMultiUserConversation)) return;
+                if (Equals(value, isMultiUserConversation))
+                {
+                    return;
+                }
+
                 isMultiUserConversation = value;
                 OnPropertyChanged();
             }
@@ -48,7 +55,11 @@ namespace ChatClient.ViewModels.UserListViewModel
             get { return connectedUsers; }
             set
             {
-                if (Equals(value, connectedUsers)) return;
+                if (Equals(value, connectedUsers))
+                {
+                    return;
+                }
+
                 connectedUsers = value;
                 OnPropertyChanged();
             }
@@ -64,12 +75,12 @@ namespace ChatClient.ViewModels.UserListViewModel
             get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
-        private static void OnNewConversationNotification(Conversation conversation)
+        private void OnNewConversationNotification(Conversation conversation)
         {
             CreateNewConversationWindow(conversation);
         }
 
-        private static void OnNewContributionNotification(Conversation contributions)
+        private void OnNewContributionNotification(Conversation contributions)
         {
             CreateNewConversationWindow(contributions);
         }
@@ -96,28 +107,18 @@ namespace ChatClient.ViewModels.UserListViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        private static void CreateNewConversationWindow(Conversation conversation)
-        {
-            // Check if conversation window already exists
-            if (ConversationWindowsStatusCollection.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
-            {
-                Application.Current.Dispatcher.Invoke(delegate
-                {
-                    var chatWindow = new ChatWindow(conversation);
-                    chatWindow.Show();
-                });
-
-                ConversationWindowsStatusCollection.SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
-            }
-        }
-
         private void OnNewUser(IEnumerable<User> newUser)
         {
-            List<User> newUserList = newUser.Where(user => user.UserId != Client.ClientUserId).ToList();
+            GetAllUsers(newUser);
+        }
 
-            List<ConnectedUserViewModel> users = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
+        private void GetAllUsers(IEnumerable<User> users)
+        {
+            List<User> newUserList = users.Where(user => user.UserId != Client.ClientUserId).ToList();
 
-            ConnectedUsers = users;
+            List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
+
+            ConnectedUsers = otherUsers;
         }
 
         private void NewConversation(List<int> participantIds)
@@ -132,7 +133,7 @@ namespace ChatClient.ViewModels.UserListViewModel
             }
         }
 
-        private static bool CheckConversationExists(IEnumerable<int> participantIds)
+        private bool CheckConversationExists(IEnumerable<int> participantIds)
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
@@ -147,17 +148,36 @@ namespace ChatClient.ViewModels.UserListViewModel
             }
 
             foreach (KeyValuePair<int, List<int>> conversationKeyValuePair
-                in from conversationKeyValuePair
-                    in userIdsIndexedByConversationId
-                    let isConversation = conversationKeyValuePair.Value.HasSameElementsAs(participantIds)
-                    where isConversation
-                    select conversationKeyValuePair)
+                in userIdsIndexedByConversationId.Select(
+                    conversationKeyValuePair => new
+                    {
+                        conversationKeyValuePair,
+                        isConversation = conversationKeyValuePair.Value.HasSameElementsAs(participantIds)
+                    })
+                    .Where(user => user.isConversation)
+                    .Select(user => user.conversationKeyValuePair))
             {
                 // Conversation has been found, create chat window
                 CreateNewConversationWindow(Client.ConversationRepository.FindEntityByID(conversationKeyValuePair.Key));
                 return false;
             }
+
             return true;
+        }
+
+        private void CreateNewConversationWindow(Conversation conversation)
+        {
+            // Check if conversation window already exists
+            if (ConversationWindowsStatusCollection.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
+            {
+                Application.Current.Dispatcher.Invoke(delegate
+                {
+                    var chatWindow = new ChatWindow(conversation);
+                    chatWindow.Show();
+                });
+
+                ConversationWindowsStatusCollection.SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
+            }
         }
     }
 }
