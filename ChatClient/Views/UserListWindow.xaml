@@ -71,7 +71,7 @@
                             Visibility="{Binding MultiUserSelectionMode,
                             Converter={StaticResource TrueToVisibleConverter}}"
                             Name="UserCheckedCheckBox"  HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsSelectedForConversation}" Style="{StaticResource CheckBoxStyle}" />
-                            <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
+                        <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                             HorizontalAlignment="Left">
                             <Path Data="{StaticResource PersonIcon}"
                             Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />

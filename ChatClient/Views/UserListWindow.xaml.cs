@@ -32,9 +32,9 @@ namespace ChatClient.Views
         {
             if (e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
             {
-                var userClicked = (StackPanel) sender;
-                var participantId = (int) userClicked.Tag;
-                
+                var userClicked = (StackPanel)sender;
+                var participantId = (int)userClicked.Tag;
+
                 var viewmodel = DataContext as UserListViewModel;
 
                 if (viewmodel != null)

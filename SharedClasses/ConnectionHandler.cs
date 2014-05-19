@@ -9,8 +9,8 @@ using SharedClasses.Serialiser;
 namespace SharedClasses
 {
     /// <summary>
-    /// This is in charge of abstracting away the TcpClient work
-    /// This class has no logic other than to send and receive messages.
+    /// This is in charge of abstracting away the TcpClient work.
+    /// This class has no logic other than to send and receive messages to and from a <see cref="NetworkStream"/>
     /// </summary>
     public sealed class ConnectionHandler : IDisposable
     {
@@ -50,7 +50,10 @@ namespace SharedClasses
             };
             messageListenerThread.Start();
         }
-
+        /// <summary>
+        /// Sends an <see cref="IMessage"/> across the <see cref="ConnectionHandler"/>'s <see cref="NetworkStream"/>.
+        /// </summary>
+        /// <param name="message"></param>
         public void SendMessage(IMessage message)
         {
             Contract.Requires(message != null);

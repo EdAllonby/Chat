@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
-using SharedClasses.Serialiser;
 
 namespace ChatClient
 {
     /// <summary>
-    /// Handles the logic for <see cref="IMessage"/>
-    /// Delegates TCP work off to the <see cref="ConnectionHandler"/>
+    /// Handles the logic for <see cref="IMessage" />
+    /// Delegates Server specific communications to the <see cref="serverHandler" />
     /// </summary>
     public sealed class Client
     {
+        public delegate void LoginCompleteHandler();
+
         public delegate void NewContributionNotificationHandler(Conversation contributions);
 
         public delegate void NewConversationHandler(Conversation conversation);
@@ -24,12 +23,12 @@ namespace ChatClient
         public delegate void UserListHandler(IEnumerable<User> users);
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+
         private readonly List<Participation> participations = new List<Participation>();
 
         private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
 
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-        private ConnectionHandler connectionHandler;
+        private readonly ServerHandler serverHandler = new ServerHandler();
 
         public IEntityRepository<User> UserRepository
         {
@@ -46,14 +45,12 @@ namespace ChatClient
             get { return participations; }
         }
 
-
         public int ClientUserId { get; private set; }
-
-        public string Username { get; private set; }
 
         public event UserListHandler OnNewUser = delegate { };
         public event NewConversationHandler OnNewConversationNotification = delegate { };
         public event NewContributionNotificationHandler OnNewContributionNotification = delegate { };
+        public event LoginCompleteHandler OnLoginComplete = delegate { };
 
         private void NotifyClientOfUserChange()
         {
@@ -61,70 +58,61 @@ namespace ChatClient
             Log.Info("User changed event fired");
         }
 
+        /// <summary>
+        /// Connects the Client to the server using the parameters as connection details
+        /// and gets the state of <see cref="Client"/> up to date with the user status'. 
+        /// </summary>
+        /// <param name="username">The name the user wants to have.</param>
+        /// <param name="targetAddress">The address of the Server.</param>
+        /// <param name="targetPort">The port the Server is running on.</param>
         public void ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
-            Username = username;
+            UserSnapshot currentlyConnectedUsers = serverHandler.ConnectToServer(username, targetAddress, targetPort);
 
-            TcpClient tcpClient = CreateConnection(targetAddress, targetPort);
+            AddUserListToRepository(currentlyConnectedUsers);
 
-            IMessage userRequest = new LoginRequest(Username);
+            SetClientUserID(username);
 
-            SendLoginRequestMessage(userRequest, tcpClient);
+            serverHandler.OnNewMessage += NewMessageReceived;
 
-            LoginResponse loginResponse = GetLoginResponse(tcpClient);
-
-            ClientUserId = loginResponse.User.UserId;
-
-            connectionHandler = new ConnectionHandler(ClientUserId, tcpClient);
-
-            connectionHandler.SendMessage(new UserSnapshotRequest());
-
-            connectionHandler.OnNewMessage += NewMessageReceived;
+            OnLoginComplete();
         }
 
-        private LoginResponse GetLoginResponse(TcpClient tcpClient)
+        private void SetClientUserID(string username)
         {
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-            return (LoginResponse) serialiser.Deserialise(tcpClient.GetStream());
-        }
+            IEnumerable<User> users = UserRepository.GetAllEntities();
 
-        private void SendLoginRequestMessage(IMessage message, TcpClient tcpClient)
-        {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
-            messageSerialiser.Serialise(message, tcpClient.GetStream());
-        }
-
-        private static TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
-        {
-            const int TimeoutSeconds = 5;
-
-            Log.Info("Client looking for server with address: " + targetAddress + " and port: " + targetPort);
-
-            var serverConnection = new TcpClient();
-
-            serverConnection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-            IAsyncResult asyncResult = serverConnection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
-            WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
-            try
+            foreach (User user in users.Where(user => user.Username == username))
             {
-                if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(TimeoutSeconds), false))
-                {
-                    serverConnection.Close();
-                    throw new TimeoutException();
-                }
-
-                serverConnection.EndConnect(asyncResult);
+                ClientUserId = user.UserId;
             }
-            finally
-            {
-                waitHandle.Close();
-            }
+        }
 
-            Log.Info("Client found server, connection created");
-            return serverConnection;
+        private void AddUserListToRepository(UserSnapshot userSnapshot)
+        {
+            repositoryFactory.GetRepository<User>().AddEntities(userSnapshot.Users);
+            OnNewUser(repositoryFactory.GetRepository<User>().GetAllEntities());
+        }
+
+        /// <summary>
+        /// Sends a <see cref="ConversationRequest"/> message to the server.
+        /// </summary>
+        /// <param name="participantIds">The participants that are included in the conversation.</param>
+        public void SendConversationRequest(List<int> participantIds)
+        {
+            var conversationRequest = new ConversationRequest(participantIds);
+            serverHandler.SendMessage(conversationRequest);
+        }
+
+        /// <summary>
+        /// Sends a <see cref="ContributionRequest"/> message to the server.
+        /// </summary>
+        /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
+        /// <param name="message">The content of the message.</param>
+        public void SendContributionRequest(int conversationID, string message)
+        {
+            var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
+            serverHandler.SendMessage(clientContribution);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -141,10 +129,6 @@ namespace ChatClient
                 case MessageNumber.UserNotification:
                     UpdateUserRepository((UserNotification) message);
                     NotifyClientOfUserChange();
-                    break;
-
-                case MessageNumber.UserSnapshot:
-                    AddUserListToRepository((UserSnapshot) message);
                     break;
 
                 case MessageNumber.ConversationNotification:
@@ -176,29 +160,11 @@ namespace ChatClient
             OnNewContributionNotification(conversation);
         }
 
-        public void SendContributionRequest(int conversationID, string message)
-        {
-            var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
-            connectionHandler.SendMessage(clientContribution);
-        }
-
-        public void SendConversationRequest(List<int> participantIds)
-        {
-            var conversationRequest = new ConversationRequest(participantIds);
-            connectionHandler.SendMessage(conversationRequest);
-        }
-
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             var conversation = new Conversation(conversationNotification.ConversationId);
             repositoryFactory.GetRepository<Conversation>().AddEntity(conversation);
             OnNewConversationNotification(conversation);
-        }
-
-        private void AddUserListToRepository(UserSnapshot userSnapshot)
-        {
-            repositoryFactory.GetRepository<User>().AddEntities(userSnapshot.Users);
-            OnNewUser(repositoryFactory.GetRepository<User>().GetAllEntities());
         }
 
         private void UpdateUserRepository(UserNotification userNotification)

@@ -7,7 +7,7 @@ namespace ChatClient.ViewModels
     public class ViewModel : INotifyPropertyChanged
     {
         // I still can't find a way of sharing this Client across. Made it static in the ViewModel for the time being.
-        // I might have to investigate IoC to get the viewModels to pass this client about.
+        // TODO: I might have to investigate IoC to get the viewModels to pass this client about.
         protected static readonly Client Client = new Client();
 
         /// <summary>

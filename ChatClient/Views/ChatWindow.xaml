@@ -25,7 +25,7 @@
                       Stretch="Fill" Stroke="Black" StrokeThickness="1" Width="50" Height="38" Canvas.Top="18.5"
                       Fill="#e74c3c" />
             </Canvas>
-            <Label Content="{Binding Title}" VerticalContentAlignment="Center"
+            <Label Content="{Binding ChatTitle}" VerticalContentAlignment="Center"
                    FontFamily="Myriad Pro" FontSize="16" />
         </StackPanel>
 
@@ -38,7 +38,7 @@
                                  Grid.Column="0"
                                  Background="AliceBlue"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                 ItemsSource="{Binding Messages, UpdateSourceTrigger=Default}">
+                                 ItemsSource="{Binding ChatMessages, UpdateSourceTrigger=Default}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>

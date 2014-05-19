@@ -21,14 +21,11 @@ namespace Server
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
 
-        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
+        private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
+
         private readonly List<Participation> participations = new List<Participation>();
 
         private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
-
-        private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
-
 
         public Server()
         {
@@ -86,7 +83,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin)
         {
-            var newUser = new User(clientLogin.User.Username, userIDGenerator.AssignEntityID());
+            var newUser = new User(clientLogin.User.Username, entityIDGenerator.GetEntityID<User>());
 
             repositoryFactory.GetRepository<User>().AddEntity(newUser);
 
@@ -95,7 +92,7 @@ namespace Server
 
         private int CreateConversationEntity(ConversationRequest conversationRequest)
         {
-            int conversationId = conversationIDGenerator.AssignEntityID();
+            int conversationId = entityIDGenerator.GetEntityID<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
@@ -111,7 +108,7 @@ namespace Server
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            var newContribution = new Contribution(contributionIDGenerator.AssignEntityID(), contributionRequest.Contribution);
+            var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(), contributionRequest.Contribution);
 
             Conversation conversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(newContribution.ConversationId);
 
@@ -197,13 +194,12 @@ namespace Server
                 userIdsIndexedByConversationId[participation.ConversationId].Add(participation.UserId);
             }
 
-            if ((from conversationKeyValuePair
-                in userIdsIndexedByConversationId
-                let isConversation = conversationKeyValuePair.Value.HasSameElementsAs(conversationRequest.ParticipantIds)
-                where isConversation
-                select conversationKeyValuePair).Any())
+            if (userIdsIndexedByConversationId
+                .Select(conversationKeyValuePair => conversationKeyValuePair
+                    .Value.HasSameElementsAs(conversationRequest.ParticipantIds))
+                .Any(isConversation => isConversation))
             {
-                Log.Warn("Conversation already exists between these two users. Server will not create a new one.");
+                Log.Warn("Conversation already exists between these users. Server will not create a new one.");
                 return false;
             }
 
@@ -228,9 +224,10 @@ namespace Server
             Conversation conversation = repositoryFactory.GetRepository<Conversation>().FindEntityByID(contribution.ConversationId);
 
             // Send message to each user in conversation
-            foreach (Participation participant in participations.Where(x => x.ConversationId == conversation.ConversationId))
+            foreach (ConnectionHandler participantConnectionHandler in participations
+                .Where(participant => participant.ConversationId == conversation.ConversationId)
+                .Select(participant => clientConnectionHandlersIndexedByUserId[participant.UserId]))
             {
-                ConnectionHandler participantConnectionHandler = clientConnectionHandlersIndexedByUserId[participant.UserId];
                 participantConnectionHandler.SendMessage(contributionNotification);
             }
         }
