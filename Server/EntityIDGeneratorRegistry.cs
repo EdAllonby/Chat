@@ -5,26 +5,19 @@ using SharedClasses.Domain;
 namespace Server
 {
     /// <summary>
-    /// Holds the <see cref="EntityIDGenerator"/>s for each entity type that needs one
+    /// Holds the <see cref="EntityIDGenerator"/>s for each entity type that needs one.
     /// </summary>
     internal sealed class EntityIDGeneratorRegistry
     {
-        private readonly EntityIDGenerator userIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator conversationIDGenerator = new EntityIDGenerator();
-        private readonly EntityIDGenerator contributionIDGenerator = new EntityIDGenerator();
-
-        private readonly Dictionary<Type, EntityIDGenerator> entityIDGeneratorsIndexedByEntityType = new Dictionary<Type, EntityIDGenerator>();
-
-        public EntityIDGeneratorRegistry()
-        {
-            entityIDGeneratorsIndexedByEntityType.Add(typeof (User), userIDGenerator);           
-            entityIDGeneratorsIndexedByEntityType.Add(typeof (Conversation), conversationIDGenerator);
-            entityIDGeneratorsIndexedByEntityType.Add(typeof (Contribution), contributionIDGenerator);
-        }
-
-        public Dictionary<Type, EntityIDGenerator> EntityIDGeneratorsIndexedByEntityType
-        {
-            get { return entityIDGeneratorsIndexedByEntityType; }
-        }
+        /// <summary>
+        /// A readonly version of an IDGenerator dictionary. No one can alter this dictionary after compiling.
+        /// </summary>
+        public readonly IReadOnlyDictionary<Type, EntityIDGenerator> EntityIDGeneratorsIndexedByEntityType =
+            new Dictionary<Type, EntityIDGenerator>
+            {
+                {typeof (User), new EntityIDGenerator()},
+                {typeof (Conversation), new EntityIDGenerator()},
+                {typeof (Contribution), new EntityIDGenerator()}
+            };
     }
 }

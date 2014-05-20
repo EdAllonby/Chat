@@ -23,7 +23,6 @@ namespace Server
             bool isEntityGeneratorFound = entityIDGeneratorRegistry
                 .EntityIDGeneratorsIndexedByEntityType.TryGetValue(typeof (T), out generator);
 
-
             if (!isEntityGeneratorFound)
             {
                 Log.ErrorFormat("Entity generator for type {0} does not exist in {1}.", typeof (T), entityIDGeneratorRegistry);
