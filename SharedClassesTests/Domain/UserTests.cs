@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Diagnostics.Contracts;
+using NUnit.Framework;
 using Server;
 using SharedClasses.Domain;
 
@@ -28,7 +29,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void IDEqualityTest()
+        public void UserEqualityTest()
         {
             EntityGeneratorFactory entityGeneratorFactory = new EntityGeneratorFactory();
 
@@ -55,10 +56,8 @@ namespace SharedClassesTests.Domain
                 user = new User("User", entityGeneratorFactory.GetEntityID<User>());
             }
 
-            if (user != null)
-            {
-                Assert.AreEqual(user.UserId, totalUsers);
-            }
+            Contract.Assert(user != null, "user != null");
+            Assert.AreEqual(user.UserId, totalUsers);
         }
 
         [Test]

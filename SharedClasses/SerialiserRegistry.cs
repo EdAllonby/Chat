@@ -10,7 +10,10 @@ namespace SharedClasses
     /// </summary>
     public static class SerialiserRegistry
     {
-        public static readonly Dictionary<MessageNumber, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<MessageNumber, ISerialiser>
+        /// <summary>
+        /// A readonly version of an Serialiser by Message Identifier dictionary. No one can alter this dictionary after compiling.
+        /// </summary>
+        public static readonly IReadOnlyDictionary<MessageNumber, ISerialiser> SerialisersByMessageIdentifier = new Dictionary<MessageNumber, ISerialiser>
         {
             {MessageNumber.ContributionRequest, new ContributionRequestSerialiser()},
             {MessageNumber.ContributionNotification, new ContributionNotificationSerialiser()},
@@ -23,7 +26,10 @@ namespace SharedClasses
             {MessageNumber.LoginResponse, new LoginResponseSerialiser()}
         };
 
-        public static readonly Dictionary<Type, ISerialiser> SerialisersByMessageType = new Dictionary<Type, ISerialiser>
+        /// <summary>
+        /// A readonly version of an Serialiser by Message Type dictionary. No one can alter this dictionary after compiling.
+        /// </summary>
+        public static readonly IReadOnlyDictionary<Type, ISerialiser> SerialisersByMessageType = new Dictionary<Type, ISerialiser>
         {
             {typeof (ContributionRequest), new ContributionRequestSerialiser()},
             {typeof (ContributionNotification), new ContributionNotificationSerialiser()},
