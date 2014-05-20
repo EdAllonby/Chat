@@ -53,21 +53,27 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 conversation = value;
 
-                var titleBuilder = new StringBuilder();
-                titleBuilder.Append("Chat between ");
-
-                foreach (Participation participant in Client.Participations.Where(participant => participant.ConversationId == conversation.ConversationId))
-                {
-                    titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
-                    titleBuilder.Append(" and ");
-                }
-
-                titleBuilder.Length = titleBuilder.Length - " and ".Length;
-
-                ChatTitle = titleBuilder.ToString();
+                ChatTitle = GetChatTitle();
 
                 OnPropertyChanged();
             }
+        }
+
+        private string GetChatTitle()
+        {
+            var titleBuilder = new StringBuilder();
+            titleBuilder.Append("Chat between ");
+
+            foreach (Participation participant in Client.Participations.Where(participant => participant.ConversationId == conversation.ConversationId))
+            {
+                titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
+                titleBuilder.Append(" and ");
+            }
+
+            titleBuilder.Length = titleBuilder.Length - " and ".Length;
+
+            string title = titleBuilder.ToString();
+            return title;
         }
 
         public IList<UserMessageViewModel> ChatMessages

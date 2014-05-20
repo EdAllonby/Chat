@@ -45,7 +45,7 @@ namespace ChatClient.Views
 
             if (string.IsNullOrEmpty(lostFocusTextBox.Text))
             {
-                if (lostFocusTextBox.Name == "LogonNameTextBox")
+                if (lostFocusTextBox.Name == "UsernameTextBox")
                 {
                     lostFocusTextBox.Text = "Username";
                     Log.Debug("Default text added back to textbox");

@@ -4,7 +4,8 @@
         xmlns:viewModels="clr-namespace:ChatClient.ViewModels.ChatWindowViewModel"
         xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders"
         Title="{Binding WindowTitle}" Height="500" Width="350"
-        WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        WindowStartupLocation="CenterScreen" Closing="Window_Closing"
+        FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}">
     <Window.DataContext>
         <viewModels:ChatWindowViewModel />
     </Window.DataContext>
@@ -59,7 +60,7 @@
                 <ColumnDefinition Width="70" />
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0"
+            <TextBox Name="ChatTextBox" Grid.Column="0"
                      Text="{Binding MessageToAddToConversation,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
                      DockPanel.Dock="Left"
                      VerticalAlignment="Stretch"

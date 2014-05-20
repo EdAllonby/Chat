@@ -7,7 +7,8 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent" MouseDown="MoveWindow">
+        Background="Transparent" MouseDown="MoveWindow"
+        FocusManager.FocusedElement="{Binding ElementName=UsernameTextBox}">
     <Window.DataContext>
         <loginWindowViewModel:LoginWindowViewModel />
     </Window.DataContext>
@@ -51,7 +52,7 @@
                       Stretch="Fill" Stroke="Black" StrokeThickness="2" />
             </Button>
         </Grid>
-        <TextBox x:Name="LogonNameTextBox" Grid.Row="1" Grid.Column="0" CaretBrush="#e74c3c"
+        <TextBox x:Name="UsernameTextBox" Grid.Row="1" Grid.Column="0" CaretBrush="#e74c3c"
                  Text="{Binding Username, UpdateSourceTrigger= PropertyChanged}" BorderThickness="0"
                  Foreground="#e74c3c"
                  TextAlignment="Left"
