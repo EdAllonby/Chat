@@ -15,29 +15,33 @@ namespace SharedClasses.Domain
         // Immutable domain entity class
         private readonly int contributorUserId;
         private readonly int conversationId;
-        private readonly DateTime messageTimeStamp;
 
+        /// <summary>
+        /// Creates a complete contribution entity
+        /// </summary>
+        /// <param name="contributionId">The unique ID of the entity.</param>
+        /// <param name="incompleteContribution">The extra details of the <see cref="Contribution"/>.</param>
         public Contribution(int contributionId, Contribution incompleteContribution)
         {
             Contract.Requires(incompleteContribution != null);
 
             ContributionId = contributionId;
             contributorUserId = incompleteContribution.contributorUserId;
-            CreateMessage(incompleteContribution.Message);
-            messageTimeStamp = DateTime.Now;
+            Message = incompleteContribution.Message;
+            MessageTimeStamp = DateTime.Now;
             conversationId = incompleteContribution.conversationId;
         }
 
         /// <summary>
-        /// Create a contribution that will later get assigned an ID
+        /// Create a contribution that will later get assigned an ID.
         /// </summary>
-        public Contribution(int contributorUserId, string text, int conversationId)
+        public Contribution(int contributorUserId, string message, int conversationId)
         {
             Contract.Requires(contributorUserId > 0);
             Contract.Requires(conversationId > 0);
 
             this.contributorUserId = contributorUserId;
-            CreateMessage(text);
+            Message = message;
             this.conversationId = conversationId;
         }
 
@@ -63,14 +67,11 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The contribution text.
+        /// The contribution message.
         /// </summary>
         public string Message { get; private set; }
 
-        public DateTime MessageTimeStamp
-        {
-            get { return messageTimeStamp; }
-        }
+        public DateTime MessageTimeStamp { get; private set; }
 
         public bool Equals(Contribution other)
         {
@@ -89,22 +90,6 @@ namespace SharedClasses.Domain
         public override int GetHashCode()
         {
             return ContributionId;
-        }
-
-        public override string ToString()
-        {
-            return Message + " @ " + messageTimeStamp;
-        }
-
-        private void CreateMessage(string messageText)
-        {
-            SetTextOfMessage(messageText ?? String.Empty);
-        }
-
-        private void SetTextOfMessage(string messageText)
-        {
-            Message = messageText;
-            Log.Debug("Contribution text set: " + Message);
         }
     }
 }
