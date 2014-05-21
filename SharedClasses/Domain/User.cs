@@ -42,7 +42,7 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The status of the user
         /// </summary>
-        public ConnectionStatus ConnectionStatus { get; set; } 
+        public ConnectionStatus ConnectionStatus { get; set; }
 
         /// <summary>
         /// A Unique number used to identify the User.

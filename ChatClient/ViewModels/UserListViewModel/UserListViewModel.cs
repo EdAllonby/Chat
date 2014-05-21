@@ -115,7 +115,7 @@ namespace ChatClient.ViewModels.UserListViewModel
         private void GetAllUsers(IEnumerable<User> users)
         {
             List<User> newUserList = users.Where(user => user.UserId != Client.ClientUserId)
-                .Where(user=>user.ConnectionStatus == ConnectionStatus.Connected).ToList();
+                .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
 

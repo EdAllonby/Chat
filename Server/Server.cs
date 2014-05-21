@@ -22,15 +22,13 @@ namespace Server
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
 
-        private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
-
-        private readonly UserRepository userRepository = new UserRepository();
-
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
 
         private readonly ParticipationRepository participationRepository = new ParticipationRepository();
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly UserRepository userRepository = new UserRepository();
 
 
         public Server()
@@ -70,7 +68,7 @@ namespace Server
             {
                 NotifyClientsOfUser(user, NotificationType.Update, ConnectionStatus.Connected);
             }
-            
+
             var loginResponse = new LoginResponse(user);
 
             SendConnectionMessage(loginResponse, tcpClient);
@@ -98,7 +96,7 @@ namespace Server
             IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(userId);
 
             IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
-            
+
             List<Conversation> conversations = conversationEnumerable.Select(conversationId => conversationRepository.FindEntityByID(conversationId)).ToList();
 
             var conversationSnapshot = new ConversationSnapshot(conversations);
@@ -109,7 +107,7 @@ namespace Server
 
             var userParticipations = new List<Participation>();
 
-            foreach (var conversationId in conversationEnumerable)
+            foreach (int conversationId in conversationEnumerable)
             {
                 userParticipations.AddRange(participationRepository.GetParticipationsByConversationIds(conversationId));
             }

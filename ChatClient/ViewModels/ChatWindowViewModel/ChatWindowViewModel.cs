@@ -14,10 +14,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     public class ChatWindowViewModel : ViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private Conversation conversation;
-        private string messageToAddToConversation;
         private IList<UserMessageViewModel> chatMessages = new List<UserMessageViewModel>();
         private string chatTitle;
+        private Conversation conversation;
+        private string messageToAddToConversation;
         private string windowTitle;
 
         public ChatWindowViewModel()
@@ -57,23 +57,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 OnPropertyChanged();
             }
-        }
-
-        private string GetChatTitle()
-        {
-            var titleBuilder = new StringBuilder();
-            titleBuilder.Append("Chat between ");
-
-            foreach (Participation participant in Client.ParticipationRepository.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
-            {
-                titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
-                titleBuilder.Append(" and ");
-            }
-
-            titleBuilder.Length = titleBuilder.Length - " and ".Length;
-
-            string title = titleBuilder.ToString();
-            return title;
         }
 
         public IList<UserMessageViewModel> ChatMessages
@@ -146,6 +129,23 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         #endregion
 
+        private string GetChatTitle()
+        {
+            var titleBuilder = new StringBuilder();
+            titleBuilder.Append("Chat between ");
+
+            foreach (Participation participant in Client.ParticipationRepository.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
+            {
+                titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
+                titleBuilder.Append(" and ");
+            }
+
+            titleBuilder.Length = titleBuilder.Length - " and ".Length;
+
+            string title = titleBuilder.ToString();
+            return title;
+        }
+
         public void InitialiseChat()
         {
             GetMessages();
@@ -163,7 +163,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 }
             }
         }
-        
+
         private void GetMessages()
         {
             IEnumerable<Contribution> contributions = conversation.GetAllContributions();

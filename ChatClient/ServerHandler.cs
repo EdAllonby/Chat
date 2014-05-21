@@ -18,6 +18,8 @@ namespace ChatClient
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
+        private ConnectionHandler connectionHandler;
+
         /// <summary>
         /// This event will hold the message when a new <see cref="IMessage"/> is sent to the Client from the Server
         /// </summary>
@@ -25,10 +27,8 @@ namespace ChatClient
         {
             add { connectionHandler.OnNewMessage += value; }
             remove { connectionHandler.OnNewMessage -= value; }
-        } 
+        }
 
-        private ConnectionHandler connectionHandler;
-        
         /// <summary>
         /// Sends an <see cref="IMessage"/> to the Server.
         /// </summary>
@@ -111,13 +111,13 @@ namespace ChatClient
 
             return new Snapshots(userSnapshot, conversationSnapshot, participationSnapshot);
         }
-        
+
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
         }
-        
+
         private LoginResponse GetLoginResponse(TcpClient tcpClient)
         {
             return (LoginResponse) GetIMessage(tcpClient);
@@ -130,12 +130,12 @@ namespace ChatClient
 
         private ConversationSnapshot GetConversationSnapshot(TcpClient tcpClient)
         {
-            return (ConversationSnapshot)GetIMessage(tcpClient);
+            return (ConversationSnapshot) GetIMessage(tcpClient);
         }
 
         private ParticipationSnapshot GetParticipationSnapshot(TcpClient tcpClient)
         {
-            return (ParticipationSnapshot)GetIMessage(tcpClient);
+            return (ParticipationSnapshot) GetIMessage(tcpClient);
         }
 
         private IMessage GetIMessage(TcpClient tcpClient)

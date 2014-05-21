@@ -25,13 +25,12 @@ namespace ChatClient
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
 
-        private readonly UserRepository userRepository = new UserRepository();
-
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
 
         private readonly ParticipationRepository participationRepository = new ParticipationRepository();
 
         private readonly ServerHandler serverHandler = new ServerHandler();
+        private readonly UserRepository userRepository = new UserRepository();
 
         public UserRepository UserRepository
         {

@@ -50,6 +50,7 @@ namespace SharedClasses
             };
             messageListenerThread.Start();
         }
+
         /// <summary>
         /// Sends an <see cref="IMessage"/> across the <see cref="ConnectionHandler"/>'s <see cref="NetworkStream"/>.
         /// </summary>

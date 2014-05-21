@@ -19,21 +19,13 @@ namespace SharedClassesTests.Domain
             Assert.AreEqual(conversation.ConversationId, id);
         }
 
-        [Test]
-        public void ConversationEqualityTest()
-        {
-            var conversation = new Conversation(1);
-            var otherConversation = new Conversation(1);
-            Assert.AreEqual(conversation, otherConversation);
-        }
-
         [TestCase(12)]
         [TestCase(21326)]
         public void ConversationIDIterationTest(int conversationCount)
         {
             int totalUsers = conversationCount;
 
-            EntityGeneratorFactory entityGeneratorFactory = new EntityGeneratorFactory();
+            var entityGeneratorFactory = new EntityGeneratorFactory();
 
             Conversation conversation = null;
 
@@ -59,6 +51,14 @@ namespace SharedClassesTests.Domain
             conversation.AddContribution(contribution);
 
             Assert.Contains(contribution, conversation.GetAllContributions().ToList());
+        }
+
+        [Test]
+        public void ConversationEqualityTest()
+        {
+            var conversation = new Conversation(1);
+            var otherConversation = new Conversation(1);
+            Assert.AreEqual(conversation, otherConversation);
         }
 
         [Test]
