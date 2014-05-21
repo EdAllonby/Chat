@@ -13,13 +13,14 @@ namespace SharedClasses.Domain
         private readonly int userId;
         private readonly string username;
 
-        public User(string username, int userId)
+        public User(string username, int userId, ConnectionStatus status)
         {
             Contract.Requires(username != null);
             Contract.Requires(userId > 0);
 
             this.username = username;
             this.userId = userId;
+            ConnectionStatus = status;
         }
 
         /// <summary>
@@ -37,6 +38,11 @@ namespace SharedClasses.Domain
         {
             get { return username; }
         }
+
+        /// <summary>
+        /// The status of the user
+        /// </summary>
+        public ConnectionStatus ConnectionStatus { get; set; } 
 
         /// <summary>
         /// A Unique number used to identify the User.

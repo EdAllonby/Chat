@@ -1,4 +1,5 @@
-﻿using SharedClasses.Domain;
+﻿using SharedClasses;
+using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.UserListViewModel
 {
@@ -45,6 +46,11 @@ namespace ChatClient.ViewModels.UserListViewModel
         public int UserId
         {
             get { return user.UserId; }
+        }
+
+        public ConnectionStatus ConnectionStatus
+        {
+            get { return user.ConnectionStatus; }
         }
 
         public string Username
