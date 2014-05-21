@@ -53,10 +53,11 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Domain\ConversationRepositoryTests.cs" />
     <Compile Include="Domain\ConversationTests.cs" />
+    <Compile Include="Domain\UserRepositoryTests.cs" />
     <Compile Include="Domain\UserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RepositoryFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Server\Server.csproj">
