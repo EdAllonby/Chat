@@ -10,15 +10,6 @@ namespace SharedClassesTests.Domain
     public class UserRepositoryTests
     {
         [Test]
-        public void AddUserEntityTest()
-        {
-            var user = new User("User", 2, ConnectionStatus.Connected);
-            var userRepository = new UserRepository();
-            userRepository.AddEntity(user);
-            Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
-        }
-
-        [Test]
         public void AddUserEntitiesTest()
         {
             var user1 = new User("User", 1, ConnectionStatus.Connected);
@@ -29,6 +20,15 @@ namespace SharedClassesTests.Domain
 
             userRepository.AddUsers(users);
             Assert.AreEqual(users, userRepository.GetAllEntities().ToList());
+        }
+
+        [Test]
+        public void AddUserEntityTest()
+        {
+            var user = new User("User", 2, ConnectionStatus.Connected);
+            var userRepository = new UserRepository();
+            userRepository.AddEntity(user);
+            Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
         }
 
         [Test]

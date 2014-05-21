@@ -9,15 +9,6 @@ namespace SharedClassesTests.Domain
     public class ConversationRepositoryTests
     {
         [Test]
-        public void AddConversationEntityTest()
-        {
-            var conversation = new Conversation(1);
-            var conversationRepository = new ConversationRepository();
-            conversationRepository.AddEntity(conversation);
-            Assert.AreEqual(conversation, conversationRepository.FindEntityByID(conversation.ConversationId));
-        }
-
-        [Test]
         public void AddConversationEntitiesTest()
         {
             var conversation1 = new Conversation(1);
@@ -28,6 +19,15 @@ namespace SharedClassesTests.Domain
 
             conversationRepository.AddConversations(conversations);
             Assert.AreEqual(conversations, conversationRepository.GetAllEntities().ToList());
+        }
+
+        [Test]
+        public void AddConversationEntityTest()
+        {
+            var conversation = new Conversation(1);
+            var conversationRepository = new ConversationRepository();
+            conversationRepository.AddEntity(conversation);
+            Assert.AreEqual(conversation, conversationRepository.FindEntityByID(conversation.ConversationId));
         }
 
         [Test]

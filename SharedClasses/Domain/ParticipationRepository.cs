@@ -7,7 +7,7 @@ namespace SharedClasses.Domain
 {
     public sealed class ParticipationRepository
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(UserRepository));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
         private readonly List<Participation> participations = new List<Participation>();
 
@@ -36,7 +36,7 @@ namespace SharedClasses.Domain
         /// </summary>
         /// <param name="participantIds">The group of participants to check if a <see cref="Conversation"/> exists for.</param>
         /// <returns>Whether or not a <see cref="Conversation"/> exists with the group of participants.</returns>
-       [Pure]
+        [Pure]
         public bool DoesConversationWithUsersExist(IEnumerable<int> participantIds)
         {
             Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
@@ -61,7 +61,7 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(DoesConversationWithUsersExist(participantIds));
 
-            var userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
+            Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
 
             return userIdsIndexedByConversationId
                 .Where(userIds => userIds.Value.HasSameElementsAs(participantIds))

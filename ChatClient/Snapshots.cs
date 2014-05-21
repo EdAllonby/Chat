@@ -19,7 +19,5 @@ namespace ChatClient
         public ConversationSnapshot ConversationSnapshot { get; private set; }
 
         public ParticipationSnapshot ParticipationSnapshot { get; private set; }
-
-
     }
 }

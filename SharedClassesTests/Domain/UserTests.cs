@@ -29,26 +29,13 @@ namespace SharedClassesTests.Domain
             Assert.AreEqual(user1, user2);
         }
 
-        [Test]
-        public void UserEqualityTest()
-        {
-            EntityGeneratorFactory entityGeneratorFactory = new EntityGeneratorFactory();
-
-            var user1 = new User("User1", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
-
-            Assert.AreEqual(user1.UserId, 1);
-
-            var user2 = new User("User2", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
-            Assert.AreNotSame(user1.UserId, user2.UserId);
-        }
-
         [TestCase(7)]
         [TestCase(123987)]
         public void UserIDIterationTest(int userCount)
         {
             int totalUsers = userCount;
 
-            EntityGeneratorFactory entityGeneratorFactory = new EntityGeneratorFactory();
+            var entityGeneratorFactory = new EntityGeneratorFactory();
 
             User user = null;
 
@@ -59,6 +46,19 @@ namespace SharedClassesTests.Domain
 
             Contract.Assert(user != null, "user != null");
             Assert.AreEqual(user.UserId, totalUsers);
+        }
+
+        [Test]
+        public void UserEqualityTest()
+        {
+            var entityGeneratorFactory = new EntityGeneratorFactory();
+
+            var user1 = new User("User1", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
+
+            Assert.AreEqual(user1.UserId, 1);
+
+            var user2 = new User("User2", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
+            Assert.AreNotSame(user1.UserId, user2.UserId);
         }
 
         [Test]
