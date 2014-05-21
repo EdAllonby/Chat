@@ -21,9 +21,9 @@ namespace SharedClasses.Serialiser
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationRequest, stream);
 
-            Log.Debug("Waiting for conversation request message to serialise");
+            Log.DebugFormat("Waiting for {0} message to serialise", message.Identifier);
             binaryFormatter.Serialize(stream, message);
-            Log.Info("Conversation request message serialised");
+            Log.InfoFormat("{0} message serialised", message.Identifier);
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -34,7 +34,7 @@ namespace SharedClasses.Serialiser
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var conversation = (ConversationRequest) binaryFormatter.Deserialize(networkStream);
-            Log.Info("Conversation request message deserialised");
+            Log.InfoFormat("{0} message deserialised", conversation.Identifier);
             return conversation;
         }
     }

@@ -16,12 +16,13 @@ namespace SharedClasses.Message
             Contract.Requires(contribution.ContributionId > 0);
 
             Contribution = contribution;
-
-            Identifier = MessageNumber.ContributionNotification;
         }
 
         public Contribution Contribution { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.ContributionNotification; }
+        }
     }
 }

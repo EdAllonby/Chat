@@ -21,7 +21,7 @@ namespace SharedClasses.Serialiser
             {
                 messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
                 userSerialiser.Serialise(message.User, stream);
-                Log.Info("LoginResponse serialised and sent to network stream");
+                Log.InfoFormat("{0} serialised and sent to network stream", message.Identifier);
             }
         }
 
@@ -33,7 +33,7 @@ namespace SharedClasses.Serialiser
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var loginResponse = new LoginResponse(userSerialiser.Deserialise(networkStream));
-            Log.Info("Network stream has received data and deserialised to a LoginResponse object");
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginResponse.Identifier);
             return loginResponse;
         }
     }

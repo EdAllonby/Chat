@@ -15,11 +15,13 @@ namespace SharedClasses.Message
             Contract.Requires(username != null);
 
             User = new User(username);
-            Identifier = MessageNumber.LoginRequest;
         }
 
         public User User { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.LoginRequest; }
+        }
     }
 }

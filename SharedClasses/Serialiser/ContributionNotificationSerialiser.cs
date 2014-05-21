@@ -29,9 +29,8 @@ namespace SharedClasses.Serialiser
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            Log.Debug("Waiting for a contribution notification message to deserialise");
             var notification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream));
-            Log.Info("Contribution notification message deserialised");
+            Log.InfoFormat("{0} message deserialised", notification.Identifier);
             return notification;
         }
     }

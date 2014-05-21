@@ -27,7 +27,7 @@ namespace SharedClasses.Domain
             foreach (Participation participation in newParticipations)
             {
                 participations.Add(participation);
-                Log.Debug("Participation with Id " + participation.UserId + " added to user repository");
+                Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
             }
         }
 

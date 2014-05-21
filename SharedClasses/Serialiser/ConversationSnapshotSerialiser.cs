@@ -21,7 +21,7 @@ namespace SharedClasses.Serialiser
             messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
             binaryFormatter.Serialize(stream, message);
-            Log.Info(message.Identifier + " serialised and sent to network stream");
+            Log.InfoFormat("{0} serialised and sent to network stream", message.Identifier);
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -32,7 +32,7 @@ namespace SharedClasses.Serialiser
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var conversationSnapshot = (ConversationSnapshot) binaryFormatter.Deserialize(networkStream);
-            Log.Info("Network stream has received data and deserialised to a " + conversationSnapshot.Identifier + " object.");
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", conversationSnapshot.Identifier);
             return conversationSnapshot;
         }
     }
