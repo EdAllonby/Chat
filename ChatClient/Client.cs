@@ -24,25 +24,28 @@ namespace ChatClient
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly List<Participation> participations = new List<Participation>();
 
-        private readonly RepositoryFactory repositoryFactory = new RepositoryFactory();
+        private readonly UserRepository userRepository = new UserRepository();
+
+        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+
+        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
 
         private readonly ServerHandler serverHandler = new ServerHandler();
 
-        public IEntityRepository<User> UserRepository
+        public UserRepository UserRepository
         {
-            get { return repositoryFactory.GetRepository<User>(); }
+            get { return userRepository; }
         }
 
-        public IEntityRepository<Conversation> ConversationRepository
+        public ConversationRepository ConversationRepository
         {
-            get { return repositoryFactory.GetRepository<Conversation>(); }
+            get { return conversationRepository; }
         }
 
-        public IEnumerable<Participation> Participations
+        public ParticipationRepository ParticipationRepository
         {
-            get { return participations; }
+            get { return participationRepository; }
         }
 
         public int ClientUserId { get; private set; }
@@ -54,7 +57,7 @@ namespace ChatClient
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(repositoryFactory.GetRepository<User>().GetAllEntities());
+            OnNewUser(userRepository.GetAllEntities());
             Log.Info("User changed event fired");
         }
 
@@ -67,9 +70,13 @@ namespace ChatClient
         /// <param name="targetPort">The port the Server is running on.</param>
         public void ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
-            UserSnapshot currentlyConnectedUsers = serverHandler.ConnectToServer(username, targetAddress, targetPort);
+            Snapshots snapshots = serverHandler.ConnectToServer(username, targetAddress, targetPort);
 
-            AddUserListToRepository(currentlyConnectedUsers);
+            UserRepository.AddUsers(snapshots.UserSnapshot.Users);
+
+            ConversationRepository.AddConversations(snapshots.ConversationSnapshot.Conversations);
+
+            ParticipationRepository.AddParticipations(snapshots.ParticipationSnapshot.Participations);
 
             SetClientUserID(username);
 
@@ -86,12 +93,6 @@ namespace ChatClient
             {
                 ClientUserId = user.UserId;
             }
-        }
-
-        private void AddUserListToRepository(UserSnapshot userSnapshot)
-        {
-            repositoryFactory.GetRepository<User>().AddEntities(userSnapshot.Users);
-            OnNewUser(repositoryFactory.GetRepository<User>().GetAllEntities());
         }
 
         /// <summary>
@@ -147,13 +148,13 @@ namespace ChatClient
         {
             foreach (int participantId in conversationNotification.ParticipantIds)
             {
-                participations.Add(new Participation(participantId, conversationNotification.ConversationId));
+                ParticipationRepository.AddParticipation(new Participation(participantId, conversationNotification.ConversationId));
             }
         }
 
         private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
-            Conversation conversation = repositoryFactory.GetRepository<Conversation>()
+            Conversation conversation = conversationRepository
                 .FindEntityByID(contributionNotification.Contribution.ConversationId);
 
             conversation.AddContribution(contributionNotification);
@@ -163,7 +164,7 @@ namespace ChatClient
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             var conversation = new Conversation(conversationNotification.ConversationId);
-            repositoryFactory.GetRepository<Conversation>().AddEntity(conversation);
+            conversationRepository.AddEntity(conversation);
             OnNewConversationNotification(conversation);
         }
 
@@ -172,10 +173,10 @@ namespace ChatClient
             switch (userNotification.Notification)
             {
                 case NotificationType.Create:
-                    repositoryFactory.GetRepository<User>().AddEntity(userNotification.User);
+                    userRepository.AddEntity(userNotification.User);
                     break;
-                case NotificationType.Delete:
-                    repositoryFactory.GetRepository<User>().RemoveEntity(userNotification.User.UserId);
+                case NotificationType.Update:
+                    userRepository.UpdateEntity(userNotification.User);
                     break;
             }
         }

@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ServerHandler.cs" />
+    <Compile Include="Snapshots.cs" />
     <Compile Include="ViewModels\UserListViewModel\ConnectedUserViewModel.cs" />
     <Compile Include="ViewModels\ChatWindowViewModel\UserMessageViewModel.cs" />
     <Compile Include="AudioPlayer.cs" />

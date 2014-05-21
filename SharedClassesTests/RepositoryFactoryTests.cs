@@ -17,32 +17,32 @@ namespace SharedClassesTests
         [Test]
         public void AddUserEntityTest()
         {
-            var user = new User("User", 2);
-            var repositoryFactory = new RepositoryFactory();
-            repositoryFactory.GetRepository<User>().AddEntity(user);
-            Assert.AreEqual(user, repositoryFactory.GetRepository<User>().FindEntityByID(user.UserId));
+            var user = new User("User", 2, ConnectionStatus.Connected);
+            var userRepository = new UserRepository();
+            userRepository.AddEntity(user);
+            Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
         }
               
         [Test]
         public void AddConversationEntityTest()
         {
             var conversation = new Conversation(1);
-            var repositoryFactory = new RepositoryFactory();
-            repositoryFactory.GetRepository<Conversation>().AddEntity(conversation);
-            Assert.AreEqual(conversation, repositoryFactory.GetRepository<Conversation>().FindEntityByID(conversation.ConversationId));
+            var conversationRepository = new ConversationRepository();
+            conversationRepository.AddEntity(conversation);
+            Assert.AreEqual(conversation, conversationRepository.FindEntityByID(conversation.ConversationId));
         }
 
         [Test]
         public void AddUserEntitiesTest()
         {
-            var user1 = new User("User", 1);
-            var user2 = new User("User", 2);
+            var user1 = new User("User", 1, ConnectionStatus.Connected);
+            var user2 = new User("User", 2, ConnectionStatus.Connected);
             var users = new List<User> { user1, user2 };
 
-            var repositoryFactory = new RepositoryFactory();
+            var userRepository = new UserRepository();
 
-            repositoryFactory.GetRepository<User>().AddEntities(users);
-            Assert.AreEqual(users, repositoryFactory.GetRepository<User>().GetAllEntities().ToList());
+            userRepository.AddUsers(users);
+            Assert.AreEqual(users, userRepository.GetAllEntities().ToList());
         }
 
         [Test]
@@ -52,25 +52,25 @@ namespace SharedClassesTests
             var conversation2 = new Conversation(2);
             var conversations = new List<Conversation> { conversation1, conversation2 };
 
-            var repositoryFactory = new RepositoryFactory();
+            var conversationRepository = new ConversationRepository();
 
-            repositoryFactory.GetRepository<Conversation>().AddEntities(conversations);
-            Assert.AreEqual(conversations, repositoryFactory.GetRepository<Conversation>().GetAllEntities().ToList());
+            conversationRepository.AddConversations(conversations);
+            Assert.AreEqual(conversations, conversationRepository.GetAllEntities().ToList());
         }
 
         [Test]
         public void CanNotAddSameUserEntityTwice()
         {
-            var user = new User("User", 1);
+            var user = new User("User", 1, ConnectionStatus.Connected);
 
-            var repositoryFactory = new RepositoryFactory();
+            var userRepository = new UserRepository();
             
-            repositoryFactory.GetRepository<User>().AddEntity(user);
-            repositoryFactory.GetRepository<User>().AddEntity(user);
+            userRepository.AddEntity(user);
+            userRepository.AddEntity(user);
 
             var users = new List<User> {user};
 
-            Assert.AreEqual(users, repositoryFactory.GetRepository<User>().GetAllEntities());
+            Assert.AreEqual(users, userRepository.GetAllEntities());
         }
 
         [Test] 
@@ -78,14 +78,14 @@ namespace SharedClassesTests
         {
             var conversation = new Conversation(1);
 
-            var repositoryFactory = new RepositoryFactory();
+            var conversationRepository = new ConversationRepository();
 
-            repositoryFactory.GetRepository<Conversation>().AddEntity(conversation);
-            repositoryFactory.GetRepository<Conversation>().AddEntity(conversation);
+            conversationRepository.AddEntity(conversation);
+            conversationRepository.AddEntity(conversation);
 
             var conversations = new List<Conversation> { conversation };
 
-            Assert.AreEqual(conversations, repositoryFactory.GetRepository<Conversation>().GetAllEntities());
+            Assert.AreEqual(conversations, conversationRepository.GetAllEntities());
         }
     }
 }

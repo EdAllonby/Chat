@@ -19,7 +19,7 @@ namespace ChatClient
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         /// <summary>
-        /// T his event will hold the message when a new <see cref="IMessage"/> is sent to the Client from the Server
+        /// This event will hold the message when a new <see cref="IMessage"/> is sent to the Client from the Server
         /// </summary>
         public event EventHandler<MessageEventArgs> OnNewMessage
         {
@@ -45,7 +45,7 @@ namespace ChatClient
         /// <param name="targetAddress">The address of the Server.</param>
         /// <param name="targetPort">The port the Server is running on.</param>
         /// <returns>The currently connected users on the Server.</returns>
-        public UserSnapshot ConnectToServer(string username, IPAddress targetAddress, int targetPort)
+        public Snapshots ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
             TcpClient tcpClient = CreateConnection(targetAddress, targetPort);
 
@@ -57,13 +57,11 @@ namespace ChatClient
 
             int clientUserId = loginResponse.User.UserId;
 
-            SendConnectionMessage(new UserSnapshotRequest(), tcpClient);
-
-            UserSnapshot userSnapshot = GetUserSnapshot(tcpClient);
+            Snapshots snapshots = GetSnapshots(tcpClient);
 
             connectionHandler = new ConnectionHandler(clientUserId, tcpClient);
 
-            return userSnapshot;
+            return snapshots;
         }
 
         private TcpClient CreateConnection(IPAddress targetAddress, int targetPort)
@@ -97,6 +95,23 @@ namespace ChatClient
             return serverConnection;
         }
 
+        private Snapshots GetSnapshots(TcpClient tcpClient)
+        {
+            SendConnectionMessage(new UserSnapshotRequest(), tcpClient);
+
+            UserSnapshot userSnapshot = GetUserSnapshot(tcpClient);
+
+            SendConnectionMessage(new ConversationSnapshotRequest(), tcpClient);
+
+            ConversationSnapshot conversationSnapshot = GetConversationSnapshot(tcpClient);
+
+            SendConnectionMessage(new ParticipationSnapshotRequest(), tcpClient);
+
+            ParticipationSnapshot participationSnapshot = GetParticipationSnapshot(tcpClient);
+
+            return new Snapshots(userSnapshot, conversationSnapshot, participationSnapshot);
+        }
+        
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
@@ -111,6 +126,16 @@ namespace ChatClient
         private UserSnapshot GetUserSnapshot(TcpClient tcpClient)
         {
             return (UserSnapshot) GetIMessage(tcpClient);
+        }
+
+        private ConversationSnapshot GetConversationSnapshot(TcpClient tcpClient)
+        {
+            return (ConversationSnapshot)GetIMessage(tcpClient);
+        }
+
+        private ParticipationSnapshot GetParticipationSnapshot(TcpClient tcpClient)
+        {
+            return (ParticipationSnapshot)GetIMessage(tcpClient);
         }
 
         private IMessage GetIMessage(TcpClient tcpClient)

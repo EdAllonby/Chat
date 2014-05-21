@@ -114,7 +114,8 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         private void GetAllUsers(IEnumerable<User> users)
         {
-            List<User> newUserList = users.Where(user => user.UserId != Client.ClientUserId).ToList();
+            List<User> newUserList = users.Where(user => user.UserId != Client.ClientUserId)
+                .Where(user=>user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
 
@@ -125,44 +126,15 @@ namespace ChatClient.ViewModels.UserListViewModel
         {
             IsMultiUserConversation = false;
 
-            bool isNewConversation = CheckConversationExists(participantIds);
-
-            if (isNewConversation)
+            if (!Client.ParticipationRepository.DoesConversationWithUsersExist(participantIds))
             {
                 Client.SendConversationRequest(participantIds);
             }
-        }
-
-        private bool CheckConversationExists(IEnumerable<int> participantIds)
-        {
-            var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
-
-            foreach (Participation participation in Client.Participations)
+            else
             {
-                if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
-                {
-                    userIdsIndexedByConversationId[participation.ConversationId] = new List<int>();
-                }
-
-                userIdsIndexedByConversationId[participation.ConversationId].Add(participation.UserId);
+                int conversationId = Client.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
+                CreateNewConversationWindow(Client.ConversationRepository.FindEntityByID(conversationId));
             }
-
-            foreach (KeyValuePair<int, List<int>> conversationKeyValuePair
-                in userIdsIndexedByConversationId.Select(
-                    conversationKeyValuePair => new
-                    {
-                        conversationKeyValuePair,
-                        isConversation = conversationKeyValuePair.Value.HasSameElementsAs(participantIds)
-                    })
-                    .Where(user => user.isConversation)
-                    .Select(user => user.conversationKeyValuePair))
-            {
-                // Conversation has been found, create chat window
-                CreateNewConversationWindow(Client.ConversationRepository.FindEntityByID(conversationKeyValuePair.Key));
-                return false;
-            }
-
-            return true;
         }
 
         private void CreateNewConversationWindow(Conversation conversation)

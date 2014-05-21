@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using NUnit.Framework;
 using Server;
+using SharedClasses;
 using SharedClasses.Domain;
 
 namespace SharedClassesTests.Domain
@@ -14,7 +15,7 @@ namespace SharedClassesTests.Domain
         [TestCase(8)]
         public void AssignCustomIDtoUserTest(int id)
         {
-            var user = new User("user", id);
+            var user = new User("user", id, ConnectionStatus.Connected);
             Assert.AreEqual(user.UserId, id);
         }
 
@@ -22,8 +23,8 @@ namespace SharedClassesTests.Domain
         [TestCase("Tim", "Tim", 3)]
         public void UsersWithSameIDEqualityTest(string firstUserUsername, string secondUserUsername, int userID)
         {
-            var user1 = new User(firstUserUsername, userID);
-            var user2 = new User(secondUserUsername, userID);
+            var user1 = new User(firstUserUsername, userID, ConnectionStatus.Connected);
+            var user2 = new User(secondUserUsername, userID, ConnectionStatus.Connected);
 
             Assert.AreEqual(user1, user2);
         }
@@ -33,11 +34,11 @@ namespace SharedClassesTests.Domain
         {
             EntityGeneratorFactory entityGeneratorFactory = new EntityGeneratorFactory();
 
-            var user1 = new User("User1", entityGeneratorFactory.GetEntityID<User>());
+            var user1 = new User("User1", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
 
             Assert.AreEqual(user1.UserId, 1);
 
-            var user2 = new User("User2", entityGeneratorFactory.GetEntityID<User>());
+            var user2 = new User("User2", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
             Assert.AreNotSame(user1.UserId, user2.UserId);
         }
 
@@ -53,7 +54,7 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i < totalUsers; i++)
             {
-                user = new User("User", entityGeneratorFactory.GetEntityID<User>());
+                user = new User("User", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
             }
 
             Contract.Assert(user != null, "user != null");
@@ -63,8 +64,8 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UsersWithSameNameHaveDifferentIDsEqualityTest()
         {
-            var user1 = new User("User", 1);
-            var user2 = new User("User", 2);
+            var user1 = new User("User", 1, ConnectionStatus.Connected);
+            var user2 = new User("User", 2, ConnectionStatus.Connected);
             Assert.AreNotEqual(user1, user2);
         }
     }

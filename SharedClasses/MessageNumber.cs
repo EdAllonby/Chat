@@ -12,9 +12,13 @@
         UserNotification,
         UserSnapshotRequest,
         UserSnapshot,
+        ConversationSnapshotRequest,
+        ConversationSnapshot,
+        ParticipationSnapshotRequest,
+        ParticipationSnapshot,
         ClientDisconnection,
         ConversationRequest,
         ConversationNotification,
-        LoginResponse,
+        LoginResponse
     }
 }

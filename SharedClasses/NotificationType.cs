@@ -6,6 +6,7 @@
     public enum NotificationType
     {
         Create,
-        Delete
+        Delete,
+        Update
     }
 }

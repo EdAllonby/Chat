@@ -64,7 +64,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in Client.Participations.Where(participant => participant.ConversationId == conversation.ConversationId))
+            foreach (Participation participant in Client.ParticipationRepository.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
             {
                 titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
                 titleBuilder.Append(" and ");

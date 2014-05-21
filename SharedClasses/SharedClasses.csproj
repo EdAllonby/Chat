@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CONTRACTS_FULL</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
@@ -75,17 +75,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionHandler.cs" />
+    <Compile Include="ConnectionStatus.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\ConversationRepository.cs" />
     <Compile Include="Domain\Participation.cs" />
+    <Compile Include="Domain\ParticipationRepository.cs" />
     <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="IEntityRepository.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />
     <Compile Include="Message\ClientDisconnection.cs" />
     <Compile Include="Message\ContributionNotification.cs" />
-    <Compile Include="RepositoryFactory.cs" />
+    <Compile Include="Message\ConversationSnapshot.cs" />
+    <Compile Include="Message\ConversationSnapshotRequest.cs" />
+    <Compile Include="Message\ParticipationSnapshot.cs" />
+    <Compile Include="Message\ParticipationSnapshotRequest.cs" />
     <Compile Include="Serialiser\ContributionNotificationSerialiser.cs" />
     <Compile Include="Message\ContributionRequest.cs" />
     <Compile Include="Serialiser\ContributionRequestSerialiser.cs" />
@@ -98,6 +102,8 @@
     <Compile Include="Serialiser\ConversationRequestSerialiser.cs" />
     <Compile Include="Serialiser\ConversationSerialiser.cs" />
     <Compile Include="Message\IMessage.cs" />
+    <Compile Include="Serialiser\ConversationSnapshotRequestSerialiser.cs" />
+    <Compile Include="Serialiser\ConversationSnapshotSerialiser.cs" />
     <Compile Include="Serialiser\ISerialiser.cs" />
     <Compile Include="Message\LoginRequest.cs" />
     <Compile Include="Serialiser\LoginRequestSerialiser.cs" />
@@ -109,6 +115,8 @@
     <Compile Include="SerialiserFactory.cs" />
     <Compile Include="SerialiserRegistry.cs" />
     <Compile Include="Message\UserNotification.cs" />
+    <Compile Include="Serialiser\ParticipationSnapshotRequestSerialiser.cs" />
+    <Compile Include="Serialiser\ParticipationSnapshotSerialiser.cs" />
     <Compile Include="Serialiser\UserNotificationSerialiser.cs" />
     <Compile Include="Serialiser\UserSerialiser.cs" />
     <Compile Include="Message\UserSnapshot.cs" />

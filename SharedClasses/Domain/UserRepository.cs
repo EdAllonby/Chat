@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
 
@@ -7,7 +8,7 @@ namespace SharedClasses.Domain
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
-    internal sealed class UserRepository : IEntityRepository<User>
+    public sealed class UserRepository
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
@@ -19,6 +20,8 @@ namespace SharedClasses.Domain
         /// <param name="user"><see cref="User"/> entity to add.</param>
         public void AddEntity(User user)
         {
+            Contract.Requires(user != null);
+
             usersIndexedById[user.UserId] = user;
             Log.Debug("User with Id " + user.UserId + " added to user repository");
         }
@@ -27,8 +30,10 @@ namespace SharedClasses.Domain
         /// Adds <see cref="User"/> entities to the repository.
         /// </summary>
         /// <param name="users">The <see cref="User"/> entities to add to the repository.</param>
-        public void AddEntities(IEnumerable<User> users)
+        public void AddUsers(IEnumerable<User> users)
         {
+            Contract.Requires(users != null);
+
             foreach (User user in users)
             {
                 usersIndexedById[user.UserId] = user;
@@ -37,14 +42,26 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Removes a <see cref="User"/> entity from the repository.
+        /// Updates a <see cref="User"/> entity in the repository
         /// </summary>
-        /// <param name="userId"><see cref="User"/> entity to remove from the repository.</param>
-        public void RemoveEntity(int userId)
+        /// <param name="user">The user to update</param>
+        public void UpdateEntity(User user)
         {
-            usersIndexedById.Remove(userId);
-            Log.Debug("User with Id " + userId + " removed from user repository");
+            Contract.Requires(user != null);
+
+            usersIndexedById[user.UserId] = user;
+            Log.Debug("User with Id" + user.UserId + " has been updated");
         }
+
+//        /// <summary>
+//        /// Removes a <see cref="User"/> entity from the repository.
+//        /// </summary>
+//        /// <param name="userId"><see cref="User"/> entity to remove from the repository.</param>
+//        public void RemoveEntity(int userId)
+//        {
+//            usersIndexedById.Remove(userId);
+//            Log.Debug("User with Id " + userId + " removed from user repository");
+//        }
 
         /// <summary>
         /// Retrieves a <see cref="User"/> entity from the repository.
@@ -54,6 +71,11 @@ namespace SharedClasses.Domain
         public User FindEntityByID(int userId)
         {
             return usersIndexedById.ContainsKey(userId) ? usersIndexedById[userId] : null;
+        }
+
+        public User FindEntityByUsername(string username)
+        {
+            return usersIndexedById.Where(user => user.Value.Username == username).Select(user => user.Value).FirstOrDefault();
         }
 
         /// <summary>
