@@ -22,7 +22,7 @@ namespace SharedClasses.Serialiser
             messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
             binaryFormatter.Serialize(stream, message);
-            Log.Info("UserNotification serialised and sent to network stream");
+            Log.InfoFormat("{0} serialised and sent to network stream", message);
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -33,7 +33,7 @@ namespace SharedClasses.Serialiser
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var userNotification = (UserNotification) binaryFormatter.Deserialize(networkStream);
-            Log.Info("Network stream has received data and deserialised to a UserNotification object");
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", userNotification.Identifier);
             return userNotification;
         }
     }

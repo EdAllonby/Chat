@@ -11,7 +11,7 @@ namespace SharedClasses.Serialiser
     /// </summary>
     internal class ParticipationSnapshotSerialiser : ISerialiser<ParticipationSnapshot>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(ConversationSnapshotSerialiser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationSnapshotSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
@@ -22,18 +22,18 @@ namespace SharedClasses.Serialiser
             messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 
             binaryFormatter.Serialize(stream, message);
-            Log.Info(message.Identifier + " serialised and sent to network stream");
+            Log.InfoFormat("{0} serialised and sent to network stream", message.Identifier);
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
         {
-            Serialise((ParticipationSnapshot)message, stream);
+            Serialise((ParticipationSnapshot) message, stream);
         }
 
         public IMessage Deserialise(NetworkStream networkStream)
         {
-            var participationSnapshot = (ParticipationSnapshot)binaryFormatter.Deserialize(networkStream);
-            Log.Info("Network stream has received data and deserialised to a " + participationSnapshot.Identifier + " object.");
+            var participationSnapshot = (ParticipationSnapshot) binaryFormatter.Deserialize(networkStream);
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object.", participationSnapshot.Identifier);
             return participationSnapshot;
         }
     }

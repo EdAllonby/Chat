@@ -12,11 +12,13 @@ namespace SharedClasses.Message
         public LoginResponse(User user)
         {
             User = user;
-            Identifier = MessageNumber.LoginResponse;
         }
 
         public User User { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.LoginResponse; }
+        }
     }
 }

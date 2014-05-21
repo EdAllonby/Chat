@@ -21,7 +21,7 @@ namespace SharedClasses.Serialiser
             messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.Identifier, stream);
 
             ContributionSerialiser.Serialise(contributionRequest.Contribution, stream);
-            Log.Info("Contribution request message serialised");
+            Log.InfoFormat("{0} message serialised", contributionRequest.Identifier);
         }
 
         public void Serialise(IMessage contributionRequestMessage, NetworkStream stream)

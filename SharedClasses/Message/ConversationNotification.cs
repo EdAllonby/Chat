@@ -18,14 +18,15 @@ namespace SharedClasses.Message
 
             ParticipantIds = participantIds;
             ConversationId = conversationId;
-
-            Identifier = MessageNumber.ConversationNotification;
         }
 
         public List<int> ParticipantIds { get; private set; }
 
         public int ConversationId { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.ConversationNotification; }
+        }
     }
 }

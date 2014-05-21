@@ -11,11 +11,9 @@ namespace SharedClasses.Message
     /// </summary>
     internal sealed class ClientDisconnection : IMessage
     {
-        public ClientDisconnection()
+        public MessageNumber Identifier
         {
-            Identifier = MessageNumber.ClientDisconnection;
+            get { return MessageNumber.ClientDisconnection; }
         }
-
-        public MessageNumber Identifier { get; private set; }
     }
 }

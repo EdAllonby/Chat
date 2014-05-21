@@ -16,12 +16,13 @@ namespace SharedClasses.Message
             Contract.Requires(conversationID > 0);
 
             Contribution = new Contribution(senderID, message, conversationID);
-
-            Identifier = MessageNumber.ContributionRequest;
         }
 
         public Contribution Contribution { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.ContributionRequest; }
+        }
     }
 }

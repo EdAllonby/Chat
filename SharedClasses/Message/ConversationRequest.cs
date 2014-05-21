@@ -12,12 +12,13 @@ namespace SharedClasses.Message
         public ConversationRequest(List<int> participantIds)
         {
             ParticipantIds = participantIds;
-
-            Identifier = MessageNumber.ConversationRequest;
         }
 
         public List<int> ParticipantIds { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.ConversationRequest; }
+        }
     }
 }

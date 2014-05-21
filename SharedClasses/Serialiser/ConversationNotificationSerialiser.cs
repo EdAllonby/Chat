@@ -21,9 +21,9 @@ namespace SharedClasses.Serialiser
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationNotification, stream);
 
-            Log.Debug("Waiting for a contribution notification message to serialise");
+            Log.DebugFormat("Waiting for a {0} message to serialise", message.Identifier);
             binaryFormatter.Serialize(stream, message);
-            Log.Info("Contribution notification message serialised");
+            Log.InfoFormat("{0} message serialised", message.Identifier);
         }
 
         public void Serialise(IMessage message, NetworkStream stream)
@@ -34,7 +34,7 @@ namespace SharedClasses.Serialiser
         public IMessage Deserialise(NetworkStream networkStream)
         {
             var conversationNotification = (ConversationNotification) binaryFormatter.Deserialize(networkStream);
-            Log.Info("Conversation notification message deserialised");
+            Log.InfoFormat("{0} message deserialised", conversationNotification.Identifier);
             return conversationNotification;
         }
     }

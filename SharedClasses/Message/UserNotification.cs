@@ -13,13 +13,15 @@ namespace SharedClasses.Message
         {
             User = user;
             Notification = notificationType;
-            Identifier = MessageNumber.UserNotification;
         }
 
         public NotificationType Notification { get; private set; }
 
         public User User { get; private set; }
 
-        public MessageNumber Identifier { get; private set; }
+        public MessageNumber Identifier
+        {
+            get { return MessageNumber.UserNotification; }
+        }
     }
 }
