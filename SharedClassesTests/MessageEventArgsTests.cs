@@ -12,7 +12,7 @@ namespace SharedClassesTests
         {
             const string Username = "User";
             const int UserId = 3;
-            MessageEventArgs messageEventArgs = new MessageEventArgs(new LoginRequest(Username), UserId);
+            var messageEventArgs = new MessageEventArgs(new LoginRequest(Username), UserId);
             Assert.AreEqual(messageEventArgs.ClientUserId, UserId);
             Assert.IsInstanceOf<LoginRequest>(messageEventArgs.Message);
         }

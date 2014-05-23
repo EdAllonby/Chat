@@ -31,6 +31,11 @@ namespace SharedClasses
             CreateListenerThreadForClient();
         }
 
+        public void Dispose()
+        {
+            tcpClient.Close();
+        }
+
         public event EventHandler<MessageEventArgs> OnNewMessage
         {
             add { messageReceiver.OnNewMessage += value; }
@@ -57,11 +62,6 @@ namespace SharedClasses
                 Name = "ReceiveMessageThread" + (totalListenerThreads++)
             };
             messageListenerThread.Start();
-        }
-
-        public void Dispose()
-        {
-            tcpClient.Close();
         }
     }
 }

@@ -45,4 +45,5 @@ using log4net.Config;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 // The test project associated with this project is allowed to see its internal classes
+
 [assembly: InternalsVisibleTo("SharedClassesTests")]

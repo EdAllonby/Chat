@@ -38,7 +38,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Participation) obj);
         }
 
@@ -46,7 +46,7 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (conversationId * 397) ^ userId;
+                return (conversationId*397) ^ userId;
             }
         }
 

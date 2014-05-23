@@ -7,20 +7,24 @@ namespace SharedClassesTests.Domain
     public class ContributionTests
     {
         [Test]
-        public void IncompleteContributionTest()
-        {
-            const string Message = "Hello";
-            var contribution = new Contribution(1, Message, 1);
-            Assert.AreEqual(contribution.Message, Message);
-        }
-
-        [Test]
         public void CompleteContributionTest()
         {
             const string Message = "Hello";
 
             var finalContribution = new Contribution(1, new Contribution(1, Message, 1));
             Assert.AreEqual(finalContribution.Message, Message);
+        }
+
+        [Test]
+        public void EqualsTest()
+        {
+            const string Message = "Hello";
+
+            var contribution = new Contribution(1, new Contribution(1, Message, 1));
+            var contribution2 = new Contribution(1, new Contribution(1, Message, 1));
+
+            Assert.AreEqual(contribution, contribution2);
+            Assert.IsTrue(contribution.Equals(contribution2 as object));
         }
 
         [Test]
@@ -44,15 +48,22 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void EqualsTest()
+        public void HashcodeTest()
         {
             const string Message = "Hello";
 
             var contribution = new Contribution(1, new Contribution(1, Message, 1));
             var contribution2 = new Contribution(1, new Contribution(1, Message, 1));
 
-            Assert.AreEqual(contribution, contribution2);
-            Assert.IsTrue(contribution.Equals(contribution2 as object));
+            Assert.AreEqual(contribution.GetHashCode(), contribution2.GetHashCode());
+        }
+
+        [Test]
+        public void IncompleteContributionTest()
+        {
+            const string Message = "Hello";
+            var contribution = new Contribution(1, Message, 1);
+            Assert.AreEqual(contribution.Message, Message);
         }
 
         [Test]
@@ -62,7 +73,7 @@ namespace SharedClassesTests.Domain
 
             var contribution = new Contribution(1, new Contribution(1, Message, 1));
 
-            var contribution2 = contribution;
+            Contribution contribution2 = contribution;
 
             Assert.IsTrue(contribution.Equals(contribution2));
             Assert.IsTrue(contribution.Equals(contribution2 as object));
@@ -72,17 +83,6 @@ namespace SharedClassesTests.Domain
 
             Assert.IsFalse(contributionObject.Equals(2));
             Assert.IsFalse(contributionObject.Equals(null));
-        }
-
-        [Test]
-        public void HashcodeTest()
-        {
-            const string Message = "Hello";
-
-            var contribution = new Contribution(1, new Contribution(1, Message, 1));
-            var contribution2 = new Contribution(1, new Contribution(1, Message, 1));
-
-            Assert.AreEqual(contribution.GetHashCode(), contribution2.GetHashCode());
         }
     }
 }
