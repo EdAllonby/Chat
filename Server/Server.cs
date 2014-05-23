@@ -18,7 +18,7 @@ namespace Server
     internal sealed class Server
     {
         private const int PortNumber = 5004;
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId =
             new Dictionary<int, ConnectionHandler>();
@@ -193,7 +193,7 @@ namespace Server
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            var loginRequest = (LoginRequest)serialiser.Deserialise(tcpClient.GetStream());
+            var loginRequest = (LoginRequest) serialiser.Deserialise(tcpClient.GetStream());
 
             return loginRequest;
         }
@@ -254,7 +254,7 @@ namespace Server
             switch (message.Identifier)
             {
                 case MessageNumber.ContributionRequest:
-                    Contribution contribution = CreateContributionEntity((ContributionRequest)message);
+                    Contribution contribution = CreateContributionEntity((ContributionRequest) message);
                     SendContributionNotificationToParticipants(contribution);
                     break;
 
@@ -265,9 +265,9 @@ namespace Server
                     break;
 
                 case MessageNumber.ConversationRequest:
-                    if (CheckConversationIsValid((ConversationRequest)message))
+                    if (CheckConversationIsValid((ConversationRequest) message))
                     {
-                        var conversationRequest = (ConversationRequest)message;
+                        var conversationRequest = (ConversationRequest) message;
                         int conversationId = CreateConversationEntity(conversationRequest);
                         SendConversationNotificationToClients(conversationRequest.ParticipantIds, conversationId);
                     }

@@ -42,19 +42,6 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void AddContributionTest()
-        {
-            const int ConversationID = 5;
-
-            var contribution = new Contribution(1, new Contribution(1, "Hello", ConversationID));
-            var conversation = new Conversation(ConversationID);
-
-            conversation.AddContribution(contribution);
-
-            Assert.Contains(contribution, conversation.GetAllContributions().ToList());
-        }
-
-        [Test]
         public void AddContributionFromContributionRequestTest()
         {
             const string Message = "Hello";
@@ -66,7 +53,20 @@ namespace SharedClassesTests.Domain
             var conversation = new Conversation(ConversationID);
 
             conversation.AddContribution(contributionRequest);
-            var contributions = conversation.GetAllContributions().ToList();
+            List<Contribution> contributions = conversation.GetAllContributions().ToList();
+            Assert.Contains(contribution, conversation.GetAllContributions().ToList());
+        }
+
+        [Test]
+        public void AddContributionTest()
+        {
+            const int ConversationID = 5;
+
+            var contribution = new Contribution(1, new Contribution(1, "Hello", ConversationID));
+            var conversation = new Conversation(ConversationID);
+
+            conversation.AddContribution(contribution);
+
             Assert.Contains(contribution, conversation.GetAllContributions().ToList());
         }
 

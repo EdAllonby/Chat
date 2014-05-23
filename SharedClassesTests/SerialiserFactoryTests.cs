@@ -8,7 +8,14 @@ namespace SharedClassesTests
     [TestFixture]
     public class SerialiserFactoryTests
     {
-        private SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+
+        [Test]
+        public void GetSerialiserFromGenericTest()
+        {
+            ISerialiser serialiser = serialiserFactory.GetSerialiser<ConversationNotification>();
+            Assert.IsInstanceOf<ConversationNotificationSerialiser>(serialiser);
+        }
 
         [Test]
         public void GetSerialiserFromIMessageTest()
@@ -17,13 +24,6 @@ namespace SharedClassesTests
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(message.Identifier);
             Assert.IsInstanceOf<LoginRequestSerialiser>(serialiser);
-        }
-
-        [Test]
-        public void GetSerialiserFromGenericTest()
-        {
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ConversationNotification>();
-            Assert.IsInstanceOf<ConversationNotificationSerialiser>(serialiser);
         }
     }
 }

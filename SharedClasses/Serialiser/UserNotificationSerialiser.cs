@@ -14,7 +14,7 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override  void Serialise(UserNotification message, NetworkStream stream)
+        protected override void Serialise(UserNotification message, NetworkStream stream)
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
 

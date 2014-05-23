@@ -42,7 +42,7 @@ namespace ChatClient
         /// <returns>The currently connected users on the Server.</returns>
         public InitialisedData ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
-            ServerLoginHandler loginHandler = new ServerLoginHandler();
+            var loginHandler = new ServerLoginHandler();
 
             InitialisedData initialisedData = loginHandler.ConnectToServer(username, targetAddress, targetPort);
 
