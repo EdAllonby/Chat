@@ -6,7 +6,7 @@ namespace SharedClasses.Domain
     /// The relationship between a User and a Conversation
     /// </summary>
     [Serializable]
-    public class Participation
+    public class Participation : IEquatable<Participation>
     {
         private readonly int conversationId;
         private readonly int userId;
@@ -25,6 +25,39 @@ namespace SharedClasses.Domain
         public int ConversationId
         {
             get { return conversationId; }
+        }
+
+        public bool Equals(Participation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return conversationId == other.conversationId && userId == other.userId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Participation) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (conversationId * 397) ^ userId;
+            }
+        }
+
+        public static bool operator ==(Participation left, Participation right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Participation left, Participation right)
+        {
+            return !Equals(left, right);
         }
     }
 }

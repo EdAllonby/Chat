@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using log4net;
 
 namespace SharedClasses.Domain
 {
@@ -10,8 +9,6 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Contribution : IEquatable<Contribution>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Contribution));
-
         // Immutable domain entity class
         private readonly int contributorUserId;
         private readonly int conversationId;
@@ -75,8 +72,15 @@ namespace SharedClasses.Domain
 
         public bool Equals(Contribution other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return ContributionId == other.ContributionId;
         }
 
@@ -84,6 +88,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
+
             return obj is Contribution && Equals((Contribution) obj);
         }
 

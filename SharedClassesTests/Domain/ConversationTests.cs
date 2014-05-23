@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using Server;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace SharedClassesTests.Domain
 {
@@ -50,6 +51,22 @@ namespace SharedClassesTests.Domain
 
             conversation.AddContribution(contribution);
 
+            Assert.Contains(contribution, conversation.GetAllContributions().ToList());
+        }
+
+        [Test]
+        public void AddContributionFromContributionRequestTest()
+        {
+            const string Message = "Hello";
+            const int ConversationID = 5;
+
+            var contribution = new Contribution(1, new Contribution(1, Message, ConversationID));
+            var contributionRequest = new ContributionNotification(contribution);
+
+            var conversation = new Conversation(ConversationID);
+
+            conversation.AddContribution(contributionRequest);
+            var contributions = conversation.GetAllContributions().ToList();
             Assert.Contains(contribution, conversation.GetAllContributions().ToList());
         }
 

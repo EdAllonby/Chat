@@ -22,7 +22,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ChatWindowViewModel()
         {
-            windowTitle = Client.UserRepository.FindEntityByID(Client.ClientUserId).Username;
+            windowTitle = Client.GetUser(Client.ClientUserId).Username;
 
             Client.OnNewContributionNotification += NewContributionNotificationReceived;
         }
@@ -134,14 +134,13 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in Client.ParticipationRepository.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
+            foreach (Participation participant in Client.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
             {
-                titleBuilder.Append(Client.UserRepository.FindEntityByID(participant.UserId).Username);
+                titleBuilder.Append(Client.GetUser(participant.UserId).Username);
                 titleBuilder.Append(" and ");
             }
 
             titleBuilder.Length = titleBuilder.Length - " and ".Length;
-
             string title = titleBuilder.ToString();
             return title;
         }
@@ -175,7 +174,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 string message = contribution.Message;
 
                 var messageDetails = new StringBuilder();
-                messageDetails.Append(Client.UserRepository.FindEntityByID(contribution.ContributorUserId).Username);
+                messageDetails.Append(Client.GetUser(contribution.ContributorUserId).Username);
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 

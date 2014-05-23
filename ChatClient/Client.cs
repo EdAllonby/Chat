@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using log4net;
 using SharedClasses;
@@ -24,28 +23,12 @@ namespace ChatClient
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
 
         private readonly ParticipationRepository participationRepository = new ParticipationRepository();
 
         private readonly ServerHandler serverHandler = new ServerHandler();
         private readonly UserRepository userRepository = new UserRepository();
-
-        public UserRepository UserRepository
-        {
-            get { return userRepository; }
-        }
-
-        public ConversationRepository ConversationRepository
-        {
-            get { return conversationRepository; }
-        }
-
-        public ParticipationRepository ParticipationRepository
-        {
-            get { return participationRepository; }
-        }
 
         public int ClientUserId { get; private set; }
 
@@ -69,32 +52,22 @@ namespace ChatClient
         /// <param name="targetPort">The port the Server is running on.</param>
         public void ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
-            Snapshots snapshots = serverHandler.ConnectToServer(username, targetAddress, targetPort);
+            InitialisedData initialisedData = serverHandler.ConnectToServer(username, targetAddress, targetPort);
 
-            UserRepository.AddUsers(snapshots.UserSnapshot.Users);
+            ClientUserId = initialisedData.UserId;
 
-            ConversationRepository.AddConversations(snapshots.ConversationSnapshot.Conversations);
+            userRepository.AddUsers(initialisedData.UserSnapshot.Users);
 
-            ParticipationRepository.AddParticipations(snapshots.ParticipationSnapshot.Participations);
+            conversationRepository.AddConversations(initialisedData.ConversationSnapshot.Conversations);
 
-            SetClientUserID(username);
+            participationRepository.AddParticipations(initialisedData.ParticipationSnapshot.Participations);
 
             serverHandler.OnNewMessage += NewMessageReceived;
 
             OnLoginComplete();
         }
 
-        private void SetClientUserID(string username)
-        {
-            IEnumerable<User> users = UserRepository.GetAllEntities();
-
-            foreach (User user in users.Where(user => user.Username == username))
-            {
-                ClientUserId = user.UserId;
-            }
-        }
-
-        /// <summary>
+        /// <summary>s
         /// Sends a <see cref="ConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="participantIds">The participants that are included in the conversation.</param>
@@ -115,30 +88,87 @@ namespace ChatClient
             serverHandler.SendMessage(clientContribution);
         }
 
+        /// <summary>
+        /// Returns all <see cref="User"/>s that the client knows of.
+        /// </summary>
+        /// <returns>A collection of all <see cref="User"/>s.</returns>
+        public IEnumerable<User> GetAllUsers()
+        {
+            return userRepository.GetAllEntities();
+        }
+
+        /// <summary>
+        /// Returns all <see cref="Participation"/>s that the client knows of.
+        /// </summary>
+        /// <returns>A collection of all <see cref="Participation"/>s.</returns>
+        public IEnumerable<Participation> GetAllParticipations()
+        {
+            return participationRepository.GetAllParticipations();
+        }
+
+        /// <summary>
+        /// Returns the <see cref="User"/> entity object that is specific to this client.
+        /// </summary>
+        /// <param name="userId">The Id that matches the <see cref="User"/>.</param>
+        /// <returns>The <see cref="User"/> that matches the <see cref="User"/> Id.</returns>
+        public User GetUser(int userId)
+        {
+            return userRepository.FindEntityByID(userId);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="Conversation"/> object that matches the <see cref="Conversation"/> Id.
+        /// </summary>
+        /// <param name="conversationId">The Id that matches the <see cref="Conversation"/>.</param>
+        /// <returns>The <see cref="Conversation"/> that matches the <see cref="Conversation"/> Id.</returns>
+        public Conversation GetConversation(int conversationId)
+        {
+            return conversationRepository.FindEntityByID(conversationId);
+        }
+
+        /// <summary>
+        /// Checks whether a <see cref="Conversation"/> exists for a particular set of <see cref="User"/>s.
+        /// </summary>
+        /// <param name="participantIds">The set of <see cref="User"/> Ids to check for a conversation.</param>
+        /// <returns>Whether a conversation exists for the set of <see cref="User"/>s.</returns>
+        public bool DoesConversationExist(IEnumerable<int> participantIds)
+        {
+            return participationRepository.DoesConversationWithUsersExist(participantIds);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="Conversation"/> Id for the particular set of <see cref="User"/>s.
+        /// </summary>
+        /// <param name="participantIds">The set of <see cref="User"/> Ids that belong to the conversation.</param>
+        /// <returns>The <see cref="Conversation"/> Id.</returns>
+        public int GetConversationId(IEnumerable<int> participantIds)
+        {
+            return participationRepository.GetConversationIdByParticipantsId(participantIds);
+        }
+
+
         private void NewMessageReceived(object sender, MessageEventArgs e)
         {
-            IMessage message = e.Message;
-
-            switch (message.Identifier)
+            switch (e.Message.Identifier)
             {
                 case MessageNumber.ContributionNotification:
-                    var contributionNotification = (ContributionNotification) message;
+                    var contributionNotification = (ContributionNotification) e.Message;
                     AddContributionToConversation(contributionNotification);
                     break;
 
                 case MessageNumber.UserNotification:
-                    UpdateUserRepository((UserNotification) message);
+                    UpdateUserRepository((UserNotification) e.Message);
                     NotifyClientOfUserChange();
                     break;
 
                 case MessageNumber.ConversationNotification:
-                    var conversationNotification = (ConversationNotification) message;
+                    var conversationNotification = (ConversationNotification) e.Message;
                     AddParticipants(conversationNotification);
-                    AddConversationToRepository((ConversationNotification) message);
+                    AddConversationToRepository((ConversationNotification) e.Message);
                     break;
 
                 default:
-                    Log.Warn("Client is not supposed to handle message with identifier: " + message.Identifier);
+                    Log.Warn("Client is not supposed to handle message with identifier: " + e.Message.Identifier);
                     break;
             }
         }
@@ -147,14 +177,15 @@ namespace ChatClient
         {
             foreach (int participantId in conversationNotification.ParticipantIds)
             {
-                ParticipationRepository.AddParticipation(new Participation(participantId, conversationNotification.ConversationId));
+                participationRepository.AddParticipation(new Participation(participantId,
+                    conversationNotification.ConversationId));
             }
         }
 
         private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
-            Conversation conversation = conversationRepository
-                .FindEntityByID(contributionNotification.Contribution.ConversationId);
+            Conversation conversation =
+                conversationRepository.FindEntityByID(contributionNotification.Contribution.ConversationId);
 
             conversation.AddContribution(contributionNotification);
             OnNewContributionNotification(conversation);
@@ -169,15 +200,7 @@ namespace ChatClient
 
         private void UpdateUserRepository(UserNotification userNotification)
         {
-            switch (userNotification.Notification)
-            {
-                case NotificationType.Create:
-                    userRepository.AddEntity(userNotification.User);
-                    break;
-                case NotificationType.Update:
-                    userRepository.UpdateEntity(userNotification.User);
-                    break;
-            }
+            userRepository.AddEntity(userNotification.User);
         }
     }
 }

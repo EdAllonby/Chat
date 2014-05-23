@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using log4net;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -8,15 +7,13 @@ namespace SharedClasses.Serialiser
     /// <summary>
     /// Used to serialise and deserialise a <see cref="ContributionRequest" /> message
     /// </summary>
-    internal sealed class ContributionRequestSerialiser : ISerialiser<ContributionRequest>
+    internal sealed class ContributionRequestSerialiser : Serialiser<ContributionRequest>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionRequestSerialiser));
-
         private static readonly ContributionSerialiser ContributionSerialiser = new ContributionSerialiser();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        public void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
+        protected override void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.Identifier, stream);
 
@@ -24,15 +21,10 @@ namespace SharedClasses.Serialiser
             Log.InfoFormat("{0} message serialised", contributionRequest.Identifier);
         }
 
-        public void Serialise(IMessage contributionRequestMessage, NetworkStream stream)
-        {
-            Serialise((ContributionRequest) contributionRequestMessage, stream);
-        }
-
-        public IMessage Deserialise(NetworkStream networkStream)
+        public override IMessage Deserialise(NetworkStream stream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            Contribution contribution = ContributionSerialiser.Deserialise(networkStream);
+            Contribution contribution = ContributionSerialiser.Deserialise(stream);
             var contributionRequest = new ContributionRequest(
                 contribution.ConversationId,
                 contribution.ContributorUserId,
