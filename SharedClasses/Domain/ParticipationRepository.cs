@@ -47,7 +47,7 @@ namespace SharedClasses.Domain
                 .Any(isConversation => isConversation);
         }
 
-        public IEnumerable<Participation> GetParticipationsByConversationIds(int conversationId)
+        public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
         {
             return participations.Where(participation => participation.ConversationId == conversationId).ToList();
         }

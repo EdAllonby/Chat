@@ -31,24 +31,10 @@ namespace SharedClasses
             CreateListenerThreadForClient();
         }
 
-        public void Dispose()
-        {
-            tcpClient.Close();
-        }
-
         public event EventHandler<MessageEventArgs> OnNewMessage
         {
             add { messageReceiver.OnNewMessage += value; }
             remove { messageReceiver.OnNewMessage -= value; }
-        }
-
-        private void CreateListenerThreadForClient()
-        {
-            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
-            {
-                Name = "ReceiveMessageThread" + (totalListenerThreads++)
-            };
-            messageListenerThread.Start();
         }
 
         /// <summary>
@@ -61,7 +47,21 @@ namespace SharedClasses
 
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
-            Log.Debug("Sent message with identifier " + message.Identifier + " to user with id " + clientUserId);
+            Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.Identifier, clientUserId);
+        }
+
+        private void CreateListenerThreadForClient()
+        {
+            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
+            {
+                Name = "ReceiveMessageThread" + (totalListenerThreads++)
+            };
+            messageListenerThread.Start();
+        }
+
+        public void Dispose()
+        {
+            tcpClient.Close();
         }
     }
 }

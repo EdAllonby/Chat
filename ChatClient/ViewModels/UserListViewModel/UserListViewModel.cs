@@ -16,7 +16,7 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public UserListViewModel()
         {
-            GetAllUsers(Client.UserRepository.GetAllEntities());
+            GetAllUsers(Client.GetAllUsers());
 
             Client.OnNewUser += OnNewUser;
 
@@ -27,7 +27,7 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public string Username
         {
-            get { return Client.UserRepository.FindEntityByID(Client.ClientUserId).Username; }
+            get { return Client.GetUser(Client.ClientUserId).Username; }
         }
 
         public bool IsMultiUserConversation
@@ -126,14 +126,14 @@ namespace ChatClient.ViewModels.UserListViewModel
         {
             IsMultiUserConversation = false;
 
-            if (!Client.ParticipationRepository.DoesConversationWithUsersExist(participantIds))
+            if (!Client.DoesConversationExist(participantIds))
             {
                 Client.SendConversationRequest(participantIds);
             }
             else
             {
-                int conversationId = Client.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
-                CreateNewConversationWindow(Client.ConversationRepository.FindEntityByID(conversationId));
+                int conversationId = Client.GetConversationId(participantIds);
+                CreateNewConversationWindow(Client.GetConversation(conversationId));
             }
         }
 

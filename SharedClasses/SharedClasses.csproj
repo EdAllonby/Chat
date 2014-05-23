@@ -117,6 +117,7 @@
     <Compile Include="Message\UserNotification.cs" />
     <Compile Include="Serialiser\ParticipationSnapshotRequestSerialiser.cs" />
     <Compile Include="Serialiser\ParticipationSnapshotSerialiser.cs" />
+    <Compile Include="Serialiser\Serialiser.cs" />
     <Compile Include="Serialiser\UserNotificationSerialiser.cs" />
     <Compile Include="Serialiser\UserSerialiser.cs" />
     <Compile Include="Message\UserSnapshot.cs" />

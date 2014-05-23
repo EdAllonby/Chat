@@ -15,15 +15,22 @@ namespace SharedClasses.Domain
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
         /// <summary>
-        /// Adds a <see cref="User"/> entity to the repository.
+        /// Adds or updates a <see cref="User"/> entity to the repository.
         /// </summary>
         /// <param name="user"><see cref="User"/> entity to add.</param>
         public void AddEntity(User user)
         {
             Contract.Requires(user != null);
-
             usersIndexedById[user.UserId] = user;
-            Log.Debug("User with Id " + user.UserId + " added to user repository");
+
+            if (usersIndexedById.ContainsKey(user.UserId))
+            {
+                Log.Debug("User with Id " + user.UserId + " has been updated");
+            }
+            else
+            {
+                Log.Debug("User with Id " + user.UserId + " added to user repository");
+            }
         }
 
         /// <summary>
@@ -42,26 +49,14 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Updates a <see cref="User"/> entity in the repository
+        /// Removes a <see cref="User"/> entity from the repository.
         /// </summary>
-        /// <param name="user">The user to update</param>
-        public void UpdateEntity(User user)
+        /// <param name="userId"><see cref="User"/> entity to remove from the repository.</param>
+        public void RemoveEntity(int userId)
         {
-            Contract.Requires(user != null);
-
-            usersIndexedById[user.UserId] = user;
-            Log.Debug("User with Id" + user.UserId + " has been updated");
+            usersIndexedById.Remove(userId);
+            Log.Debug("User with Id " + userId + " removed from user repository");
         }
-
-//        /// <summary>
-//        /// Removes a <see cref="User"/> entity from the repository.
-//        /// </summary>
-//        /// <param name="userId"><see cref="User"/> entity to remove from the repository.</param>
-//        public void RemoveEntity(int userId)
-//        {
-//            usersIndexedById.Remove(userId);
-//            Log.Debug("User with Id " + userId + " removed from user repository");
-//        }
 
         /// <summary>
         /// Retrieves a <see cref="User"/> entity from the repository.

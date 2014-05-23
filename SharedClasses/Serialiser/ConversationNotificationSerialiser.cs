@@ -1,6 +1,5 @@
 ﻿using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using log4net;
 using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser
@@ -9,15 +8,13 @@ namespace SharedClasses.Serialiser
     /// Used to serialise and deserialise a <see cref="ConversationNotification" /> message
     /// Uses <see cref="ConversationSerialiser" /> for its underlying serialiser
     /// </summary>
-    internal sealed class ConversationNotificationSerialiser : ISerialiser<ConversationNotification>
+    internal sealed class ConversationNotificationSerialiser : Serialiser<ConversationNotification>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationNotificationSerialiser));
-
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        public void Serialise(ConversationNotification message, NetworkStream stream)
+        protected override void Serialise(ConversationNotification message, NetworkStream stream)
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationNotification, stream);
 
@@ -26,14 +23,9 @@ namespace SharedClasses.Serialiser
             Log.InfoFormat("{0} message serialised", message.Identifier);
         }
 
-        public void Serialise(IMessage message, NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream stream)
         {
-            Serialise((ConversationNotification) message, stream);
-        }
-
-        public IMessage Deserialise(NetworkStream networkStream)
-        {
-            var conversationNotification = (ConversationNotification) binaryFormatter.Deserialize(networkStream);
+            var conversationNotification = (ConversationNotification) binaryFormatter.Deserialize(stream);
             Log.InfoFormat("{0} message deserialised", conversationNotification.Identifier);
             return conversationNotification;
         }

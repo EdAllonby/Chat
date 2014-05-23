@@ -11,7 +11,7 @@ namespace SharedClasses
     public static class SerialiserRegistry
     {
         /// <summary>
-        /// A readonly version of an Serialiser by Message Identifier dictionary. No one can alter this dictionary after compiling.
+        /// A readonly version of an ISerialiser by Message Identifier dictionary. No one can alter this dictionary after compiling.
         /// </summary>
         public static readonly IReadOnlyDictionary<MessageNumber, ISerialiser> SerialisersByMessageIdentifier =
             new Dictionary<MessageNumber, ISerialiser>
@@ -32,7 +32,7 @@ namespace SharedClasses
             };
 
         /// <summary>
-        /// A readonly version of an Serialiser by Message Type dictionary. No one can alter this dictionary after compiling.
+        /// A readonly version of an ISerialiser by Message Type dictionary. No one can alter this dictionary after compiling.
         /// </summary>
         public static readonly IReadOnlyDictionary<Type, ISerialiser> SerialisersByMessageType =
             new Dictionary<Type, ISerialiser>

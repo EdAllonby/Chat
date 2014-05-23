@@ -53,11 +53,17 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Domain\ContributionTests.cs" />
     <Compile Include="Domain\ConversationRepositoryTests.cs" />
     <Compile Include="Domain\ConversationTests.cs" />
+    <Compile Include="Domain\ParticipationRepositoryTests.cs" />
+    <Compile Include="Domain\ParticipationTests.cs" />
     <Compile Include="Domain\UserRepositoryTests.cs" />
     <Compile Include="Domain\UserTests.cs" />
+    <Compile Include="EnumerableExtensionsTests.cs" />
+    <Compile Include="MessageEventArgsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerialiserFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Server\Server.csproj">

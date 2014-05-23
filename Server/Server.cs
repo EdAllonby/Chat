@@ -18,9 +18,10 @@ namespace Server
     internal sealed class Server
     {
         private const int PortNumber = 5004;
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
 
-        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
+        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId =
+            new Dictionary<int, ConnectionHandler>();
 
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
@@ -29,7 +30,6 @@ namespace Server
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly UserRepository userRepository = new UserRepository();
-
 
         public Server()
         {
@@ -48,7 +48,11 @@ namespace Server
                 TcpClient client = clientListener.AcceptTcpClient();
                 Log.Info("New client connected");
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                var clientLoginWorkerThread = new Thread(() => InitialiseNewClient(client)) {Name = "Client Login Worker Thread"};
+                var clientLoginWorkerThread = new Thread(() => InitialiseNewClient(client))
+                {
+                    Name = "Client Login Worker Thread"
+                };
+
                 clientLoginWorkerThread.Start();
             }
         }
@@ -73,7 +77,7 @@ namespace Server
 
             SendConnectionMessage(loginResponse, tcpClient);
 
-            AcquireClientSnapshots(tcpClient, user.UserId);
+            SendClientSnapshots(tcpClient, user.UserId);
 
             var connectionHandler = new ConnectionHandler(user.UserId, tcpClient);
 
@@ -82,39 +86,56 @@ namespace Server
             clientConnectionHandlersIndexedByUserId[user.UserId] = connectionHandler;
         }
 
-        private void AcquireClientSnapshots(TcpClient tcpClient, int userId)
+        private void SendClientSnapshots(TcpClient tcpClient, int userId)
         {
             GetUserSnapshotRequest(tcpClient);
 
-            IEnumerable<User> currentUsers = userRepository.GetAllEntities();
-            var userSnapshot = new UserSnapshot(currentUsers);
-
-            SendConnectionMessage(userSnapshot, tcpClient);
+            SendUserSnapshot(tcpClient);
 
             GetConversationSnapshotRequest(tcpClient);
 
-            IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(userId);
-
-            IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
-
-            List<Conversation> conversations = conversationEnumerable.Select(conversationId => conversationRepository.FindEntityByID(conversationId)).ToList();
-
-            var conversationSnapshot = new ConversationSnapshot(conversations);
-
-            SendConnectionMessage(conversationSnapshot, tcpClient);
+            IEnumerable<int> conversations = SendConversationSnapshot(tcpClient, userId);
 
             GetParticipationSnapshotRequest(tcpClient);
 
+            SendParticipationSnapshot(tcpClient, conversations);
+        }
+
+        private void SendParticipationSnapshot(TcpClient tcpClient, IEnumerable<int> conversations)
+        {
             var userParticipations = new List<Participation>();
 
-            foreach (int conversationId in conversationEnumerable)
+            foreach (int conversationId in conversations)
             {
-                userParticipations.AddRange(participationRepository.GetParticipationsByConversationIds(conversationId));
+                userParticipations.AddRange(participationRepository.GetParticipationsByConversationId(conversationId));
             }
 
             var participationSnapshot = new ParticipationSnapshot(userParticipations);
 
             SendConnectionMessage(participationSnapshot, tcpClient);
+        }
+
+        private IEnumerable<int> SendConversationSnapshot(TcpClient tcpClient, int userId)
+        {
+            IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(userId);
+
+            IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
+
+            List<Conversation> conversations =
+                conversationEnumerable.Select(conversationId => conversationRepository.FindEntityByID(conversationId)).ToList();
+
+            var conversationSnapshot = new ConversationSnapshot(conversations);
+
+            SendConnectionMessage(conversationSnapshot, tcpClient);
+            return conversationEnumerable;
+        }
+
+        private void SendUserSnapshot(TcpClient tcpClient)
+        {
+            IEnumerable<User> currentUsers = userRepository.GetAllEntities();
+            var userSnapshot = new UserSnapshot(currentUsers);
+
+            SendConnectionMessage(userSnapshot, tcpClient);
         }
 
         private void GetUserSnapshotRequest(TcpClient tcpClient)
@@ -172,7 +193,7 @@ namespace Server
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            var loginRequest = (LoginRequest) serialiser.Deserialise(tcpClient.GetStream());
+            var loginRequest = (LoginRequest)serialiser.Deserialise(tcpClient.GetStream());
 
             return loginRequest;
         }
@@ -204,7 +225,8 @@ namespace Server
 
         private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(), contributionRequest.Contribution);
+            var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(),
+                contributionRequest.Contribution);
 
             Conversation conversation = conversationRepository.FindEntityByID(newContribution.ConversationId);
 
@@ -232,19 +254,20 @@ namespace Server
             switch (message.Identifier)
             {
                 case MessageNumber.ContributionRequest:
-                    Contribution contribution = CreateContributionEntity((ContributionRequest) message);
+                    Contribution contribution = CreateContributionEntity((ContributionRequest)message);
                     SendContributionNotificationToParticipants(contribution);
                     break;
 
                 case MessageNumber.ClientDisconnection:
                     RemoveClientHandler(e.ClientUserId);
-                    NotifyClientsOfUser(userRepository.FindEntityByID(e.ClientUserId), NotificationType.Update, ConnectionStatus.Disconnected);
+                    NotifyClientsOfUser(userRepository.FindEntityByID(e.ClientUserId), NotificationType.Update,
+                        ConnectionStatus.Disconnected);
                     break;
 
                 case MessageNumber.ConversationRequest:
-                    if (CheckConversationIsValid((ConversationRequest) message))
+                    if (CheckConversationIsValid((ConversationRequest)message))
                     {
-                        var conversationRequest = (ConversationRequest) message;
+                        var conversationRequest = (ConversationRequest)message;
                         int conversationId = CreateConversationEntity(conversationRequest);
                         SendConversationNotificationToClients(conversationRequest.ParticipantIds, conversationId);
                     }
