@@ -61,29 +61,37 @@ namespace Server
         {
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
 
-            User user = GetUserFromUsername(loginRequest.User.Username);
+            User user = userRepository.FindUserByUsername(loginRequest.User.Username);
 
-            if (user == null)
+            if (user == null || user.ConnectionStatus != ConnectionStatus.Connected)
             {
-                user = CreateUserEntity(loginRequest);
-                NotifyClientsOfUser(user, NotificationType.Create, ConnectionStatus.Connected);
+                if (user == null)
+                {
+                    user = CreateUserEntity(loginRequest);
+                    NotifyClientsOfUser(user, NotificationType.Create, ConnectionStatus.Connected);
+                }
+                else
+                {
+                    NotifyClientsOfUser(user, NotificationType.Update, ConnectionStatus.Connected);
+                }
+                var loginResponse = new LoginResponse(user, LoginResult.Success);
+
+                SendConnectionMessage(loginResponse, tcpClient);
+
+                SendClientSnapshots(tcpClient, user.UserId);
+
+                var connectionHandler = new ConnectionHandler(user.UserId, tcpClient);
+
+                connectionHandler.OnNewMessage += NewMessageReceived;
+
+                clientConnectionHandlersIndexedByUserId[user.UserId] = connectionHandler;
             }
             else
             {
-                NotifyClientsOfUser(user, NotificationType.Update, ConnectionStatus.Connected);
+                Log.InfoFormat("User with user Id {0} already connected, denying user login.", user.UserId);
+                var loginResponse = new LoginResponse(null, LoginResult.AlreadyConnected);
+                SendConnectionMessage(loginResponse, tcpClient);
             }
-
-            var loginResponse = new LoginResponse(user);
-
-            SendConnectionMessage(loginResponse, tcpClient);
-
-            SendClientSnapshots(tcpClient, user.UserId);
-
-            var connectionHandler = new ConnectionHandler(user.UserId, tcpClient);
-
-            connectionHandler.OnNewMessage += NewMessageReceived;
-
-            clientConnectionHandlersIndexedByUserId[user.UserId] = connectionHandler;
         }
 
         private void SendClientSnapshots(TcpClient tcpClient, int userId)
@@ -176,11 +184,6 @@ namespace Server
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
             return serialiser.Deserialise(tcpClient.GetStream());
-        }
-
-        private User GetUserFromUsername(string username)
-        {
-            return userRepository.FindUserByUsername(username);
         }
 
         private static LoginRequest GetLoginRequest(TcpClient tcpClient)

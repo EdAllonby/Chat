@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ChatClient.ViewModels.LoginWindowViewModel;
 using log4net;
 using SharedClasses;
 using SharedClasses.Message;
@@ -33,8 +34,18 @@ namespace ChatClient
             IMessage userRequest = new LoginRequest(username);
             SendConnectionMessage(userRequest, serverConnection);
             LoginResponse loginResponse = GetLoginResponse(serverConnection);
-            clientUserId = loginResponse.User.UserId;
-            return GetSnapshots(clientUserId);
+
+            switch (loginResponse.LoginResult)
+            {
+                case LoginResult.Success:
+                    clientUserId = loginResponse.User.UserId;
+                    return GetSnapshots(clientUserId);
+                case LoginResult.AlreadyConnected:
+                    throw new UserAlreadyConnectedException();
+                default:
+                    // This case will never happen
+                    return new InitialisedData(0, null, null, null);
+            }
         }
 
         private void CreateConnection(IPAddress targetAddress, int targetPort)
