@@ -317,12 +317,11 @@ namespace Server
             var contributionNotification = new ContributionNotification(contribution);
             Conversation conversation = conversationRepository.FindConversationById(contribution.ConversationId);
 
-            // Send message to each user in conversation
-            foreach (ConnectionHandler participantConnectionHandler in participationRepository.GetAllParticipations()
-                .Where(participant => participant.ConversationId == conversation.ConversationId)
-                .Select(participant => clientConnectionHandlersIndexedByUserId[participant.UserId]))
+            foreach (User user in participationRepository.GetParticipationsByConversationId(conversation.ConversationId)
+                .Select(participant => userRepository.FindUserByID(participant.UserId))
+                .Where(user => user.ConnectionStatus == ConnectionStatus.Connected))
             {
-                participantConnectionHandler.SendMessage(contributionNotification);
+                clientConnectionHandlersIndexedByUserId[user.UserId].SendMessage(contributionNotification);
             }
         }
 
