@@ -19,7 +19,7 @@ namespace SharedClassesTests.Domain
             var userRepository = new UserRepository();
 
             userRepository.AddUsers(users);
-            Assert.AreEqual(users, userRepository.GetAllEntities().ToList());
+            Assert.AreEqual(users, userRepository.GetAllUsers().ToList());
         }
 
         [Test]
@@ -27,14 +27,14 @@ namespace SharedClassesTests.Domain
         {
             var user = new User("User", 2, ConnectionStatus.Connected);
             var userRepository = new UserRepository();
-            userRepository.AddEntity(user);
+            userRepository.AddUser(user);
 
-            Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
+            Assert.AreEqual(user, userRepository.FindUserByID(user.UserId));
 
             user.ConnectionStatus = ConnectionStatus.Disconnected;
-            userRepository.AddEntity(user);
+            userRepository.AddUser(user);
 
-            Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
+            Assert.AreEqual(user, userRepository.FindUserByID(user.UserId));
         }
 
         [Test]
@@ -44,12 +44,12 @@ namespace SharedClassesTests.Domain
 
             var userRepository = new UserRepository();
 
-            userRepository.AddEntity(user);
-            userRepository.AddEntity(user);
+            userRepository.AddUser(user);
+            userRepository.AddUser(user);
 
             var users = new List<User> {user};
 
-            Assert.AreEqual(users, userRepository.GetAllEntities());
+            Assert.AreEqual(users, userRepository.GetAllUsers());
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SharedClassesTests.Domain
         {
             var userRepository = new UserRepository();
 
-            Assert.IsNull(userRepository.FindEntityByID(3));
+            Assert.IsNull(userRepository.FindUserByID(3));
         }
 
         [Test]
@@ -67,11 +67,11 @@ namespace SharedClassesTests.Domain
 
             string username = "User";
             var user = new User(username, 3, ConnectionStatus.Connected);
-            userRepository.AddEntity(user);
+            userRepository.AddUser(user);
 
-            Assert.AreEqual(user, userRepository.FindEntityByUsername(username));
+            Assert.AreEqual(user, userRepository.FindUserByUsername(username));
 
-            Assert.IsNull(userRepository.FindEntityByUsername("Anon"));
+            Assert.IsNull(userRepository.FindUserByUsername("Anon"));
         }
     }
 }

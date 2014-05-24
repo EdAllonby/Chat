@@ -18,7 +18,7 @@ namespace SharedClasses.Domain
         /// Adds or updates a <see cref="User"/> entity to the repository.
         /// </summary>
         /// <param name="user"><see cref="User"/> entity to add.</param>
-        public void AddEntity(User user)
+        public void AddUser(User user)
         {
             Contract.Requires(user != null);
 
@@ -50,18 +50,17 @@ namespace SharedClasses.Domain
             }
         }
 
-
         /// <summary>
         /// Retrieves a <see cref="User"/> entity from the repository.
         /// </summary>
         /// <param name="userId">The <see cref="User"/> entity ID to find.</param>
         /// <returns>The <see cref="User"/> which matches the ID. If no <see cref="User"/> is found, return null.</returns>
-        public User FindEntityByID(int userId)
+        public User FindUserByID(int userId)
         {
             return usersIndexedById.ContainsKey(userId) ? usersIndexedById[userId] : null;
         }
 
-        public User FindEntityByUsername(string username)
+        public User FindUserByUsername(string username)
         {
             return usersIndexedById.Where(user => user.Value.Username == username).Select(user => user.Value).FirstOrDefault();
         }
@@ -70,7 +69,7 @@ namespace SharedClasses.Domain
         /// Retrieves all <see cref="User"/> entities from the repository.
         /// </summary>
         /// <returns>A collection of all <see cref="User"/> entities in the repository.</returns>
-        public IEnumerable<User> GetAllEntities()
+        public IEnumerable<User> GetAllUsers()
         {
             return usersIndexedById.Values.ToList();
         }

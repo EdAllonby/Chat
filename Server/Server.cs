@@ -122,7 +122,7 @@ namespace Server
             IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
 
             List<Conversation> conversations =
-                conversationEnumerable.Select(conversationId => conversationRepository.FindEntityByID(conversationId)).ToList();
+                conversationEnumerable.Select(conversationId => conversationRepository.FindConversationById(conversationId)).ToList();
 
             var conversationSnapshot = new ConversationSnapshot(conversations);
 
@@ -132,7 +132,7 @@ namespace Server
 
         private void SendUserSnapshot(TcpClient tcpClient)
         {
-            IEnumerable<User> currentUsers = userRepository.GetAllEntities();
+            IEnumerable<User> currentUsers = userRepository.GetAllUsers();
             var userSnapshot = new UserSnapshot(currentUsers);
 
             SendConnectionMessage(userSnapshot, tcpClient);
@@ -180,7 +180,7 @@ namespace Server
 
         private User GetUserFromUsername(string username)
         {
-            return userRepository.FindEntityByUsername(username);
+            return userRepository.FindUserByUsername(username);
         }
 
         private static LoginRequest GetLoginRequest(TcpClient tcpClient)
@@ -202,7 +202,7 @@ namespace Server
         {
             var newUser = new User(clientLogin.User.Username, entityIDGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
 
-            userRepository.AddEntity(newUser);
+            userRepository.AddUser(newUser);
 
             return newUser;
         }
@@ -218,7 +218,7 @@ namespace Server
                 participationRepository.AddParticipation(new Participation(participantId, conversationId));
             }
 
-            conversationRepository.AddEntity(newConversation);
+            conversationRepository.AddConversation(newConversation);
 
             return conversationId;
         }
@@ -228,7 +228,7 @@ namespace Server
             var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(),
                 contributionRequest.Contribution);
 
-            Conversation conversation = conversationRepository.FindEntityByID(newContribution.ConversationId);
+            Conversation conversation = conversationRepository.FindConversationById(newContribution.ConversationId);
 
             conversation.AddContribution(newContribution);
 
@@ -260,7 +260,7 @@ namespace Server
 
                 case MessageNumber.ClientDisconnection:
                     RemoveClientHandler(e.ClientUserId);
-                    NotifyClientsOfUser(userRepository.FindEntityByID(e.ClientUserId), NotificationType.Update,
+                    NotifyClientsOfUser(userRepository.FindUserByID(e.ClientUserId), NotificationType.Update,
                         ConnectionStatus.Disconnected);
                     break;
 
@@ -312,7 +312,7 @@ namespace Server
         private void SendContributionNotificationToParticipants(Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution);
-            Conversation conversation = conversationRepository.FindEntityByID(contribution.ConversationId);
+            Conversation conversation = conversationRepository.FindConversationById(contribution.ConversationId);
 
             // Send message to each user in conversation
             foreach (ConnectionHandler participantConnectionHandler in participationRepository.GetAllParticipations()

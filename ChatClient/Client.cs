@@ -39,7 +39,7 @@ namespace ChatClient
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(userRepository.GetAllEntities());
+            OnNewUser(userRepository.GetAllUsers());
             Log.Info("User changed event fired");
         }
 
@@ -94,7 +94,7 @@ namespace ChatClient
         /// <returns>A collection of all <see cref="User"/>s.</returns>
         public IEnumerable<User> GetAllUsers()
         {
-            return userRepository.GetAllEntities();
+            return userRepository.GetAllUsers();
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace ChatClient
         /// <returns>The <see cref="User"/> that matches the <see cref="User"/> Id.</returns>
         public User GetUser(int userId)
         {
-            return userRepository.FindEntityByID(userId);
+            return userRepository.FindUserByID(userId);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace ChatClient
         /// <returns>The <see cref="Conversation"/> that matches the <see cref="Conversation"/> Id.</returns>
         public Conversation GetConversation(int conversationId)
         {
-            return conversationRepository.FindEntityByID(conversationId);
+            return conversationRepository.FindConversationById(conversationId);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace ChatClient
         private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
             Conversation conversation =
-                conversationRepository.FindEntityByID(contributionNotification.Contribution.ConversationId);
+                conversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
 
             conversation.AddContribution(contributionNotification);
             OnNewContributionNotification(conversation);
@@ -194,13 +194,13 @@ namespace ChatClient
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             var conversation = new Conversation(conversationNotification.ConversationId);
-            conversationRepository.AddEntity(conversation);
+            conversationRepository.AddConversation(conversation);
             OnNewConversationNotification(conversation);
         }
 
         private void UpdateUserRepository(UserNotification userNotification)
         {
-            userRepository.AddEntity(userNotification.User);
+            userRepository.AddUser(userNotification.User);
         }
     }
 }

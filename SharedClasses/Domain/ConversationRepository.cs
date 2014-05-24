@@ -17,7 +17,7 @@ namespace SharedClasses.Domain
         /// Adds a <see cref="Conversation"/> entity to the repository.
         /// </summary>
         /// <param name="conversation"><see cref="Conversation"/> entity to add.</param>
-        public void AddEntity(Conversation conversation)
+        public void AddConversation(Conversation conversation)
         {
             Contract.Requires(conversation != null);
 
@@ -45,7 +45,7 @@ namespace SharedClasses.Domain
         /// </summary>
         /// <param name="conversationID">The <see cref="Conversation"/> entity ID to find.</param>
         /// <returns>The <see cref="Conversation"/> which matches the ID. If no <see cref="Conversation"/> is found, return null.</returns>
-        public Conversation FindEntityByID(int conversationID)
+        public Conversation FindConversationById(int conversationID)
         {
             return conversationsIndexedById.ContainsKey(conversationID) ? conversationsIndexedById[conversationID] : null;
         }
@@ -54,7 +54,7 @@ namespace SharedClasses.Domain
         /// Retrieves all <see cref="Conversation"/> entities from the repository.
         /// </summary>
         /// <returns>A collection of all <see cref="Conversation"/> entities in the repository.</returns>
-        public IEnumerable<Conversation> GetAllEntities()
+        public IEnumerable<Conversation> GetAllConversations()
         {
             return conversationsIndexedById.Values;
         }
