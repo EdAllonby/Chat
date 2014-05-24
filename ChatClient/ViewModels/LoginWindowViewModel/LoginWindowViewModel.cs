@@ -100,6 +100,11 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                 Log.Error("Port is incorrect", socketException);
                 MessageBox.Show("Could log in to server, check the port");
             }
+            catch (UserAlreadyConnectedException userAlreadyConnectedException)
+            {
+                Log.Error("User is already connected", userAlreadyConnectedException);
+                MessageBox.Show(String.Format("{0} is already connected to the Server!", loginParser.Username));
+            }
         }
 
         private void OpenUserListWindow()

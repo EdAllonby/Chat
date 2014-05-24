@@ -64,6 +64,7 @@
     <Compile Include="ServerHandler.cs" />
     <Compile Include="InitialisedData.cs" />
     <Compile Include="ServerLoginHandler.cs" />
+    <Compile Include="ViewModels\LoginWindowViewModel\UserAlreadyConnectedException.cs" />
     <Compile Include="ViewModels\UserListViewModel\ConnectedUserViewModel.cs" />
     <Compile Include="ViewModels\ChatWindowViewModel\UserMessageViewModel.cs" />
     <Compile Include="AudioPlayer.cs" />
