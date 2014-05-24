@@ -41,16 +41,6 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Removes a <see cref="Conversation"/> entity from the repository.
-        /// </summary>
-        /// <param name="conversationId">The <see cref="Conversation"/> entity to remove from the repository.</param>
-        public void RemoveEntity(int conversationId)
-        {
-            conversationsIndexedById.Remove(conversationId);
-            Log.Debug("Conversation with Id " + conversationId + " removed from Conversation repository");
-        }
-
-        /// <summary>
         /// Retrieves a <see cref="Conversation"/> entity from the repository.
         /// </summary>
         /// <param name="conversationID">The <see cref="Conversation"/> entity ID to find.</param>

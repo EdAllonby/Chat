@@ -106,6 +106,7 @@ namespace SharedClassesTests.Domain
             int actualConversationId = participationRepository.GetConversationIdByParticipantsId(participantIds);
 
             Assert.AreEqual(conversationId, actualConversationId);
+            Assert.AreEqual(0, participationRepository.GetConversationIdByParticipantsId(new List<int> {1, 2, 3}));
         }
 
         [Test]
