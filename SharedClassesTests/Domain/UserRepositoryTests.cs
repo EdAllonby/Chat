@@ -19,7 +19,7 @@ namespace SharedClassesTests.Domain
             var userRepository = new UserRepository();
 
             userRepository.AddUsers(users);
-            Assert.AreEqual(users, userRepository.GetAllUsers().ToList());
+            Assert.AreEqual(users, userRepository.GetAllUsers());
         }
 
         [Test]

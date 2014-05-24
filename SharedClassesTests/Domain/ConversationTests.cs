@@ -53,7 +53,7 @@ namespace SharedClassesTests.Domain
             var conversation = new Conversation(ConversationID);
 
             conversation.AddContribution(contributionRequest);
-            List<Contribution> contributions = conversation.GetAllContributions().ToList();
+
             Assert.Contains(contribution, conversation.GetAllContributions().ToList());
         }
 
