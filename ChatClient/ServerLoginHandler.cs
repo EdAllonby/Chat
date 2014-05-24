@@ -41,7 +41,7 @@ namespace ChatClient
         {
             const int TimeoutSeconds = 5;
 
-            Log.Info("Client looking for server with address: " + targetAddress + " and port: " + targetPort);
+            Log.Info("Client looking for server with address: " + targetAddress + ":" + targetPort);
 
             var connection = new TcpClient();
 

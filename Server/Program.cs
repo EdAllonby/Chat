@@ -15,6 +15,9 @@ namespace Server
         /// </summary>
         private static void Main()
         {
+            Thread mainThread = Thread.CurrentThread;
+            mainThread.Name = "Main Thread";
+
             var servicesToRun = new ServiceBase[]
             {
                 new ServerService()
