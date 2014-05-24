@@ -21,7 +21,6 @@ namespace SharedClasses.Domain
         public void AddEntity(User user)
         {
             Contract.Requires(user != null);
-            usersIndexedById[user.UserId] = user;
 
             if (usersIndexedById.ContainsKey(user.UserId))
             {
@@ -31,6 +30,9 @@ namespace SharedClasses.Domain
             {
                 Log.Debug("User with Id " + user.UserId + " added to user repository");
             }
+
+            usersIndexedById[user.UserId] = user;
+
         }
 
         /// <summary>
@@ -48,15 +50,6 @@ namespace SharedClasses.Domain
             }
         }
 
-        /// <summary>
-        /// Removes a <see cref="User"/> entity from the repository.
-        /// </summary>
-        /// <param name="userId"><see cref="User"/> entity to remove from the repository.</param>
-        public void RemoveEntity(int userId)
-        {
-            usersIndexedById.Remove(userId);
-            Log.Debug("User with Id " + userId + " removed from user repository");
-        }
 
         /// <summary>
         /// Retrieves a <see cref="User"/> entity from the repository.

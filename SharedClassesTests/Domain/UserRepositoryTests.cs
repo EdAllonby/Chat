@@ -23,11 +23,17 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void AddUserEntityTest()
+        public void AddAndUpdateUserEntityTest()
         {
             var user = new User("User", 2, ConnectionStatus.Connected);
             var userRepository = new UserRepository();
             userRepository.AddEntity(user);
+
+            Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
+
+            user.ConnectionStatus = ConnectionStatus.Disconnected;
+            userRepository.AddEntity(user);
+
             Assert.AreEqual(user, userRepository.FindEntityByID(user.UserId));
         }
 
@@ -44,6 +50,28 @@ namespace SharedClassesTests.Domain
             var users = new List<User> {user};
 
             Assert.AreEqual(users, userRepository.GetAllEntities());
+        }
+
+        [Test]
+        public void FindNonExistentUserTest()
+        {
+            var userRepository = new UserRepository();
+
+            Assert.IsNull(userRepository.FindEntityByID(3));
+        }
+
+        [Test]
+        public void FindUserByUsernameTest()
+        {
+            var userRepository = new UserRepository();
+
+            string username = "User";
+            var user = new User(username, 3, ConnectionStatus.Connected);
+            userRepository.AddEntity(user);
+
+            Assert.AreEqual(user, userRepository.FindEntityByUsername(username));
+
+            Assert.IsNull(userRepository.FindEntityByUsername("Anon"));
         }
     }
 }

@@ -49,15 +49,5 @@ namespace SharedClasses.Domain
                 return (conversationId*397) ^ userId;
             }
         }
-
-        public static bool operator ==(Participation left, Participation right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Participation left, Participation right)
-        {
-            return !Equals(left, right);
-        }
     }
 }

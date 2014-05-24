@@ -59,6 +59,8 @@ namespace SharedClassesTests.Domain
 
             var user2 = new User("User2", entityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
             Assert.AreNotSame(user1.UserId, user2.UserId);
+
+            Assert.IsFalse(user1.Equals(user2 as object));
         }
 
         [Test]
@@ -67,6 +69,31 @@ namespace SharedClassesTests.Domain
             var user1 = new User("User", 1, ConnectionStatus.Connected);
             var user2 = new User("User", 2, ConnectionStatus.Connected);
             Assert.AreNotEqual(user1, user2);
+        }
+
+        [Test]
+        public void HashcodeTest()
+        {
+            var user1 = new User("User", 1, ConnectionStatus.Connected);
+            var user2 = new User("User", 1, ConnectionStatus.Connected);
+
+            Assert.AreEqual(user1.GetHashCode(), user2.GetHashCode());
+        }
+
+        [Test]
+        public void ReferenceEqualsTest()
+        {
+            var user1 = new User("User", 2, ConnectionStatus.Disconnected);
+            var user2 = user1;
+
+            Assert.IsTrue(user1.Equals(user2));
+            Assert.IsTrue(user1.Equals(user2 as object));
+            Assert.IsFalse(user1.Equals(null));
+
+            object userObject = user1;
+
+            Assert.IsFalse(userObject.Equals(2));
+            Assert.IsFalse(userObject.Equals(null));
         }
     }
 }

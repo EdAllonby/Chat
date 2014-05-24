@@ -34,13 +34,6 @@ namespace SharedClasses.Domain
             get { return conversationId; }
         }
 
-        public bool Equals(Conversation other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return conversationId == other.conversationId;
-        }
-
         /// <summary>
         /// Adds a <see cref="Contribution"/> entity to the dictionary indexed by ids.
         /// </summary>
@@ -73,6 +66,13 @@ namespace SharedClasses.Domain
             return new List<Contribution>(contributionsIndexedByContributionID.Values);
         }
 
+        public bool Equals(Conversation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return conversationId == other.conversationId;
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -83,16 +83,6 @@ namespace SharedClasses.Domain
         public override int GetHashCode()
         {
             return conversationId;
-        }
-
-        public static bool operator ==(Conversation left, Conversation right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Conversation left, Conversation right)
-        {
-            return !Equals(left, right);
         }
     }
 }

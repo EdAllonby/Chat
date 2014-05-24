@@ -100,5 +100,41 @@ namespace SharedClassesTests.Domain
 
             Assert.AreEqual(contributionList, conversation.GetAllContributions());
         }
+
+        [Test]
+        public void HashcodeTest()
+        {
+            var conversation = new Conversation(1);
+            var conversation2 = conversation;
+
+            Assert.AreEqual(conversation.GetHashCode(), conversation2.GetHashCode());
+        }
+
+        [Test]
+        public void EqualsTest()
+        {
+            const int ConversationId = 4;
+            var conversation = new Conversation(ConversationId);
+            var conversation2 = new Conversation(ConversationId);
+            Assert.AreEqual(conversation, conversation2);
+            Assert.IsTrue(conversation.Equals(conversation2 as object));
+        }
+
+        [Test]
+        public void ReferenceEqualsTest()
+        {
+            const int ConversationId = 4;
+            var conversation = new Conversation(ConversationId);
+            Conversation conversation2 = conversation;
+
+            Assert.IsTrue(conversation.Equals(conversation2));
+            Assert.IsTrue(conversation.Equals(conversation2 as object));
+            Assert.IsFalse(conversation.Equals(null));
+
+            object conversationObject = conversation;
+
+            Assert.IsFalse(conversationObject.Equals(2));
+            Assert.IsFalse(conversationObject.Equals(null));
+        }
     }
 }

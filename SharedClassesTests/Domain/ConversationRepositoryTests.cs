@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using SharedClasses.Domain;
 
@@ -18,7 +17,7 @@ namespace SharedClassesTests.Domain
             var conversationRepository = new ConversationRepository();
 
             conversationRepository.AddConversations(conversations);
-            Assert.AreEqual(conversations, conversationRepository.GetAllEntities().ToList());
+            Assert.AreEqual(conversations, conversationRepository.GetAllEntities());
         }
 
         [Test]
@@ -43,6 +42,14 @@ namespace SharedClassesTests.Domain
             var conversations = new List<Conversation> {conversation};
 
             Assert.AreEqual(conversations, conversationRepository.GetAllEntities());
+        }
+  
+        [Test]
+        public void FindNonExistentConversationTest()
+        {
+            var conversationRepository = new ConversationRepository();
+
+            Assert.IsNull(conversationRepository.FindEntityByID(3));
         }
     }
 }

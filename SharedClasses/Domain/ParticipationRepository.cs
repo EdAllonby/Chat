@@ -59,8 +59,6 @@ namespace SharedClasses.Domain
         /// <returns>The <see cref="Conversation"/> Id that the participants are in.</returns>
         public int GetConversationIdByParticipantsId(IEnumerable<int> participantIds)
         {
-            Contract.Requires(DoesConversationWithUsersExist(participantIds));
-
             Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
 
             return userIdsIndexedByConversationId
