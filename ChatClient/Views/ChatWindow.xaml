@@ -35,16 +35,16 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ListBox controlExtenders:ListBoxExtenders.AutoScrollToEnd="True" Margin="10"
+            <ListBox Name="MessagesBox" controlExtenders:ListBoxExtenders.AutoScrollToEnd="True" Margin="10"
                                  Grid.Column="0"
                                  Background="AliceBlue"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                  ItemsSource="{Binding ChatMessages, UpdateSourceTrigger=Default}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Message}" />
-                            <TextBlock Text="{Binding MessageDetails}" FontSize="10" Foreground="Gray" />
+                        <StackPanel MaxWidth="{Binding ActualWidth, ElementName=MessagesBox}" >
+                            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding MessageDetails}" FontSize="10" Foreground="Gray" TextWrapping="Wrap" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
