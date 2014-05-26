@@ -73,7 +73,7 @@ namespace ChatClient
             }
             else
             {
-                Log.Warn("User already connected.");
+                Log.WarnFormat("User {0} already connected.", username);
             }
 
             return response.LoginResult;

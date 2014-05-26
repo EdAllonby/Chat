@@ -20,8 +20,7 @@ namespace Server
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId =
-            new Dictionary<int, ConnectionHandler>();
+        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
 
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
@@ -96,15 +95,15 @@ namespace Server
 
         private void SendClientSnapshots(TcpClient tcpClient, int userId)
         {
-            GetUserSnapshotRequest(tcpClient);
+            CheckStreamContainsMessage(tcpClient, MessageNumber.UserSnapshotRequest);
 
             SendUserSnapshot(tcpClient);
 
-            GetConversationSnapshotRequest(tcpClient);
+            CheckStreamContainsMessage(tcpClient, MessageNumber.ConversationSnapshotRequest);
 
             IEnumerable<int> conversations = SendConversationSnapshot(tcpClient, userId);
 
-            GetParticipationSnapshotRequest(tcpClient);
+            CheckStreamContainsMessage(tcpClient, MessageNumber.ParticipationSnapshotRequest);
 
             SendParticipationSnapshot(tcpClient, conversations);
         }
@@ -146,30 +145,10 @@ namespace Server
             SendConnectionMessage(userSnapshot, tcpClient);
         }
 
-        private void GetUserSnapshotRequest(TcpClient tcpClient)
+        private void CheckStreamContainsMessage(TcpClient tcpClient, MessageNumber messageNumber)
         {
-            IMessage userSnapshotRequest = GetIMessage(tcpClient);
-
-            if (userSnapshotRequest.Identifier != MessageNumber.UserSnapshotRequest)
-            {
-                throw new IOException();
-            }
-        }
-
-        private void GetConversationSnapshotRequest(TcpClient tcpClient)
-        {
-            IMessage conversationSnapshotRequest = GetIMessage(tcpClient);
-            if (conversationSnapshotRequest.Identifier != MessageNumber.ConversationSnapshotRequest)
-            {
-                throw new IOException();
-            }
-        }
-
-        private void GetParticipationSnapshotRequest(TcpClient tcpClient)
-        {
-            IMessage participationSnapshotRequest = GetIMessage(tcpClient);
-
-            if (participationSnapshotRequest.Identifier != MessageNumber.ParticipationSnapshotRequest)
+            IMessage message = GetIMessage(tcpClient);
+            if (message.Identifier != messageNumber)
             {
                 throw new IOException();
             }
