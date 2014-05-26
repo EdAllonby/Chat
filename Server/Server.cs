@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -8,7 +7,6 @@ using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
-using SharedClasses.Serialiser;
 
 namespace Server
 {
@@ -20,19 +18,20 @@ namespace Server
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
+        private readonly ClientLoginHandler clientLoginHandler;
 
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly ClientHandler clientHandler = new ClientHandler();
+        
         private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
 
-        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
-
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly UserRepository userRepository = new UserRepository();
-        
+        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
+        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+
         public Server()
         {
             Log.Info("Server instance started");
+            clientLoginHandler = new ClientLoginHandler(clientHandler, entityIDGenerator, userRepository, conversationRepository, participationRepository);
             ListenForNewClients();
         }
 
@@ -58,135 +57,13 @@ namespace Server
 
         private void InitialiseNewClient(TcpClient tcpClient)
         {
-            LoginRequest loginRequest = GetLoginRequest(tcpClient);
+            LoginResponse loginResponse = clientLoginHandler.InitialiseNewClient(tcpClient);
 
-            User user = userRepository.FindUserByUsername(loginRequest.User.Username);
-
-            if (user == null || user.ConnectionStatus != ConnectionStatus.Connected)
+            if (loginResponse.LoginResult == LoginResult.Success)
             {
-                if (user == null)
-                {
-                    user = CreateUserEntity(loginRequest);
-                    NotifyClientsOfUser(user, NotificationType.Create, ConnectionStatus.Connected);
-                }
-                else
-                {
-                    NotifyClientsOfUser(user, NotificationType.Update, ConnectionStatus.Connected);
-                }
-                var loginResponse = new LoginResponse(user, LoginResult.Success);
-
-                SendConnectionMessage(loginResponse, tcpClient);
-
-                SendClientSnapshots(tcpClient, user.UserId);
-
-                var connectionHandler = new ConnectionHandler(user.UserId, tcpClient);
-
-                connectionHandler.OnNewMessage += NewMessageReceived;
-
-                clientConnectionHandlersIndexedByUserId[user.UserId] = connectionHandler;
+                clientHandler.AddNewConnectionHandler(loginResponse.User.UserId, tcpClient);
+                clientHandler.GetConnectionHandler(loginResponse.User.UserId).OnNewMessage += NewMessageReceived;
             }
-            else
-            {
-                Log.InfoFormat("User with user Id {0} already connected, denying user login.", user.UserId);
-                var loginResponse = new LoginResponse(null, LoginResult.AlreadyConnected);
-                SendConnectionMessage(loginResponse, tcpClient);
-            }
-        }
-
-        private void SendClientSnapshots(TcpClient tcpClient, int userId)
-        {
-            CheckStreamContainsMessage(tcpClient, MessageNumber.UserSnapshotRequest);
-
-            SendUserSnapshot(tcpClient);
-
-            CheckStreamContainsMessage(tcpClient, MessageNumber.ConversationSnapshotRequest);
-
-            IEnumerable<int> conversations = SendConversationSnapshot(tcpClient, userId);
-
-            CheckStreamContainsMessage(tcpClient, MessageNumber.ParticipationSnapshotRequest);
-
-            SendParticipationSnapshot(tcpClient, conversations);
-        }
-
-        private void SendParticipationSnapshot(TcpClient tcpClient, IEnumerable<int> conversations)
-        {
-            var userParticipations = new List<Participation>();
-
-            foreach (int conversationId in conversations)
-            {
-                userParticipations.AddRange(participationRepository.GetParticipationsByConversationId(conversationId));
-            }
-
-            var participationSnapshot = new ParticipationSnapshot(userParticipations);
-
-            SendConnectionMessage(participationSnapshot, tcpClient);
-        }
-
-        private IEnumerable<int> SendConversationSnapshot(TcpClient tcpClient, int userId)
-        {
-            IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(userId);
-
-            IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
-
-            List<Conversation> conversations =
-                conversationEnumerable.Select(conversationId => conversationRepository.FindConversationById(conversationId)).ToList();
-
-            var conversationSnapshot = new ConversationSnapshot(conversations);
-
-            SendConnectionMessage(conversationSnapshot, tcpClient);
-            return conversationEnumerable;
-        }
-
-        private void SendUserSnapshot(TcpClient tcpClient)
-        {
-            IEnumerable<User> currentUsers = userRepository.GetAllUsers();
-            var userSnapshot = new UserSnapshot(currentUsers);
-
-            SendConnectionMessage(userSnapshot, tcpClient);
-        }
-
-        private void CheckStreamContainsMessage(TcpClient tcpClient, MessageNumber messageNumber)
-        {
-            IMessage message = GetIMessage(tcpClient);
-            if (message.Identifier != messageNumber)
-            {
-                throw new IOException();
-            }
-        }
-
-        private IMessage GetIMessage(TcpClient tcpClient)
-        {
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
-
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-
-            return serialiser.Deserialise(tcpClient.GetStream());
-        }
-
-        private static LoginRequest GetLoginRequest(TcpClient tcpClient)
-        {
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
-
-            var serialiserFactory = new SerialiserFactory();
-
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
-
-            var loginRequest = (LoginRequest) serialiser.Deserialise(tcpClient.GetStream());
-
-            return loginRequest;
-        }
-
-        private User CreateUserEntity(LoginRequest clientLogin)
-        {
-            var newUser = new User(clientLogin.User.Username, entityIDGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
-
-            userRepository.AddUser(newUser);
-
-            return newUser;
         }
 
         private int CreateConversationEntity(ConversationRequest conversationRequest)
@@ -223,10 +100,7 @@ namespace Server
 
             var userNotification = new UserNotification(user, updateType);
 
-            foreach (ConnectionHandler handler in clientConnectionHandlersIndexedByUserId.Values)
-            {
-                handler.SendMessage(userNotification);
-            }
+            clientHandler.NotifyAllClients(userNotification);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -261,12 +135,6 @@ namespace Server
             }
         }
 
-        private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
-        {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
-            messageSerialiser.Serialise(message, tcpClient.GetStream());
-        }
-
         private bool CheckConversationIsValid(ConversationRequest conversationRequest)
         {
             // Check for no repeating users
@@ -285,7 +153,7 @@ namespace Server
 
             // Send message to each user in conversation
             foreach (ConnectionHandler participantConnectionHandler in participantIds
-                .Select(participant => clientConnectionHandlersIndexedByUserId[participant]))
+                .Select(participant => clientHandler.GetConnectionHandler(participant)))
             {
                 participantConnectionHandler.SendMessage(conversationNotification);
             }
@@ -300,14 +168,14 @@ namespace Server
                 .Select(participant => userRepository.FindUserByID(participant.UserId))
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected))
             {
-                clientConnectionHandlersIndexedByUserId[user.UserId].SendMessage(contributionNotification);
+                clientHandler.GetConnectionHandler(user.UserId).SendMessage(contributionNotification);
             }
         }
 
         private void RemoveClientHandler(int userId)
         {
-            clientConnectionHandlersIndexedByUserId.Remove(userId);
-            Log.Info("User with id " + userId + " logged out. Removing from Server's ConnectionHandler list");
+            clientHandler.RemoveConnectionHander(userId);
+            Log.Info("User with id " + userId + " logged out. Removing from ServerHandler's ConnectionHandler list");
         }
     }
 }
