@@ -8,14 +8,11 @@ namespace SharedClasses
     /// </summary>
     public sealed class MessageEventArgs : EventArgs
     {
-        public MessageEventArgs(IMessage message, int clientUserId)
+        public MessageEventArgs(IMessage message)
         {
             Message = message;
-            ClientUserId = clientUserId;
         }
 
         public IMessage Message { get; private set; }
-
-        public int ClientUserId { get; private set; }
     }
 }

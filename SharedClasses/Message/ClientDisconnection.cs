@@ -1,4 +1,5 @@
-﻿using SharedClasses.Serialiser;
+﻿using SharedClasses.Domain;
+using SharedClasses.Serialiser;
 
 namespace SharedClasses.Message
 {
@@ -9,8 +10,15 @@ namespace SharedClasses.Message
     /// therefore it is generated when the Server decides a Client has disconnected
     /// by using the associated userID in the <see cref="ConnectionHandler"/>
     /// </summary>
-    internal sealed class ClientDisconnection : IMessage
+    public sealed class ClientDisconnection : IMessage
     {
+        public ClientDisconnection(int userId)
+        {
+            UserId = userId;
+        }
+
+        public int UserId { get; private set; }
+
         public MessageNumber Identifier
         {
             get { return MessageNumber.ClientDisconnection; }
