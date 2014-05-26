@@ -30,7 +30,7 @@ namespace Server
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly UserRepository userRepository = new UserRepository();
-
+        
         public Server()
         {
             Log.Info("Server instance started");
