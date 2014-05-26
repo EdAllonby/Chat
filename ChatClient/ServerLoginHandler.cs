@@ -19,33 +19,38 @@ namespace ChatClient
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        private int clientUserId;
         private TcpClient serverConnection;
 
-        public ConnectionHandler CreateServerConnectionHandler()
+        public ConnectionHandler CreateServerConnectionHandler(int clientUserId)
         {
             return new ConnectionHandler(clientUserId, serverConnection);
         }
 
-        public InitialisedData ConnectToServer(string username, IPAddress targetIPAddress, int targetPort)
+        public LoginResponse ConnectToServer(string username, IPAddress targetIPAddress, int targetPort)
         {
             CreateConnection(targetIPAddress, targetPort);
 
             IMessage userRequest = new LoginRequest(username);
             SendConnectionMessage(userRequest, serverConnection);
             LoginResponse loginResponse = GetLoginResponse(serverConnection);
+            return loginResponse;
+        }
 
-            switch (loginResponse.LoginResult)
-            {
-                case LoginResult.Success:
-                    clientUserId = loginResponse.User.UserId;
-                    return GetSnapshots(clientUserId);
-                case LoginResult.AlreadyConnected:
-                    throw new UserAlreadyConnectedException();
-                default:
-                    // This case will never happen
-                    return new InitialisedData(0, null, null, null);
-            }
+        public InitialisedData GetSnapshots(int clientUserId)
+        {
+            SendConnectionMessage(new UserSnapshotRequest(), serverConnection);
+
+            UserSnapshot userSnapshot = GetUserSnapshot(serverConnection);
+
+            SendConnectionMessage(new ConversationSnapshotRequest(), serverConnection);
+
+            ConversationSnapshot conversationSnapshot = GetConversationSnapshot(serverConnection);
+
+            SendConnectionMessage(new ParticipationSnapshotRequest(), serverConnection);
+
+            ParticipationSnapshot participationSnapshot = GetParticipationSnapshot(serverConnection);
+
+            return new InitialisedData(clientUserId, userSnapshot, conversationSnapshot, participationSnapshot);
         }
 
         private void CreateConnection(IPAddress targetAddress, int targetPort)
@@ -88,23 +93,6 @@ namespace ChatClient
         private LoginResponse GetLoginResponse(TcpClient tcpClient)
         {
             return (LoginResponse) GetConnectionIMessage(tcpClient);
-        }
-
-        private InitialisedData GetSnapshots(int userId)
-        {
-            SendConnectionMessage(new UserSnapshotRequest(), serverConnection);
-
-            UserSnapshot userSnapshot = GetUserSnapshot(serverConnection);
-
-            SendConnectionMessage(new ConversationSnapshotRequest(), serverConnection);
-
-            ConversationSnapshot conversationSnapshot = GetConversationSnapshot(serverConnection);
-
-            SendConnectionMessage(new ParticipationSnapshotRequest(), serverConnection);
-
-            ParticipationSnapshot participationSnapshot = GetParticipationSnapshot(serverConnection);
-
-            return new InitialisedData(userId, userSnapshot, conversationSnapshot, participationSnapshot);
         }
 
         private UserSnapshot GetUserSnapshot(TcpClient tcpClient)

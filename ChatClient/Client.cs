@@ -9,12 +9,10 @@ namespace ChatClient
 {
     /// <summary>
     /// Handles the logic for <see cref="IMessage" />
-    /// Delegates Server specific communications to the <see cref="serverHandler" />
+    /// Delegates Server specific communications to the <see cref="connectionHandler" />
     /// </summary>
     public sealed class Client
     {
-        public delegate void LoginCompleteHandler();
-
         public delegate void NewContributionNotificationHandler(Conversation contributions);
 
         public delegate void NewConversationHandler(Conversation conversation);
@@ -27,7 +25,7 @@ namespace ChatClient
 
         private readonly ParticipationRepository participationRepository = new ParticipationRepository();
 
-        private readonly ServerHandler serverHandler = new ServerHandler();
+        private ConnectionHandler connectionHandler;
         private readonly UserRepository userRepository = new UserRepository();
 
         public int ClientUserId { get; private set; }
@@ -35,7 +33,6 @@ namespace ChatClient
         public event UserListHandler OnNewUser = delegate { };
         public event NewConversationHandler OnNewConversationNotification = delegate { };
         public event NewContributionNotificationHandler OnNewContributionNotification = delegate { };
-        public event LoginCompleteHandler OnLoginComplete = delegate { };
 
         private void NotifyClientOfUserChange()
         {
@@ -50,31 +47,46 @@ namespace ChatClient
         /// <param name="username">The name the user wants to have.</param>
         /// <param name="targetAddress">The address of the Server.</param>
         /// <param name="targetPort">The port the Server is running on.</param>
-        public void ConnectToServer(string username, IPAddress targetAddress, int targetPort)
+        public LoginResult ConnectToServer(string username, IPAddress targetAddress, int targetPort)
         {
-            InitialisedData initialisedData = serverHandler.ConnectToServer(username, targetAddress, targetPort);
+            var loginHandler = new ServerLoginHandler();
+            
+            LoginResponse response = loginHandler.ConnectToServer(username, targetAddress, targetPort);
+            
+            if (response.LoginResult == LoginResult.Success)
+            {
+                InitialisedData initialisedData = loginHandler.GetSnapshots(response.User.UserId);
 
-            ClientUserId = initialisedData.UserId;
+                connectionHandler = loginHandler.CreateServerConnectionHandler(response.User.UserId);
 
-            userRepository.AddUsers(initialisedData.UserSnapshot.Users);
+                Log.DebugFormat("Connection process to the server has finished");
 
-            conversationRepository.AddConversations(initialisedData.ConversationSnapshot.Conversations);
+                ClientUserId = initialisedData.UserId;
 
-            participationRepository.AddParticipations(initialisedData.ParticipationSnapshot.Participations);
+                userRepository.AddUsers(initialisedData.UserSnapshot.Users);
 
-            serverHandler.OnNewMessage += NewMessageReceived;
+                conversationRepository.AddConversations(initialisedData.ConversationSnapshot.Conversations);
 
-            OnLoginComplete();
+                participationRepository.AddParticipations(initialisedData.ParticipationSnapshot.Participations);
+
+                connectionHandler.OnNewMessage += NewMessageReceived;
+            }
+            else
+            {
+                Log.Warn("User already connected.");
+            }
+
+            return response.LoginResult;
         }
 
-        /// <summary>s
+        /// <summary>
         /// Sends a <see cref="ConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="participantIds">The participants that are included in the conversation.</param>
         public void SendConversationRequest(List<int> participantIds)
         {
             var conversationRequest = new ConversationRequest(participantIds);
-            serverHandler.SendMessage(conversationRequest);
+            connectionHandler.SendMessage(conversationRequest);
         }
 
         /// <summary>
@@ -85,7 +97,7 @@ namespace ChatClient
         public void SendContributionRequest(int conversationID, string message)
         {
             var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
-            serverHandler.SendMessage(clientContribution);
+            connectionHandler.SendMessage(clientContribution);
         }
 
         /// <summary>
@@ -145,7 +157,6 @@ namespace ChatClient
         {
             return participationRepository.GetConversationIdByParticipantsId(participantIds);
         }
-
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
         {

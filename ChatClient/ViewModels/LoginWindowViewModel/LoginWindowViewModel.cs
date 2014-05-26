@@ -6,6 +6,7 @@ using System.Windows.Input;
 using ChatClient.Commands;
 using ChatClient.Views;
 using log4net;
+using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.LoginWindowViewModel
 {
@@ -22,8 +23,6 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         public LoginWindowViewModel()
         {
-            Client.OnLoginComplete += OpenUserListWindow;
-
             var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
 
             commandLineArgs.RemoveAt(0);
@@ -88,7 +87,18 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         {
             try
             {
-                Client.ConnectToServer(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+                LoginResult result = Client.ConnectToServer(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+
+                switch (result)
+                {
+                    case LoginResult.Success:
+                        OpenUserListWindow();
+                        break;
+                    
+                    case LoginResult.AlreadyConnected:
+                        MessageBox.Show(string.Format("User already connected with username: {0}", username), "Login Denied");
+                        break;
+                }
             }
             catch (TimeoutException timeoutException)
             {
@@ -99,11 +109,6 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             {
                 Log.Error("Port is incorrect", socketException);
                 MessageBox.Show("Could log in to server, check the port");
-            }
-            catch (UserAlreadyConnectedException userAlreadyConnectedException)
-            {
-                Log.Error("User is already connected", userAlreadyConnectedException);
-                MessageBox.Show(String.Format("{0} is already connected to the Server!", loginParser.Username));
             }
         }
 
