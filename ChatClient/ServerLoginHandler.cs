@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ChatClient.ViewModels.LoginWindowViewModel;
 using log4net;
 using SharedClasses;
 using SharedClasses.Message;
