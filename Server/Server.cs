@@ -115,8 +115,9 @@ namespace Server
                     break;
 
                 case MessageNumber.ClientDisconnection:
-                    RemoveClientHandler(e.ClientUserId);
-                    NotifyClientsOfUser(userRepository.FindUserByID(e.ClientUserId), NotificationType.Update,
+                    var clientDisconnection = (ClientDisconnection) message;
+                    RemoveClientHandler(clientDisconnection.UserId);
+                    NotifyClientsOfUser(userRepository.FindUserByID(clientDisconnection.UserId), NotificationType.Update,
                         ConnectionStatus.Disconnected);
                     break;
 

@@ -35,14 +35,14 @@ namespace SharedClasses
 
                     IMessage message = serialiser.Deserialise(tcpClient.GetStream());
 
-                    OnNewMessage(this, new MessageEventArgs(message, clientUserId));
+                    OnNewMessage(this, new MessageEventArgs(message));
                 }
             }
             catch (IOException)
             {
                 Log.Info("Detected client disconnection, sending ClientDisconnection object to Server");
-                IMessage message = new ClientDisconnection();
-                OnNewMessage(this, new MessageEventArgs(message, clientUserId));
+                IMessage message = new ClientDisconnection(clientUserId);
+                OnNewMessage(this, new MessageEventArgs(message));
             }
         }
     }
