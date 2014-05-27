@@ -25,11 +25,11 @@ namespace ChatClient
             return new ConnectionHandler(clientUserId, serverConnection);
         }
 
-        public LoginResponse ConnectToServer(string username, IPAddress targetIPAddress, int targetPort)
+        public LoginResponse ConnectToServer(LoginDetails loginDetails)
         {
-            CreateConnection(targetIPAddress, targetPort);
+            CreateConnection(loginDetails.Address, loginDetails.Port);
 
-            IMessage userRequest = new LoginRequest(username);
+            IMessage userRequest = new LoginRequest(loginDetails.Username);
             SendConnectionMessage(userRequest, serverConnection);
             LoginResponse loginResponse = GetLoginResponse(serverConnection);
             return loginResponse;

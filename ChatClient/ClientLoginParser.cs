@@ -14,14 +14,22 @@ namespace ChatClient
         private const int PortMinBound = 0;
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginParser));
 
-        public String Username { get; private set; }
-        public IPAddress TargetedAddress { get; private set; }
-        public int TargetedPort { get; private set; }
+        private bool isParsed;
 
-        public bool ParseCommandLineArguments(IEnumerable<String> commandLineArguments)
+        private string targetedUsername;
+        private IPAddress targetedAddress;
+        private int targetedPort;
+
+        /// <summary>
+        /// Tries to parse the command line arguments to a <see cref="LoginDetails"/> object.
+        /// </summary>
+        /// <param name="commandLineArguments">A collection of command line arguments containing the login details.</param>
+        /// <param name="loginDetails">An object to store the parsed login details.</param>
+        /// <returns>Whether the parse was successful.</returns>
+        public bool TryParseCommandLineArguments(IEnumerable<String> commandLineArguments, out LoginDetails loginDetails)
         {
             string parameterName = "";
-            bool result = false;
+
             foreach (string argument in commandLineArguments)
             {
                 if (argument[0] == '/')
@@ -32,92 +40,101 @@ namespace ChatClient
                 {
                     if (parameterName == "/Username")
                     {
-                        result = SetUserName(argument);
+                        SetUserName(argument);
                     }
-                    if (parameterName == "/IPAddress" && result)
+                    if (parameterName == "/IPAddress" && isParsed)
                     {
-                        result = SetIPAddress(argument);
+                        SetIPAddress(argument);
                     }
-                    if (parameterName == "/Port" && result)
+                    if (parameterName == "/Port" && isParsed)
                     {
-                        result = SetPort(argument);
+                        SetPort(argument);
                     }
                 }
             }
-            Log.Info(result
+
+            loginDetails = isParsed ? new LoginDetails(targetedUsername, targetedAddress, targetedPort) : null;
+
+            Log.Info(isParsed
                 ? "Command line arguments successfully parsed"
                 : "Command line arguments incomplete. Going to manual entry of Username, Server and Port");
 
-            return result;
+            return isParsed;
         }
 
-        public bool ParseLogonDetails(string username, string ipAddress, string port)
+        /// <summary>
+        /// Tries to parse the username, ipAddress and port strings to a <see cref="LoginDetails"/> object.
+        /// </summary>
+        /// <param name="username">The username wanted to be set.</param>
+        /// <param name="ipAddress">The IPAddress wanted to be set.</param>
+        /// <param name="port">The port wanted to be set.</param>
+        /// <param name="loginDetails">An object to store the parsed login details.</param>
+        /// <returns>Whether the parse was successful.</returns>
+        public bool TryParseLogonDetails(string username, string ipAddress, string port, out LoginDetails loginDetails)
         {
-            bool result = SetUserName(username);
-            if (result)
-            {
-                result = SetIPAddress(ipAddress);
-            }
-            if (result)
-            {
-                result = SetPort(port);
-            }
+            SetUserName(username);
 
-            return result;
+            if (isParsed)
+            {
+                SetIPAddress(ipAddress);
+            }
+            if (isParsed)
+            {
+                SetPort(port);
+            }
+            loginDetails = isParsed ? new LoginDetails(targetedUsername, targetedAddress, targetedPort) : null;
+
+            return isParsed;
         }
 
-        private bool SetUserName(string userName)
+        private void SetUserName(string username)
         {
-            if (String.IsNullOrEmpty(userName))
+            if (String.IsNullOrEmpty(username))
             {
-                return false;
+                isParsed = false;
             }
 
-            Username = userName;
-            Log.Info("Username set as " + Username);
+            targetedUsername = username;
+            Log.Info("Username set as " + targetedUsername);
 
-            return true;
+            isParsed = true;
         }
 
-        private bool SetIPAddress(string ipString)
+        private void SetIPAddress(string ipString)
         {
             IPAddress address;
-            bool addressResult = IPAddress.TryParse(ipString, out address);
+            isParsed = IPAddress.TryParse(ipString, out address);
 
-            if (addressResult)
+            if (isParsed)
             {
                 Log.Info("User entered target IP Address " + address);
-                TargetedAddress = address;
+                targetedAddress = address;
             }
             else
             {
                 Log.Warn("IPAddress was not a valid entry");
             }
-
-            return addressResult;
         }
 
-        private bool SetPort(string portLine)
+        private void SetPort(string portLine)
         {
             int port;
-            bool portResult = int.TryParse(portLine, out port);
+            isParsed = int.TryParse(portLine, out port);
 
             if (port > PortMaxBound || port < PortMinBound)
             {
-                portResult = false;
+                isParsed = false;
             }
 
-            if (portResult)
+            if (isParsed)
             {
                 Log.Info("User entered port " + port);
-                TargetedPort = port;
+                targetedPort = port;
             }
             else
             {
                 Log.Warn("Port was not a valid entry");
             }
-
-            return portResult;
         }
     }
 }
