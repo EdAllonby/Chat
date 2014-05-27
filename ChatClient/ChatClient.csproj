@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="InitialisedData.cs" />
+    <Compile Include="LoginDetails.cs" />
     <Compile Include="ServerLoginHandler.cs" />
     <Compile Include="ViewModels\UserListViewModel\ConnectedUserViewModel.cs" />
     <Compile Include="ViewModels\ChatWindowViewModel\UserMessageViewModel.cs" />

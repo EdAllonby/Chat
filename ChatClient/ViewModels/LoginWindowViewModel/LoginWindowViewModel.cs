@@ -30,10 +30,12 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             if (commandLineArgs.Count != 0)
             {
                 Log.Info("Command line arguments found, attempting to parse");
-                bool result = loginParser.ParseCommandLineArguments(Environment.GetCommandLineArgs());
+
+                LoginDetails loginDetails;
+                bool result = loginParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
                 if (result)
                 {
-                    AttemptLogin();
+                    AttemptLogin(loginDetails);
                 }
             }
         }
@@ -83,11 +85,11 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             }
         }
 
-        private void AttemptLogin()
+        private void AttemptLogin(LoginDetails loginDetails)
         {
             try
             {
-                LoginResult result = Client.ConnectToServer(loginParser.Username, loginParser.TargetedAddress, loginParser.TargetedPort);
+                LoginResult result = Client.ConnectToServer(loginDetails);
 
                 switch (result)
                 {
@@ -138,10 +140,11 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void LoginToChat()
         {
-            bool result = loginParser.ParseLogonDetails(username, ipAddress, port);
+            LoginDetails loginDetails;
+            bool result = loginParser.TryParseLogonDetails(username, ipAddress, port, out loginDetails);
             if (result)
             {
-                AttemptLogin();
+                AttemptLogin(loginDetails);
             }
             else
             {

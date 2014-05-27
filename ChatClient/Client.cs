@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
@@ -44,14 +43,12 @@ namespace ChatClient
         /// Connects the Client to the server using the parameters as connection details
         /// and gets the state of <see cref="Client"/> up to date with the user status'. 
         /// </summary>
-        /// <param name="username">The name the user wants to have.</param>
-        /// <param name="targetAddress">The address of the Server.</param>
-        /// <param name="targetPort">The port the Server is running on.</param>
-        public LoginResult ConnectToServer(string username, IPAddress targetAddress, int targetPort)
+        /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
+        public LoginResult ConnectToServer(LoginDetails loginDetails)
         {
             var loginHandler = new ServerLoginHandler();
-            
-            LoginResponse response = loginHandler.ConnectToServer(username, targetAddress, targetPort);
+
+            LoginResponse response = loginHandler.ConnectToServer(loginDetails);
             
             if (response.LoginResult == LoginResult.Success)
             {
@@ -73,7 +70,7 @@ namespace ChatClient
             }
             else
             {
-                Log.WarnFormat("User {0} already connected.", username);
+                Log.WarnFormat("User {0} already connected.", loginDetails.Username);
             }
 
             return response.LoginResult;
