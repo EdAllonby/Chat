@@ -18,7 +18,14 @@ namespace ChatClient
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
+        private readonly RepositoryManager repositoryManager;
+
         private TcpClient serverConnection;
+
+        public ServerLoginHandler(RepositoryManager repositoryManager)
+        {
+            this.repositoryManager = repositoryManager;
+        }
 
         public ConnectionHandler CreateServerConnectionHandler(int clientUserId)
         {
@@ -35,7 +42,7 @@ namespace ChatClient
             return loginResponse;
         }
 
-        public InitialisedData GetSnapshots(int clientUserId)
+        public void GetSnapshots()
         {
             SendConnectionMessage(new UserSnapshotRequest(), serverConnection);
 
@@ -49,7 +56,9 @@ namespace ChatClient
 
             ParticipationSnapshot participationSnapshot = GetParticipationSnapshot(serverConnection);
 
-            return new InitialisedData(clientUserId, userSnapshot, conversationSnapshot, participationSnapshot);
+            repositoryManager.UserRepository.AddUsers(userSnapshot.Users);
+            repositoryManager.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
+            repositoryManager.ParticipationRepository.AddParticipations(participationSnapshot.Participations);
         }
 
         private void CreateConnection(IPAddress targetAddress, int targetPort)
