@@ -5,8 +5,7 @@
     /// </summary>
     public enum NotificationType
     {
-        Create,
+        Update,
         Delete,
-        Update
     }
 }

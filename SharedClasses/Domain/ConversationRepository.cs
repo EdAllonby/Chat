@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using log4net;
 
 namespace SharedClasses.Domain
@@ -13,6 +14,13 @@ namespace SharedClasses.Domain
 
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
+        public delegate void ConversationChangedHandler(Conversation conversation);
+
+        public delegate void ConversationsChangedHandler(IEnumerable<Conversation> conversations);
+
+        public event ConversationChangedHandler ConversationAdded = delegate { };
+        public event ConversationsChangedHandler ConversationsAdded = delegate { };
+
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.
         /// </summary>
@@ -22,6 +30,7 @@ namespace SharedClasses.Domain
             Contract.Requires(conversation != null);
 
             conversationsIndexedById[conversation.ConversationId] = conversation;
+            ConversationAdded(conversation);
             Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
         }
 
@@ -33,11 +42,13 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(conversations != null);
 
-            foreach (Conversation conversation in conversations)
+            IEnumerable<Conversation> conversationsEnumerable = conversations as IList<Conversation> ?? conversations.ToList();
+            foreach (Conversation conversation in conversationsEnumerable)
             {
                 conversationsIndexedById[conversation.ConversationId] = conversation;
                 Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
             }
+            ConversationsAdded(conversationsEnumerable);
         }
 
         /// <summary>

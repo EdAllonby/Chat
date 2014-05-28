@@ -10,9 +10,15 @@ namespace SharedClasses.Domain
     /// </summary>
     public sealed class UserRepository
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
+        public delegate void UserChangedHandler(User user);
 
+        public delegate void UsersChangedHandler(IEnumerable<User> users);
+
+        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
+
+        public event UserChangedHandler UserAdded = delegate { };
+        public event UsersChangedHandler UsersAdded = delegate { };
 
         /// <summary>
         /// Adds or updates a <see cref="User"/> entity to the repository.
@@ -32,7 +38,7 @@ namespace SharedClasses.Domain
             }
 
             usersIndexedById[user.UserId] = user;
-
+            UserAdded(user);
         }
 
         /// <summary>
@@ -43,11 +49,14 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(users != null);
 
-            foreach (User user in users)
+            IEnumerable<User> usersEnumerable = users as IList<User> ?? users.ToList();
+
+            foreach (User user in usersEnumerable)
             {
                 usersIndexedById[user.UserId] = user;
                 Log.Debug("User with Id " + user.UserId + " added to user repository");
             }
+            UsersAdded(usersEnumerable);
         }
 
         /// <summary>

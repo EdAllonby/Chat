@@ -8,6 +8,13 @@ namespace SharedClasses.Message
     [Serializable]
     public class ParticipationSnapshotRequest : IMessage
     {
+        public ParticipationSnapshotRequest(int userId)
+        {
+            UserId = userId;
+        }
+
+        public int UserId { get; private set; }
+
         public MessageNumber Identifier
         {
             get { return MessageNumber.ParticipationSnapshotRequest; }

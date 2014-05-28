@@ -26,13 +26,13 @@ namespace ChatClient
 
         public int ClientUserId { get; private set; }
 
-        public event UserListHandler OnNewUser = delegate { };
-        public event NewConversationHandler OnNewConversationNotification = delegate { };
-        public event NewContributionNotificationHandler OnNewContributionNotification = delegate { };
+        public event UserListHandler NewUser = delegate { };
+        public event NewConversationHandler NewConversationNotification = delegate { };
+        public event NewContributionNotificationHandler NewContributionNotification = delegate { };
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(repositoryManager.UserRepository.GetAllUsers());
+            NewUser(repositoryManager.UserRepository.GetAllUsers());
             Log.Info("User changed event fired");
         }
 
@@ -49,7 +49,7 @@ namespace ChatClient
 
             if (response.LoginResult == LoginResult.Success)
             {
-                loginHandler.GetSnapshots();
+                loginHandler.GetSnapshots(response.User.UserId);
 
                 connectionHandler = loginHandler.CreateServerConnectionHandler(response.User.UserId);
 
@@ -171,7 +171,7 @@ namespace ChatClient
                     break;
             }
         }
-
+        
         private void AddParticipants(ConversationNotification conversationNotification)
         {
             foreach (int participantId in conversationNotification.ParticipantIds)
@@ -183,18 +183,17 @@ namespace ChatClient
 
         private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
-            Conversation conversation =
-                repositoryManager.ConversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
+            Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
 
             conversation.AddContribution(contributionNotification);
-            OnNewContributionNotification(conversation);
+            NewContributionNotification(conversation);
         }
 
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             var conversation = new Conversation(conversationNotification.ConversationId);
             repositoryManager.ConversationRepository.AddConversation(conversation);
-            OnNewConversationNotification(conversation);
+            NewConversationNotification(conversation);
         }
 
         private void UpdateUserRepository(UserNotification userNotification)
