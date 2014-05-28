@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using SharedClasses;
 using SharedClasses.Message;
 
@@ -7,29 +6,23 @@ namespace Server
 {
     internal class ClientHandler
     {
-        private readonly IDictionary<int, ConnectionHandler> clientConnectionHandlersIndexedByUserId = new Dictionary<int, ConnectionHandler>();
+        private ClientLoginHandler clientLoginHandler;
 
-        public void AddNewConnectionHandler(int userId, TcpClient tcpClient)
+        public LoginResponse LoginClient(TcpClient tcpClient, EntityGeneratorFactory entityGeneratorFactory, RepositoryManager repositoryManager)
         {
-            clientConnectionHandlersIndexedByUserId[userId] = new ConnectionHandler(userId, tcpClient);
+            clientLoginHandler = new ClientLoginHandler(entityGeneratorFactory, repositoryManager);
+            return clientLoginHandler.InitialiseNewClient(tcpClient);
+        }
+        public void CreateConnectionHandler(int userId, TcpClient tcpClient)
+        {
+            ConnectionHandler = new ConnectionHandler(userId, tcpClient);
         }
 
-        public ConnectionHandler GetConnectionHandler(int userId)
+        public void SendMessage(IMessage message)
         {
-            return clientConnectionHandlersIndexedByUserId[userId];
+            ConnectionHandler.SendMessage(message);
         }
 
-        public void RemoveConnectionHander(int userId)
-        {
-            clientConnectionHandlersIndexedByUserId.Remove(userId);
-        }
-
-        public void NotifyAllClients(IMessage message)
-        {
-            foreach (ConnectionHandler handler in clientConnectionHandlersIndexedByUserId.Values)
-            {
-                handler.SendMessage(message);
-            }
-        }
+        public ConnectionHandler ConnectionHandler { get; private set; }
     }
 }

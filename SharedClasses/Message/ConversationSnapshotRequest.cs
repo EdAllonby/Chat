@@ -8,6 +8,13 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class ConversationSnapshotRequest : IMessage
     {
+        public ConversationSnapshotRequest(int userId)
+        {
+            UserId = userId;
+        }
+
+        public int UserId { get; private set; }
+
         public MessageNumber Identifier
         {
             get { return MessageNumber.ConversationSnapshotRequest; }

@@ -42,17 +42,17 @@ namespace ChatClient
             return loginResponse;
         }
 
-        public void GetSnapshots()
+        public void GetSnapshots(int userId)
         {
-            SendConnectionMessage(new UserSnapshotRequest(), serverConnection);
+            SendConnectionMessage(new UserSnapshotRequest(userId), serverConnection);
 
             UserSnapshot userSnapshot = GetUserSnapshot(serverConnection);
 
-            SendConnectionMessage(new ConversationSnapshotRequest(), serverConnection);
+            SendConnectionMessage(new ConversationSnapshotRequest(userId), serverConnection);
 
             ConversationSnapshot conversationSnapshot = GetConversationSnapshot(serverConnection);
 
-            SendConnectionMessage(new ParticipationSnapshotRequest(), serverConnection);
+            SendConnectionMessage(new ParticipationSnapshotRequest(userId), serverConnection);
 
             ParticipationSnapshot participationSnapshot = GetParticipationSnapshot(serverConnection);
 

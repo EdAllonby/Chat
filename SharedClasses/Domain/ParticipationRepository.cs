@@ -7,9 +7,16 @@ namespace SharedClasses.Domain
 {
     public sealed class ParticipationRepository
     {
+        public delegate void ParticipationChangedHandler(Participation participation);
+
+        public delegate void ParticipationsChangedHandler(IEnumerable<Participation> participations);
+
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
         private readonly List<Participation> participations = new List<Participation>();
+
+        public event ParticipationChangedHandler ParticipationAdded = delegate { };
+        public event ParticipationsChangedHandler ParticipationsAdded = delegate { };
 
         /// <summary>
         /// Adds a <see cref="Participation"/> entity to the repository
@@ -18,17 +25,22 @@ namespace SharedClasses.Domain
         public void AddParticipation(Participation participation)
         {
             participations.Add(participation);
+            ParticipationAdded(participation);
         }
 
         public void AddParticipations(IEnumerable<Participation> newParticipations)
         {
             Contract.Requires(newParticipations != null);
 
-            foreach (Participation participation in newParticipations)
+            IEnumerable<Participation> newParticipationsEnumerable = newParticipations as IList<Participation> ?? newParticipations.ToList();
+
+            foreach (Participation participation in newParticipationsEnumerable)
             {
                 participations.Add(participation);
                 Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
             }
+
+            ParticipationsAdded(newParticipationsEnumerable);
         }
 
         /// <summary>

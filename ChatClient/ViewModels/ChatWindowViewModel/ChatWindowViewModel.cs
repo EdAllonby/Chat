@@ -24,7 +24,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             windowTitle = Client.GetUser(Client.ClientUserId).Username;
 
-            Client.OnNewContributionNotification += NewContributionNotificationReceived;
+            Client.NewContributionNotification += NewContributionNotificationReceived;
         }
 
         public string WindowTitle

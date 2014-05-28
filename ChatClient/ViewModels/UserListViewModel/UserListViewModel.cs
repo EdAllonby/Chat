@@ -18,11 +18,11 @@ namespace ChatClient.ViewModels.UserListViewModel
         {
             GetAllUsers(Client.GetAllUsers());
 
-            Client.OnNewUser += OnNewUser;
+            Client.NewUser += NewUser;
 
-            Client.OnNewConversationNotification += OnNewConversationNotification;
+            Client.NewConversationNotification += NewConversationNotification;
 
-            Client.OnNewContributionNotification += OnNewContributionNotification;
+            Client.NewContributionNotification += NewContributionNotification;
         }
 
         public string Username
@@ -75,12 +75,12 @@ namespace ChatClient.ViewModels.UserListViewModel
             get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
-        private void OnNewConversationNotification(Conversation conversation)
+        private void NewConversationNotification(Conversation conversation)
         {
             CreateNewConversationWindow(conversation);
         }
 
-        private void OnNewContributionNotification(Conversation contributions)
+        private void NewContributionNotification(Conversation contributions)
         {
             CreateNewConversationWindow(contributions);
         }
@@ -107,7 +107,7 @@ namespace ChatClient.ViewModels.UserListViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        private void OnNewUser(IEnumerable<User> newUser)
+        private void NewUser(IEnumerable<User> newUser)
         {
             GetAllUsers(newUser);
         }
