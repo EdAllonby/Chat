@@ -20,12 +20,9 @@ namespace ChatClient
 
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
-
-        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
-
         private ConnectionHandler connectionHandler;
-        private readonly UserRepository userRepository = new UserRepository();
+
+        private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
         public int ClientUserId { get; private set; }
 
@@ -35,7 +32,7 @@ namespace ChatClient
 
         private void NotifyClientOfUserChange()
         {
-            OnNewUser(userRepository.GetAllUsers());
+            OnNewUser(repositoryManager.UserRepository.GetAllUsers());
             Log.Info("User changed event fired");
         }
 
@@ -46,25 +43,19 @@ namespace ChatClient
         /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
         public LoginResult ConnectToServer(LoginDetails loginDetails)
         {
-            var loginHandler = new ServerLoginHandler();
+            var loginHandler = new ServerLoginHandler(repositoryManager);
 
             LoginResponse response = loginHandler.ConnectToServer(loginDetails);
-            
+
             if (response.LoginResult == LoginResult.Success)
             {
-                InitialisedData initialisedData = loginHandler.GetSnapshots(response.User.UserId);
+                loginHandler.GetSnapshots();
 
                 connectionHandler = loginHandler.CreateServerConnectionHandler(response.User.UserId);
 
                 Log.DebugFormat("Connection process to the server has finished");
 
-                ClientUserId = initialisedData.UserId;
-
-                userRepository.AddUsers(initialisedData.UserSnapshot.Users);
-
-                conversationRepository.AddConversations(initialisedData.ConversationSnapshot.Conversations);
-
-                participationRepository.AddParticipations(initialisedData.ParticipationSnapshot.Participations);
+                ClientUserId = response.User.UserId;
 
                 connectionHandler.OnNewMessage += NewMessageReceived;
             }
@@ -103,7 +94,7 @@ namespace ChatClient
         /// <returns>A collection of all <see cref="User"/>s.</returns>
         public IEnumerable<User> GetAllUsers()
         {
-            return userRepository.GetAllUsers();
+            return repositoryManager.UserRepository.GetAllUsers();
         }
 
         /// <summary>
@@ -112,7 +103,7 @@ namespace ChatClient
         /// <returns>A collection of all <see cref="Participation"/>s.</returns>
         public IEnumerable<Participation> GetAllParticipations()
         {
-            return participationRepository.GetAllParticipations();
+            return repositoryManager.ParticipationRepository.GetAllParticipations();
         }
 
         /// <summary>
@@ -122,7 +113,7 @@ namespace ChatClient
         /// <returns>The <see cref="User"/> that matches the <see cref="User"/> Id.</returns>
         public User GetUser(int userId)
         {
-            return userRepository.FindUserByID(userId);
+            return repositoryManager.UserRepository.FindUserByID(userId);
         }
 
         /// <summary>
@@ -132,7 +123,7 @@ namespace ChatClient
         /// <returns>The <see cref="Conversation"/> that matches the <see cref="Conversation"/> Id.</returns>
         public Conversation GetConversation(int conversationId)
         {
-            return conversationRepository.FindConversationById(conversationId);
+            return repositoryManager.ConversationRepository.FindConversationById(conversationId);
         }
 
         /// <summary>
@@ -142,7 +133,7 @@ namespace ChatClient
         /// <returns>Whether a conversation exists for the set of <see cref="User"/>s.</returns>
         public bool DoesConversationExist(IEnumerable<int> participantIds)
         {
-            return participationRepository.DoesConversationWithUsersExist(participantIds);
+            return repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(participantIds);
         }
 
         /// <summary>
@@ -152,7 +143,7 @@ namespace ChatClient
         /// <returns>The <see cref="Conversation"/> Id.</returns>
         public int GetConversationId(IEnumerable<int> participantIds)
         {
-            return participationRepository.GetConversationIdByParticipantsId(participantIds);
+            return repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -185,7 +176,7 @@ namespace ChatClient
         {
             foreach (int participantId in conversationNotification.ParticipantIds)
             {
-                participationRepository.AddParticipation(new Participation(participantId,
+                repositoryManager.ParticipationRepository.AddParticipation(new Participation(participantId,
                     conversationNotification.ConversationId));
             }
         }
@@ -193,7 +184,7 @@ namespace ChatClient
         private void AddContributionToConversation(ContributionNotification contributionNotification)
         {
             Conversation conversation =
-                conversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
+                repositoryManager.ConversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
 
             conversation.AddContribution(contributionNotification);
             OnNewContributionNotification(conversation);
@@ -202,13 +193,13 @@ namespace ChatClient
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
             var conversation = new Conversation(conversationNotification.ConversationId);
-            conversationRepository.AddConversation(conversation);
+            repositoryManager.ConversationRepository.AddConversation(conversation);
             OnNewConversationNotification(conversation);
         }
 
         private void UpdateUserRepository(UserNotification userNotification)
         {
-            userRepository.AddUser(userNotification.User);
+            repositoryManager.UserRepository.AddUser(userNotification.User);
         }
     }
 }

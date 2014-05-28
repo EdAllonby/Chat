@@ -91,6 +91,7 @@
     <Compile Include="Message\LoginResult.cs" />
     <Compile Include="Message\ParticipationSnapshot.cs" />
     <Compile Include="Message\ParticipationSnapshotRequest.cs" />
+    <Compile Include="RepositoryManager.cs" />
     <Compile Include="Serialiser\ContributionNotificationSerialiser.cs" />
     <Compile Include="Message\ContributionRequest.cs" />
     <Compile Include="Serialiser\ContributionRequestSerialiser.cs" />

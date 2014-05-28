@@ -24,14 +24,12 @@ namespace Server
         
         private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
 
-        private readonly UserRepository userRepository = new UserRepository();
-        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
+        private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
         public Server()
         {
             Log.Info("Server instance started");
-            clientLoginHandler = new ClientLoginHandler(clientHandler, entityIDGenerator, userRepository, conversationRepository, participationRepository);
+            clientLoginHandler = new ClientLoginHandler(clientHandler, entityIDGenerator, repositoryManager);
             ListenForNewClients();
         }
 
@@ -74,10 +72,10 @@ namespace Server
 
             foreach (int participantId in conversationRequest.ParticipantIds)
             {
-                participationRepository.AddParticipation(new Participation(participantId, conversationId));
+                repositoryManager.ParticipationRepository.AddParticipation(new Participation(participantId, conversationId));
             }
 
-            conversationRepository.AddConversation(newConversation);
+            repositoryManager.ConversationRepository.AddConversation(newConversation);
 
             return conversationId;
         }
@@ -87,7 +85,7 @@ namespace Server
             var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(),
                 contributionRequest.Contribution);
 
-            Conversation conversation = conversationRepository.FindConversationById(newContribution.ConversationId);
+            Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(newContribution.ConversationId);
 
             conversation.AddContribution(newContribution);
 
@@ -117,7 +115,7 @@ namespace Server
                 case MessageNumber.ClientDisconnection:
                     var clientDisconnection = (ClientDisconnection) message;
                     RemoveClientHandler(clientDisconnection.UserId);
-                    NotifyClientsOfUser(userRepository.FindUserByID(clientDisconnection.UserId), NotificationType.Update,
+                    NotifyClientsOfUser(repositoryManager.UserRepository.FindUserByID(clientDisconnection.UserId), NotificationType.Update,
                         ConnectionStatus.Disconnected);
                     break;
 
@@ -145,7 +143,7 @@ namespace Server
                 return false;
             }
 
-            return !participationRepository.DoesConversationWithUsersExist(conversationRequest.ParticipantIds);
+            return !repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(conversationRequest.ParticipantIds);
         }
 
         private void SendConversationNotificationToClients(List<int> participantIds, int conversationId)
@@ -163,10 +161,10 @@ namespace Server
         private void SendContributionNotificationToParticipants(Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution);
-            Conversation conversation = conversationRepository.FindConversationById(contribution.ConversationId);
+            Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);
 
-            foreach (User user in participationRepository.GetParticipationsByConversationId(conversation.ConversationId)
-                .Select(participant => userRepository.FindUserByID(participant.UserId))
+            foreach (User user in repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.ConversationId)
+                .Select(participant => repositoryManager.UserRepository.FindUserByID(participant.UserId))
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected))
             {
                 clientHandler.GetConnectionHandler(user.UserId).SendMessage(contributionNotification);

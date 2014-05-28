@@ -16,29 +16,23 @@ namespace Server
 
         private readonly ClientHandler clientHandler;
         private readonly EntityGeneratorFactory entityIDGenerator;
-        private readonly UserRepository userRepository;
-        private readonly ConversationRepository conversationRepository;
-        private readonly ParticipationRepository participationRepository;
+        private readonly RepositoryManager repositoryManager;
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         public ClientLoginHandler(ClientHandler clientHandler,
             EntityGeneratorFactory entityIDGenerator,
-            UserRepository userRepository,
-            ConversationRepository conversationRepository,
-            ParticipationRepository participationRepository)
+            RepositoryManager repositoryManager)
         {
             this.clientHandler = clientHandler;
             this.entityIDGenerator = entityIDGenerator;
-            this.userRepository = userRepository;
-            this.conversationRepository = conversationRepository;
-            this.participationRepository = participationRepository;
+            this.repositoryManager = repositoryManager;
         }
 
         public LoginResponse InitialiseNewClient(TcpClient tcpClient)
         {
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
-            User user = userRepository.FindUserByUsername(loginRequest.User.Username);
+            User user = repositoryManager.UserRepository.FindUserByUsername(loginRequest.User.Username);
 
             LoginResponse loginResponse;
 
@@ -91,7 +85,7 @@ namespace Server
         {
             var newUser = new User(clientLogin.User.Username, entityIDGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
 
-            userRepository.AddUser(newUser);
+            repositoryManager.UserRepository.AddUser(newUser);
 
             return newUser;
         }
@@ -123,7 +117,7 @@ namespace Server
 
             foreach (int conversationId in conversations)
             {
-                userParticipations.AddRange(participationRepository.GetParticipationsByConversationId(conversationId));
+                userParticipations.AddRange(repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversationId));
             }
 
             var participationSnapshot = new ParticipationSnapshot(userParticipations);
@@ -133,12 +127,12 @@ namespace Server
 
         private IEnumerable<int> SendConversationSnapshot(TcpClient tcpClient, int userId)
         {
-            IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(userId);
+            IEnumerable<int> conversationIds = repositoryManager.ParticipationRepository.GetAllConversationIdsByUserId(userId);
 
             IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
 
             List<Conversation> conversations =
-                conversationEnumerable.Select(conversationId => conversationRepository.FindConversationById(conversationId)).ToList();
+                conversationEnumerable.Select(conversationId => repositoryManager.ConversationRepository.FindConversationById(conversationId)).ToList();
 
             var conversationSnapshot = new ConversationSnapshot(conversations);
 
@@ -148,7 +142,7 @@ namespace Server
 
         private void SendUserSnapshot(TcpClient tcpClient)
         {
-            IEnumerable<User> currentUsers = userRepository.GetAllUsers();
+            IEnumerable<User> currentUsers = repositoryManager.UserRepository.GetAllUsers();
             var userSnapshot = new UserSnapshot(currentUsers);
 
             SendConnectionMessage(userSnapshot, tcpClient);
