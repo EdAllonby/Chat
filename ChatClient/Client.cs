@@ -6,18 +6,18 @@ using SharedClasses.Message;
 
 namespace ChatClient
 {
+    public delegate void NewContributionNotificationHandler(Conversation contributions);
+
+    public delegate void NewConversationHandler(Conversation conversation);
+
+    public delegate void UserListHandler(IEnumerable<User> users);
+
     /// <summary>
     /// Handles the logic for <see cref="IMessage" />
     /// Delegates Server specific communications to the <see cref="connectionHandler" />
     /// </summary>
     public sealed class Client
     {
-        public delegate void NewContributionNotificationHandler(Conversation contributions);
-
-        public delegate void NewConversationHandler(Conversation conversation);
-
-        public delegate void UserListHandler(IEnumerable<User> users);
-
         private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
 
         private ConnectionHandler connectionHandler;
@@ -57,7 +57,7 @@ namespace ChatClient
 
                 ClientUserId = response.User.UserId;
 
-                connectionHandler.OnNewMessage += NewMessageReceived;
+                connectionHandler.MessageReceived += NewMessageReceived;
             }
             else
             {
@@ -68,12 +68,12 @@ namespace ChatClient
         }
 
         /// <summary>
-        /// Sends a <see cref="ConversationRequest"/> message to the server.
+        /// Sends a <see cref="NewConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="participantIds">The participants that are included in the conversation.</param>
         public void SendConversationRequest(List<int> participantIds)
         {
-            var conversationRequest = new ConversationRequest(participantIds);
+            var conversationRequest = new NewConversationRequest(participantIds);
             connectionHandler.SendMessage(conversationRequest);
         }
 
@@ -162,8 +162,12 @@ namespace ChatClient
 
                 case MessageNumber.ConversationNotification:
                     var conversationNotification = (ConversationNotification) e.Message;
-                    AddParticipants(conversationNotification);
-                    AddConversationToRepository((ConversationNotification) e.Message);
+                    AddConversationToRepository(conversationNotification);
+                    break;
+
+                case MessageNumber.ParticipationsNotification:
+                    var participantsNotification = (ParticipationsNotification) e.Message;
+                    AddParticipants(participantsNotification);
                     break;
 
                 default:
@@ -172,12 +176,12 @@ namespace ChatClient
             }
         }
         
-        private void AddParticipants(ConversationNotification conversationNotification)
+        private void AddParticipants(ParticipationsNotification participationsNotification)
         {
-            foreach (int participantId in conversationNotification.ParticipantIds)
+            foreach (int participantId in participationsNotification.ParticipantIds)
             {
                 repositoryManager.ParticipationRepository.AddParticipation(new Participation(participantId,
-                    conversationNotification.ConversationId));
+                    participationsNotification.ConversationId));
             }
         }
 
@@ -191,14 +195,14 @@ namespace ChatClient
 
         private void AddConversationToRepository(ConversationNotification conversationNotification)
         {
-            var conversation = new Conversation(conversationNotification.ConversationId);
+            var conversation = new Conversation(conversationNotification.Conversation.ConversationId);
             repositoryManager.ConversationRepository.AddConversation(conversation);
             NewConversationNotification(conversation);
         }
 
         private void UpdateUserRepository(UserNotification userNotification)
         {
-            repositoryManager.UserRepository.AddUser(userNotification.User);
+            repositoryManager.UserRepository.UpdateUser(userNotification.User);
         }
     }
 }

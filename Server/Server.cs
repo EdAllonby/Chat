@@ -26,7 +26,11 @@ namespace Server
 
         public Server()
         {
-            repositoryManager.UserRepository.UserAdded += OnNewUser;
+            repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+            repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
+            repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
+            repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
+
             Log.Info("Server instance started");
             ListenForNewClients();
         }
@@ -65,40 +69,33 @@ namespace Server
 
                 clientHandlersIndexedByUserId[userId] = clientHandler;
                 
-                clientHandler.ConnectionHandler.OnNewMessage += NewMessageReceived;
+                clientHandler.MessageReceived += OnMessageReceived;
                 Log.InfoFormat("Client with User Id {0} has successfully logged in.", userId);
             }
         }
 
-        private int CreateConversationEntity(ConversationRequest conversationRequest)
+        private void CreateConversationEntity(NewConversationRequest newConversationRequest)
         {
             int conversationId = entityIDGenerator.GetEntityID<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
-            foreach (int participantId in conversationRequest.ParticipantIds)
-            {
-                repositoryManager.ParticipationRepository.AddParticipation(new Participation(participantId, conversationId));
-            }
+            IEnumerable<Participation> participations = newConversationRequest.ParticipantIds
+                .Select(participantId => new Participation(participantId, conversationId));
+
+            repositoryManager.ParticipationRepository.AddParticipations(participations);
 
             repositoryManager.ConversationRepository.AddConversation(newConversation);
-
-            return conversationId;
         }
 
-        private Contribution CreateContributionEntity(ContributionRequest contributionRequest)
+        private void CreateContributionEntity(ContributionRequest contributionRequest)
         {
             var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(),
                 contributionRequest.Contribution);
-
-            Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(newContribution.ConversationId);
-
-            conversation.AddContribution(newContribution);
-
-            return newContribution;
+            repositoryManager.ConversationRepository.AddContributionToConversation(newContribution);
         }
 
-        private void OnNewUser(User user)
+        private void OnUserUpdated(User user)
         {
             var userNotification = new UserNotification(user, NotificationType.Update);
 
@@ -108,7 +105,7 @@ namespace Server
             }
         }
 
-        private void NewMessageReceived(object sender, MessageEventArgs e)
+        private void OnMessageReceived(object sender, MessageEventArgs e)
         {
             IMessage message = e.Message;
 
@@ -127,8 +124,7 @@ namespace Server
                     break;
 
                 case MessageNumber.ContributionRequest:
-                    Contribution contribution = CreateContributionEntity((ContributionRequest) message);
-                    SendContributionNotificationToParticipants(contribution);
+                    CreateContributionEntity((ContributionRequest) message);
                     break;
 
                 case MessageNumber.ClientDisconnection:
@@ -137,12 +133,11 @@ namespace Server
                     DisconnectUser(clientDisconnection.UserId);
                     break;
 
-                case MessageNumber.ConversationRequest:
-                    if (CheckConversationIsValid((ConversationRequest) message))
+                case MessageNumber.NewConversationRequest:
+                    if (CheckConversationIsValid((NewConversationRequest) message))
                     {
-                        var conversationRequest = (ConversationRequest) message;
-                        int conversationId = CreateConversationEntity(conversationRequest);
-                        SendConversationNotificationToClients(conversationRequest.ParticipantIds, conversationId);
+                        var conversationRequest = (NewConversationRequest) message;
+                        CreateConversationEntity(conversationRequest);
                     }
                     break;
 
@@ -190,32 +185,43 @@ namespace Server
         {
             User user = repositoryManager.UserRepository.FindUserByID(userId);
             user.ConnectionStatus = ConnectionStatus.Disconnected;
-            repositoryManager.UserRepository.AddUser(user);
+            repositoryManager.UserRepository.UpdateUser(user);
         }
 
-        private bool CheckConversationIsValid(ConversationRequest conversationRequest)
+        private bool CheckConversationIsValid(NewConversationRequest newConversationRequest)
         {
             // Check for no repeating users
-            if (conversationRequest.ParticipantIds.Count != conversationRequest.ParticipantIds.Distinct().Count())
+            if (newConversationRequest.ParticipantIds.Count != newConversationRequest.ParticipantIds.Distinct().Count())
             {
                 Log.Warn("Cannot make a conversation between two users of same id");
                 return false;
             }
 
-            return !repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(conversationRequest.ParticipantIds);
+            return !repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(newConversationRequest.ParticipantIds);
         }
 
-        private void SendConversationNotificationToClients(List<int> participantIds, int conversationId)
+        private void OnConversationAdded(Conversation conversation)
         {
-            var conversationNotification = new ConversationNotification(participantIds, conversationId);
-
-            foreach (var participantId in participantIds.Where(participantId => clientHandlersIndexedByUserId.ContainsKey(participantId)))
+            var conversationNotification = new ConversationNotification(conversation);
+            foreach (Participation participant in repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.ConversationId))
             {
-                clientHandlersIndexedByUserId[participantId].SendMessage(conversationNotification);
+                clientHandlersIndexedByUserId[participant.UserId].SendMessage(conversationNotification);
             }
         }
 
-        private void SendContributionNotificationToParticipants(Contribution contribution)
+        private void OnParticipationsAdded(IEnumerable<Participation> participations)
+        {
+            IEnumerable<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
+            List<int> userIds = participationsEnumerable.Select(participation => participation.UserId).ToList();
+
+            var participationsNotification = new ParticipationsNotification(userIds, participationsEnumerable.First().ConversationId);
+            foreach (int userId in userIds)
+            {
+                clientHandlersIndexedByUserId[userId].SendMessage(participationsNotification);
+            }
+        }
+
+        private void OnContributionAdded(Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution);
             Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);

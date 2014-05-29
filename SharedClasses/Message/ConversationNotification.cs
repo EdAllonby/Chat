@@ -1,28 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using SharedClasses.Domain;
 
 namespace SharedClasses.Message
 {
-    /// <summary>
-    /// Packages a <see cref="Conversation"/> for the Server to send to the Client
-    /// </summary>
     [Serializable]
-    public sealed class ConversationNotification : IMessage
+    public class ConversationNotification : IMessage
     {
-        public ConversationNotification(List<int> participantIds, int conversationId)
+        public ConversationNotification(Conversation conversation)
         {
-            Contract.Requires(participantIds != null);
-            Contract.Requires(conversationId > 0);
+            Contract.Requires(conversation != null);
+            Contract.Requires(conversation.ConversationId > 0);
 
-            ParticipantIds = participantIds;
-            ConversationId = conversationId;
+            Conversation = conversation;
         }
 
-        public List<int> ParticipantIds { get; private set; }
-
-        public int ConversationId { get; private set; }
+        public Conversation Conversation { get; private set; }
 
         public MessageNumber Identifier
         {

@@ -1,28 +1,52 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 using SharedClasses;
 using SharedClasses.Message;
 
 namespace Server
 {
-    internal class ClientHandler
+    /// <summary>
+    /// Handles message handling for a unique client in the system
+    /// </summary>
+    internal sealed class ClientHandler
     {
         private ClientLoginHandler clientLoginHandler;
+        private ConnectionHandler connectionHandler;
 
+        public event EventHandler<MessageEventArgs> MessageReceived;
+
+        /// <summary>
+        /// Logs in a requested Client to the Server.
+        /// </summary>
+        /// <param name="tcpClient">The client's connection.</param>
+        /// <param name="entityGeneratorFactory">A generator for assigning the client a unique user ID.</param>
+        /// <param name="repositoryManager">The server's list of repositories used to give the client necessary entity collections.</param>
+        /// <returns></returns>
         public LoginResponse LoginClient(TcpClient tcpClient, EntityGeneratorFactory entityGeneratorFactory, RepositoryManager repositoryManager)
         {
             clientLoginHandler = new ClientLoginHandler(entityGeneratorFactory, repositoryManager);
             return clientLoginHandler.InitialiseNewClient(tcpClient);
         }
+
+        /// <summary>
+        /// Creates a new <see cref="ConnectionHandler"/> to connect the client and the server.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="tcpClient"></param>
         public void CreateConnectionHandler(int userId, TcpClient tcpClient)
         {
-            ConnectionHandler = new ConnectionHandler(userId, tcpClient);
+            connectionHandler = new ConnectionHandler(userId, tcpClient);
+            connectionHandler.MessageReceived += OnConnectionHandlerNewMessageReceived;
         }
 
         public void SendMessage(IMessage message)
         {
-            ConnectionHandler.SendMessage(message);
+            connectionHandler.SendMessage(message);
         }
 
-        public ConnectionHandler ConnectionHandler { get; private set; }
+        private void OnConnectionHandlerNewMessageReceived(object sender, MessageEventArgs e)
+        {
+            MessageReceived(sender, e);
+        }
     }
 }

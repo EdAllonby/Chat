@@ -5,12 +5,12 @@ using log4net;
 
 namespace SharedClasses.Domain
 {
+    public delegate void ParticipationChangedHandler(Participation participation);
+
+    public delegate void ParticipationsChangedHandler(IEnumerable<Participation> participations);
+
     public sealed class ParticipationRepository
     {
-        public delegate void ParticipationChangedHandler(Participation participation);
-
-        public delegate void ParticipationsChangedHandler(IEnumerable<Participation> participations);
-
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
         private readonly List<Participation> participations = new List<Participation>();

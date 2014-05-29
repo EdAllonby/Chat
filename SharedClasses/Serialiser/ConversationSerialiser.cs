@@ -8,7 +8,7 @@ namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Used to serialise and deserialise the <see cref="Conversation" /> Domain object
-    /// Both <see cref="ConversationRequest" /> and <see cref="ConversationNotification" /> use this class
+    /// Both <see cref="NewConversationRequest" /> and <see cref="ParticipationsNotification" /> use this class
     /// to do its the main serialisation work
     /// </summary>
     internal sealed class ConversationSerialiser

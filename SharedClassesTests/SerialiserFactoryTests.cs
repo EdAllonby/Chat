@@ -13,8 +13,8 @@ namespace SharedClassesTests
         [Test]
         public void GetSerialiserFromGenericTest()
         {
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ConversationNotification>();
-            Assert.IsInstanceOf<ConversationNotificationSerialiser>(serialiser);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser<ParticipationsNotification>();
+            Assert.IsInstanceOf<ParticipationsNotificationSerialiser>(serialiser);
         }
 
         [Test]

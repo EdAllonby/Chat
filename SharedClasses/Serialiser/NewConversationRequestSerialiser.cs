@@ -5,18 +5,17 @@ using SharedClasses.Message;
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="ConversationRequest" /> message
-    /// Uses <see cref="ConversationSerialiser" /> for its underlying serialiser
+    /// Used to serialise and deserialise a <see cref="NewConversationRequest" /> message.
     /// </summary>
-    internal sealed class ConversationRequestSerialiser : Serialiser<ConversationRequest>
+    internal sealed class NewConversationRequestSerialiser : Serialiser<NewConversationRequest>
     {
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override void Serialise(ConversationRequest message, NetworkStream stream)
+        protected override void Serialise(NewConversationRequest message, NetworkStream stream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationRequest, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.NewConversationRequest, stream);
 
             Log.DebugFormat("Waiting for {0} message to serialise", message.Identifier);
             binaryFormatter.Serialize(stream, message);
@@ -25,7 +24,7 @@ namespace SharedClasses.Serialiser
 
         public override IMessage Deserialise(NetworkStream stream)
         {
-            var conversation = (ConversationRequest) binaryFormatter.Deserialize(stream);
+            var conversation = (NewConversationRequest) binaryFormatter.Deserialize(stream);
             Log.InfoFormat("{0} message deserialised", conversation.Identifier);
             return conversation;
         }

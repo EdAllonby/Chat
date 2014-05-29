@@ -9,8 +9,9 @@ using SharedClasses.Serialiser;
 namespace SharedClasses
 {
     /// <summary>
-    /// This is in charge of abstracting away the TcpClient work.
-    /// This class has no logic other than to send and receive messages to and from a <see cref="NetworkStream"/>
+    /// This is in charge of abstracting away the TcpClient work for sending and receiving <see cref="IMessage"/>s.
+    /// This class has no logic other than to send and receive messages to and from a <see cref="NetworkStream"/>.
+    /// This class is identified by the <see cref="clientUserId"/>
     /// </summary>
     public sealed class ConnectionHandler : IDisposable
     {
@@ -23,12 +24,18 @@ namespace SharedClasses
 
         private readonly TcpClient tcpClient;
 
-        public ConnectionHandler(int userId, TcpClient client)
+        public ConnectionHandler(int userId, TcpClient tcpClient)
         {
-            tcpClient = client;
+            this.tcpClient = tcpClient;
             clientUserId = userId;
-            Log.Info("New client handler created");
-            CreateListenerThreadForClient();
+            Log.Info("New connection handler created");
+            CreateListenerThread();
+            messageReceiver.MessageReceived += OnMessageReceiverMessageReceived;
+        }
+
+        void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
+        {
+            MessageReceived(sender, e);
         }
 
         public void Dispose()
@@ -36,11 +43,7 @@ namespace SharedClasses
             tcpClient.Close();
         }
 
-        public event EventHandler<MessageEventArgs> OnNewMessage
-        {
-            add { messageReceiver.OnNewMessage += value; }
-            remove { messageReceiver.OnNewMessage -= value; }
-        }
+        public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
         /// Sends an <see cref="IMessage"/> across the <see cref="ConnectionHandler"/>'s <see cref="NetworkStream"/>.
@@ -55,12 +58,13 @@ namespace SharedClasses
             Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.Identifier, clientUserId);
         }
 
-        private void CreateListenerThreadForClient()
+        private void CreateListenerThread()
         {
             var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
             {
                 Name = "ReceiveMessageThread" + (totalListenerThreads++)
             };
+
             messageListenerThread.Start();
         }
     }
