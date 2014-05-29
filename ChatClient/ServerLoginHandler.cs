@@ -20,7 +20,7 @@ namespace ChatClient
 
         private readonly RepositoryManager repositoryManager;
 
-        private TcpClient serverConnection;
+        private TcpClient loginConnection;
 
         public ServerLoginHandler(RepositoryManager repositoryManager)
         {
@@ -29,7 +29,7 @@ namespace ChatClient
 
         public ConnectionHandler CreateServerConnectionHandler(int clientUserId)
         {
-            return new ConnectionHandler(clientUserId, serverConnection);
+            return new ConnectionHandler(clientUserId, loginConnection);
         }
 
         public LoginResponse ConnectToServer(LoginDetails loginDetails)
@@ -37,24 +37,24 @@ namespace ChatClient
             CreateConnection(loginDetails.Address, loginDetails.Port);
 
             IMessage userRequest = new LoginRequest(loginDetails.Username);
-            SendConnectionMessage(userRequest, serverConnection);
-            LoginResponse loginResponse = GetLoginResponse(serverConnection);
+            SendConnectionMessage(userRequest, loginConnection);
+            LoginResponse loginResponse = (LoginResponse)GetConnectionIMessage(loginConnection);
             return loginResponse;
         }
 
         public void GetSnapshots(int userId)
         {
-            SendConnectionMessage(new UserSnapshotRequest(userId), serverConnection);
+            SendConnectionMessage(new UserSnapshotRequest(userId), loginConnection);
 
-            UserSnapshot userSnapshot = GetUserSnapshot(serverConnection);
+            UserSnapshot userSnapshot = (UserSnapshot)GetConnectionIMessage(loginConnection);
 
-            SendConnectionMessage(new ConversationSnapshotRequest(userId), serverConnection);
+            SendConnectionMessage(new ConversationSnapshotRequest(userId), loginConnection);
 
-            ConversationSnapshot conversationSnapshot = GetConversationSnapshot(serverConnection);
+            ConversationSnapshot conversationSnapshot = (ConversationSnapshot)GetConnectionIMessage(loginConnection);
 
-            SendConnectionMessage(new ParticipationSnapshotRequest(userId), serverConnection);
+            SendConnectionMessage(new ParticipationSnapshotRequest(userId), loginConnection);
 
-            ParticipationSnapshot participationSnapshot = GetParticipationSnapshot(serverConnection);
+            ParticipationSnapshot participationSnapshot = (ParticipationSnapshot)GetConnectionIMessage(loginConnection);
 
             repositoryManager.UserRepository.AddUsers(userSnapshot.Users);
             repositoryManager.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
@@ -89,33 +89,13 @@ namespace ChatClient
             }
 
             Log.Info("Client found server, connection created");
-            serverConnection = connection;
+            loginConnection = connection;
         }
 
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
-        }
-
-        private LoginResponse GetLoginResponse(TcpClient tcpClient)
-        {
-            return (LoginResponse) GetConnectionIMessage(tcpClient);
-        }
-
-        private UserSnapshot GetUserSnapshot(TcpClient tcpClient)
-        {
-            return (UserSnapshot) GetConnectionIMessage(tcpClient);
-        }
-
-        private ConversationSnapshot GetConversationSnapshot(TcpClient tcpClient)
-        {
-            return (ConversationSnapshot) GetConnectionIMessage(tcpClient);
-        }
-
-        private ParticipationSnapshot GetParticipationSnapshot(TcpClient tcpClient)
-        {
-            return (ParticipationSnapshot) GetConnectionIMessage(tcpClient);
         }
 
         private IMessage GetConnectionIMessage(TcpClient tcpClient)

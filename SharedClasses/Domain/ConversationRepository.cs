@@ -5,6 +5,12 @@ using log4net;
 
 namespace SharedClasses.Domain
 {
+    public delegate void ConversationChangedHandler(Conversation conversation);
+
+    public delegate void ContributionAddedHandler(Contribution contribution);
+
+    public delegate void ConversationsChangedHandler(IEnumerable<Conversation> conversations);
+
     /// <summary>
     /// Holds a collection of <see cref="Conversation"/>s with basic CRUD operations.
     /// </summary>
@@ -14,12 +20,9 @@ namespace SharedClasses.Domain
 
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
-        public delegate void ConversationChangedHandler(Conversation conversation);
-
-        public delegate void ConversationsChangedHandler(IEnumerable<Conversation> conversations);
-
         public event ConversationChangedHandler ConversationAdded = delegate { };
         public event ConversationsChangedHandler ConversationsAdded = delegate { };
+        public event ContributionAddedHandler ContributionAdded = delegate { }; 
 
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.
@@ -30,8 +33,22 @@ namespace SharedClasses.Domain
             Contract.Requires(conversation != null);
 
             conversationsIndexedById[conversation.ConversationId] = conversation;
-            ConversationAdded(conversation);
             Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
+
+            ConversationAdded(conversation);
+        }
+
+        public void AddContributionToConversation(Contribution contribution)
+        {
+            Contract.Requires(contribution != null);
+            Contract.Requires(contribution.ContributionId > 0);
+            Contract.Requires(contribution.ConversationId > 0);
+
+            Conversation conversation = FindConversationById(contribution.ConversationId);
+
+            conversation.AddContribution(contribution);
+
+            ContributionAdded(contribution);
         }
 
         /// <summary>

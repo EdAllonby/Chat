@@ -5,26 +5,26 @@ using log4net;
 
 namespace SharedClasses.Domain
 {
+    public delegate void UserChangedHandler(User user);
+
+    public delegate void UsersChangedHandler(IEnumerable<User> users);
+
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
     public sealed class UserRepository
     {
-        public delegate void UserChangedHandler(User user);
-
-        public delegate void UsersChangedHandler(IEnumerable<User> users);
-
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
-        public event UserChangedHandler UserAdded = delegate { };
+        public event UserChangedHandler UserUpdated = delegate { };
         public event UsersChangedHandler UsersAdded = delegate { };
 
         /// <summary>
         /// Adds or updates a <see cref="User"/> entity to the repository.
         /// </summary>
         /// <param name="user"><see cref="User"/> entity to add.</param>
-        public void AddUser(User user)
+        public void UpdateUser(User user)
         {
             Contract.Requires(user != null);
 
@@ -38,7 +38,7 @@ namespace SharedClasses.Domain
             }
 
             usersIndexedById[user.UserId] = user;
-            UserAdded(user);
+            UserUpdated(user);
         }
 
         /// <summary>

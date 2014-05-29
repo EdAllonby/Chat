@@ -1,16 +1,15 @@
 ﻿using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="ConversationNotification" /> message
+    /// Used to serialise and deserialise a <see cref="NewConversationRequest" /> message
     /// Uses <see cref="ConversationSerialiser" /> for its underlying serialiser
     /// </summary>
     internal sealed class ConversationNotificationSerialiser : Serialiser<ConversationNotification>
     {
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly ConversationSerialiser conversationSerialiser = new ConversationSerialiser();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
@@ -18,16 +17,16 @@ namespace SharedClasses.Serialiser
         {
             messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ConversationNotification, stream);
 
-            Log.DebugFormat("Waiting for a {0} message to serialise", message.Identifier);
-            binaryFormatter.Serialize(stream, message);
+            Log.DebugFormat("Waiting for {0} message to serialise", message.Identifier);
+            conversationSerialiser.Serialise(message.Conversation, stream);
             Log.InfoFormat("{0} message serialised", message.Identifier);
         }
 
         public override IMessage Deserialise(NetworkStream stream)
         {
-            var conversationNotification = (ConversationNotification) binaryFormatter.Deserialize(stream);
-            Log.InfoFormat("{0} message deserialised", conversationNotification.Identifier);
-            return conversationNotification;
+            var conversation = new ConversationNotification(conversationSerialiser.Deserialise(stream));
+            Log.InfoFormat("{0} message deserialised", conversation.Identifier);
+            return conversation;
         }
     }
 }

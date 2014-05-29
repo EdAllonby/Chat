@@ -26,8 +26,9 @@ namespace SharedClasses
                 {MessageNumber.ConversationSnapshot, new ConversationSnapshotSerialiser()},
                 {MessageNumber.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser()},
                 {MessageNumber.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
-                {MessageNumber.ConversationRequest, new ConversationRequestSerialiser()},
+                {MessageNumber.NewConversationRequest, new NewConversationRequestSerialiser()},
                 {MessageNumber.ConversationNotification, new ConversationNotificationSerialiser()},
+                {MessageNumber.ParticipationsNotification, new ParticipationsNotificationSerialiser()},
                 {MessageNumber.LoginResponse, new LoginResponseSerialiser()}
             };
 
@@ -47,8 +48,9 @@ namespace SharedClasses
                 {typeof (ConversationSnapshot), new ConversationSnapshotSerialiser()},
                 {typeof (ParticipationSnapshotRequest), new ParticipationSnapshotRequestSerialiser()},
                 {typeof (ParticipationSnapshot), new ParticipationSnapshotSerialiser()},
-                {typeof (ConversationRequest), new ConversationRequestSerialiser()},
+                {typeof (NewConversationRequest), new NewConversationRequestSerialiser()},
                 {typeof (ConversationNotification), new ConversationNotificationSerialiser()},
+                {typeof (ParticipationsNotification), new ParticipationsNotificationSerialiser()},
                 {typeof (LoginResponse), new LoginResponseSerialiser()}
             };
     }

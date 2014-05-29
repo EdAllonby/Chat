@@ -10,7 +10,7 @@ namespace SharedClasses
 {
     /// <summary>
     /// A class to listen for incoming messages from the wire. When a new <see cref="IMessage" /> is received,
-    /// it will then fire off an <see cref="OnNewMessage" /> event where subscribers will be notified.
+    /// it will then fire off an <see cref="MessageReceived" /> event where subscribers will be notified.
     /// </summary>
     public sealed class MessageReceiver
     {
@@ -19,7 +19,7 @@ namespace SharedClasses
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        public event EventHandler<MessageEventArgs> OnNewMessage;
+        public event EventHandler<MessageEventArgs> MessageReceived;
 
         public void ReceiveMessages(int clientUserId, TcpClient tcpClient)
         {
@@ -35,14 +35,14 @@ namespace SharedClasses
 
                     IMessage message = serialiser.Deserialise(tcpClient.GetStream());
 
-                    OnNewMessage(this, new MessageEventArgs(message));
+                    MessageReceived(this, new MessageEventArgs(message));
                 }
             }
             catch (IOException)
             {
                 Log.Info("Detected client disconnection, sending ClientDisconnection object to Server");
                 IMessage message = new ClientDisconnection(clientUserId);
-                OnNewMessage(this, new MessageEventArgs(message));
+                MessageReceived(this, new MessageEventArgs(message));
             }
         }
     }

@@ -40,7 +40,7 @@ namespace Server
                 {
                     // This user already exists, just update the status of it in the repository
                     user.ConnectionStatus = ConnectionStatus.Connected;
-                    repositoryManager.UserRepository.AddUser(user);
+                    repositoryManager.UserRepository.UpdateUser(user);
                 }
 
                 loginResponse = new LoginResponse(user, LoginResult.Success);
@@ -74,7 +74,7 @@ namespace Server
         {
             var newUser = new User(clientLogin.User.Username, entityIDGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
 
-            repositoryManager.UserRepository.AddUser(newUser);
+            repositoryManager.UserRepository.UpdateUser(newUser);
 
             return newUser;
         }
