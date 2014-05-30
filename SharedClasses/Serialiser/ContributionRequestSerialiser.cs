@@ -13,18 +13,18 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override void Serialise(ContributionRequest contributionRequest, NetworkStream stream)
+        protected override void Serialise(ContributionRequest contributionRequest, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.MessageIdentifier, networkStream);
 
-            ContributionSerialiser.Serialise(contributionRequest.Contribution, stream);
-            Log.InfoFormat("{0} message serialised", contributionRequest.Identifier);
+            ContributionSerialiser.Serialise(contributionRequest.Contribution, networkStream);
+            Log.InfoFormat("{0} message serialised", contributionRequest.MessageIdentifier);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            Contribution contribution = ContributionSerialiser.Deserialise(stream);
+            Contribution contribution = ContributionSerialiser.Deserialise(networkStream);
             var contributionRequest = new ContributionRequest(
                 contribution.ConversationId,
                 contribution.ContributorUserId,

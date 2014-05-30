@@ -22,7 +22,7 @@ namespace SharedClassesTests
         {
             IMessage message = new LoginRequest("User");
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
             Assert.IsInstanceOf<LoginRequestSerialiser>(serialiser);
         }
     }

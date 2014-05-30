@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace ChatClient
 {
-    public interface IAudioPlayer
+    public interface IAudioPlayer: IDisposable 
     {
         void Play(Stream resource);
     }

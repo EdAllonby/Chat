@@ -13,19 +13,19 @@ namespace SharedClasses.Serialiser
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly UserSerialiser userSerialiser = new UserSerialiser();
 
-        protected override void Serialise(LoginRequest message, NetworkStream stream)
+        protected override void Serialise(LoginRequest message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.MessageIdentifier, networkStream);
 
-            userSerialiser.Serialise(message.User, stream);
-            Log.InfoFormat("{0} message serialised and sent to network stream", message.Identifier);
+            userSerialiser.Serialise(message.User, networkStream);
+            Log.InfoFormat("{0} message serialised and sent to network stream", message.MessageIdentifier);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
-            User user = userSerialiser.Deserialise(stream);
+            User user = userSerialiser.Deserialise(networkStream);
             var loginRequest = new LoginRequest(user.Username);
-            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginRequest.Identifier);
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginRequest.MessageIdentifier);
             return loginRequest;
         }
     }

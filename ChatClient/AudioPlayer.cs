@@ -4,22 +4,22 @@ using System.Media;
 
 namespace ChatClient
 {
-    public class AudioPlayer : IAudioPlayer, IDisposable
+    public sealed class AudioPlayer : IAudioPlayer
     {
-        private readonly SoundPlayer player = new SoundPlayer();
+        private readonly SoundPlayer soundPlayer = new SoundPlayer();
 
         public void Play(Stream resource)
         {
             using (resource)
             {
-                player.Stream = resource;
-                player.Play();
+                soundPlayer.Stream = resource;
+                soundPlayer.Play();
             }
         }
 
         public void Dispose()
         {
-            player.Dispose();
+            soundPlayer.Dispose();
         }
     }
 }

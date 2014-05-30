@@ -25,17 +25,17 @@ namespace ChatClient.Views
             if (focusedTextBox.Text == "Username")
             {
                 focusedTextBox.Text = string.Empty;
-                Log.Debug("Text has been removed from Logon textbox");
+                Log.Debug("Text has been removed from LogOn textbox");
             }
             if (focusedTextBox.Text == "IP Address")
             {
                 focusedTextBox.Text = string.Empty;
-                Log.Debug("Text has been removed from Logon textbox");
+                Log.Debug("Text has been removed from LogOn textbox");
             }
             if (focusedTextBox.Text == "Port")
             {
                 focusedTextBox.Text = string.Empty;
-                Log.Debug("Text has been removed from Logon textbox");
+                Log.Debug("Text has been removed from LogOn textbox");
             }
         }
 

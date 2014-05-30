@@ -10,11 +10,9 @@ namespace SharedClassesTests.Domain
         [Test]
         public void AddConversationEntitiesTest()
         {
-            var conversation1 = new Conversation(1);
-            var conversation2 = new Conversation(2);
-            var conversations = new List<Conversation> {conversation1, conversation2};
-
             var conversationRepository = new ConversationRepository();
+
+            var conversations = new List<Conversation> {new Conversation(1), new Conversation(2)};
 
             conversationRepository.AddConversations(conversations);
             Assert.AreEqual(conversations, conversationRepository.GetAllConversations());

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using ChatClient.Commands;
 using ChatClient.Views;
 using log4net;
+using SharedClasses;
 using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.LoginWindowViewModel
@@ -14,8 +15,10 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
 
-        private readonly ClientLoginParser loginParser = new ClientLoginParser();
+        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
 
+        private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
+        
         private string ipAddress = "IP Address";
         private string port = "Port";
         private UserListWindow userListWindow;
@@ -32,7 +35,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                 Log.Info("Command line arguments found, attempting to parse");
 
                 LoginDetails loginDetails;
-                bool result = loginParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
+                bool result = logOnParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
                 if (result)
                 {
                     AttemptLogin(loginDetails);
@@ -89,7 +92,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         {
             try
             {
-                LoginResult result = Client.ConnectToServer(loginDetails);
+                LoginResult result = clientService.LogOn(loginDetails);
 
                 switch (result)
                 {
@@ -141,7 +144,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         private void LoginToChat()
         {
             LoginDetails loginDetails;
-            bool result = loginParser.TryParseLogonDetails(username, ipAddress, port, out loginDetails);
+            bool result = logOnParser.TryParseLogonDetails(username, ipAddress, port, out loginDetails);
             if (result)
             {
                 AttemptLogin(loginDetails);

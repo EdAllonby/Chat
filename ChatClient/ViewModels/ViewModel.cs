@@ -6,12 +6,8 @@ namespace ChatClient.ViewModels
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        // I still can't find a way of sharing this Client across. Made it static in the ViewModel for the time being.
-        // TODO: I might have to investigate IoC to get the viewModels to pass this client about.
-        protected static readonly Client Client = new Client();
-
         /// <summary>
-        /// Holds the states of conversation windows for the Client
+        /// Holds the states of conversation windows for the ClientService
         /// </summary>
         protected static readonly ConversationWindowsStatusCollection ConversationWindowsStatusCollection = new ConversationWindowsStatusCollection();
 

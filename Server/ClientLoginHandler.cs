@@ -11,14 +11,12 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
 
-        private readonly EntityGeneratorFactory entityIDGenerator;
         private readonly RepositoryManager repositoryManager;
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        public ClientLoginHandler(EntityGeneratorFactory entityIDGenerator, RepositoryManager repositoryManager)
+        public ClientLoginHandler(RepositoryManager repositoryManager)
         {
-            this.entityIDGenerator = entityIDGenerator;
             this.repositoryManager = repositoryManager;
         }
 
@@ -61,7 +59,7 @@ namespace Server
         {
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
@@ -72,7 +70,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin)
         {
-            var newUser = new User(clientLogin.User.Username, entityIDGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
+            var newUser = new User(clientLogin.User.Username, EntityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
 
             repositoryManager.UserRepository.UpdateUser(newUser);
 
@@ -81,7 +79,7 @@ namespace Server
 
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
         }
     }

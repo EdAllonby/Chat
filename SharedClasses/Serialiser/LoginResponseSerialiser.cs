@@ -14,17 +14,17 @@ namespace SharedClasses.Serialiser
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-        protected override void Serialise(LoginResponse message, NetworkStream stream)
+        protected override void Serialise(LoginResponse message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
-            binaryFormatter.Serialize(stream, message);
-            Log.InfoFormat("{0} serialised and sent to network stream", message.Identifier);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.MessageIdentifier, networkStream);
+            binaryFormatter.Serialize(networkStream, message);
+            Log.InfoFormat("{0} serialised and sent to network stream", message.MessageIdentifier);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var loginResponse = (LoginResponse)binaryFormatter.Deserialize(stream);
-            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginResponse.Identifier);
+            var loginResponse = (LoginResponse)binaryFormatter.Deserialize(networkStream);
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginResponse.MessageIdentifier);
             return loginResponse;
         }
     }

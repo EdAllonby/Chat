@@ -16,9 +16,9 @@ namespace SharedClasses.Message
 
         public List<int> ParticipantIds { get; private set; }
 
-        public MessageNumber Identifier
+        public MessageIdentifier MessageIdentifier
         {
-            get { return MessageNumber.NewConversationRequest; }
+            get { return MessageIdentifier.NewConversationRequest; }
         }
     }
 }

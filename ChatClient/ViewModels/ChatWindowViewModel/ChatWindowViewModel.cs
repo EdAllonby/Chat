@@ -7,12 +7,15 @@ using System.Windows;
 using System.Windows.Input;
 using ChatClient.Commands;
 using ChatClient.Properties;
+using SharedClasses;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
-    public class ChatWindowViewModel : ViewModel
+    public sealed class ChatWindowViewModel : ViewModel, IDisposable
     {
+        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
+
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private IList<UserMessageViewModel> chatMessages = new List<UserMessageViewModel>();
         private string chatTitle;
@@ -22,9 +25,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ChatWindowViewModel()
         {
-            windowTitle = Client.GetUser(Client.ClientUserId).Username;
+            windowTitle = clientService.GetUser(clientService.ClientUserId).Username;
 
-            Client.NewContributionNotification += NewContributionNotificationReceived;
+            clientService.NewContributionNotification += NewContributionNotificationReceived;
         }
 
         public string WindowTitle
@@ -117,7 +120,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void NewConversationContributionRequest()
         {
-            Client.SendContributionRequest(conversation.ConversationId, MessageToAddToConversation);
+            clientService.SendContributionRequest(conversation.ConversationId, MessageToAddToConversation);
 
             MessageToAddToConversation = string.Empty;
         }
@@ -134,9 +137,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in Client.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
+            foreach (Participation participant in clientService.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
             {
-                titleBuilder.Append(Client.GetUser(participant.UserId).Username);
+                titleBuilder.Append(clientService.GetUser(participant.UserId).Username);
                 titleBuilder.Append(" and ");
             }
 
@@ -156,7 +159,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             {
                 Application.Current.Dispatcher.Invoke(GetMessages);
 
-                if (conversation.GetAllContributions().Last().ContributorUserId != Client.ClientUserId)
+                if (conversation.GetAllContributions().Last().ContributorUserId != clientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
@@ -174,7 +177,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 string message = contribution.Message;
 
                 var messageDetails = new StringBuilder();
-                messageDetails.Append(Client.GetUser(contribution.ContributorUserId).Username);
+                messageDetails.Append(clientService.GetUser(contribution.ContributorUserId).Username);
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 
@@ -182,6 +185,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
 
             ChatMessages = userMessages;
+        }
+
+        public void Dispose()
+        {
+            audioPlayer.Dispose();
         }
     }
 }

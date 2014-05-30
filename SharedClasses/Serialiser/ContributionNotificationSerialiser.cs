@@ -13,16 +13,16 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream stream)
+        protected override void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ContributionNotification, stream);
-            contributionSerialiser.Serialise(contributionNotificationMessage.Contribution, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.ContributionNotification, networkStream);
+            contributionSerialiser.Serialise(contributionNotificationMessage.Contribution, networkStream);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var notification = new ContributionNotification(contributionSerialiser.Deserialise(stream));
-            Log.InfoFormat("{0} message deserialised", notification.Identifier);
+            var notification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream));
+            Log.InfoFormat("{0} message deserialised", notification.MessageIdentifier);
             return notification;
         }
     }

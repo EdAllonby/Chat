@@ -17,7 +17,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void EqualsTest()
+        public void ParticipationEqualsTest()
         {
             const int UserId = 1;
             const int ConversationId = 2;
@@ -32,7 +32,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void ReferenceEqualsTest()
+        public void ParticipationReferenceEqualsTest()
         {
             const int UserId = 1;
             const int ConversationId = 2;
@@ -50,7 +50,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void HashcodeTest()
+        public void ParticipationHashCodeTest()
         {
             const int UserId = 1;
             const int ConversationId = 2;

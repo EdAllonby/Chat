@@ -13,19 +13,19 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override void Serialise(NewConversationRequest message, NetworkStream stream)
+        protected override void Serialise(NewConversationRequest message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.NewConversationRequest, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.NewConversationRequest, networkStream);
 
-            Log.DebugFormat("Waiting for {0} message to serialise", message.Identifier);
-            binaryFormatter.Serialize(stream, message);
-            Log.InfoFormat("{0} message serialised", message.Identifier);
+            Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
+            binaryFormatter.Serialize(networkStream, message);
+            Log.InfoFormat("{0} message serialised", message.MessageIdentifier);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversation = (NewConversationRequest) binaryFormatter.Deserialize(stream);
-            Log.InfoFormat("{0} message deserialised", conversation.Identifier);
+            var conversation = (NewConversationRequest) binaryFormatter.Deserialize(networkStream);
+            Log.InfoFormat("{0} message deserialised", conversation.MessageIdentifier);
             return conversation;
         }
     }

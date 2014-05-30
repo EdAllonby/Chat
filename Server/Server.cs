@@ -18,8 +18,6 @@ namespace Server
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
         
-        private readonly EntityGeneratorFactory entityIDGenerator = new EntityGeneratorFactory();
-
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
         private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>(); 
@@ -59,7 +57,7 @@ namespace Server
         {
             var clientHandler = new ClientHandler();
 
-            LoginResponse loginResponse = clientHandler.LoginClient(tcpClient, entityIDGenerator, repositoryManager);
+            LoginResponse loginResponse = clientHandler.LoginClient(tcpClient, repositoryManager);
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
@@ -76,7 +74,7 @@ namespace Server
 
         private void CreateConversationEntity(NewConversationRequest newConversationRequest)
         {
-            int conversationId = entityIDGenerator.GetEntityID<Conversation>();
+            int conversationId = EntityGeneratorFactory.GetEntityID<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
@@ -90,7 +88,7 @@ namespace Server
 
         private void CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            var newContribution = new Contribution(entityIDGenerator.GetEntityID<Contribution>(),
+            var newContribution = new Contribution(EntityGeneratorFactory.GetEntityID<Contribution>(),
                 contributionRequest.Contribution);
             repositoryManager.ConversationRepository.AddContributionToConversation(newContribution);
         }
@@ -109,31 +107,31 @@ namespace Server
         {
             IMessage message = e.Message;
 
-            switch (message.Identifier)
+            switch (message.MessageIdentifier)
             {
-                case MessageNumber.UserSnapshotRequest:
+                case MessageIdentifier.UserSnapshotRequest:
                     SendUserSnapshot((UserSnapshotRequest)message);
                     break;
 
-                case MessageNumber.ConversationSnapshotRequest:
+                case MessageIdentifier.ConversationSnapshotRequest:
                     SendConversationSnapshot((ConversationSnapshotRequest)message);
                     break;
 
-                case MessageNumber.ParticipationSnapshotRequest:
+                case MessageIdentifier.ParticipationSnapshotRequest:
                     SendParticipationSnapshot((ParticipationSnapshotRequest) message);
                     break;
 
-                case MessageNumber.ContributionRequest:
+                case MessageIdentifier.ContributionRequest:
                     CreateContributionEntity((ContributionRequest) message);
                     break;
 
-                case MessageNumber.ClientDisconnection:
+                case MessageIdentifier.ClientDisconnection:
                     var clientDisconnection = (ClientDisconnection) message;
                     RemoveClientHandler(clientDisconnection.UserId);
                     DisconnectUser(clientDisconnection.UserId);
                     break;
 
-                case MessageNumber.NewConversationRequest:
+                case MessageIdentifier.NewConversationRequest:
                     if (CheckConversationIsValid((NewConversationRequest) message))
                     {
                         var conversationRequest = (NewConversationRequest) message;
@@ -142,7 +140,7 @@ namespace Server
                     break;
 
                 default:
-                    Log.Warn("Server is not supposed to handle message with identifier: " + message.Identifier);
+                    Log.Warn("Server is not supposed to handle message with identifier: " + message.MessageIdentifier);
                     break;
             }
         }
@@ -212,6 +210,7 @@ namespace Server
         private void OnParticipationsAdded(IEnumerable<Participation> participations)
         {
             IEnumerable<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
+            
             List<int> userIds = participationsEnumerable.Select(participation => participation.UserId).ToList();
 
             var participationsNotification = new ParticipationsNotification(userIds, participationsEnumerable.First().ConversationId);

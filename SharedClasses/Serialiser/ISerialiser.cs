@@ -14,14 +14,14 @@ namespace SharedClasses.Serialiser
         /// Serialise an <see cref="IMessage" /> down the NetworkStream
         /// </summary>
         /// <param name="message">The message to send</param>
-        /// <param name="stream">The stream that connects the Client and Server</param>
-        void Serialise(IMessage message, NetworkStream stream);
+        /// <param name="networkStream">The networkStream that connects the Client and Server</param>
+        void Serialise(IMessage message, NetworkStream networkStream);
 
         /// <summary>
         /// Deserialise an <see cref="IMessage" /> from the NetworkStream
         /// </summary>
-        /// <param name="stream">The stream that connects the Client and Server</param>
+        /// <param name="networkStream">The networkStream that connects the Client and Server</param>
         /// <returns>an <see cref="IMessage" /> object</returns>
-        IMessage Deserialise(NetworkStream stream);
+        IMessage Deserialise(NetworkStream networkStream);
     }
 }

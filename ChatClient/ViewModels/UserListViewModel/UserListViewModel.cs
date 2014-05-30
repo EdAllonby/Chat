@@ -11,23 +11,26 @@ namespace ChatClient.ViewModels.UserListViewModel
 {
     internal class UserListViewModel : ViewModel
     {
+        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
+        
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
+
         private bool isMultiUserConversation;
 
         public UserListViewModel()
         {
-            GetAllUsers(Client.GetAllUsers());
+            GetAllUsers(clientService.GetAllUsers());
 
-            Client.NewUser += NewUser;
+            clientService.NewUser += NewUser;
 
-            Client.NewConversationNotification += NewConversationNotification;
+            clientService.NewConversationNotification += NewConversationNotification;
 
-            Client.NewContributionNotification += NewContributionNotification;
+            clientService.NewContributionNotification += NewContributionNotification;
         }
 
         public string Username
         {
-            get { return Client.GetUser(Client.ClientUserId).Username; }
+            get { return clientService.GetUser(clientService.ClientUserId).Username; }
         }
 
         public bool IsMultiUserConversation
@@ -87,14 +90,14 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public void StartNewSingleUserConversation(int participant)
         {
-            var participantIds = new List<int> {Client.ClientUserId, participant};
+            var participantIds = new List<int> { clientService.ClientUserId, participant };
 
             NewConversation(participantIds);
         }
 
         private void StartNewMultiUserConversation()
         {
-            var participantIds = new List<int> {Client.ClientUserId};
+            var participantIds = new List<int> { clientService.ClientUserId };
 
             participantIds.AddRange(connectedUsers.Where(user => user.IsSelectedForConversation)
                 .Select(connectedUser => connectedUser.UserId));
@@ -114,7 +117,7 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         private void GetAllUsers(IEnumerable<User> users)
         {
-            List<User> newUserList = users.Where(user => user.UserId != Client.ClientUserId)
+            List<User> newUserList = users.Where(user => user.UserId != clientService.ClientUserId)
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
@@ -126,14 +129,14 @@ namespace ChatClient.ViewModels.UserListViewModel
         {
             IsMultiUserConversation = false;
 
-            if (!Client.DoesConversationExist(participantIds))
+            if (!clientService.DoesConversationExist(participantIds))
             {
-                Client.SendConversationRequest(participantIds);
+                clientService.SendConversationRequest(participantIds);
             }
             else
             {
-                int conversationId = Client.GetConversationId(participantIds);
-                CreateNewConversationWindow(Client.GetConversation(conversationId));
+                int conversationId = clientService.GetConversationId(participantIds);
+                CreateNewConversationWindow(clientService.GetConversation(conversationId));
             }
         }
 
