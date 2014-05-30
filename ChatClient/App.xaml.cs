@@ -1,5 +1,7 @@
 ﻿using System.Threading;
 using System.Windows;
+using ChatClient.Services;
+using SharedClasses;
 
 namespace ChatClient
 {
@@ -13,8 +15,15 @@ namespace ChatClient
             // First thing is to name the main thread, then continue with the normal startup procedure.
             Thread mainThread = Thread.CurrentThread;
             mainThread.Name = "Main Thread";
+            
+            RegisterServices();
 
             base.OnStartup(e);
+        }
+
+        private void RegisterServices()
+        {
+            ServiceManager.RegisterService<IClientService>(new ClientService());
         }
     }
 }

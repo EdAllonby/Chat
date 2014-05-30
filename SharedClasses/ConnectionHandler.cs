@@ -38,11 +38,6 @@ namespace SharedClasses
             MessageReceived(sender, e);
         }
 
-        public void Dispose()
-        {
-            tcpClient.Close();
-        }
-
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
@@ -53,9 +48,9 @@ namespace SharedClasses
         {
             Contract.Requires(message != null);
 
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
-            Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.Identifier, clientUserId);
+            Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
         }
 
         private void CreateListenerThread()
@@ -66,6 +61,11 @@ namespace SharedClasses
             };
 
             messageListenerThread.Start();
+        }
+
+        public void Dispose()
+        {
+            tcpClient.Close();
         }
     }
 }

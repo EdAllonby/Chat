@@ -24,9 +24,9 @@ namespace SharedClasses.Message
 
         public int ConversationId { get; private set; }
 
-        public MessageNumber Identifier
+        public MessageIdentifier MessageIdentifier
         {
-            get { return MessageNumber.ParticipationsNotification; }
+            get { return MessageIdentifier.ParticipationsNotification; }
         }
     }
 }

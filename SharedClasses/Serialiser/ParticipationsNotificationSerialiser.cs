@@ -14,19 +14,19 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override void Serialise(ParticipationsNotification message, NetworkStream stream)
+        protected override void Serialise(ParticipationsNotification message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageNumber.ParticipationsNotification, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.ParticipationsNotification, networkStream);
 
-            Log.DebugFormat("Waiting for a {0} message to serialise", message.Identifier);
-            binaryFormatter.Serialize(stream, message);
-            Log.InfoFormat("{0} message serialised", message.Identifier);
+            Log.DebugFormat("Waiting for a {0} message to serialise", message.MessageIdentifier);
+            binaryFormatter.Serialize(networkStream, message);
+            Log.InfoFormat("{0} message serialised", message.MessageIdentifier);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversationNotification = (ParticipationsNotification) binaryFormatter.Deserialize(stream);
-            Log.InfoFormat("{0} message deserialised", conversationNotification.Identifier);
+            var conversationNotification = (ParticipationsNotification) binaryFormatter.Deserialize(networkStream);
+            Log.InfoFormat("{0} message deserialised", conversationNotification.MessageIdentifier);
             return conversationNotification;
         }
     }

@@ -65,7 +65,7 @@ namespace ChatClient
         {
             const int TimeoutSeconds = 5;
 
-            Log.Info("Client looking for server with address: " + targetAddress + ":" + targetPort);
+            Log.Info("ClientService looking for server with address: " + targetAddress + ":" + targetPort);
 
             var connection = new TcpClient();
 
@@ -88,13 +88,13 @@ namespace ChatClient
                 waitHandle.Close();
             }
 
-            Log.Info("Client found server, connection created");
+            Log.Info("ClientService found server, connection created");
             loginConnection = connection;
         }
 
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.Identifier);
+            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(message, tcpClient.GetStream());
         }
 
@@ -102,7 +102,7 @@ namespace ChatClient
         {
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-            MessageNumber messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 

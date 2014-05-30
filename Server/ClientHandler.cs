@@ -8,7 +8,7 @@ namespace Server
     /// <summary>
     /// Handles message handling for a unique client in the system
     /// </summary>
-    internal sealed class ClientHandler
+    internal sealed class ClientHandler : IDisposable
     {
         private ClientLoginHandler clientLoginHandler;
         private ConnectionHandler connectionHandler;
@@ -22,9 +22,9 @@ namespace Server
         /// <param name="entityGeneratorFactory">A generator for assigning the client a unique user ID.</param>
         /// <param name="repositoryManager">The server's list of repositories used to give the client necessary entity collections.</param>
         /// <returns></returns>
-        public LoginResponse LoginClient(TcpClient tcpClient, EntityGeneratorFactory entityGeneratorFactory, RepositoryManager repositoryManager)
+        public LoginResponse LoginClient(TcpClient tcpClient, RepositoryManager repositoryManager)
         {
-            clientLoginHandler = new ClientLoginHandler(entityGeneratorFactory, repositoryManager);
+            clientLoginHandler = new ClientLoginHandler(repositoryManager);
             return clientLoginHandler.InitialiseNewClient(tcpClient);
         }
 
@@ -47,6 +47,11 @@ namespace Server
         private void OnConnectionHandlerNewMessageReceived(object sender, MessageEventArgs e)
         {
             MessageReceived(sender, e);
+        }
+
+        public void Dispose()
+        {
+            connectionHandler.Dispose();
         }
     }
 }

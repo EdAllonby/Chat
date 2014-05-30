@@ -14,7 +14,7 @@ namespace SharedClassesTests.Domain
         [TestCase(5)]
         [TestCase(12)]
         [TestCase(22)]
-        public void AssignCustomIDToConversationTest(int id)
+        public void AssignCustomIdToConversationTest(int id)
         {
             var conversation = new Conversation(id);
             Assert.AreEqual(conversation.ConversationId, id);
@@ -22,22 +22,22 @@ namespace SharedClassesTests.Domain
 
         [TestCase(12)]
         [TestCase(21326)]
-        public void ConversationIDIterationTest(int conversationCount)
+        public void ConversationIdIterationTest(int conversationCount)
         {
-            int totalUsers = conversationCount;
+            int baseId = EntityGeneratorFactory.GetEntityID<User>();
 
-            var entityGeneratorFactory = new EntityGeneratorFactory();
+            int totalUsers = conversationCount;
 
             Conversation conversation = null;
 
             for (int i = 0; i < totalUsers; i++)
             {
-                conversation = new Conversation(entityGeneratorFactory.GetEntityID<User>());
+                conversation = new Conversation(EntityGeneratorFactory.GetEntityID<User>());
             }
 
             if (conversation != null)
             {
-                Assert.AreEqual(conversation.ConversationId, totalUsers);
+                Assert.AreEqual(conversation.ConversationId, totalUsers + baseId);
             }
         }
 
@@ -102,7 +102,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void HashcodeTest()
+        public void ConversationHashCodeTest()
         {
             var conversation = new Conversation(1);
             var conversation2 = conversation;
@@ -111,7 +111,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void EqualsTest()
+        public void ConversationEqualsTest()
         {
             const int ConversationId = 4;
             var conversation = new Conversation(ConversationId);
@@ -121,7 +121,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void ReferenceEqualsTest()
+        public void ConversationReferenceEqualsTest()
         {
             const int ConversationId = 4;
             var conversation = new Conversation(ConversationId);

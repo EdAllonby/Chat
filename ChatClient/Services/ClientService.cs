@@ -4,7 +4,7 @@ using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
-namespace ChatClient
+namespace ChatClient.Services
 {
     public delegate void NewContributionNotificationHandler(Conversation contributions);
 
@@ -16,9 +16,9 @@ namespace ChatClient
     /// Handles the logic for <see cref="IMessage" />
     /// Delegates Server specific communications to the <see cref="connectionHandler" />
     /// </summary>
-    public sealed class Client
+    public sealed class ClientService : IClientService
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Client));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
 
         private ConnectionHandler connectionHandler;
 
@@ -29,19 +29,13 @@ namespace ChatClient
         public event UserListHandler NewUser = delegate { };
         public event NewConversationHandler NewConversationNotification = delegate { };
         public event NewContributionNotificationHandler NewContributionNotification = delegate { };
-
-        private void NotifyClientOfUserChange()
-        {
-            NewUser(repositoryManager.UserRepository.GetAllUsers());
-            Log.Info("User changed event fired");
-        }
-
+   
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
-        /// and gets the state of <see cref="Client"/> up to date with the user status'. 
+        /// and gets the state of <see cref="ClientService"/> up to date with the user status'. 
         /// </summary>
         /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
-        public LoginResult ConnectToServer(LoginDetails loginDetails)
+        public LoginResult LogOn(LoginDetails loginDetails)
         {
             var loginHandler = new ServerLoginHandler(repositoryManager);
 
@@ -148,30 +142,30 @@ namespace ChatClient
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
         {
-            switch (e.Message.Identifier)
+            switch (e.Message.MessageIdentifier)
             {
-                case MessageNumber.ContributionNotification:
+                case MessageIdentifier.ContributionNotification:
                     var contributionNotification = (ContributionNotification) e.Message;
                     AddContributionToConversation(contributionNotification);
                     break;
 
-                case MessageNumber.UserNotification:
+                case MessageIdentifier.UserNotification:
                     UpdateUserRepository((UserNotification) e.Message);
                     NotifyClientOfUserChange();
                     break;
 
-                case MessageNumber.ConversationNotification:
+                case MessageIdentifier.ConversationNotification:
                     var conversationNotification = (ConversationNotification) e.Message;
                     AddConversationToRepository(conversationNotification);
                     break;
 
-                case MessageNumber.ParticipationsNotification:
+                case MessageIdentifier.ParticipationsNotification:
                     var participantsNotification = (ParticipationsNotification) e.Message;
                     AddParticipants(participantsNotification);
                     break;
 
                 default:
-                    Log.Warn("Client is not supposed to handle message with identifier: " + e.Message.Identifier);
+                    Log.Warn("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier);
                     break;
             }
         }
@@ -203,6 +197,12 @@ namespace ChatClient
         private void UpdateUserRepository(UserNotification userNotification)
         {
             repositoryManager.UserRepository.UpdateUser(userNotification.User);
+        }
+
+        private void NotifyClientOfUserChange()
+        {
+            NewUser(repositoryManager.UserRepository.GetAllUsers());
+            Log.Info("User changed event fired");
         }
     }
 }

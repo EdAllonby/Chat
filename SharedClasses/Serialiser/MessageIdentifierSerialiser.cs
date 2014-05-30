@@ -13,7 +13,7 @@ namespace SharedClasses.Serialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 
-        public void SerialiseMessageIdentifier(MessageNumber messageIdentifier, NetworkStream stream)
+        public void SerialiseMessageIdentifier(MessageIdentifier messageIdentifier, NetworkStream stream)
         {
             Contract.Requires(stream != null);
 
@@ -21,14 +21,14 @@ namespace SharedClasses.Serialiser
             Log.DebugFormat("Sent Message Identifier: {0} to stream", messageIdentifier);
         }
 
-        public MessageNumber DeserialiseMessageIdentifier(NetworkStream stream)
+        public MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
         {
             Contract.Requires(stream != null);
 
             var messageTypeBuffer = new byte[4];
             stream.Read(messageTypeBuffer, 0, 4);
             int messageIdentifierNumber = BitConverter.ToInt32(messageTypeBuffer, 0);
-            var messageIdentifier = (MessageNumber) messageIdentifierNumber;
+            var messageIdentifier = (MessageIdentifier) messageIdentifierNumber;
             Log.DebugFormat("Message Identifier {0} received from client", messageIdentifier);
             return messageIdentifier;
         }

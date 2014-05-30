@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics.Contracts;
+using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
@@ -17,14 +18,19 @@ namespace SharedClasses.Serialiser
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-        public void Serialise(Contribution contribution, NetworkStream stream)
+        public void Serialise(Contribution contribution, NetworkStream networkStream)
         {
-            binaryFormatter.Serialize(stream, contribution);
+            Contract.Requires(contribution != null);
+            Contract.Requires(networkStream != null);
+            
+            binaryFormatter.Serialize(networkStream, contribution);
             Log.Debug("Contribution serialised and sent to network stream");
         }
 
         public Contribution Deserialise(NetworkStream networkStream)
         {
+            Contract.Requires(networkStream != null);
+
             var contribution = (Contribution) binaryFormatter.Deserialize(networkStream);
             Log.Debug("Network stream has received data and deserialised to a Contribution object");
             return contribution;

@@ -20,9 +20,9 @@ namespace SharedClasses.Message
 
         public Contribution Contribution { get; private set; }
 
-        public MessageNumber Identifier
+        public MessageIdentifier MessageIdentifier
         {
-            get { return MessageNumber.ContributionNotification; }
+            get { return MessageIdentifier.ContributionNotification; }
         }
     }
 }

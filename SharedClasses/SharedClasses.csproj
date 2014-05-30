@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CONTRACTS_FULL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
@@ -114,7 +114,7 @@
     <Compile Include="Message\LoginResponse.cs" />
     <Compile Include="Serialiser\LoginResponseSerialiser.cs" />
     <Compile Include="Serialiser\MessageIdentifierSerialiser.cs" />
-    <Compile Include="MessageNumber.cs" />
+    <Compile Include="MessageIdentifier.cs" />
     <Compile Include="NotificationType.cs" />
     <Compile Include="SerialiserFactory.cs" />
     <Compile Include="SerialiserRegistry.cs" />
@@ -129,6 +129,8 @@
     <Compile Include="Serialiser\UserSnapshotRequestSerialiser.cs" />
     <Compile Include="Serialiser\UserSnapshotSerialiser.cs" />
     <Compile Include="Domain\UserRepository.cs" />
+    <Compile Include="IService.cs" />
+    <Compile Include="ServiceManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

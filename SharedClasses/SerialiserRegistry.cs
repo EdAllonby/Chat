@@ -13,23 +13,23 @@ namespace SharedClasses
         /// <summary>
         /// A readonly version of an ISerialiser by Message Identifier dictionary. No one can alter this dictionary after compiling.
         /// </summary>
-        public static readonly IReadOnlyDictionary<MessageNumber, ISerialiser> SerialisersByMessageIdentifier =
-            new Dictionary<MessageNumber, ISerialiser>
+        public static readonly IReadOnlyDictionary<MessageIdentifier, ISerialiser> SerialisersByMessageIdentifier =
+            new Dictionary<MessageIdentifier, ISerialiser>
             {
-                {MessageNumber.ContributionRequest, new ContributionRequestSerialiser()},
-                {MessageNumber.ContributionNotification, new ContributionNotificationSerialiser()},
-                {MessageNumber.LoginRequest, new LoginRequestSerialiser()},
-                {MessageNumber.UserNotification, new UserNotificationSerialiser()},
-                {MessageNumber.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
-                {MessageNumber.UserSnapshot, new UserSnapshotSerialiser()},
-                {MessageNumber.ConversationSnapshotRequest, new ConversationSnapshotRequestSerialiser()},
-                {MessageNumber.ConversationSnapshot, new ConversationSnapshotSerialiser()},
-                {MessageNumber.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser()},
-                {MessageNumber.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
-                {MessageNumber.NewConversationRequest, new NewConversationRequestSerialiser()},
-                {MessageNumber.ConversationNotification, new ConversationNotificationSerialiser()},
-                {MessageNumber.ParticipationsNotification, new ParticipationsNotificationSerialiser()},
-                {MessageNumber.LoginResponse, new LoginResponseSerialiser()}
+                {MessageIdentifier.ContributionRequest, new ContributionRequestSerialiser()},
+                {MessageIdentifier.ContributionNotification, new ContributionNotificationSerialiser()},
+                {MessageIdentifier.LoginRequest, new LoginRequestSerialiser()},
+                {MessageIdentifier.UserNotification, new UserNotificationSerialiser()},
+                {MessageIdentifier.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
+                {MessageIdentifier.UserSnapshot, new UserSnapshotSerialiser()},
+                {MessageIdentifier.ConversationSnapshotRequest, new ConversationSnapshotRequestSerialiser()},
+                {MessageIdentifier.ConversationSnapshot, new ConversationSnapshotSerialiser()},
+                {MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser()},
+                {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
+                {MessageIdentifier.NewConversationRequest, new NewConversationRequestSerialiser()},
+                {MessageIdentifier.ConversationNotification, new ConversationNotificationSerialiser()},
+                {MessageIdentifier.ParticipationsNotification, new ParticipationsNotificationSerialiser()},
+                {MessageIdentifier.LoginResponse, new LoginResponseSerialiser()}
             };
 
         /// <summary>

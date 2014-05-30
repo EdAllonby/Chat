@@ -8,11 +8,11 @@ namespace ChatClient
     /// <summary>
     /// This class is used to Parse the IPAddress, Port and Username with validation
     /// </summary>
-    internal sealed class ClientLoginParser
+    internal sealed class ClientLogOnParser
     {
         private const int PortMaxBound = 65535;
         private const int PortMinBound = 0;
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginParser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLogOnParser));
 
         private bool isParsed;
 

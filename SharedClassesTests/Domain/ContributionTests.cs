@@ -16,7 +16,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void EqualsTest()
+        public void ContributionEqualsTest()
         {
             const string Message = "Hello";
 
@@ -48,7 +48,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void HashcodeTest()
+        public void ContributionHashCodeTest()
         {
             const string Message = "Hello";
 
@@ -67,7 +67,7 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void ReferenceEqualsTest()
+        public void ContributionReferenceEqualsTest()
         {
             const string Message = "Hello";
 

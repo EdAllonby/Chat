@@ -28,9 +28,9 @@ namespace SharedClasses.Message
         /// <summary>
         /// The type of message this is.
         /// </summary>
-        public MessageNumber Identifier
+        public MessageIdentifier MessageIdentifier
         {
-            get { return MessageNumber.LoginResponse; }
+            get { return MessageIdentifier.LoginResponse; }
         }
     }
 }

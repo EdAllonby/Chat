@@ -13,18 +13,18 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        protected override void Serialise(ConversationSnapshotRequest message, NetworkStream stream)
+        protected override void Serialise(ConversationSnapshotRequest message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.Identifier, stream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.MessageIdentifier, networkStream);
 
-            binaryFormatter.Serialize(stream, message);
-            Log.InfoFormat("{0} serialised and sent to network stream", message.Identifier);
+            binaryFormatter.Serialize(networkStream, message);
+            Log.InfoFormat("{0} serialised and sent to network stream", message.MessageIdentifier);
         }
 
-        public override IMessage Deserialise(NetworkStream stream)
+        public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversationSnapshotRequest = (ConversationSnapshotRequest) binaryFormatter.Deserialize(stream);
-            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", conversationSnapshotRequest.Identifier);
+            var conversationSnapshotRequest = (ConversationSnapshotRequest) binaryFormatter.Deserialize(networkStream);
+            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", conversationSnapshotRequest.MessageIdentifier);
             return conversationSnapshotRequest;
         }
     }

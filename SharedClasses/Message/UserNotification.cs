@@ -19,9 +19,9 @@ namespace SharedClasses.Message
 
         public User User { get; private set; }
 
-        public MessageNumber Identifier
+        public MessageIdentifier MessageIdentifier
         {
-            get { return MessageNumber.UserNotification; }
+            get { return MessageIdentifier.UserNotification; }
         }
     }
 }

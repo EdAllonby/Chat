@@ -17,9 +17,9 @@ namespace SharedClasses.Message
 
         public Conversation Conversation { get; private set; }
 
-        public MessageNumber Identifier
+        public MessageIdentifier MessageIdentifier
         {
-            get { return MessageNumber.ConversationNotification; }
+            get { return MessageIdentifier.ConversationNotification; }
         }
     }
 }
