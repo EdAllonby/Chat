@@ -51,7 +51,7 @@ namespace Server
                 loginResponse = new LoginResponse(null, LoginResult.AlreadyConnected);
                 SendConnectionMessage(loginResponse, tcpClient);
             }
-         
+
             return loginResponse;
         }
 

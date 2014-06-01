@@ -4,9 +4,9 @@ namespace SharedClasses
 {
     public sealed class RepositoryManager
     {
-        private readonly UserRepository userRepository = new UserRepository();
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly ParticipationRepository participationRepository = new ParticipationRepository();
+        private readonly UserRepository userRepository = new UserRepository();
 
         public UserRepository UserRepository
         {

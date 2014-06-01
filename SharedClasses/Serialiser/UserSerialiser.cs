@@ -19,7 +19,7 @@ namespace SharedClasses.Serialiser
         {
             Contract.Requires(user != null);
             Contract.Requires(networkStream != null);
-            
+
             binaryFormatter.Serialize(networkStream, user);
             Log.Debug("User serialised and sent to network stream");
         }

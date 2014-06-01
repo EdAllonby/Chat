@@ -25,7 +25,7 @@ namespace ChatClient.Views
 
         private void ShowUserListWindow(object param)
         {
-            var view = new UserListWindow((UserListViewModel)param);
+            var view = new UserListWindow((UserListViewModel) param);
             Close();
             view.Show();
         }

@@ -41,7 +41,7 @@ namespace SharedClassesTests.Domain
 
             Assert.AreEqual(conversations, conversationRepository.GetAllConversations());
         }
-  
+
         [Test]
         public void FindNonExistentConversationTest()
         {

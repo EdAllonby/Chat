@@ -16,9 +16,9 @@ namespace ChatClient.Services
 
         private bool isParsed;
 
-        private string targetedUsername;
         private IPAddress targetedAddress;
         private int targetedPort;
+        private string targetedUsername;
 
         /// <summary>
         /// Tries to parse the command line arguments to a <see cref="LoginDetails"/> object.

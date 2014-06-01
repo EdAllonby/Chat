@@ -33,7 +33,12 @@ namespace SharedClasses
             messageReceiver.MessageReceived += OnMessageReceiverMessageReceived;
         }
 
-        void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
+        public void Dispose()
+        {
+            tcpClient.Close();
+        }
+
+        private void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
         {
             MessageReceived(sender, e);
         }
@@ -61,11 +66,6 @@ namespace SharedClasses
             };
 
             messageListenerThread.Start();
-        }
-
-        public void Dispose()
-        {
-            tcpClient.Close();
         }
     }
 }

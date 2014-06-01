@@ -34,7 +34,7 @@ namespace SharedClassesTests.Domain
         public void UserIdIterationTest(int userCount)
         {
             int baseId = EntityGeneratorFactory.GetEntityID<User>();
-            
+
             int totalUsers = userCount;
 
             User user = null;
@@ -64,14 +64,6 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void UsersWithSameNameHaveDifferentIDsEqualityTest()
-        {
-            var user1 = new User("User", 1, ConnectionStatus.Connected);
-            var user2 = new User("User", 2, ConnectionStatus.Connected);
-            Assert.AreNotEqual(user1, user2);
-        }
-
-        [Test]
         public void UserHashCodeTest()
         {
             var user1 = new User("User", 1, ConnectionStatus.Connected);
@@ -84,7 +76,7 @@ namespace SharedClassesTests.Domain
         public void UserReferenceEqualsTest()
         {
             var user1 = new User("User", 2, ConnectionStatus.Disconnected);
-            var user2 = user1;
+            User user2 = user1;
 
             Assert.IsTrue(user1.Equals(user2));
             Assert.IsTrue(user1.Equals(user2 as object));
@@ -94,6 +86,14 @@ namespace SharedClassesTests.Domain
 
             Assert.IsFalse(userObject.Equals(2));
             Assert.IsFalse(userObject.Equals(null));
+        }
+
+        [Test]
+        public void UsersWithSameNameHaveDifferentIDsEqualityTest()
+        {
+            var user1 = new User("User", 1, ConnectionStatus.Connected);
+            var user2 = new User("User", 2, ConnectionStatus.Connected);
+            Assert.AreNotEqual(user1, user2);
         }
     }
 }

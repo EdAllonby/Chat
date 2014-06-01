@@ -16,9 +16,8 @@ namespace ChatClient.Services
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ServerLoginHandler));
 
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-
         private readonly RepositoryManager repositoryManager;
+        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         private TcpClient loginConnection;
 
@@ -38,7 +37,7 @@ namespace ChatClient.Services
 
             IMessage userRequest = new LoginRequest(loginDetails.Username);
             SendConnectionMessage(userRequest, loginConnection);
-            LoginResponse loginResponse = (LoginResponse)GetConnectionIMessage(loginConnection);
+            var loginResponse = (LoginResponse) GetConnectionIMessage(loginConnection);
             return loginResponse;
         }
 
@@ -46,15 +45,15 @@ namespace ChatClient.Services
         {
             SendConnectionMessage(new UserSnapshotRequest(userId), loginConnection);
 
-            UserSnapshot userSnapshot = (UserSnapshot)GetConnectionIMessage(loginConnection);
+            var userSnapshot = (UserSnapshot) GetConnectionIMessage(loginConnection);
 
             SendConnectionMessage(new ConversationSnapshotRequest(userId), loginConnection);
 
-            ConversationSnapshot conversationSnapshot = (ConversationSnapshot)GetConnectionIMessage(loginConnection);
+            var conversationSnapshot = (ConversationSnapshot) GetConnectionIMessage(loginConnection);
 
             SendConnectionMessage(new ParticipationSnapshotRequest(userId), loginConnection);
 
-            ParticipationSnapshot participationSnapshot = (ParticipationSnapshot)GetConnectionIMessage(loginConnection);
+            var participationSnapshot = (ParticipationSnapshot) GetConnectionIMessage(loginConnection);
 
             repositoryManager.UserRepository.AddUsers(userSnapshot.Users);
             repositoryManager.ConversationRepository.AddConversations(conversationSnapshot.Conversations);

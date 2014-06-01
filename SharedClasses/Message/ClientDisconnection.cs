@@ -1,5 +1,4 @@
-﻿using SharedClasses.Domain;
-using SharedClasses.Serialiser;
+﻿using SharedClasses.Serialiser;
 
 namespace SharedClasses.Message
 {

@@ -22,7 +22,7 @@ namespace SharedClasses.Domain
 
         public event ConversationChangedHandler ConversationAdded = delegate { };
         public event ConversationsChangedHandler ConversationsAdded = delegate { };
-        public event ContributionAddedHandler ContributionAdded = delegate { }; 
+        public event ContributionAddedHandler ContributionAdded = delegate { };
 
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.

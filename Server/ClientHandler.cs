@@ -13,6 +13,11 @@ namespace Server
         private ClientLoginHandler clientLoginHandler;
         private ConnectionHandler connectionHandler;
 
+        public void Dispose()
+        {
+            connectionHandler.Dispose();
+        }
+
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
@@ -47,11 +52,6 @@ namespace Server
         private void OnConnectionHandlerNewMessageReceived(object sender, MessageEventArgs e)
         {
             MessageReceived(sender, e);
-        }
-
-        public void Dispose()
-        {
-            connectionHandler.Dispose();
         }
     }
 }

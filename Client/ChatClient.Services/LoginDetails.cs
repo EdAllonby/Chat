@@ -8,9 +8,9 @@ namespace ChatClient.Services
     /// </summary>
     public class LoginDetails
     {
-        private readonly String username;
         private readonly IPAddress address;
         private readonly int port;
+        private readonly String username;
 
         public LoginDetails(string username, IPAddress address, int port)
         {
