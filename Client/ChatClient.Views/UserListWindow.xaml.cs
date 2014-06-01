@@ -18,13 +18,11 @@ namespace ChatClient.Views
             DataContext = viewModel;
 
             Mediator.Instance.Register(ViewName.ChatWindow, ShowChatWindow);
-
-
         }
 
         private void ShowChatWindow(object param)
         {
-            var view = new ChatWindow((ChatWindowViewModel)param);
+            var view = new ChatWindow((ChatWindowViewModel) param);
             view.Show();
         }
 

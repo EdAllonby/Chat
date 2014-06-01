@@ -15,9 +15,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 {
     public sealed class ChatWindowViewModel : ViewModel, IDisposable
     {
-        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
-
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
+        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
         private IList<UserMessageViewModel> chatMessages = new List<UserMessageViewModel>();
         private string chatTitle;
         private Conversation conversation;
@@ -139,6 +138,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         #endregion
 
+        public void Dispose()
+        {
+            audioPlayer.Dispose();
+        }
+
         private string GetChatTitle()
         {
             var titleBuilder = new StringBuilder();
@@ -192,11 +196,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
 
             ChatMessages = userMessages;
-        }
-
-        public void Dispose()
-        {
-            audioPlayer.Dispose();
         }
     }
 }

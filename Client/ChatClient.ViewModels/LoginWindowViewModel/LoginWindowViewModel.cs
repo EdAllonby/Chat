@@ -19,7 +19,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
 
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
-        
+
         private string ipAddress = "IP Address";
         private string port = "Port";
         private string username = "Username";
@@ -99,7 +99,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                     case LoginResult.Success:
                         OpenUserListWindow();
                         break;
-                    
+
                     case LoginResult.AlreadyConnected:
                         MessageBox.Show(string.Format("User already connected with username: {0}", username), "Login Denied");
                         break;

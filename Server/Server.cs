@@ -17,10 +17,9 @@ namespace Server
     {
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
-        
-        private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
-        private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>(); 
+        private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
+        private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
         public Server()
         {
@@ -66,7 +65,7 @@ namespace Server
                 clientHandler.CreateConnectionHandler(userId, tcpClient);
 
                 clientHandlersIndexedByUserId[userId] = clientHandler;
-                
+
                 clientHandler.MessageReceived += OnMessageReceived;
                 Log.InfoFormat("Client with User Id {0} has successfully logged in.", userId);
             }
@@ -110,11 +109,11 @@ namespace Server
             switch (message.MessageIdentifier)
             {
                 case MessageIdentifier.UserSnapshotRequest:
-                    SendUserSnapshot((UserSnapshotRequest)message);
+                    SendUserSnapshot((UserSnapshotRequest) message);
                     break;
 
                 case MessageIdentifier.ConversationSnapshotRequest:
-                    SendConversationSnapshot((ConversationSnapshotRequest)message);
+                    SendConversationSnapshot((ConversationSnapshotRequest) message);
                     break;
 
                 case MessageIdentifier.ParticipationSnapshotRequest:
@@ -210,7 +209,7 @@ namespace Server
         private void OnParticipationsAdded(IEnumerable<Participation> participations)
         {
             IEnumerable<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
-            
+
             List<int> userIds = participationsEnumerable.Select(participation => participation.UserId).ToList();
 
             var participationsNotification = new ParticipationsNotification(userIds, participationsEnumerable.First().ConversationId);

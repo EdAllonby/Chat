@@ -34,6 +34,13 @@ namespace SharedClasses.Domain
             get { return conversationId; }
         }
 
+        public bool Equals(Conversation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return conversationId == other.conversationId;
+        }
+
         /// <summary>
         /// Adds a <see cref="Contribution"/> entity to the dictionary indexed by ids.
         /// </summary>
@@ -64,13 +71,6 @@ namespace SharedClasses.Domain
         public IEnumerable<Contribution> GetAllContributions()
         {
             return new List<Contribution>(contributionsIndexedByContributionID.Values);
-        }
-
-        public bool Equals(Conversation other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return conversationId == other.conversationId;
         }
 
         public override bool Equals(object obj)

@@ -20,16 +20,15 @@ namespace ChatClient.Services
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
 
-        private ConnectionHandler connectionHandler;
-
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
+        private ConnectionHandler connectionHandler;
 
         public int ClientUserId { get; private set; }
 
         public event UserListHandler NewUser = delegate { };
         public event NewConversationHandler NewConversationNotification = delegate { };
         public event NewContributionNotificationHandler NewContributionNotification = delegate { };
-   
+
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
         /// and gets the state of <see cref="ClientService"/> up to date with the user status'. 
@@ -169,7 +168,7 @@ namespace ChatClient.Services
                     break;
             }
         }
-        
+
         private void AddParticipants(ParticipationsNotification participationsNotification)
         {
             foreach (int participantId in participationsNotification.ParticipantIds)

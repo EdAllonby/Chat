@@ -22,7 +22,7 @@ namespace SharedClasses.Serialiser
         {
             Contract.Requires(contribution != null);
             Contract.Requires(networkStream != null);
-            
+
             binaryFormatter.Serialize(networkStream, contribution);
             Log.Debug("Contribution serialised and sent to network stream");
         }
