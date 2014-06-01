@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ChatClient.Views.Properties {
+namespace ChatClient.ViewModels.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ChatClient.Views.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ChatClient.Views.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ChatClient.ViewModels.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,12 +61,11 @@ namespace ChatClient.Views.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
-        internal static byte[] Roboto_Thin {
+        internal static System.IO.UnmanagedMemoryStream Chat_Notification_Sound {
             get {
-                object obj = ResourceManager.GetObject("Roboto_Thin", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetStream("Chat_Notification_Sound", resourceCulture);
             }
         }
     }
