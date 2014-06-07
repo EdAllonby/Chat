@@ -30,6 +30,8 @@ namespace ChatClient.Services
         /// </summary>
         event NewContributionNotificationHandler NewContributionNotification;
 
+        RepositoryManager RepositoryManager { get; }
+
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
         /// and gets the state of <see cref="ClientService"/> up to date with the user status'. 

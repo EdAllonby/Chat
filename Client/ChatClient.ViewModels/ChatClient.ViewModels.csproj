@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="AudioPlayer.cs" />
     <Compile Include="ChatWindowViewModel\ChatWindowViewModel.cs" />
-    <Compile Include="ChatWindowViewModel\UserMessageViewModel.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="ConversationWindowsStatusCollection.cs" />
     <Compile Include="IAudioPlayer.cs" />
@@ -64,6 +63,10 @@
     <ProjectReference Include="..\..\SharedClasses\SharedClasses.csproj">
       <Project>{51e169d3-c988-4460-ab60-bfc72848e954}</Project>
       <Name>SharedClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatClient.Models\ChatClient.Models.csproj">
+      <Project>{CE7572B1-9F87-4EA5-87B1-69B794E2DA09}</Project>
+      <Name>ChatClient.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\ChatClient.Services\ChatClient.Services.csproj">
       <Project>{524e9a53-b24b-43eb-a285-62b44c520cfe}</Project>

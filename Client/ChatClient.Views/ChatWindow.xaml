@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:viewModel="clr-namespace:ChatClient.ViewModels.ChatWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding WindowTitle}" Height="500" Width="350"
+        Title="{Binding GroupChat.WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen"
         Closing="Window_Closing"
         FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}">
@@ -29,7 +29,7 @@
                       Stretch="Fill" Stroke="Black" StrokeThickness="1" Width="50" Height="38" Canvas.Top="18.5"
                       Fill="#e74c3c" />
             </Canvas>
-            <Label Content="{Binding ChatTitle, FallbackValue='Chat participant names go here'}" VerticalContentAlignment="Center"
+            <Label Content="{Binding GroupChat.Title, FallbackValue='Chat participant names go here'}" VerticalContentAlignment="Center"
                    FontFamily="Myriad Pro" FontSize="16" />
         </StackPanel>
 
@@ -42,7 +42,7 @@
                                  Grid.Column="0"
                                  Background="AliceBlue"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                 ItemsSource="{Binding ChatMessages, UpdateSourceTrigger=Default}">
+                                 ItemsSource="{Binding GroupChat.UserMessages, UpdateSourceTrigger=Default}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel MaxWidth="{Binding ActualWidth, ElementName=MessagesBox}" >
@@ -64,7 +64,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Name="ChatTextBox" Grid.Column="0"
-                     Text="{Binding MessageToAddToConversation,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                     Text="{Binding GroupChat.MessageToAddToConversation,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
                      DockPanel.Dock="Left"
                      VerticalAlignment="Stretch"
                      VerticalContentAlignment="Stretch"

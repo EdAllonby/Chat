@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using ChatClient.Models;
 using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
@@ -17,11 +18,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
-        private IList<UserMessageViewModel> chatMessages = new List<UserMessageViewModel>();
-        private string chatTitle;
-        private Conversation conversation;
-        private string messageToAddToConversation;
-        private string windowTitle;
+
+        private GroupChatModel groupChat = new GroupChatModel();
 
         public ChatWindowViewModel()
         {
@@ -30,86 +28,32 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ChatWindowViewModel(Conversation conversation)
         {
-            Conversation = conversation;
-            windowTitle = clientService.GetUser(clientService.ClientUserId).Username;
+            groupChat.Conversation = conversation;
+            groupChat.WindowTitle = clientService.GetUser(clientService.ClientUserId).Username;
+            groupChat.Title = GetChatTitle();
+            groupChat.Users = GetUsers();
 
             clientService.NewContributionNotification += NewContributionNotificationReceived;
         }
 
-        public string WindowTitle
+        public GroupChatModel GroupChat
         {
-            get { return windowTitle; }
+            get { return groupChat; }
             set
             {
-                if (value == windowTitle)
-                {
-                    return;
-                }
-
-                windowTitle = value;
+                if (Equals(value, groupChat)) return;
+                groupChat = value;
                 OnPropertyChanged();
             }
         }
 
-        public Conversation Conversation
+        private List<User> GetUsers()
         {
-            set
-            {
-                if (Equals(value, conversation))
-                {
-                    return;
-                }
+            ParticipationRepository participationRepository = clientService.RepositoryManager.ParticipationRepository;
+            UserRepository userRepository = clientService.RepositoryManager.UserRepository;
 
-                conversation = value;
-
-                ChatTitle = GetChatTitle();
-
-                OnPropertyChanged();
-            }
-        }
-
-        public IList<UserMessageViewModel> ChatMessages
-        {
-            get { return chatMessages; }
-            set
-            {
-                if (Equals(value, chatMessages))
-                {
-                    return;
-                }
-
-                chatMessages = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public String ChatTitle
-        {
-            get { return chatTitle; }
-            set
-            {
-                if (value == chatTitle)
-                {
-                    return;
-                }
-
-                chatTitle = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string MessageToAddToConversation
-        {
-            get { return messageToAddToConversation; }
-            set
-            {
-                if (value == messageToAddToConversation)
-                {
-                    return;
-                }
-                messageToAddToConversation = value;
-                OnPropertyChanged();
-            }
+            return participationRepository.GetParticipationsByConversationId(groupChat.Conversation.ConversationId)
+                .Select(participation => userRepository.FindUserByID(participation.UserId)).ToList();
         }
 
         #region Commands
@@ -121,19 +65,19 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ICommand Closing
         {
-            get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(conversation.ConversationId, WindowStatus.Closed)); }
+            get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
         }
 
         private void NewConversationContributionRequest()
         {
-            clientService.SendContributionRequest(conversation.ConversationId, MessageToAddToConversation);
+            clientService.SendContributionRequest(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
 
-            MessageToAddToConversation = string.Empty;
+            groupChat.MessageToAddToConversation = string.Empty;
         }
 
         private bool CanSendConversationContributionRequest()
         {
-            return !String.IsNullOrEmpty(MessageToAddToConversation);
+            return !String.IsNullOrEmpty(groupChat.MessageToAddToConversation);
         }
 
         #endregion
@@ -148,7 +92,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in clientService.GetAllParticipations().Where(participant => participant.ConversationId == conversation.ConversationId))
+            foreach (Participation participant in clientService.GetAllParticipations().Where(participant => participant.ConversationId == groupChat.Conversation.ConversationId))
             {
                 titleBuilder.Append(clientService.GetUser(participant.UserId).Username);
                 titleBuilder.Append(" and ");
@@ -166,11 +110,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void NewContributionNotificationReceived(Conversation updatedConversation)
         {
-            if (updatedConversation.ConversationId == conversation.ConversationId)
+            if (updatedConversation.ConversationId == groupChat.Conversation.ConversationId)
             {
                 Application.Current.Dispatcher.Invoke(GetMessages);
 
-                if (conversation.GetAllContributions().Last().ContributorUserId != clientService.ClientUserId)
+                if (groupChat.Conversation.GetAllContributions().Last().ContributorUserId != clientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
@@ -179,9 +123,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void GetMessages()
         {
-            IEnumerable<Contribution> contributions = conversation.GetAllContributions();
+            IEnumerable<Contribution> contributions = groupChat.Conversation.GetAllContributions();
 
-            var userMessages = new List<UserMessageViewModel>();
+            var userMessages = new List<UserMessageModel>();
 
             foreach (Contribution contribution in contributions)
             {
@@ -192,10 +136,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 
-                userMessages.Add(new UserMessageViewModel(message, messageDetails.ToString()));
+                userMessages.Add(new UserMessageModel(message, messageDetails.ToString()));
             }
 
-            ChatMessages = userMessages;
+            groupChat.UserMessages = userMessages;
         }
     }
 }
