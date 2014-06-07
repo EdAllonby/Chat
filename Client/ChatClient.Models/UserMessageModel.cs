@@ -1,17 +1,17 @@
-﻿using SharedClasses.Domain;
+﻿﻿using SharedClasses.Domain;
 
-namespace ChatClient.ViewModels.ChatWindowViewModel
+namespace ChatClient.Models
 {
     /// <summary>
     /// Represents the message information that a <see cref="Contribution"/> has.
     /// This makes it easier to display useful information without polluting the domain model.
     /// </summary>
-    public sealed class UserMessageViewModel
+    public sealed class UserMessageModel
     {
         private readonly string message;
         private readonly string messageDetails;
 
-        public UserMessageViewModel(string message, string messageDetails)
+        public UserMessageModel(string message, string messageDetails)
         {
             this.message = message;
             this.messageDetails = messageDetails;

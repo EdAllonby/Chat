@@ -29,6 +29,8 @@ namespace ChatClient.Services
         public event NewConversationHandler NewConversationNotification = delegate { };
         public event NewContributionNotificationHandler NewContributionNotification = delegate { };
 
+        public RepositoryManager RepositoryManager { get { return repositoryManager; } }
+
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
         /// and gets the state of <see cref="ClientService"/> up to date with the user status'. 
