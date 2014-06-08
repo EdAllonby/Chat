@@ -10,6 +10,9 @@ using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.UserListViewModel
 {
+    /// <summary>
+    /// Holds the logic for the view. Accesses the Service manager to receive and send messages. 
+    /// </summary>
     public class UserListViewModel : ViewModel
     {
         private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
@@ -18,9 +21,13 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         private bool isMultiUserConversation;
 
+        private readonly RepositoryManager repositoryManager;
+
         public UserListViewModel()
         {
-            GetAllUsers(clientService.GetAllUsers());
+            repositoryManager = clientService.RepositoryManager;
+
+            GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
 
             clientService.NewUser += NewUser;
 
@@ -31,7 +38,7 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public string Username
         {
-            get { return clientService.GetUser(clientService.ClientUserId).Username; }
+            get { return repositoryManager.UserRepository.FindUserByID(clientService.ClientUserId).Username; }
         }
 
         public bool IsMultiUserConversation
@@ -130,18 +137,18 @@ namespace ChatClient.ViewModels.UserListViewModel
         {
             IsMultiUserConversation = false;
 
-            if (!clientService.DoesConversationExist(participantIds))
+            if (!repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(participantIds))
             {
                 clientService.SendConversationRequest(participantIds);
             }
             else
             {
-                int conversationId = clientService.GetConversationId(participantIds);
-                CreateNewConversationWindow(clientService.GetConversation(conversationId));
+                int conversationId = repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
+                CreateNewConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
             }
         }
 
-        private void CreateNewConversationWindow(Conversation conversation)
+        private static void CreateNewConversationWindow(Conversation conversation)
         {
             // Check if conversation window already exists
             if (ConversationWindowsStatusCollection.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)

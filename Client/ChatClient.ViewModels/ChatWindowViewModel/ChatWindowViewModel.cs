@@ -18,18 +18,20 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
+        private readonly RepositoryManager repositoryManager;
 
         private GroupChatModel groupChat = new GroupChatModel();
 
         public ChatWindowViewModel()
         {
-            // Default constructor used for WPF design time view
+            // Default constructor used for WPF design time view.
         }
 
         public ChatWindowViewModel(Conversation conversation)
         {
+            repositoryManager = clientService.RepositoryManager;
             groupChat.Conversation = conversation;
-            groupChat.WindowTitle = clientService.GetUser(clientService.ClientUserId).Username;
+            groupChat.WindowTitle = repositoryManager.UserRepository.FindUserByID(clientService.ClientUserId).Username;
             groupChat.Title = GetChatTitle();
             groupChat.Users = GetUsers();
 
@@ -92,9 +94,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in clientService.GetAllParticipations().Where(participant => participant.ConversationId == groupChat.Conversation.ConversationId))
+            foreach (Participation participant in repositoryManager.ParticipationRepository.GetAllParticipations()
+                .Where(participant => participant.ConversationId == groupChat.Conversation.ConversationId))
             {
-                titleBuilder.Append(clientService.GetUser(participant.UserId).Username);
+                titleBuilder.Append(repositoryManager.UserRepository.FindUserByID(participant.UserId).Username);
                 titleBuilder.Append(" and ");
             }
 
@@ -132,7 +135,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 string message = contribution.Message;
 
                 var messageDetails = new StringBuilder();
-                messageDetails.Append(clientService.GetUser(contribution.ContributorUserId).Username);
+                messageDetails.Append(repositoryManager.UserRepository.FindUserByID(contribution.ContributorUserId).Username);
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 
