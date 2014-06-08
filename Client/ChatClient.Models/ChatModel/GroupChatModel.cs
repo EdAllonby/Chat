@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using ChatClient.Models.Annotations;
 using SharedClasses.Domain;
 
 namespace ChatClient.Models.ChatModel
 {
-    public class GroupChatModel : BaseModel
+    public class GroupChatModel : INotifyPropertyChanged
     {
         private Conversation conversation;
+        private string messageToAddToConversation;
         private string title;
+        private List<UserMessageModel> userMessages;
         private List<User> users;
         private string windowTitle;
-        private string messageToAddToConversation;
-        private List<UserMessageModel> userMessages;
 
         public List<UserMessageModel> UserMessages
         {
@@ -79,6 +82,15 @@ namespace ChatClient.Models.ChatModel
                 messageToAddToConversation = value;
                 OnPropertyChanged();
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
