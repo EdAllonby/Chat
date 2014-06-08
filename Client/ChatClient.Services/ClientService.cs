@@ -25,11 +25,17 @@ namespace ChatClient.Services
 
         public int ClientUserId { get; private set; }
 
+        /// <summary>
+        /// Holds the repositories for the Client.
+        /// </summary>
+        public RepositoryManager RepositoryManager
+        {
+            get { return repositoryManager; }
+        }
+
         public event UserListHandler NewUser = delegate { };
         public event NewConversationHandler NewConversationNotification = delegate { };
         public event NewContributionNotificationHandler NewContributionNotification = delegate { };
-
-        public RepositoryManager RepositoryManager { get { return repositoryManager; } }
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
@@ -81,64 +87,6 @@ namespace ChatClient.Services
         {
             var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
             connectionHandler.SendMessage(clientContribution);
-        }
-
-        /// <summary>
-        /// Returns all <see cref="User"/>s that the client knows of.
-        /// </summary>
-        /// <returns>A collection of all <see cref="User"/>s.</returns>
-        public IEnumerable<User> GetAllUsers()
-        {
-            return repositoryManager.UserRepository.GetAllUsers();
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Participation"/>s that the client knows of.
-        /// </summary>
-        /// <returns>A collection of all <see cref="Participation"/>s.</returns>
-        public IEnumerable<Participation> GetAllParticipations()
-        {
-            return repositoryManager.ParticipationRepository.GetAllParticipations();
-        }
-
-        /// <summary>
-        /// Returns the <see cref="User"/> entity object that is specific to this client.
-        /// </summary>
-        /// <param name="userId">The Id that matches the <see cref="User"/>.</param>
-        /// <returns>The <see cref="User"/> that matches the <see cref="User"/> Id.</returns>
-        public User GetUser(int userId)
-        {
-            return repositoryManager.UserRepository.FindUserByID(userId);
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Conversation"/> object that matches the <see cref="Conversation"/> Id.
-        /// </summary>
-        /// <param name="conversationId">The Id that matches the <see cref="Conversation"/>.</param>
-        /// <returns>The <see cref="Conversation"/> that matches the <see cref="Conversation"/> Id.</returns>
-        public Conversation GetConversation(int conversationId)
-        {
-            return repositoryManager.ConversationRepository.FindConversationById(conversationId);
-        }
-
-        /// <summary>
-        /// Checks whether a <see cref="Conversation"/> exists for a particular set of <see cref="User"/>s.
-        /// </summary>
-        /// <param name="participantIds">The set of <see cref="User"/> Ids to check for a conversation.</param>
-        /// <returns>Whether a conversation exists for the set of <see cref="User"/>s.</returns>
-        public bool DoesConversationExist(IEnumerable<int> participantIds)
-        {
-            return repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(participantIds);
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Conversation"/> Id for the particular set of <see cref="User"/>s.
-        /// </summary>
-        /// <param name="participantIds">The set of <see cref="User"/> Ids that belong to the conversation.</param>
-        /// <returns>The <see cref="Conversation"/> Id.</returns>
-        public int GetConversationId(IEnumerable<int> participantIds)
-        {
-            return repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
