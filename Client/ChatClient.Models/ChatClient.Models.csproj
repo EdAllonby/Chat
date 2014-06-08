@@ -35,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatModel\GroupChatModel.cs" />
-    <Compile Include="BaseModel.cs" />
     <Compile Include="LoginModel\LoginModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

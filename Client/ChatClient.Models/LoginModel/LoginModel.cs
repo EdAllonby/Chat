@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using ChatClient.Models.Annotations;
 
 namespace ChatClient.Models.LoginModel
 {
-    public class LoginModel : BaseModel, IDataErrorInfo
+    public class LoginModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private string username = "Username";
         private string ipAddress = "IPAddress";
@@ -73,5 +75,14 @@ namespace ChatClient.Models.LoginModel
         }
 
         public string Error { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
