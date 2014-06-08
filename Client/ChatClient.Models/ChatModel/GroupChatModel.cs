@@ -1,12 +1,9 @@
-﻿﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-﻿using ChatClient.Models.Annotations;
-﻿using SharedClasses.Domain;
+﻿using System.Collections.Generic;
+using SharedClasses.Domain;
 
-namespace ChatClient.Models
+namespace ChatClient.Models.ChatModel
 {
-    public class GroupChatModel : INotifyPropertyChanged
+    public class GroupChatModel : BaseModel
     {
         private Conversation conversation;
         private string title;
@@ -82,15 +79,6 @@ namespace ChatClient.Models
                 messageToAddToConversation = value;
                 OnPropertyChanged();
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

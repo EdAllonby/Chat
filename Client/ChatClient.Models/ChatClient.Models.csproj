@@ -34,10 +34,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GroupChatModel.cs" />
+    <Compile Include="ChatModel\GroupChatModel.cs" />
+    <Compile Include="BaseModel.cs" />
+    <Compile Include="LoginModel\LoginModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserMessageModel.cs" />
+    <Compile Include="ChatModel\UserMessageModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SharedClasses\SharedClasses.csproj">

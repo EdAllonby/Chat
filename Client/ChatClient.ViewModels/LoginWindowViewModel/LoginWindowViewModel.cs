@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Input;
+using ChatClient.Models.LoginModel;
 using ChatClient.Services;
 using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
@@ -20,9 +21,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
 
-        private string ipAddress = "IP Address";
-        private string port = "Port";
-        private string username = "Username";
+        private LoginModel loginModel = new LoginModel();
 
         public LoginWindowViewModel()
         {
@@ -43,47 +42,13 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             }
         }
 
-        public string Username
+        public LoginModel LoginModel
         {
-            get { return username; }
+            get { return loginModel; }
             set
             {
-                if (value == username)
-                {
-                    return;
-                }
-
-                username = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string IPAddress
-        {
-            get { return ipAddress; }
-            set
-            {
-                if (value == ipAddress)
-                {
-                    return;
-                }
-
-                ipAddress = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string Port
-        {
-            get { return port; }
-            set
-            {
-                if (value == port)
-                {
-                    return;
-                }
-
-                port = value;
+                if (Equals(value, loginModel)) return;
+                loginModel = value;
                 OnPropertyChanged();
             }
         }
@@ -101,7 +66,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                         break;
 
                     case LoginResult.AlreadyConnected:
-                        MessageBox.Show(string.Format("User already connected with username: {0}", username), "Login Denied");
+                        MessageBox.Show(string.Format("User already connected with username: {0}", LoginModel.Username), "Login Denied");
                         break;
                 }
             }
@@ -139,7 +104,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         private void LoginToChat()
         {
             LoginDetails loginDetails;
-            bool result = logOnParser.TryParseLogonDetails(username, ipAddress, port, out loginDetails);
+            bool result = logOnParser.TryParseLogonDetails(LoginModel.Username, LoginModel.IPAddress, LoginModel.Port, out loginDetails);
             if (result)
             {
                 AttemptLogin(loginDetails);
@@ -152,7 +117,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private bool CanLogin()
         {
-            return !(String.IsNullOrEmpty(Username) || String.IsNullOrEmpty(IPAddress) || String.IsNullOrEmpty(Port));
+            return (String.IsNullOrWhiteSpace(LoginModel.Error));
         }
 
         #endregion

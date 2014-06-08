@@ -1,6 +1,6 @@
 ﻿﻿using SharedClasses.Domain;
 
-namespace ChatClient.Models
+namespace ChatClient.Models.ChatModel
 {
     /// <summary>
     /// Represents the message information that a <see cref="Contribution"/> has.
