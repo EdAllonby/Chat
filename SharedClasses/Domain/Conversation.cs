@@ -16,9 +16,9 @@ namespace SharedClasses.Domain
         private readonly int conversationId;
 
         /// <summary>
-        /// Creates a conversation entity with conversation ID
+        /// Creates a conversation entity with conversation Id.
         /// </summary>
-        /// <param name="conversationId">The ID to assign to the conversation</param>
+        /// <param name="conversationId">The Id to assign to the conversation.</param>
         public Conversation(int conversationId)
         {
             Contract.Requires(conversationId > 0);
@@ -27,7 +27,7 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Conversation is a domain entity class and gets a unique ID
+        /// Conversation is a domain entity class and gets a unique Id.
         /// </summary>
         public int ConversationId
         {
@@ -53,10 +53,10 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Adds a <see cref="Contribution"/> from an incoming <see cref="ContributionNotification"/>
-        /// The <see cref="ContributionNotification"/> must have an ID otherwise it is not following the protocol
+        /// Adds a <see cref="Contribution"/> from an incoming <see cref="ContributionNotification"/>.
+        /// The <see cref="ContributionNotification"/> must have an ID otherwise it is not following the protocol.
         /// </summary>
-        /// <param name="contributionNotification">The contribution to add to the conversation packaged in a <see cref="ContributionNotification"/></param>
+        /// <param name="contributionNotification">The contribution to add to the conversation packaged in a <see cref="ContributionNotification"/>.</param>
         public void AddContribution(ContributionNotification contributionNotification)
         {
             Contract.Requires(contributionNotification != null);
@@ -65,9 +65,9 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Returns a list of <see cref="Contribution"/>s which are held in this <see cref="Conversation"/> entity
+        /// Returns a list of <see cref="Contribution"/>s which are held in this <see cref="Conversation"/> entity.
         /// </summary>
-        /// <returns>A collection of all contributions associated with the conversation</returns>
+        /// <returns>A collection of all contributions associated with the conversation.</returns>
         public IEnumerable<Contribution> GetAllContributions()
         {
             return new List<Contribution>(contributionsIndexedByContributionID.Values);

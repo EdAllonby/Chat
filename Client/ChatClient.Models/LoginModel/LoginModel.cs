@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ChatClient.Models.Annotations;
+using ChatClient.Models.Properties;
 
 namespace ChatClient.Models.LoginModel
 {

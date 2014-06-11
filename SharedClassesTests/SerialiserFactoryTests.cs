@@ -2,6 +2,7 @@
 using SharedClasses;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
+using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace SharedClassesTests
 {
@@ -13,8 +14,8 @@ namespace SharedClassesTests
         [Test]
         public void GetSerialiserFromGenericTest()
         {
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ParticipationsNotification>();
-            Assert.IsInstanceOf<ParticipationsNotificationSerialiser>(serialiser);
+            ISerialiser serialiser = serialiserFactory.GetSerialiser<ParticipationNotification>();
+            Assert.IsInstanceOf<ParticipationNotificationSerialiser>(serialiser);
         }
 
         [Test]

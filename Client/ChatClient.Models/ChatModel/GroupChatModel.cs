@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ChatClient.Models.Annotations;
+using ChatClient.Models.Properties;
 using SharedClasses.Domain;
 
 namespace ChatClient.Models.ChatModel

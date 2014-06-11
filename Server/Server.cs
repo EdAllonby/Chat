@@ -208,14 +208,16 @@ namespace Server
 
         private void OnParticipationsAdded(IEnumerable<Participation> participations)
         {
-            IEnumerable<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
+            IList<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
 
             List<int> userIds = participationsEnumerable.Select(participation => participation.UserId).ToList();
 
-            var participationsNotification = new ParticipationsNotification(userIds, participationsEnumerable.First().ConversationId);
-            foreach (int userId in userIds)
+            foreach (Participation participation in participationsEnumerable)
             {
-                clientHandlersIndexedByUserId[userId].SendMessage(participationsNotification);
+                foreach (int userId in userIds)
+                {
+                    clientHandlersIndexedByUserId[userId].SendMessage(new ParticipationNotification(participation));
+                }
             }
         }
 

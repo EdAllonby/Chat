@@ -4,6 +4,7 @@ using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
+using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace Server
 {

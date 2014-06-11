@@ -11,24 +11,31 @@ namespace SharedClasses
     /// <summary>
     /// This is in charge of abstracting away the TcpClient work for sending and receiving <see cref="IMessage"/>s.
     /// This class has no logic other than to send and receive messages to and from a <see cref="NetworkStream"/>.
-    /// This class is identified by the <see cref="clientUserId"/>
+    /// This class is identified by the <see cref="clientUserId"/>.
     /// </summary>
     public sealed class ConnectionHandler : IDisposable
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConnectionHandler));
         private static int totalListenerThreads;
+
         private readonly int clientUserId;
+        private readonly TcpClient tcpClient;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        private readonly TcpClient tcpClient;
-
-        public ConnectionHandler(int userId, TcpClient tcpClient)
+        /// <summary>
+        /// Initialises the object so it can begin to send and recieve <see cref="IMessage"/>s through <see cref="tcpClient"/>.
+        /// </summary>
+        /// <param name="clientUserId">The client </param>
+        /// <param name="tcpClient"></param>
+        public ConnectionHandler(int clientUserId, TcpClient tcpClient)
         {
             this.tcpClient = tcpClient;
-            clientUserId = userId;
+            this.clientUserId = clientUserId;
+
             Log.Info("New connection handler created");
+
             CreateListenerThread();
             messageReceiver.MessageReceived += OnMessageReceiverMessageReceived;
         }
@@ -38,17 +45,12 @@ namespace SharedClasses
             tcpClient.Close();
         }
 
-        private void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
-        {
-            MessageReceived(sender, e);
-        }
-
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
         /// Sends an <see cref="IMessage"/> across the <see cref="ConnectionHandler"/>'s <see cref="NetworkStream"/>.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">The message to send across the socket connection defined for this object.</param>
         public void SendMessage(IMessage message)
         {
             Contract.Requires(message != null);
@@ -66,6 +68,11 @@ namespace SharedClasses
             };
 
             messageListenerThread.Start();
+        }
+
+        private void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
+        {
+            MessageReceived(sender, e);
         }
     }
 }
