@@ -4,7 +4,7 @@ using SharedClasses.Message;
 namespace SharedClasses
 {
     /// <summary>
-    /// Holds an <see cref="IMessage"/> and the <see cref="ClientUser"/> who sent it
+    /// Holds an <see cref="IMessage"/>.
     /// </summary>
     public sealed class MessageEventArgs : EventArgs
     {

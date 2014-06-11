@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace SharedClasses.Domain
 {
@@ -13,10 +14,13 @@ namespace SharedClasses.Domain
 
         public Participation(int userId, int conversationId)
         {
+            Contract.Requires(userId > 0);
+            Contract.Requires(conversationId > 0);
+
             this.userId = userId;
             this.conversationId = conversationId;
         }
-
+     
         public int UserId
         {
             get { return userId; }
@@ -31,6 +35,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
+            
             return conversationId == other.conversationId && userId == other.userId;
         }
 
@@ -38,8 +43,8 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Participation) obj);
+            
+            return obj.GetType() == GetType() && Equals((Participation) obj);
         }
 
         public override int GetHashCode()

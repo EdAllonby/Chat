@@ -6,11 +6,12 @@ using log4net;
 using SharedClasses;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
+using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace ChatClient.Services
 {
     /// <summary>
-    /// Creates a connection to the Server and gets the entity snapshots the client needs.
+    /// Creates a connection to the Server and initialises the <see cref="repositoryManager"/> with 
     /// </summary>
     internal sealed class ServerLoginHandler
     {
@@ -41,7 +42,7 @@ namespace ChatClient.Services
             return loginResponse;
         }
 
-        public void GetSnapshots(int userId)
+        public void BootstrapRepositories(int userId)
         {
             SendConnectionMessage(new UserSnapshotRequest(userId), loginConnection);
 

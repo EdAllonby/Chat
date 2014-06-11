@@ -50,7 +50,7 @@ namespace ChatClient.Services
 
             if (response.LoginResult == LoginResult.Success)
             {
-                loginHandler.GetSnapshots(response.User.UserId);
+                loginHandler.BootstrapRepositories(response.User.UserId);
 
                 connectionHandler = loginHandler.CreateServerConnectionHandler(response.User.UserId);
 
@@ -74,8 +74,7 @@ namespace ChatClient.Services
         /// <param name="participantIds">The participants that are included in the conversation.</param>
         public void SendConversationRequest(List<int> participantIds)
         {
-            var conversationRequest = new NewConversationRequest(participantIds);
-            connectionHandler.SendMessage(conversationRequest);
+            connectionHandler.SendMessage(new NewConversationRequest(participantIds));
         }
 
         /// <summary>
@@ -85,8 +84,7 @@ namespace ChatClient.Services
         /// <param name="message">The content of the message.</param>
         public void SendContributionRequest(int conversationID, string message)
         {
-            var clientContribution = new ContributionRequest(conversationID, ClientUserId, message);
-            connectionHandler.SendMessage(clientContribution);
+            connectionHandler.SendMessage(new ContributionRequest(conversationID, ClientUserId, message));
         }
 
         private void NewMessageReceived(object sender, MessageEventArgs e)
@@ -94,23 +92,20 @@ namespace ChatClient.Services
             switch (e.Message.MessageIdentifier)
             {
                 case MessageIdentifier.ContributionNotification:
-                    var contributionNotification = (ContributionNotification) e.Message;
-                    AddContributionToConversation(contributionNotification);
+                    AddContributionToConversation((ContributionNotification) e.Message);
                     break;
 
                 case MessageIdentifier.UserNotification:
-                    UpdateUserRepository((UserNotification) e.Message);
+                    UpdateUserInRepository((UserNotification) e.Message);
                     NotifyClientOfUserChange();
                     break;
 
                 case MessageIdentifier.ConversationNotification:
-                    var conversationNotification = (ConversationNotification) e.Message;
-                    AddConversationToRepository(conversationNotification);
+                    AddConversationToRepository((ConversationNotification) e.Message);
                     break;
 
-                case MessageIdentifier.ParticipationsNotification:
-                    var participantsNotification = (ParticipationsNotification) e.Message;
-                    AddParticipants(participantsNotification);
+                case MessageIdentifier.ParticipationNotification:
+                    AddParticipationToRepository((ParticipationNotification) e.Message);
                     break;
 
                 default:
@@ -119,13 +114,9 @@ namespace ChatClient.Services
             }
         }
 
-        private void AddParticipants(ParticipationsNotification participationsNotification)
+        private void AddParticipationToRepository(ParticipationNotification participationNotification)
         {
-            foreach (int participantId in participationsNotification.ParticipantIds)
-            {
-                repositoryManager.ParticipationRepository.AddParticipation(new Participation(participantId,
-                    participationsNotification.ConversationId));
-            }
+            repositoryManager.ParticipationRepository.AddParticipation(participationNotification.Participation);
         }
 
         private void AddContributionToConversation(ContributionNotification contributionNotification)
@@ -143,7 +134,7 @@ namespace ChatClient.Services
             NewConversationNotification(conversation);
         }
 
-        private void UpdateUserRepository(UserNotification userNotification)
+        private void UpdateUserInRepository(UserNotification userNotification)
         {
             repositoryManager.UserRepository.UpdateUser(userNotification.User);
         }
