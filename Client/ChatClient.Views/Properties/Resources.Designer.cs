@@ -61,6 +61,16 @@ namespace ChatClient.Views.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon chat_icon_256px {
+            get {
+                object obj = ResourceManager.GetObject("chat_icon_256px", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] Roboto_Thin {
