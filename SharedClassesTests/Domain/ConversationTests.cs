@@ -14,17 +14,18 @@ namespace SharedClassesTests.Domain
         [TestCase(5)]
         [TestCase(12)]
         [TestCase(22)]
-        public void AssignCustomIdToConversationTest(int id)
+        public void AssignCustomIdToConversationTest(int conversationId)
         {
-            var conversation = new Conversation(id);
-            Assert.AreEqual(conversation.ConversationId, id);
+            var conversation = new Conversation(conversationId);
+            Assert.AreEqual(conversation.ConversationId, conversationId);
         }
 
         [TestCase(12)]
         [TestCase(21326)]
         public void ConversationIdIterationTest(int conversationCount)
         {
-            int baseId = EntityGeneratorFactory.GetEntityID<User>();
+            EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
+            int baseId = entityGenerator.GetEntityID<User>();
 
             int totalUsers = conversationCount;
 
@@ -32,7 +33,7 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i < totalUsers; i++)
             {
-                conversation = new Conversation(EntityGeneratorFactory.GetEntityID<User>());
+                conversation = new Conversation(entityGenerator.GetEntityID<User>());
             }
 
             if (conversation != null)
@@ -101,7 +102,9 @@ namespace SharedClassesTests.Domain
         public void ConversationReferenceEqualsTest()
         {
             const int ConversationId = 4;
+
             var conversation = new Conversation(ConversationId);
+
             Conversation conversation2 = conversation;
 
             Assert.IsTrue(conversation.Equals(conversation2));
@@ -123,6 +126,7 @@ namespace SharedClassesTests.Domain
             var contribution3 = new Contribution(3, new Contribution(1, "Hello??", ConversationID));
 
             var conversation = new Conversation(ConversationID);
+
             conversation.AddContribution(contribution1);
             conversation.AddContribution(contribution2);
             conversation.AddContribution(contribution3);

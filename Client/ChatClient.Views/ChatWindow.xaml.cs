@@ -16,7 +16,7 @@ namespace ChatClient.Views
             viewModel.InitialiseChat();
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
+        private void WindowClosing(object sender, CancelEventArgs e)
         {
             var viewModel = DataContext as ChatWindowViewModel;
             if (viewModel != null)

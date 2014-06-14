@@ -13,10 +13,10 @@ namespace SharedClassesTests.Domain
         [TestCase(4)]
         [TestCase(5)]
         [TestCase(8)]
-        public void AssignCustomIdtoUserTest(int id)
+        public void AssignCustomIdtoUserTest(int userId)
         {
-            var user = new User("user", id, ConnectionStatus.Connected);
-            Assert.AreEqual(user.UserId, id);
+            var user = new User("user", userId, ConnectionStatus.Connected);
+            Assert.AreEqual(user.UserId, userId);
         }
 
         [TestCase("Tim", "Eric", 3)]
@@ -33,7 +33,9 @@ namespace SharedClassesTests.Domain
         [TestCase(1291)]
         public void UserIdIterationTest(int userCount)
         {
-            int baseId = EntityGeneratorFactory.GetEntityID<User>();
+            EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
+
+            int baseId = entityGenerator.GetEntityID<User>();
 
             int totalUsers = userCount;
 
@@ -41,7 +43,7 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i < totalUsers; i++)
             {
-                user = new User("User", EntityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
+                user = new User("User", entityGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
             }
 
             Contract.Assert(user != null, "user != null");
@@ -51,13 +53,15 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UserEqualsTest()
         {
-            int user1EntityId = EntityGeneratorFactory.GetEntityID<User>();
+            EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
+
+            int user1EntityId = entityGenerator.GetEntityID<User>();
 
             var user1 = new User("User1", user1EntityId, ConnectionStatus.Connected);
 
             Assert.AreEqual(user1.UserId, user1EntityId);
 
-            var user2 = new User("User2", EntityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
+            var user2 = new User("User2", entityGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
             Assert.AreNotSame(user1.UserId, user2.UserId);
 
             Assert.IsFalse(user1.Equals(user2 as object));

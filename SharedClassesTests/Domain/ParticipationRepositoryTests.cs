@@ -13,7 +13,7 @@ namespace SharedClassesTests.Domain
         {
             var participationRepository = new ParticipationRepository();
 
-            var participation = new Participation(1, 1);
+            var participation = new Participation(1, 1, 1);
             participationRepository.AddParticipation(participation);
             Assert.AreEqual(participation, participationRepository.GetAllParticipations().First());
         }
@@ -26,8 +26,8 @@ namespace SharedClassesTests.Domain
             int conversationId = 1;
             IList<Participation> participations = new List<Participation>
             {
-                new Participation(1, conversationId),
-                new Participation(2, conversationId)
+                new Participation(1, 1, conversationId),
+                new Participation(2, 2, conversationId)
             };
             participationRepository.AddParticipations(participations);
 
@@ -38,7 +38,7 @@ namespace SharedClassesTests.Domain
         public void DoesConversationWithUsersExistTest()
         {
             var participationRepository = new ParticipationRepository();
-            var participation = new Participation(1, 1);
+            var participation = new Participation(1, 1, 1);
             participationRepository.AddParticipation(participation);
 
             Assert.True(participationRepository.DoesConversationWithUsersExist(new List<int> {participation.UserId}));
@@ -51,9 +51,9 @@ namespace SharedClassesTests.Domain
 
             int userId = 3;
 
-            var participation1 = new Participation(userId, 1);
-            var participation2 = new Participation(userId, 2);
-            var participation3 = new Participation(userId, 3);
+            var participation1 = new Participation(1, userId, 1);
+            var participation2 = new Participation(2, userId, 2);
+            var participation3 = new Participation(3, userId, 3);
 
             var expectedConversationIds = new List<int>
             {
@@ -79,10 +79,10 @@ namespace SharedClassesTests.Domain
             int conversationId = 1;
             IList<Participation> participations = new List<Participation>
             {
-                new Participation(1, conversationId),
-                new Participation(2, conversationId),
-                new Participation(3, conversationId),
-                new Participation(5, conversationId)
+                new Participation(1, 1, conversationId),
+                new Participation(2, 2, conversationId),
+                new Participation(3, 3, conversationId),
+                new Participation(4, 5, conversationId)
             };
 
             participationRepository.AddParticipations(participations);
@@ -95,8 +95,8 @@ namespace SharedClassesTests.Domain
         {
             var participationRepository = new ParticipationRepository();
             int conversationId = 10;
-            var participation1 = new Participation(1, conversationId);
-            var participation2 = new Participation(2, conversationId);
+            var participation1 = new Participation(1, 1, conversationId);
+            var participation2 = new Participation(2, 2, conversationId);
 
             participationRepository.AddParticipation(participation1);
             participationRepository.AddParticipation(participation2);
@@ -114,8 +114,8 @@ namespace SharedClassesTests.Domain
         {
             var participationRepository = new ParticipationRepository();
             int conversationId = 10;
-            var participation1 = new Participation(1, conversationId);
-            var participation2 = new Participation(2, conversationId);
+            var participation1 = new Participation(1, 1, conversationId);
+            var participation2 = new Participation(2, 2, conversationId);
 
             participationRepository.AddParticipation(participation1);
             participationRepository.AddParticipation(participation2);

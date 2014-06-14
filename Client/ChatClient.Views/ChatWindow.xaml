@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{Binding GroupChat.WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen"
-        Closing="Window_Closing"
+        Closing="WindowClosing"
         FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}">
 
     <Window.DataContext>

@@ -21,7 +21,7 @@ namespace Server
             this.repositoryManager = repositoryManager;
         }
 
-        public LoginResponse InitialiseNewClient(TcpClient tcpClient)
+        public LoginResponse InitialiseNewClient(TcpClient tcpClient, EntityGeneratorFactory entityGenerator)
         {
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
             User user = repositoryManager.UserRepository.FindUserByUsername(loginRequest.User.Username);
@@ -33,7 +33,7 @@ namespace Server
                 if (user == null)
                 {
                     // new user, give it unique ID and connection status of connected
-                    user = CreateUserEntity(loginRequest);
+                    user = CreateUserEntity(loginRequest, entityGenerator);
                 }
                 else
                 {
@@ -69,9 +69,9 @@ namespace Server
             return loginRequest;
         }
 
-        private User CreateUserEntity(LoginRequest clientLogin)
+        private User CreateUserEntity(LoginRequest clientLogin, EntityGeneratorFactory entityGenerator)
         {
-            var newUser = new User(clientLogin.User.Username, EntityGeneratorFactory.GetEntityID<User>(), ConnectionStatus.Connected);
+            var newUser = new User(clientLogin.User.Username, entityGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
 
             repositoryManager.UserRepository.UpdateUser(newUser);
 

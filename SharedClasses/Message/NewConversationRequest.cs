@@ -9,12 +9,12 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class NewConversationRequest : IMessage
     {
-        public NewConversationRequest(List<int> participantIds)
+        public NewConversationRequest(List<int> userIds)
         {
-            ParticipantIds = participantIds;
+            UserIds = userIds;
         }
 
-        public List<int> ParticipantIds { get; private set; }
+        public List<int> UserIds { get; private set; }
 
         public MessageIdentifier MessageIdentifier
         {

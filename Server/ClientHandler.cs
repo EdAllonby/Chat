@@ -27,10 +27,10 @@ namespace Server
         /// <param name="entityGeneratorFactory">A generator for assigning the client a unique user ID.</param>
         /// <param name="repositoryManager">The server's list of repositories used to give the client necessary entity collections.</param>
         /// <returns></returns>
-        public LoginResponse LoginClient(TcpClient tcpClient, RepositoryManager repositoryManager)
+        public LoginResponse LoginClient(TcpClient tcpClient, RepositoryManager repositoryManager, EntityGeneratorFactory entityGenerator)
         {
             clientLoginHandler = new ClientLoginHandler(repositoryManager);
-            return clientLoginHandler.InitialiseNewClient(tcpClient);
+            return clientLoginHandler.InitialiseNewClient(tcpClient, entityGenerator);
         }
 
         /// <summary>

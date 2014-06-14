@@ -17,7 +17,8 @@ namespace Server
             {
                 {typeof (User), new EntityIDGenerator()},
                 {typeof (Conversation), new EntityIDGenerator()},
-                {typeof (Contribution), new EntityIDGenerator()}
+                {typeof (Contribution), new EntityIDGenerator()},
+                {typeof (Participation), new EntityIDGenerator()}
             };
     }
 }
