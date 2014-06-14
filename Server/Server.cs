@@ -20,7 +20,7 @@ namespace Server
 
         private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
-
+        private readonly EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
         public Server()
         {
             repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
@@ -56,7 +56,7 @@ namespace Server
         {
             var clientHandler = new ClientHandler();
 
-            LoginResponse loginResponse = clientHandler.LoginClient(tcpClient, repositoryManager);
+            LoginResponse loginResponse = clientHandler.LoginClient(tcpClient, repositoryManager, entityGenerator);
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
@@ -73,12 +73,17 @@ namespace Server
 
         private void CreateConversationEntity(NewConversationRequest newConversationRequest)
         {
-            int conversationId = EntityGeneratorFactory.GetEntityID<Conversation>();
+            int conversationId = entityGenerator.GetEntityID<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
-            IEnumerable<Participation> participations = newConversationRequest.ParticipantIds
-                .Select(participantId => new Participation(participantId, conversationId));
+            List<Participation> participations = new List<Participation>();
+
+            foreach (var user in newConversationRequest.UserIds)
+            {
+                int participationId = entityGenerator.GetEntityID<Participation>();
+                participations.Add(new Participation(participationId, user, conversationId));
+            }
 
             repositoryManager.ParticipationRepository.AddParticipations(participations);
 
@@ -87,7 +92,7 @@ namespace Server
 
         private void CreateContributionEntity(ContributionRequest contributionRequest)
         {
-            var newContribution = new Contribution(EntityGeneratorFactory.GetEntityID<Contribution>(),
+            var newContribution = new Contribution(entityGenerator.GetEntityID<Contribution>(),
                 contributionRequest.Contribution);
             repositoryManager.ConversationRepository.AddContributionToConversation(newContribution);
         }
@@ -188,13 +193,13 @@ namespace Server
         private bool CheckConversationIsValid(NewConversationRequest newConversationRequest)
         {
             // Check for no repeating users
-            if (newConversationRequest.ParticipantIds.Count != newConversationRequest.ParticipantIds.Distinct().Count())
+            if (newConversationRequest.UserIds.Count != newConversationRequest.UserIds.Distinct().Count())
             {
                 Log.Warn("Cannot make a conversation between two users of same id");
                 return false;
             }
 
-            return !repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(newConversationRequest.ParticipantIds);
+            return !repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(newConversationRequest.UserIds);
         }
 
         private void OnConversationAdded(Conversation conversation)

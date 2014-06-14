@@ -21,10 +21,16 @@ namespace SharedClasses.Domain
         /// <summary>
         /// Adds a <see cref="Participation"/> entity to the repository
         /// </summary>
-        /// <param name="participation">The <see cref="Participation"/> entity to add to the repository</param>
+        /// <param name="participation">The <see cref="Participation"/> entity to add to the repository. Participation must not be null and must have an id greater than 0.</param>
         public void AddParticipation(Participation participation)
         {
+            Contract.Requires(participation != null);
+            Contract.Requires(participation.ParticipationId > 0);
+
             participations.Add(participation);
+
+            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
+
             ParticipationAdded(participation);
         }
 
@@ -32,12 +38,11 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(newParticipations != null);
 
-            IEnumerable<Participation> newParticipationsEnumerable = newParticipations as IList<Participation> ?? newParticipations.ToList();
+            IList<Participation> newParticipationsEnumerable = newParticipations as IList<Participation> ?? newParticipations.ToList();
 
             foreach (Participation participation in newParticipationsEnumerable)
             {
-                participations.Add(participation);
-                Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
+                AddParticipation(participation);
             }
 
             ParticipationsAdded(newParticipationsEnumerable);
@@ -53,8 +58,7 @@ namespace SharedClasses.Domain
         {
             Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
 
-            return userIdsIndexedByConversationId
-                .Select(conversationKeyValuePair => conversationKeyValuePair
+            return userIdsIndexedByConversationId.Select(conversationKeyValuePair => conversationKeyValuePair
                     .Value.HasSameElementsAs(participantIds))
                 .Any(isConversation => isConversation);
         }
@@ -81,11 +85,9 @@ namespace SharedClasses.Domain
 
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
-            return
-                from participation
-                    in participations
-                where participation.UserId == userId
-                select participation.ConversationId;
+            return from participation in participations
+                   where participation.UserId == userId
+                   select participation.ConversationId;
         }
 
         /// <summary>
