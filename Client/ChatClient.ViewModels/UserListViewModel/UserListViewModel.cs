@@ -86,7 +86,7 @@ namespace ChatClient.ViewModels.UserListViewModel
             get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
-        private void NewConversationNotification(Conversation conversation)
+        private static void NewConversationNotification(Conversation conversation)
         {
             CreateNewConversationWindow(conversation);
         }

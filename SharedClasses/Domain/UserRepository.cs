@@ -80,7 +80,7 @@ namespace SharedClasses.Domain
         /// <returns>A collection of all <see cref="User"/> entities in the repository.</returns>
         public IEnumerable<User> GetAllUsers()
         {
-            return usersIndexedById.Values.ToList();
+            return usersIndexedById.Values;
         }
     }
 }

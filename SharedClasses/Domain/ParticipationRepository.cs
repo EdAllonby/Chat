@@ -13,7 +13,7 @@ namespace SharedClasses.Domain
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
-        private readonly List<Participation> participations = new List<Participation>();
+        private readonly Dictionary<int, Participation> participationsIndexedById = new Dictionary<int, Participation>();
 
         public event ParticipationChangedHandler ParticipationAdded = delegate { };
         public event ParticipationsChangedHandler ParticipationsAdded = delegate { };
@@ -25,27 +25,28 @@ namespace SharedClasses.Domain
         public void AddParticipation(Participation participation)
         {
             Contract.Requires(participation != null);
-            Contract.Requires(participation.ParticipationId > 0);
 
-            participations.Add(participation);
-
-            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
+            AddParticipationToRepository(participation);
 
             ParticipationAdded(participation);
         }
 
-        public void AddParticipations(IEnumerable<Participation> newParticipations)
+        /// <summary>
+        /// Adds a group of participations 
+        /// </summary>
+        /// <param name="participationsToAdd"></param>
+        public void AddParticipations(IEnumerable<Participation> participationsToAdd)
         {
-            Contract.Requires(newParticipations != null);
+            Contract.Requires(participationsToAdd != null);
 
-            IList<Participation> newParticipationsEnumerable = newParticipations as IList<Participation> ?? newParticipations.ToList();
 
-            foreach (Participation participation in newParticipationsEnumerable)
+            IEnumerable<Participation> participationsEnumerable = participationsToAdd as Participation[] ?? participationsToAdd.ToArray();
+            foreach (Participation participation in participationsEnumerable)
             {
-                AddParticipation(participation);
+                AddParticipationToRepository(participation);
             }
 
-            ParticipationsAdded(newParticipationsEnumerable);
+            ParticipationsAdded(participationsEnumerable);
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace SharedClasses.Domain
 
         public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
         {
-            return participations.Where(participation => participation.ConversationId == conversationId).ToList();
+            return participationsIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace SharedClasses.Domain
 
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
-            return from participation in participations
+            return from participation in participationsIndexedById.Values
                    where participation.UserId == userId
                    select participation.ConversationId;
         }
@@ -96,14 +97,24 @@ namespace SharedClasses.Domain
         /// <returns>The collection of <see cref="Participation"/> held in the repository.</returns>
         public IEnumerable<Participation> GetAllParticipations()
         {
-            return participations;
+            return participationsIndexedById.Values;
+        }
+
+        private void AddParticipationToRepository(Participation participation)
+        {
+            Contract.Requires(participation != null);
+            Contract.Requires(participation.ParticipationId > 0);
+
+            participationsIndexedById.Add(participation.ParticipationId, participation);
+
+            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
         }
 
         private Dictionary<int, List<int>> GetUserIdsIndexedByConversationId()
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
-            foreach (Participation participation in participations)
+            foreach (Participation participation in participationsIndexedById.Values)
             {
                 if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
                 {
