@@ -10,10 +10,11 @@
     <Window.DataContext>
         <viewModel:ChatWindowViewModel/>
     </Window.DataContext>
-    
-    <Grid
+
+        <Grid
           xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="120" />
@@ -22,7 +23,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
+        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="342">
+            <MenuItem Header="Add User" DisplayMemberPath="Username"  ItemsSource="{Binding Path=ConnectedUsers}">
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="{x:Type MenuItem}">
+                        <Setter Property="Command" Value="{Binding DataContext.AddUserCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=1}}" />
+                        <Setter Property="CommandParameter" Value="{Binding}" />
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
+        </Menu>
+
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            
             <Canvas Width="50" Margin="10,0,0,0" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                     HorizontalAlignment="Left">
                 <Path Data="{StaticResource PeopleIcon}"
@@ -30,10 +44,10 @@
                       Fill="#e74c3c" />
             </Canvas>
             <Label Content="{Binding GroupChat.Title, FallbackValue='Chat participant names go here'}" VerticalContentAlignment="Center"
-                   FontFamily="Myriad Pro" FontSize="16" />
+                   FontFamily="Myriad Pro" FontSize="12" />
         </StackPanel>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -54,7 +68,7 @@
             </ListBox>
         </Grid>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -82,7 +96,6 @@
                 Command="{Binding SendMessage}"
                 FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="10"/>
         </Grid>
-
     </Grid>
 
 </Window>

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using SharedClasses;
-using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services
@@ -36,6 +35,11 @@ namespace ChatClient.Services
         event NewContributionNotificationHandler NewContributionNotification;
 
         /// <summary>
+        /// Raises an event when a new participation has been received.
+        /// </summary>
+        event NewParticipationNotification NewParticipationNotification;
+
+        /// <summary>
         /// Connects the Client to the server using the parameters as connection details
         /// and gets the state of <see cref="ClientService"/> up to date with the user status'. 
         /// </summary>
@@ -45,8 +49,15 @@ namespace ChatClient.Services
         /// <summary>
         /// Sends a <see cref="NewConversationRequest"/> message to the server.
         /// </summary>
-        /// <param name="participantIds">The participants that are included in the conversation.</param>
-        void SendConversationRequest(List<int> participantIds);
+        /// <param name="userIds">The participants that are included in the conversation.</param>
+        void SendConversationRequest(List<int> userIds);
+
+        /// <summary>
+        /// Sends a <see cref="ParticipationRequest"/> message to the server to add a user to an existing conversation.
+        /// </summary>
+        /// <param name="userId">The participant that will be added to the conversation.</param>
+        /// <param name="conversationId">The targetted conversation the participant will be added to.</param>
+        void AddUserToConversation(int userId, int conversationId);
 
         /// <summary>
         /// Sends a <see cref="ContributionRequest"/> message to the server.

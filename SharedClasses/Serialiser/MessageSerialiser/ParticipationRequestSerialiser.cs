@@ -4,21 +4,21 @@ using SharedClasses.Serialiser.EntitySerialiser;
 
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
-    internal sealed class ParticipationNotificationSerialiser : Serialiser<ParticipationNotification>
+    internal sealed class ParticipationRequestSerialiser : Serialiser<ParticipationRequest>
     {
         private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var participationNotification = new ParticipationNotification(participationSerialiser.Deserialise(networkStream));
-            Log.InfoFormat("{0} message deserialised", participationNotification.MessageIdentifier);
-            return participationNotification;
+            var participationRequest = new ParticipationRequest(participationSerialiser.Deserialise(networkStream));
+            Log.InfoFormat("{0} message deserialised", participationRequest.MessageIdentifier);
+            return participationRequest;
         }
 
-        protected override void Serialise(ParticipationNotification message, NetworkStream networkStream)
+        protected override void Serialise(ParticipationRequest message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.ParticipationNotification, networkStream);
+            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.ParticipationRequest, networkStream);
 
             Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             participationSerialiser.Serialise(networkStream, message.Participation);

@@ -18,8 +18,9 @@
         ParticipationSnapshot,
         ClientDisconnection,
         NewConversationRequest,
+        ParticipationRequest,
         ParticipationNotification,
         LoginResponse,
-        ConversationNotification
+        ConversationNotification,
     }
 }

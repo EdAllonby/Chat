@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Models.ChatModel;
+using ChatClient.Models.ChatWindowViewModel;
 using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
@@ -21,6 +22,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly RepositoryManager repositoryManager;
 
         private GroupChatModel groupChat = new GroupChatModel();
+        private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
 
         public ChatWindowViewModel()
         {
@@ -29,13 +31,19 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ChatWindowViewModel(Conversation conversation)
         {
+            clientService.NewParticipationNotification += OnNewParticipationNotification;
+            clientService.NewUser += NewUser;
+            clientService.NewContributionNotification += NewContributionNotificationReceived;
+
+            AddUserCommand = new AddUserToConversationCommand(this);
+
             repositoryManager = clientService.RepositoryManager;
             groupChat.Conversation = conversation;
+            groupChat.Users = GetUsers();
+            GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
+
             groupChat.WindowTitle = repositoryManager.UserRepository.FindUserByID(clientService.ClientUserId).Username;
             groupChat.Title = GetChatTitle();
-            groupChat.Users = GetUsers();
-
-            clientService.NewContributionNotification += NewContributionNotificationReceived;
         }
 
         public GroupChatModel GroupChat
@@ -45,6 +53,21 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             {
                 if (Equals(value, groupChat)) return;
                 groupChat = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<ConnectedUserModel> ConnectedUsers
+        {
+            get { return connectedUsers; }
+            set
+            {
+                if (Equals(value, connectedUsers))
+                {
+                    return;
+                }
+
+                connectedUsers = value;
                 OnPropertyChanged();
             }
         }
@@ -65,6 +88,33 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
         }
 
+        public ICommand AddUserCommand { get; private set; }
+
+        public void AddUser(object user)
+        {
+            ConnectedUserModel selectedUser = user as ConnectedUserModel;
+
+            if (selectedUser != null)
+            {
+                clientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.ConversationId);
+            }
+        }
+
+        public bool CanAddUser(object user)
+        {
+            ConnectedUserModel connectedUser = (ConnectedUserModel) user;
+
+            IEnumerable<Participation> participations = clientService.RepositoryManager.ParticipationRepository
+                .GetParticipationsByConversationId(groupChat.Conversation.ConversationId);
+
+            return participations.All(participation => participation.UserId != connectedUser.UserId);
+        }
+
+        private bool CanSendConversationContributionRequest()
+        {
+            return !String.IsNullOrEmpty(groupChat.MessageToAddToConversation);
+        }
+
         public ICommand Closing
         {
             get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
@@ -75,11 +125,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             clientService.SendContributionRequest(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
 
             groupChat.MessageToAddToConversation = string.Empty;
-        }
-
-        private bool CanSendConversationContributionRequest()
-        {
-            return !String.IsNullOrEmpty(groupChat.MessageToAddToConversation);
         }
 
         #endregion
@@ -94,6 +139,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
+            List<Participation> participations = repositoryManager.ParticipationRepository.GetAllParticipations().ToList();
+
             foreach (Participation participant in repositoryManager.ParticipationRepository.GetAllParticipations()
                 .Where(participant => participant.ConversationId == groupChat.Conversation.ConversationId))
             {
@@ -104,6 +151,16 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             titleBuilder.Length = titleBuilder.Length - " and ".Length;
             string title = titleBuilder.ToString();
             return title;
+        }
+
+        private void GetAllUsers(IEnumerable<User> users)
+        {
+            List<User> newUserList = users.Where(user => user.UserId != clientService.ClientUserId)
+                .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
+
+            List<ConnectedUserModel> otherUsers = newUserList.Select(user => new ConnectedUserModel(user)).ToList();
+
+            ConnectedUsers = otherUsers;
         }
 
         public void InitialiseChat()
@@ -122,6 +179,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
             }
+        }
+
+        private void NewUser(IEnumerable<User> newUser)
+        {
+            GetAllUsers(newUser);
         }
 
         private void GetMessages()
@@ -143,6 +205,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
 
             groupChat.UserMessages = userMessages;
+        }
+
+        private void OnNewParticipationNotification(Participation participation)
+        {
+            groupChat.Title = GetChatTitle();
         }
     }
 }

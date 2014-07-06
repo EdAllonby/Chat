@@ -27,6 +27,7 @@ namespace Server
             repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
             repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
             repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
+            repositoryManager.ParticipationRepository.ParticipationAdded += OnParticipationAdded;
 
             Log.Info("Server instance started");
             ListenForNewClients();
@@ -79,15 +80,22 @@ namespace Server
 
             List<Participation> participations = new List<Participation>();
 
-            foreach (var user in newConversationRequest.UserIds)
+            foreach (int userId in newConversationRequest.UserIds)
             {
                 int participationId = entityGenerator.GetEntityID<Participation>();
-                participations.Add(new Participation(participationId, user, conversationId));
+                participations.Add(new Participation(participationId, userId, conversationId));
             }
 
             repositoryManager.ParticipationRepository.AddParticipations(participations);
 
             repositoryManager.ConversationRepository.AddConversation(newConversation);
+        }
+
+        private void AddUserToConversation(ParticipationRequest participationRequest)
+        {
+            int participationId = entityGenerator.GetEntityID<Participation>();
+            var participation = new Participation(participationId, participationRequest.Participation.UserId, participationRequest.Participation.ConversationId);
+            repositoryManager.ParticipationRepository.AddParticipation(participation);
         }
 
         private void CreateContributionEntity(ContributionRequest contributionRequest)
@@ -135,10 +143,19 @@ namespace Server
                     DisconnectUser(clientDisconnection.UserId);
                     break;
 
-                case MessageIdentifier.NewConversationRequest:
-                    if (CheckConversationIsValid((NewConversationRequest) message))
+                case MessageIdentifier.ParticipationRequest:
+                    var participationRequest = (ParticipationRequest) message;
+                    if (CheckUserCanEnterConversation(participationRequest))
                     {
-                        var conversationRequest = (NewConversationRequest) message;
+                        AddUserToConversation((ParticipationRequest) message);
+                    }
+                    break;
+
+                case MessageIdentifier.NewConversationRequest:
+                    var conversationRequest = (NewConversationRequest)message;
+
+                    if (CheckConversationIsValid(conversationRequest))
+                    {
                         CreateConversationEntity(conversationRequest);
                     }
                     break;
@@ -147,6 +164,19 @@ namespace Server
                     Log.Warn("Server is not supposed to handle message with identifier: " + message.MessageIdentifier);
                     break;
             }
+        }
+
+        private bool CheckUserCanEnterConversation(ParticipationRequest participationRequest)
+        {
+            Participation newparticipation = participationRequest.Participation;
+
+            if (repositoryManager.ParticipationRepository.GetParticipationsByConversationId(newparticipation.ConversationId).Any(participation => participation.UserId == newparticipation.UserId))
+            {
+                Log.WarnFormat("User with id {0} cannot be added to conversation {1}, user already exists in this conversation.", participationRequest.Participation.UserId, participationRequest.Participation.ConversationId);
+                return false;
+            }
+
+            return true;
         }
 
         private void SendUserSnapshot(UserSnapshotRequest userSnapshotRequest)
@@ -224,6 +254,28 @@ namespace Server
                     clientHandlersIndexedByUserId[userId].SendMessage(new ParticipationNotification(participation));
                 }
             }
+        }
+
+        private void OnParticipationAdded(Participation participation)
+        {
+            IEnumerable<Participation> participations = repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
+
+            IEnumerable<Participation> conversationParticipations = participations as Participation[] ?? participations.ToArray();
+
+            // Give the new user all participations for this new conversation they are entering.
+            foreach (Participation conversationParticipation in conversationParticipations)
+            {
+                clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ParticipationNotification(conversationParticipation));
+            }
+
+            // Update other users of the new conversation participant
+            foreach (Participation conversationParticipation in conversationParticipations.Where(conversationParticipation => conversationParticipation.UserId != participation.UserId))
+            {
+                clientHandlersIndexedByUserId[conversationParticipation.UserId].SendMessage(new ParticipationNotification(participation));
+            }
+
+            Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(participation.ConversationId);
+            clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation));
         }
 
         private void OnContributionAdded(Contribution contribution)

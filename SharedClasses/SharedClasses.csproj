@@ -90,6 +90,7 @@
     <Compile Include="Message\ConversationSnapshot.cs" />
     <Compile Include="Message\ConversationSnapshotRequest.cs" />
     <Compile Include="Message\LoginResult.cs" />
+    <Compile Include="Message\ParticipationRequest.cs" />
     <Compile Include="Message\ParticipationSnapshot.cs" />
     <Compile Include="Message\ParticipationSnapshotRequest.cs" />
     <Compile Include="RepositoryManager.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Serialiser\MessageSerialiser\MessageIdentifierSerialiser.cs" />
     <Compile Include="MessageIdentifier.cs" />
     <Compile Include="NotificationType.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\ParticipationRequestSerialiser.cs" />
     <Compile Include="Serialiser\SerialiserFactory.cs" />
     <Compile Include="Serialiser\SerialiserRegistry.cs" />
     <Compile Include="Message\UserNotification.cs" />

@@ -12,6 +12,8 @@ namespace ChatClient.Services
 
     public delegate void UserListHandler(IEnumerable<User> users);
 
+    public delegate void NewParticipationNotification(Participation participation);
+
     /// <summary>
     /// Handles the logic for <see cref="IMessage" />
     /// Delegates Server specific communications to the <see cref="connectionHandler" />
@@ -23,6 +25,16 @@ namespace ChatClient.Services
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
         private ConnectionHandler connectionHandler;
 
+        public ClientService()
+        {
+            repositoryManager.ParticipationRepository.ParticipationAdded += OnNewParticipationAdded;
+        }
+
+        public event UserListHandler NewUser = delegate { };
+        public event NewConversationHandler NewConversationNotification = delegate { };
+        public event NewContributionNotificationHandler NewContributionNotification = delegate { };
+        public event NewParticipationNotification NewParticipationNotification = delegate { };
+
         public int ClientUserId { get; private set; }
 
         /// <summary>
@@ -32,10 +44,6 @@ namespace ChatClient.Services
         {
             get { return repositoryManager; }
         }
-
-        public event UserListHandler NewUser = delegate { };
-        public event NewConversationHandler NewConversationNotification = delegate { };
-        public event NewContributionNotificationHandler NewContributionNotification = delegate { };
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
@@ -71,10 +79,15 @@ namespace ChatClient.Services
         /// <summary>
         /// Sends a <see cref="NewConversationRequest"/> message to the server.
         /// </summary>
-        /// <param name="participantIds">The participants that are included in the conversation.</param>
-        public void SendConversationRequest(List<int> participantIds)
+        /// <param name="userIds">The participants that are included in the conversation.</param>
+        public void SendConversationRequest(List<int> userIds)
         {
-            connectionHandler.SendMessage(new NewConversationRequest(participantIds));
+            connectionHandler.SendMessage(new NewConversationRequest(userIds));
+        }
+
+        public void AddUserToConversation(int userId, int conversationId)
+        {
+            connectionHandler.SendMessage(new ParticipationRequest(new Participation(userId, conversationId)));
         }
 
         /// <summary>
@@ -132,6 +145,11 @@ namespace ChatClient.Services
             var conversation = new Conversation(conversationNotification.Conversation.ConversationId);
             repositoryManager.ConversationRepository.AddConversation(conversation);
             NewConversationNotification(conversation);
+        }
+
+        private void OnNewParticipationAdded(Participation participation)
+        {
+            NewParticipationNotification(participation);
         }
 
         private void UpdateUserInRepository(UserNotification userNotification)

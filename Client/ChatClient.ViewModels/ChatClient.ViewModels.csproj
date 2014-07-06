@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AudioPlayer.cs" />
     <Compile Include="ChatWindowViewModel\ChatWindowViewModel.cs" />
+    <Compile Include="Commands\AddUserToConversationCommand.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="ConversationWindowsStatusCollection.cs" />
     <Compile Include="IAudioPlayer.cs" />

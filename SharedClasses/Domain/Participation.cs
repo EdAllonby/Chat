@@ -24,8 +24,23 @@ namespace SharedClasses.Domain
             Contract.Requires(participationId > 0);
             Contract.Requires(userId > 0);
             Contract.Requires(conversationId > 0);
-
+            
             this.participationId = participationId;
+            this.userId = userId;
+            this.conversationId = conversationId;
+        }
+
+        /// <summary>
+        /// Create an incomplete Participation entity without an Id.
+        /// </summary>
+        /// <param name="participationStatus">What context will this participation object be used for?</param>
+        /// <param name="userId">The identity of the user to link to a conversation.</param>
+        /// <param name="conversationId">The identity of the conversation that the user wants to link to.</param>
+        public Participation(int userId, int conversationId)
+        {
+            Contract.Requires(userId > 0);
+            Contract.Requires(conversationId > 0);
+
             this.userId = userId;
             this.conversationId = conversationId;
         }

@@ -28,6 +28,7 @@ namespace SharedClasses.Serialiser
                 {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
                 {MessageIdentifier.NewConversationRequest, new NewConversationRequestSerialiser()},
                 {MessageIdentifier.ConversationNotification, new ConversationNotificationSerialiser()},
+                {MessageIdentifier.ParticipationRequest, new ParticipationRequestSerialiser()},
                 {MessageIdentifier.ParticipationNotification, new ParticipationNotificationSerialiser()},
                 {MessageIdentifier.LoginResponse, new LoginResponseSerialiser()}
             };
@@ -50,6 +51,7 @@ namespace SharedClasses.Serialiser
                 {typeof (ParticipationSnapshot), new ParticipationSnapshotSerialiser()},
                 {typeof (NewConversationRequest), new NewConversationRequestSerialiser()},
                 {typeof (ConversationNotification), new ConversationNotificationSerialiser()},
+                {typeof (ParticipationRequest), new ParticipationRequestSerialiser()},
                 {typeof (ParticipationNotification), new ParticipationNotificationSerialiser()},
                 {typeof (LoginResponse), new LoginResponseSerialiser()}
             };
