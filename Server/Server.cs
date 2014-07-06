@@ -19,8 +19,9 @@ namespace Server
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
         private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
-        private readonly RepositoryManager repositoryManager = new RepositoryManager();
         private readonly EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
+        private readonly RepositoryManager repositoryManager = new RepositoryManager();
+
         public Server()
         {
             repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
@@ -78,7 +79,7 @@ namespace Server
 
             var newConversation = new Conversation(conversationId);
 
-            List<Participation> participations = new List<Participation>();
+            var participations = new List<Participation>();
 
             foreach (int userId in newConversationRequest.UserIds)
             {
@@ -152,7 +153,7 @@ namespace Server
                     break;
 
                 case MessageIdentifier.NewConversationRequest:
-                    var conversationRequest = (NewConversationRequest)message;
+                    var conversationRequest = (NewConversationRequest) message;
 
                     if (CheckConversationIsValid(conversationRequest))
                     {

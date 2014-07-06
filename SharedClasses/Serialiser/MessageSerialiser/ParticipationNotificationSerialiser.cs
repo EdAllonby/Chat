@@ -6,8 +6,8 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 {
     internal sealed class ParticipationNotificationSerialiser : Serialiser<ParticipationNotification>
     {
-        private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+        private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {

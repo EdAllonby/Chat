@@ -16,12 +16,11 @@ namespace ChatClient.ViewModels.UserListViewModel
     public class UserListViewModel : ViewModel
     {
         private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
+        private readonly RepositoryManager repositoryManager;
 
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
 
         private bool isMultiUserConversation;
-
-        private readonly RepositoryManager repositoryManager;
 
         public UserListViewModel()
         {

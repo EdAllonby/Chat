@@ -10,8 +10,8 @@ namespace SharedClasses.Domain
     public class Participation : IEquatable<Participation>
     {
         private readonly int conversationId;
-        private readonly int userId;
         private readonly int participationId;
+        private readonly int userId;
 
         /// <summary>
         /// Creates a new participation entity.
@@ -24,7 +24,7 @@ namespace SharedClasses.Domain
             Contract.Requires(participationId > 0);
             Contract.Requires(userId > 0);
             Contract.Requires(conversationId > 0);
-            
+
             this.participationId = participationId;
             this.userId = userId;
             this.conversationId = conversationId;
@@ -49,7 +49,7 @@ namespace SharedClasses.Domain
         {
             get { return participationId; }
         }
-     
+
         public int UserId
         {
             get { return userId; }
@@ -64,7 +64,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            
+
             return conversationId == other.conversationId && userId == other.userId;
         }
 
@@ -72,7 +72,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            
+
             return obj.GetType() == GetType() && Equals((Participation) obj);
         }
 
