@@ -21,8 +21,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
         private readonly RepositoryManager repositoryManager;
 
-        private GroupChatModel groupChat = new GroupChatModel();
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
+        private GroupChatModel groupChat = new GroupChatModel();
 
         public ChatWindowViewModel()
         {
@@ -72,6 +72,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
+        public void Dispose()
+        {
+            audioPlayer.Dispose();
+        }
+
         private List<User> GetUsers()
         {
             ParticipationRepository participationRepository = clientService.RepositoryManager.ParticipationRepository;
@@ -79,59 +84,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             return participationRepository.GetParticipationsByConversationId(groupChat.Conversation.ConversationId)
                 .Select(participation => userRepository.FindUserByID(participation.UserId)).ToList();
-        }
-
-        #region Commands
-
-        public ICommand SendMessage
-        {
-            get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
-        }
-
-        public ICommand AddUserCommand { get; private set; }
-
-        public void AddUser(object user)
-        {
-            ConnectedUserModel selectedUser = user as ConnectedUserModel;
-
-            if (selectedUser != null)
-            {
-                clientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.ConversationId);
-            }
-        }
-
-        public bool CanAddUser(object user)
-        {
-            ConnectedUserModel connectedUser = (ConnectedUserModel) user;
-
-            IEnumerable<Participation> participations = clientService.RepositoryManager.ParticipationRepository
-                .GetParticipationsByConversationId(groupChat.Conversation.ConversationId);
-
-            return participations.All(participation => participation.UserId != connectedUser.UserId);
-        }
-
-        private bool CanSendConversationContributionRequest()
-        {
-            return !String.IsNullOrEmpty(groupChat.MessageToAddToConversation);
-        }
-
-        public ICommand Closing
-        {
-            get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
-        }
-
-        private void NewConversationContributionRequest()
-        {
-            clientService.SendContributionRequest(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
-
-            groupChat.MessageToAddToConversation = string.Empty;
-        }
-
-        #endregion
-
-        public void Dispose()
-        {
-            audioPlayer.Dispose();
         }
 
         private string GetChatTitle()
@@ -211,5 +163,53 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             groupChat.Title = GetChatTitle();
         }
+
+        #region Commands
+
+        public ICommand SendMessage
+        {
+            get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
+        }
+
+        public ICommand AddUserCommand { get; private set; }
+
+        public ICommand Closing
+        {
+            get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
+        }
+
+        public void AddUser(object user)
+        {
+            var selectedUser = user as ConnectedUserModel;
+
+            if (selectedUser != null)
+            {
+                clientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.ConversationId);
+            }
+        }
+
+        public bool CanAddUser(object user)
+        {
+            var connectedUser = (ConnectedUserModel) user;
+
+            IEnumerable<Participation> participations = clientService.RepositoryManager.ParticipationRepository
+                .GetParticipationsByConversationId(groupChat.Conversation.ConversationId);
+
+            return participations.All(participation => participation.UserId != connectedUser.UserId);
+        }
+
+        private bool CanSendConversationContributionRequest()
+        {
+            return !String.IsNullOrEmpty(groupChat.MessageToAddToConversation);
+        }
+
+        private void NewConversationContributionRequest()
+        {
+            clientService.SendContributionRequest(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
+
+            groupChat.MessageToAddToConversation = string.Empty;
+        }
+
+        #endregion
     }
 }

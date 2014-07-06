@@ -6,6 +6,7 @@ namespace ChatClient.ViewModels.Commands
     internal class AddUserToConversationCommand : ICommand
     {
         private readonly ChatWindowViewModel.ChatWindowViewModel viewModel;
+
         public AddUserToConversationCommand(ChatWindowViewModel.ChatWindowViewModel viewModel)
         {
             this.viewModel = viewModel;

@@ -32,9 +32,10 @@ namespace ChatClient.Views
                 DragMove();
             }
         }
+
         private void RemoveTextOnFocus(object sender, RoutedEventArgs e)
         {
-            var focusedTextBox = (TextBox)sender;
+            var focusedTextBox = (TextBox) sender;
 
             if (focusedTextBox.Text == "Username")
             {
@@ -55,7 +56,7 @@ namespace ChatClient.Views
 
         private void AddTextOnLostFocus(object sender, RoutedEventArgs e)
         {
-            var lostFocusTextBox = (TextBox)sender;
+            var lostFocusTextBox = (TextBox) sender;
 
             if (string.IsNullOrEmpty(lostFocusTextBox.Text))
             {

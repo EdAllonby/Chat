@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using SharedClasses;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
 using SharedClasses.Serialiser.MessageSerialiser;

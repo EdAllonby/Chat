@@ -19,10 +19,10 @@ namespace SharedClasses
         private static int totalListenerThreads;
 
         private readonly int clientUserId;
-        private readonly TcpClient tcpClient;
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly TcpClient tcpClient;
 
         /// <summary>
         /// Initialises the object so it can begin to send and recieve <see cref="IMessage"/>s through <see cref="tcpClient"/>.

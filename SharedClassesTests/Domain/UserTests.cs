@@ -33,7 +33,7 @@ namespace SharedClassesTests.Domain
         [TestCase(1291)]
         public void UserIdIterationTest(int userCount)
         {
-            EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
+            var entityGenerator = new EntityGeneratorFactory();
 
             int baseId = entityGenerator.GetEntityID<User>();
 
@@ -53,7 +53,7 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UserEqualsTest()
         {
-            EntityGeneratorFactory entityGenerator = new EntityGeneratorFactory();
+            var entityGenerator = new EntityGeneratorFactory();
 
             int user1EntityId = entityGenerator.GetEntityID<User>();
 

@@ -60,7 +60,7 @@ namespace SharedClasses.Domain
             Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
 
             return userIdsIndexedByConversationId.Select(conversationKeyValuePair => conversationKeyValuePair
-                    .Value.HasSameElementsAs(participantIds))
+                .Value.HasSameElementsAs(participantIds))
                 .Any(isConversation => isConversation);
         }
 
@@ -87,8 +87,8 @@ namespace SharedClasses.Domain
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
             return from participation in participationsIndexedById.Values
-                   where participation.UserId == userId
-                   select participation.ConversationId;
+                where participation.UserId == userId
+                select participation.ConversationId;
         }
 
         /// <summary>
