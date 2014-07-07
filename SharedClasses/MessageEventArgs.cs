@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using SharedClasses.Message;
 
 namespace SharedClasses
@@ -10,6 +11,8 @@ namespace SharedClasses
     {
         public MessageEventArgs(IMessage message)
         {
+            Contract.Requires(message != null);
+
             Message = message;
         }
 

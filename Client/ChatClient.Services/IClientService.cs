@@ -10,7 +10,7 @@ namespace ChatClient.Services
     public interface IClientService : IService
     {
         /// <summary>
-        /// The Client's User Id.
+        /// This Client's unique User Id.
         /// </summary>
         int ClientUserId { get; }
 
@@ -18,26 +18,6 @@ namespace ChatClient.Services
         /// Holds the repositories for the Client.
         /// </summary>
         RepositoryManager RepositoryManager { get; }
-
-        /// <summary>
-        /// Raises an event when a new user has entered the system.
-        /// </summary>
-        event UserListHandler NewUser;
-
-        /// <summary>
-        /// Raises an event when a new conversation has been received.
-        /// </summary>
-        event NewConversationHandler NewConversationNotification;
-
-        /// <summary>
-        /// Raises an event when a new contribution has been received.
-        /// </summary>
-        event NewContributionNotificationHandler NewContributionNotification;
-
-        /// <summary>
-        /// Raises an event when a new participation has been received.
-        /// </summary>
-        event NewParticipationNotification NewParticipationNotification;
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
@@ -50,7 +30,7 @@ namespace ChatClient.Services
         /// Sends a <see cref="NewConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="userIds">The participants that are included in the conversation.</param>
-        void SendConversationRequest(List<int> userIds);
+        void CreateConversation(List<int> userIds);
 
         /// <summary>
         /// Sends a <see cref="ParticipationRequest"/> message to the server to add a user to an existing conversation.
@@ -64,6 +44,6 @@ namespace ChatClient.Services
         /// </summary>
         /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
-        void SendContributionRequest(int conversationID, string message);
+        void SendContribution(int conversationID, string message);
     }
 }

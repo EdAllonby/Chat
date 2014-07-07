@@ -40,7 +40,9 @@ namespace SharedClasses.Domain
             Contract.Requires(participationsToAdd != null);
 
 
-            IEnumerable<Participation> participationsEnumerable = participationsToAdd as Participation[] ?? participationsToAdd.ToArray();
+            IEnumerable<Participation> participationsEnumerable = participationsToAdd as Participation[] ??
+                                                                  participationsToAdd.ToArray();
+
             foreach (Participation participation in participationsEnumerable)
             {
                 AddParticipationToRepository(participation);
@@ -66,7 +68,8 @@ namespace SharedClasses.Domain
 
         public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
         {
-            return participationsIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
+            return
+                participationsIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
         }
 
         /// <summary>
@@ -107,7 +110,8 @@ namespace SharedClasses.Domain
 
             participationsIndexedById.Add(participation.ParticipationId, participation);
 
-            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository", participation.UserId, participation.ConversationId);
+            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository",
+                participation.UserId, participation.ConversationId);
         }
 
         private Dictionary<int, List<int>> GetUserIdsIndexedByConversationId()

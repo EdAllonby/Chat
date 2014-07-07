@@ -7,8 +7,6 @@ namespace SharedClasses.Domain
 {
     public delegate void UserChangedHandler(User user);
 
-    public delegate void UsersChangedHandler(IEnumerable<User> users);
-
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
@@ -18,7 +16,6 @@ namespace SharedClasses.Domain
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
         public event UserChangedHandler UserUpdated = delegate { };
-        public event UsersChangedHandler UsersAdded = delegate { };
 
         /// <summary>
         /// Adds or updates a <see cref="User"/> entity to the repository.
@@ -56,7 +53,6 @@ namespace SharedClasses.Domain
                 usersIndexedById[user.UserId] = user;
                 Log.Debug("User with Id " + user.UserId + " added to user repository");
             }
-            UsersAdded(usersEnumerable);
         }
 
         /// <summary>
