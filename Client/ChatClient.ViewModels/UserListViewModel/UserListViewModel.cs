@@ -28,11 +28,11 @@ namespace ChatClient.ViewModels.UserListViewModel
 
             GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
 
-            clientService.NewUser += NewUser;
+            clientService.RepositoryManager.UserRepository.UserUpdated += NewUser;
 
-            clientService.NewConversationNotification += NewConversationNotification;
+            clientService.RepositoryManager.ConversationRepository.ConversationAdded += NewConversationNotification;
 
-            clientService.NewContributionNotification += NewContributionNotification;
+            clientService.RepositoryManager.ConversationRepository.ContributionAdded += NewContributionNotification;
         }
 
         public string Username
@@ -90,9 +90,12 @@ namespace ChatClient.ViewModels.UserListViewModel
             CreateNewConversationWindow(conversation);
         }
 
-        private void NewContributionNotification(Conversation contributions)
+        private void NewContributionNotification(Contribution newContribution)
         {
-            CreateNewConversationWindow(contributions);
+            Conversation conversation =
+                repositoryManager.ConversationRepository.FindConversationById(newContribution.ConversationId);
+
+            CreateNewConversationWindow(conversation);
         }
 
         public void StartNewSingleUserConversation(int participant)
@@ -117,9 +120,11 @@ namespace ChatClient.ViewModels.UserListViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        private void NewUser(IEnumerable<User> newUser)
+        private void NewUser(User newUser)
         {
-            GetAllUsers(newUser);
+            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
+
+            GetAllUsers(users);
         }
 
         private void GetAllUsers(IEnumerable<User> users)
@@ -138,7 +143,7 @@ namespace ChatClient.ViewModels.UserListViewModel
 
             if (!repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(participantIds))
             {
-                clientService.SendConversationRequest(participantIds);
+                clientService.CreateConversation(participantIds);
             }
             else
             {

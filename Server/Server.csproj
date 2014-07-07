@@ -49,6 +49,22 @@
     <Compile Include="ClientHandler.cs" />
     <Compile Include="EntityGeneratorFactory.cs" />
     <Compile Include="EntityIDGeneratorRegistry.cs" />
+    <Compile Include="MessageHandler\ClientDisconnectionContext.cs" />
+    <Compile Include="MessageHandler\ClientDisconnectionHandler.cs" />
+    <Compile Include="MessageHandler\ServerContextRegistry.cs" />
+    <Compile Include="MessageHandler\MessageHandlerRegistry.cs" />
+    <Compile Include="MessageHandler\ContributionRequestContext.cs" />
+    <Compile Include="MessageHandler\ContributionRequestHandler.cs" />
+    <Compile Include="MessageHandler\ConversationSnapshotRequestContext.cs" />
+    <Compile Include="MessageHandler\ConversationSnapshotRequestHandler.cs" />
+    <Compile Include="MessageHandler\NewConversationRequestContext.cs" />
+    <Compile Include="MessageHandler\NewConversationRequestHandler.cs" />
+    <Compile Include="MessageHandler\ParticipationRequestContext.cs" />
+    <Compile Include="MessageHandler\ParticipationRequestHandler.cs" />
+    <Compile Include="MessageHandler\ParticipationSnapshotRequestContext.cs" />
+    <Compile Include="MessageHandler\ParticipationSnapshotRequestHandler.cs" />
+    <Compile Include="MessageHandler\UserSnapshotRequestContext.cs" />
+    <Compile Include="MessageHandler\UserSnapshotRequestHandler.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

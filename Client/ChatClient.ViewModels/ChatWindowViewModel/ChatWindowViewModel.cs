@@ -31,13 +31,14 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ChatWindowViewModel(Conversation conversation)
         {
-            clientService.NewParticipationNotification += OnNewParticipationNotification;
-            clientService.NewUser += NewUser;
-            clientService.NewContributionNotification += NewContributionNotificationReceived;
+            repositoryManager = clientService.RepositoryManager;
+
+            repositoryManager.ParticipationRepository.ParticipationAdded += OnNewParticipationNotification;
+            repositoryManager.UserRepository.UserUpdated += NewUser;
+            repositoryManager.ConversationRepository.ContributionAdded += NewContributionNotificationReceived;
 
             AddUserCommand = new AddUserToConversationCommand(this);
 
-            repositoryManager = clientService.RepositoryManager;
             groupChat.Conversation = conversation;
             groupChat.Users = GetUsers();
             GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
@@ -91,8 +92,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            List<Participation> participations = repositoryManager.ParticipationRepository.GetAllParticipations().ToList();
-
             foreach (Participation participant in repositoryManager.ParticipationRepository.GetAllParticipations()
                 .Where(participant => participant.ConversationId == groupChat.Conversation.ConversationId))
             {
@@ -120,9 +119,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             GetMessages();
         }
 
-        private void NewContributionNotificationReceived(Conversation updatedConversation)
+        private void NewContributionNotificationReceived(Contribution newContribution)
         {
-            if (updatedConversation.ConversationId == groupChat.Conversation.ConversationId)
+            if (newContribution.ConversationId == groupChat.Conversation.ConversationId)
             {
                 Application.Current.Dispatcher.Invoke(GetMessages);
 
@@ -133,9 +132,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        private void NewUser(IEnumerable<User> newUser)
+        private void NewUser(User newUser)
         {
-            GetAllUsers(newUser);
+            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
+
+            GetAllUsers(users);
         }
 
         private void GetMessages()
@@ -205,7 +206,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void NewConversationContributionRequest()
         {
-            clientService.SendContributionRequest(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
+            clientService.SendContribution(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
 
             groupChat.MessageToAddToConversation = string.Empty;
         }

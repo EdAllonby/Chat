@@ -82,6 +82,8 @@
     <Compile Include="Domain\ParticipationRepository.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Domain\User.cs" />
+    <Compile Include="IMessageContext.cs" />
+    <Compile Include="IMessageHandler.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />
     <Compile Include="Message\ClientDisconnection.cs" />

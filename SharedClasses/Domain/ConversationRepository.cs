@@ -9,8 +9,6 @@ namespace SharedClasses.Domain
 
     public delegate void ContributionAddedHandler(Contribution contribution);
 
-    public delegate void ConversationsChangedHandler(IEnumerable<Conversation> conversations);
-
     /// <summary>
     /// Holds a collection of <see cref="Conversation"/>s with basic CRUD operations.
     /// </summary>
@@ -21,7 +19,7 @@ namespace SharedClasses.Domain
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
         public event ConversationChangedHandler ConversationAdded = delegate { };
-        public event ConversationsChangedHandler ConversationsAdded = delegate { };
+
         public event ContributionAddedHandler ContributionAdded = delegate { };
 
         /// <summary>
@@ -65,7 +63,6 @@ namespace SharedClasses.Domain
                 conversationsIndexedById[conversation.ConversationId] = conversation;
                 Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
             }
-            ConversationsAdded(conversationsEnumerable);
         }
 
         /// <summary>

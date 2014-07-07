@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ChatClient.Services.MessageHandler;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
@@ -6,14 +7,6 @@ using SharedClasses.Message;
 
 namespace ChatClient.Services
 {
-    public delegate void NewContributionNotificationHandler(Conversation contributions);
-
-    public delegate void NewConversationHandler(Conversation conversation);
-
-    public delegate void UserListHandler(IEnumerable<User> users);
-
-    public delegate void NewParticipationNotification(Participation participation);
-
     /// <summary>
     /// Handles the logic for <see cref="IMessage" />
     /// Delegates Server specific communications to the <see cref="connectionHandler" />
@@ -21,20 +14,19 @@ namespace ChatClient.Services
     public sealed class ClientService : IClientService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
+        private readonly ClientContextRegistry clientContextRegistry;
 
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
         private ConnectionHandler connectionHandler;
 
         public ClientService()
         {
-            repositoryManager.ParticipationRepository.ParticipationAdded += OnNewParticipationAdded;
+            clientContextRegistry = new ClientContextRegistry(repositoryManager);
         }
 
-        public event UserListHandler NewUser = delegate { };
-        public event NewConversationHandler NewConversationNotification = delegate { };
-        public event NewContributionNotificationHandler NewContributionNotification = delegate { };
-        public event NewParticipationNotification NewParticipationNotification = delegate { };
-
+        /// <summary>
+        /// This Client's unique User Id.
+        /// </summary>
         public int ClientUserId { get; private set; }
 
         /// <summary>
@@ -66,7 +58,7 @@ namespace ChatClient.Services
 
                 ClientUserId = response.User.UserId;
 
-                connectionHandler.MessageReceived += NewMessageReceived;
+                connectionHandler.MessageReceived += OnNewMessageReceived;
             }
             else
             {
@@ -80,7 +72,7 @@ namespace ChatClient.Services
         /// Sends a <see cref="NewConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="userIds">The participants that are included in the conversation.</param>
-        public void SendConversationRequest(List<int> userIds)
+        public void CreateConversation(List<int> userIds)
         {
             connectionHandler.SendMessage(new NewConversationRequest(userIds));
         }
@@ -95,72 +87,30 @@ namespace ChatClient.Services
         /// </summary>
         /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
-        public void SendContributionRequest(int conversationID, string message)
+        public void SendContribution(int conversationID, string message)
         {
             connectionHandler.SendMessage(new ContributionRequest(conversationID, ClientUserId, message));
         }
 
-        private void NewMessageReceived(object sender, MessageEventArgs e)
+        private void OnNewMessageReceived(object sender, MessageEventArgs e)
         {
-            switch (e.Message.MessageIdentifier)
+            IMessage message = e.Message;
+
+            try
             {
-                case MessageIdentifier.ContributionNotification:
-                    AddContributionToConversation((ContributionNotification) e.Message);
-                    break;
+                IMessageHandler handler =
+                    MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                case MessageIdentifier.UserNotification:
-                    UpdateUserInRepository((UserNotification) e.Message);
-                    NotifyClientOfUserChange();
-                    break;
+                IMessageContext context =
+                    clientContextRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                case MessageIdentifier.ConversationNotification:
-                    AddConversationToRepository((ConversationNotification) e.Message);
-                    break;
-
-                case MessageIdentifier.ParticipationNotification:
-                    AddParticipationToRepository((ParticipationNotification) e.Message);
-                    break;
-
-                default:
-                    Log.Warn("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier);
-                    break;
+                handler.HandleMessage(message, context);
             }
-        }
-
-        private void AddParticipationToRepository(ParticipationNotification participationNotification)
-        {
-            repositoryManager.ParticipationRepository.AddParticipation(participationNotification.Participation);
-        }
-
-        private void AddContributionToConversation(ContributionNotification contributionNotification)
-        {
-            Conversation conversation = repositoryManager.ConversationRepository.FindConversationById(contributionNotification.Contribution.ConversationId);
-
-            conversation.AddContribution(contributionNotification);
-            NewContributionNotification(conversation);
-        }
-
-        private void AddConversationToRepository(ConversationNotification conversationNotification)
-        {
-            var conversation = new Conversation(conversationNotification.Conversation.ConversationId);
-            repositoryManager.ConversationRepository.AddConversation(conversation);
-            NewConversationNotification(conversation);
-        }
-
-        private void OnNewParticipationAdded(Participation participation)
-        {
-            NewParticipationNotification(participation);
-        }
-
-        private void UpdateUserInRepository(UserNotification userNotification)
-        {
-            repositoryManager.UserRepository.UpdateUser(userNotification.User);
-        }
-
-        private void NotifyClientOfUserChange()
-        {
-            NewUser(repositoryManager.UserRepository.GetAllUsers());
-            Log.Info("User changed event fired");
+            catch (KeyNotFoundException keyNotFoundException)
+            {
+                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
+                    keyNotFoundException);
+            }
         }
     }
 }
