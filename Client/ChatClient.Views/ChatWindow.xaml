@@ -11,7 +11,7 @@
         <viewModel:ChatWindowViewModel/>
     </Window.DataContext>
 
-        <Grid
+        <Grid Name="mainGrid"
           xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,7 +23,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="342">
+        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=mainGrid,Path=ActualWidth}">
             <MenuItem Header="Add User" DisplayMemberPath="Username"  ItemsSource="{Binding Path=ConnectedUsers}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}">
