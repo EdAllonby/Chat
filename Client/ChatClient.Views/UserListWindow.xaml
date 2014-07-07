@@ -15,7 +15,10 @@
         <BooleanToVisibilityConverter x:Key="TrueToVisibleConverter"/>
     </Window.Resources>
 
-    <Grid Background="#e74c3c">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Resources/halftone.png"/>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -40,8 +43,7 @@
             <Label Grid.Column="0" Grid.Row="0"
                    FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
                    HorizontalContentAlignment="Left"
-                   Foreground="White"
-                   Margin="10,0,0,0"
+                   Foreground="#64645a" Margin="10,0,0,0"
                    VerticalContentAlignment="Center" Content="{Binding Username, FallbackValue='User name'}" FontSize="32" />
             <Button Grid.Column="2" Padding="0"
                     Height="25" VerticalAlignment="Top"
@@ -57,13 +59,15 @@
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Connected Users"
                    FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
-                   Foreground="White" FontSize="20" Margin="10,0,0,0" />
+                   Foreground="#64645a" FontSize="20" Margin="10,0,0,0" />
 
-        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" Background="#FFDE766B" BorderBrush="#e74c3c"
+        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" BorderBrush="#e74c3c"
                     ItemsSource="{Binding ConnectedUsers, UpdateSourceTrigger=Default}"
-                    Foreground="White"
-                    Margin="10,5"
+                    Foreground="#64645a" Margin="10,5"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ListBox.Background>
+                <ImageBrush ImageSource="Resources/halftone.png"/>
+            </ListBox.Background>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection" Orientation="Horizontal">
