@@ -14,23 +14,6 @@ namespace SharedClasses.Domain
         private readonly int userId;
 
         /// <summary>
-        /// Creates a new participation entity.
-        /// </summary>
-        /// <param name="participationId">The identity of this participation entity object.</param>
-        /// <param name="userId">The identity of the user to link to a conversation.</param>
-        /// <param name="conversationId">The identity of the conversation that the user wants to link to.</param>
-        public Participation(int participationId, int userId, int conversationId)
-        {
-            Contract.Requires(participationId > 0);
-            Contract.Requires(userId > 0);
-            Contract.Requires(conversationId > 0);
-
-            this.participationId = participationId;
-            this.userId = userId;
-            this.conversationId = conversationId;
-        }
-
-        /// <summary>
         /// Create an incomplete Participation entity without an Id.
         /// </summary>
         /// <param name="participationStatus">What context will this participation object be used for?</param>
@@ -43,6 +26,22 @@ namespace SharedClasses.Domain
 
             this.userId = userId;
             this.conversationId = conversationId;
+        }
+
+        /// <summary>
+        /// Creates a new participation entity.
+        /// </summary>
+        /// <param name="participationId">The identity of this participation entity object.</param>
+        /// <param name="userId">The identity of the user to link to a conversation.</param>
+        /// <param name="conversationId">The identity of the conversation that the user wants to link to.</param>
+        public Participation(int participationId, int userId, int conversationId)
+            : this(userId, conversationId)
+        {
+            Contract.Requires(conversationId > 0);
+            Contract.Requires(userId > 0);
+            Contract.Requires(participationId > 0);
+
+            this.participationId = participationId;
         }
 
         public int ParticipationId

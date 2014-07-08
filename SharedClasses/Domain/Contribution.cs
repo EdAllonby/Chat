@@ -9,25 +9,11 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Contribution : IEquatable<Contribution>
     {
-        // Immutable domain entity class
         private readonly int contributorUserId;
+        private readonly string message;
         private readonly int conversationId;
-
-        /// <summary>
-        /// Creates a complete contribution entity
-        /// </summary>
-        /// <param name="contributionId">The unique ID of the entity.</param>
-        /// <param name="incompleteContribution">The extra details of the <see cref="Contribution"/>.</param>
-        public Contribution(int contributionId, Contribution incompleteContribution)
-        {
-            Contract.Requires(incompleteContribution != null);
-
-            ContributionId = contributionId;
-            contributorUserId = incompleteContribution.contributorUserId;
-            Message = incompleteContribution.Message;
-            MessageTimeStamp = DateTime.Now;
-            conversationId = incompleteContribution.conversationId;
-        }
+        private readonly int contributionId;
+        private readonly DateTime messageTimeStamp;
 
         /// <summary>
         /// Create a contribution that will later get assigned an ID.
@@ -38,37 +24,49 @@ namespace SharedClasses.Domain
             Contract.Requires(conversationId > 0);
 
             this.contributorUserId = contributorUserId;
-            Message = message;
+            this.message = message;
             this.conversationId = conversationId;
+        }
+
+        /// <summary>
+        /// Creates a complete contribution entity
+        /// </summary>
+        /// <param name="contributionId">The unique ID of the entity.</param>
+        /// <param name="incompleteContribution">The extra details of the <see cref="Contribution"/>.</param>
+        public Contribution(int contributionId, Contribution incompleteContribution)
+            : this(incompleteContribution.ContributorUserId, incompleteContribution.Message, incompleteContribution.ConversationId)
+        {
+            Contract.Requires(contributionId > 0);
+            Contract.Requires(incompleteContribution != null);
+
+            this.contributionId = contributionId;
+            this.messageTimeStamp = DateTime.Now;
         }
 
         /// <summary>
         /// The Conversation ID this Contribution belongs to.
         /// </summary>
-        public int ConversationId
-        {
-            get { return conversationId; }
-        }
+        public int ConversationId { get { return conversationId; } }
 
         /// <summary>
         /// The Unique ID of this Contribution
         /// </summary>
-        public int ContributionId { get; private set; }
+        public int ContributionId { get { return contributionId; } }
 
         /// <summary>
         /// The User who sent this Contribution message.
         /// </summary>
-        public int ContributorUserId
-        {
-            get { return contributorUserId; }
-        }
+        public int ContributorUserId { get { return contributorUserId; } }
 
         /// <summary>
         /// The contribution message.
         /// </summary>
-        public string Message { get; private set; }
+        public string Message { get { return message; } }
 
-        public DateTime MessageTimeStamp { get; private set; }
+        /// <summary>
+        /// The time the server received the message.
+        /// </summary>
+        public DateTime MessageTimeStamp { get { return messageTimeStamp; } }
 
         public bool Equals(Contribution other)
         {
