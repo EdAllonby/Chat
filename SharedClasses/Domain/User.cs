@@ -4,35 +4,42 @@ using System.Diagnostics.Contracts;
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Models a user in the system as an entity class (has identity)
+    /// Models a user in the system as an entity.
     /// </summary>
     [Serializable]
     public sealed class User : IEquatable<User>
     {
-        // User should be immutable, once made it will never change
         private readonly int userId;
         private readonly string username;
 
+        /// <summary>
+        /// Creates an incomplete user entity.
+        /// </summary>
+        public User(string username)
+        {
+            Contract.Requires(username != null);
+
+            this.username = username;
+        }
+
+        /// <summary>
+        /// Creates a user entity with an Id.
+        /// </summary>
+        /// <param name="username">The name of the user.</param>
+        /// <param name="userId">The unique Id of the user.</param>
+        /// <param name="status">The current status of the user.</param>
         public User(string username, int userId, ConnectionStatus status)
+            : this(username)
         {
             Contract.Requires(username != null);
             Contract.Requires(userId > 0);
 
-            this.username = username;
             this.userId = userId;
             ConnectionStatus = status;
         }
 
         /// <summary>
-        /// Incomplete user
-        /// </summary>
-        public User(string username)
-        {
-            this.username = username;
-        }
-
-        /// <summary>
-        /// The name of the User
+        /// The name of the User.
         /// </summary>
         public string Username
         {
@@ -40,7 +47,7 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The status of the user
+        /// The status of the User.
         /// </summary>
         public ConnectionStatus ConnectionStatus { get; set; }
 
