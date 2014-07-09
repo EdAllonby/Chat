@@ -19,7 +19,10 @@ namespace ChatClient.Services.MessageHandler
         private static void UpdateUserInRepository(UserNotification userNotification,
             UserNotificationContext userNotificationContext)
         {
-            userNotificationContext.UserRepository.UpdateUser(userNotification.User);
+            if (userNotification.NotificationType == NotificationType.Update)
+            {
+                userNotificationContext.UserRepository.UpdateUser(userNotification.User);
+            }
         }
     }
 }
