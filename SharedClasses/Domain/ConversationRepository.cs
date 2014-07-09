@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
 
 namespace SharedClasses.Domain
 {
-    public delegate void ConversationChangedHandler(Conversation conversation);
-
-    public delegate void ContributionAddedHandler(Contribution contribution);
-
     /// <summary>
     /// Holds a collection of <see cref="Conversation"/>s with basic CRUD operations.
     /// </summary>
@@ -18,9 +15,9 @@ namespace SharedClasses.Domain
 
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
-        public event ConversationChangedHandler ConversationAdded = delegate { };
+        public event EventHandler<Conversation> ConversationAdded;
 
-        public event ContributionAddedHandler ContributionAdded = delegate { };
+        public event EventHandler<Contribution> ContributionAdded;
 
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.
@@ -33,7 +30,7 @@ namespace SharedClasses.Domain
             conversationsIndexedById[conversation.ConversationId] = conversation;
             Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
 
-            ConversationAdded(conversation);
+            OnConversationAdded(conversation);
         }
 
         public void AddContributionToConversation(Contribution contribution)
@@ -46,7 +43,7 @@ namespace SharedClasses.Domain
 
             conversation.AddContribution(contribution);
 
-            ContributionAdded(contribution);
+            OnContributionAdded(contribution);
         }
 
         /// <summary>
@@ -82,6 +79,26 @@ namespace SharedClasses.Domain
         public IEnumerable<Conversation> GetAllConversations()
         {
             return conversationsIndexedById.Values;
+        }
+
+        private void OnConversationAdded(Conversation conversation)
+        {
+            EventHandler<Conversation> conversationAddedCopy = ConversationAdded;
+
+            if (conversationAddedCopy != null)
+            {
+                conversationAddedCopy(this, conversation);
+            }
+        }
+
+        private void OnContributionAdded(Contribution contribution)
+        {
+            EventHandler<Contribution> conversationAddedCopy = ContributionAdded;
+
+            if (conversationAddedCopy != null)
+            {
+                conversationAddedCopy(this, contribution);
+            }
         }
     }
 }

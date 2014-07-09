@@ -34,7 +34,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             repositoryManager = clientService.RepositoryManager;
 
             repositoryManager.ParticipationRepository.ParticipationAdded += OnNewParticipationNotification;
-            repositoryManager.UserRepository.UserUpdated += NewUser;
+            repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
             repositoryManager.ConversationRepository.ContributionAdded += NewContributionNotificationReceived;
 
             AddUserCommand = new AddUserToConversationCommand(this);
@@ -119,9 +119,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             GetMessages();
         }
 
-        private void NewContributionNotificationReceived(Contribution newContribution)
+        private void NewContributionNotificationReceived(object sender, Contribution contribution)
         {
-            if (newContribution.ConversationId == groupChat.Conversation.ConversationId)
+            if (contribution.ConversationId == groupChat.Conversation.ConversationId)
             {
                 Application.Current.Dispatcher.Invoke(GetMessages);
 
@@ -132,7 +132,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        private void NewUser(User newUser)
+        private void OnUserUpdated(object sender, User user)
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
 
@@ -160,7 +160,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.UserMessages = userMessages;
         }
 
-        private void OnNewParticipationNotification(Participation participation)
+        private void OnNewParticipationNotification(object sender, Participation participation)
         {
             groupChat.Title = GetChatTitle();
         }

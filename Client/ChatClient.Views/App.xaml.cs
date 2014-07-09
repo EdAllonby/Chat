@@ -21,7 +21,7 @@ namespace ChatClient.Views
             base.OnStartup(e);
         }
 
-        private void RegisterServices()
+        private static void RegisterServices()
         {
             ServiceManager.RegisterService<IClientService>(new ClientService());
         }

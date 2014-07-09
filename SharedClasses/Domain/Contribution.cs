@@ -9,10 +9,10 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Contribution : IEquatable<Contribution>
     {
-        private readonly int contributorUserId;
-        private readonly string message;
-        private readonly int conversationId;
         private readonly int contributionId;
+        private readonly int contributorUserId;
+        private readonly int conversationId;
+        private readonly string message;
         private readonly DateTime messageTimeStamp;
 
         /// <summary>
@@ -40,33 +40,48 @@ namespace SharedClasses.Domain
             Contract.Requires(incompleteContribution != null);
 
             this.contributionId = contributionId;
-            this.messageTimeStamp = DateTime.Now;
+            messageTimeStamp = DateTime.Now;
         }
 
         /// <summary>
         /// The Conversation ID this Contribution belongs to.
         /// </summary>
-        public int ConversationId { get { return conversationId; } }
+        public int ConversationId
+        {
+            get { return conversationId; }
+        }
 
         /// <summary>
         /// The Unique ID of this Contribution
         /// </summary>
-        public int ContributionId { get { return contributionId; } }
+        public int ContributionId
+        {
+            get { return contributionId; }
+        }
 
         /// <summary>
         /// The User who sent this Contribution message.
         /// </summary>
-        public int ContributorUserId { get { return contributorUserId; } }
+        public int ContributorUserId
+        {
+            get { return contributorUserId; }
+        }
 
         /// <summary>
         /// The contribution message.
         /// </summary>
-        public string Message { get { return message; } }
+        public string Message
+        {
+            get { return message; }
+        }
 
         /// <summary>
         /// The time the server received the message.
         /// </summary>
-        public DateTime MessageTimeStamp { get { return messageTimeStamp; } }
+        public DateTime MessageTimeStamp
+        {
+            get { return messageTimeStamp; }
+        }
 
         public bool Equals(Contribution other)
         {
