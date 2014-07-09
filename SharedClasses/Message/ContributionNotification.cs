@@ -10,15 +10,18 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class ContributionNotification : IMessage
     {
-        public ContributionNotification(Contribution contribution)
+        public ContributionNotification(Contribution contribution, NotificationType notificationType)
         {
             Contract.Requires(contribution != null);
             Contract.Requires(contribution.ContributionId > 0);
 
             Contribution = contribution;
+            NotificationType = notificationType;
         }
 
         public Contribution Contribution { get; private set; }
+
+        public NotificationType NotificationType { get; private set; }
 
         public MessageIdentifier MessageIdentifier
         {

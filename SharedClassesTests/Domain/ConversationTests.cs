@@ -49,7 +49,7 @@ namespace SharedClassesTests.Domain
             const int ConversationID = 5;
 
             var contribution = new Contribution(1, new Contribution(1, Message, ConversationID));
-            var contributionRequest = new ContributionNotification(contribution);
+            var contributionRequest = new ContributionNotification(contribution, NotificationType.Create);
 
             var conversation = new Conversation(ConversationID);
 

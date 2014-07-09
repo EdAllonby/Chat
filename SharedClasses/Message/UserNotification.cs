@@ -12,10 +12,10 @@ namespace SharedClasses.Message
         public UserNotification(User user, NotificationType notificationType)
         {
             User = user;
-            Notification = notificationType;
+            NotificationType = notificationType;
         }
 
-        public NotificationType Notification { get; private set; }
+        public NotificationType NotificationType { get; private set; }
 
         public User User { get; private set; }
 

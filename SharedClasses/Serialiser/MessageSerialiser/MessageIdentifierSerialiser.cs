@@ -13,7 +13,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 
-        public void SerialiseMessageIdentifier(MessageIdentifier messageIdentifier, NetworkStream stream)
+        public void Serialise(NetworkStream stream, MessageIdentifier messageIdentifier)
         {
             Contract.Requires(stream != null);
 

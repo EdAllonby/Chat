@@ -112,7 +112,7 @@ namespace Server
 
         private void OnConversationAdded(object sender, Conversation conversation)
         {
-            var conversationNotification = new ConversationNotification(conversation);
+            var conversationNotification = new ConversationNotification(conversation, NotificationType.Create);
 
             foreach (Participation participant in repositoryManager.ParticipationRepository
                 .GetParticipationsByConversationId(
@@ -124,7 +124,7 @@ namespace Server
 
         private void OnContributionAdded(object sender, Contribution contribution)
         {
-            var contributionNotification = new ContributionNotification(contribution);
+            var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
 
             Conversation conversation = repositoryManager.ConversationRepository
                 .FindConversationById(contribution.ConversationId);
@@ -148,7 +148,7 @@ namespace Server
             {
                 foreach (int userId in userIds)
                 {
-                    clientHandlersIndexedByUserId[userId].SendMessage(new ParticipationNotification(participation));
+                    clientHandlersIndexedByUserId[userId].SendMessage(new ParticipationNotification(participation, NotificationType.Create));
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace Server
             Conversation conversation = repositoryManager.ConversationRepository
                 .FindConversationById(participation.ConversationId);
 
-            clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation));
+            clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation, NotificationType.Update));
         }
 
         private void UpdateUsersOfNewParticipation(Participation newParticipation)
@@ -175,7 +175,7 @@ namespace Server
             foreach (Participation conversationParticipation in conversationParticipations)
             {
                 clientHandlersIndexedByUserId[newParticipation.UserId].SendMessage(
-                    new ParticipationNotification(conversationParticipation));
+                    new ParticipationNotification(conversationParticipation, NotificationType.Create));
             }
 
             // Update other users of the new conversation participant
@@ -183,7 +183,7 @@ namespace Server
                 conversationParticipation => conversationParticipation.UserId != newParticipation.UserId))
             {
                 clientHandlersIndexedByUserId[conversationParticipation.UserId].SendMessage(
-                    new ParticipationNotification(newParticipation));
+                    new ParticipationNotification(newParticipation, NotificationType.Create));
             }
         }
     }

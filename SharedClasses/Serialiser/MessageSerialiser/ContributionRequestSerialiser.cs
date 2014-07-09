@@ -16,7 +16,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 
         protected override void Serialise(ContributionRequest contributionRequest, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(contributionRequest.MessageIdentifier, networkStream);
+            messageIdentifierSerialiser.Serialise(networkStream, contributionRequest.MessageIdentifier);
 
             ContributionSerialiser.Serialise(networkStream, contributionRequest.Contribution);
             Log.InfoFormat("{0} message serialised", contributionRequest.MessageIdentifier);

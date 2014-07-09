@@ -15,7 +15,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 
         protected override void Serialise(NewConversationRequest message, NetworkStream networkStream)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.NewConversationRequest, networkStream);
+            messageIdentifierSerialiser.Serialise(networkStream, MessageIdentifier.NewConversationRequest);
 
             Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             binaryFormatter.Serialize(networkStream, message);

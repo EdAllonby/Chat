@@ -11,7 +11,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
     /// </summary>
     internal sealed class ParticipationSerialiser
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationSerialiser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ParticipationSerialiser));
 
         private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 

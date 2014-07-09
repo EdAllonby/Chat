@@ -10,14 +10,17 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class ParticipationNotification : IMessage
     {
-        public ParticipationNotification(Participation participation)
+        public ParticipationNotification(Participation participation, NotificationType notificationType)
         {
             Contract.Requires(participation != null);
 
             Participation = participation;
+            NotificationType = notificationType;
         }
 
         public Participation Participation { get; private set; }
+
+        public NotificationType NotificationType { get; private set; }
 
         public MessageIdentifier MessageIdentifier
         {
