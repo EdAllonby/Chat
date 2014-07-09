@@ -100,7 +100,7 @@ namespace Server
             }
         }
 
-        private void OnUserUpdated(User user)
+        private void OnUserUpdated(object sender, User user)
         {
             var userNotification = new UserNotification(user, NotificationType.Update);
 
@@ -110,7 +110,7 @@ namespace Server
             }
         }
 
-        private void OnConversationAdded(Conversation conversation)
+        private void OnConversationAdded(object sender, Conversation conversation)
         {
             var conversationNotification = new ConversationNotification(conversation);
 
@@ -122,7 +122,7 @@ namespace Server
             }
         }
 
-        private void OnContributionAdded(Contribution contribution)
+        private void OnContributionAdded(object sender, Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution);
 
@@ -138,7 +138,7 @@ namespace Server
             }
         }
 
-        private void OnParticipationsAdded(IEnumerable<Participation> participations)
+        private void OnParticipationsAdded(object sender, IEnumerable<Participation> participations)
         {
             IList<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
 
@@ -153,14 +153,14 @@ namespace Server
             }
         }
 
-        private void OnParticipationAdded(Participation newParticipation)
+        private void OnParticipationAdded(object sender, Participation participation)
         {
-            UpdateUsersOfNewParticipation(newParticipation);
+            UpdateUsersOfNewParticipation(participation);
 
             Conversation conversation = repositoryManager.ConversationRepository
-                .FindConversationById(newParticipation.ConversationId);
+                .FindConversationById(participation.ConversationId);
 
-            clientHandlersIndexedByUserId[newParticipation.UserId].SendMessage(new ConversationNotification(conversation));
+            clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation));
         }
 
         private void UpdateUsersOfNewParticipation(Participation newParticipation)

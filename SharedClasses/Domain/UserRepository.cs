@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
 
 namespace SharedClasses.Domain
 {
-    public delegate void UserChangedHandler(User user);
-
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
@@ -15,7 +14,7 @@ namespace SharedClasses.Domain
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
-        public event UserChangedHandler UserUpdated = delegate { };
+        public event EventHandler<User> UserUpdated;
 
         /// <summary>
         /// Adds or updates a <see cref="User"/> entity to the repository.
@@ -35,7 +34,7 @@ namespace SharedClasses.Domain
             }
 
             usersIndexedById[user.UserId] = user;
-            UserUpdated(user);
+            OnUserUpdated(user);
         }
 
         /// <summary>
@@ -77,6 +76,16 @@ namespace SharedClasses.Domain
         public IEnumerable<User> GetAllUsers()
         {
             return usersIndexedById.Values;
+        }
+
+        private void OnUserUpdated(User user)
+        {
+            EventHandler<User> userUpdatedCopy = UserUpdated;
+
+            if (userUpdatedCopy != null)
+            {
+                userUpdatedCopy(this, user);
+            }
         }
     }
 }

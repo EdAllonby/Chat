@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
 
 namespace SharedClasses.Domain
 {
-    public delegate void ParticipationChangedHandler(Participation participation);
-
-    public delegate void ParticipationsChangedHandler(IEnumerable<Participation> participations);
-
     public sealed class ParticipationRepository
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
 
         private readonly Dictionary<int, Participation> participationsIndexedById = new Dictionary<int, Participation>();
 
-        public event ParticipationChangedHandler ParticipationAdded = delegate { };
-        public event ParticipationsChangedHandler ParticipationsAdded = delegate { };
+        public event EventHandler<Participation> ParticipationAdded;
+
+        public event EventHandler<IEnumerable<Participation>> ParticipationsAdded;
 
         /// <summary>
         /// Adds a <see cref="Participation"/> entity to the repository
@@ -28,7 +26,7 @@ namespace SharedClasses.Domain
 
             AddParticipationToRepository(participation);
 
-            ParticipationAdded(participation);
+            OnParticipationAdded(participation);
         }
 
         /// <summary>
@@ -40,15 +38,15 @@ namespace SharedClasses.Domain
             Contract.Requires(participationsToAdd != null);
 
 
-            IEnumerable<Participation> participationsEnumerable = participationsToAdd as Participation[] ??
-                                                                  participationsToAdd.ToArray();
+            IEnumerable<Participation> participations = participationsToAdd as Participation[] ??
+                                                        participationsToAdd.ToArray();
 
-            foreach (Participation participation in participationsEnumerable)
+            foreach (Participation participation in participations)
             {
                 AddParticipationToRepository(participation);
             }
 
-            ParticipationsAdded(participationsEnumerable);
+            OnParticipationsAdded(participations);
         }
 
         /// <summary>
@@ -129,6 +127,26 @@ namespace SharedClasses.Domain
             }
 
             return userIdsIndexedByConversationId;
+        }
+
+        private void OnParticipationAdded(Participation participation)
+        {
+            EventHandler<Participation> participationAddedCopy = ParticipationAdded;
+
+            if (participationAddedCopy != null)
+            {
+                ParticipationAdded(this, participation);
+            }
+        }
+
+        private void OnParticipationsAdded(IEnumerable<Participation> participation)
+        {
+            EventHandler<IEnumerable<Participation>> participationsAddedCopy = ParticipationsAdded;
+
+            if (participationsAddedCopy != null)
+            {
+                ParticipationsAdded(this, participation);
+            }
         }
     }
 }

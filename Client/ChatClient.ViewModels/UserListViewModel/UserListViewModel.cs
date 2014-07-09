@@ -15,7 +15,7 @@ namespace ChatClient.ViewModels.UserListViewModel
     /// </summary>
     public class UserListViewModel : ViewModel
     {
-        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
+        private readonly IClientService clientService;
         private readonly RepositoryManager repositoryManager;
 
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
@@ -24,11 +24,13 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public UserListViewModel()
         {
+            clientService = ServiceManager.GetService<IClientService>();
+
             repositoryManager = clientService.RepositoryManager;
 
             GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
 
-            clientService.RepositoryManager.UserRepository.UserUpdated += NewUser;
+            clientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
 
             clientService.RepositoryManager.ConversationRepository.ConversationAdded += NewConversationNotification;
 
@@ -85,15 +87,15 @@ namespace ChatClient.ViewModels.UserListViewModel
             get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
-        private static void NewConversationNotification(Conversation conversation)
+        private static void NewConversationNotification(object sender, Conversation conversation)
         {
             CreateNewConversationWindow(conversation);
         }
 
-        private void NewContributionNotification(Contribution newContribution)
+        private void NewContributionNotification(object sender, Contribution contribution)
         {
             Conversation conversation =
-                repositoryManager.ConversationRepository.FindConversationById(newContribution.ConversationId);
+                repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);
 
             CreateNewConversationWindow(conversation);
         }
@@ -120,7 +122,7 @@ namespace ChatClient.ViewModels.UserListViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        private void NewUser(User newUser)
+        private void OnUserUpdated(object sender, User user)
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
 
