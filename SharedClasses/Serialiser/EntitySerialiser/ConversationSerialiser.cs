@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
 
@@ -13,14 +12,14 @@ namespace SharedClasses.Serialiser.EntitySerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationSerialiser));
 
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly ISerialisationType serialiser = new BinarySerialiser();
 
         public void Serialise(NetworkStream networkStream, Conversation conversation)
         {
             Contract.Requires(conversation != null);
             Contract.Requires(networkStream != null);
 
-            binaryFormatter.Serialize(networkStream, conversation);
+            serialiser.Serialise(networkStream, conversation);
             Log.Debug("Conversation serialised and sent to network stream");
         }
 
@@ -28,7 +27,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
         {
             Contract.Requires(networkStream != null);
 
-            var conversation = (Conversation) binaryFormatter.Deserialize(networkStream);
+            var conversation = (Conversation) serialiser.Deserialise(networkStream);
             Log.Debug("Network stream has received data and deserialised to a Conversation object");
             return conversation;
         }

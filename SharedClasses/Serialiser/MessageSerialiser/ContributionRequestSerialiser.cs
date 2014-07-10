@@ -10,22 +10,18 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class ContributionRequestSerialiser : Serialiser<ContributionRequest>
     {
-        private static readonly ContributionSerialiser ContributionSerialiser = new ContributionSerialiser();
+        private readonly ContributionSerialiser contributionSerialiser = new ContributionSerialiser();
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        protected override void Serialise(ContributionRequest contributionRequest, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, ContributionRequest contributionRequest)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, contributionRequest.MessageIdentifier);
-
-            ContributionSerialiser.Serialise(networkStream, contributionRequest.Contribution);
+            contributionSerialiser.Serialise(networkStream, contributionRequest.Contribution);
             Log.InfoFormat("{0} message serialised", contributionRequest.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            Contribution contribution = ContributionSerialiser.Deserialise(networkStream);
+            Contribution contribution = contributionSerialiser.Deserialise(networkStream);
             var contributionRequest = new ContributionRequest(
                 contribution.ConversationId,
                 contribution.ContributorUserId,

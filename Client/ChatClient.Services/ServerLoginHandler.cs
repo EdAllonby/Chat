@@ -11,7 +11,7 @@ using SharedClasses.Serialiser.MessageSerialiser;
 namespace ChatClient.Services
 {
     /// <summary>
-    /// Creates a connection to the Server and initialises the <see cref="repositoryManager"/> with 
+    /// Creates a connection to the Server and initialises the <see cref="repositoryManager"/> repositories.
     /// </summary>
     internal sealed class ServerLoginHandler
     {
@@ -95,7 +95,7 @@ namespace ChatClient.Services
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(message, tcpClient.GetStream());
+            messageSerialiser.Serialise(tcpClient.GetStream(), message);
         }
 
         private IMessage GetConnectionIMessage(TcpClient tcpClient)

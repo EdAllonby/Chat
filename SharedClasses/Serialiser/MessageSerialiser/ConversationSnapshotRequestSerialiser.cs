@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser.MessageSerialiser
@@ -9,21 +8,17 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class ConversationSnapshotRequestSerialiser : Serialiser<ConversationSnapshotRequest>
     {
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly ISerialisationType serialiser = new BinarySerialiser();
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        protected override void Serialise(ConversationSnapshotRequest message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, ConversationSnapshotRequest message)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
-
-            binaryFormatter.Serialize(networkStream, message);
+            serialiser.Serialise(networkStream, message);
             Log.InfoFormat("{0} serialised and sent to network stream", message.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversationSnapshotRequest = (ConversationSnapshotRequest) binaryFormatter.Deserialize(networkStream);
+            var conversationSnapshotRequest = (ConversationSnapshotRequest) serialiser.Deserialise(networkStream);
             Log.InfoFormat("Network stream has received data and deserialised to a {0} object", conversationSnapshotRequest.MessageIdentifier);
             return conversationSnapshotRequest;
         }

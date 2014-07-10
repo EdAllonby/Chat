@@ -81,7 +81,7 @@ namespace Server
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(message, tcpClient.GetStream());
+            messageSerialiser.Serialise(tcpClient.GetStream(), message);
         }
     }
 }

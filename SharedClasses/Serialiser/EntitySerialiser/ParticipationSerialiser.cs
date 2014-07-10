@@ -13,14 +13,14 @@ namespace SharedClasses.Serialiser.EntitySerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ParticipationSerialiser));
 
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly ISerialisationType serialiser = new BinarySerialiser();
 
         public void Serialise(NetworkStream networkStream, Participation participation)
         {
             Contract.Requires(participation != null);
             Contract.Requires(networkStream != null);
 
-            binaryFormatter.Serialize(networkStream, participation);
+            serialiser.Serialise(networkStream, participation);
             Log.Debug("Participation serialised to the network stream");
         }
 
@@ -28,7 +28,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
         {
             Contract.Requires(networkStream != null);
 
-            var participation = (Participation) binaryFormatter.Deserialize(networkStream);
+            var participation = (Participation) serialiser.Deserialise(networkStream);
             Log.Debug("Deserialised a participation object from the network stream.");
             return participation;
         }
