@@ -6,14 +6,11 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 {
     internal sealed class ParticipationNotificationSerialiser : Serialiser<ParticipationNotification>
     {
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly NotificationTypeSerialiser notificationTypeSerialiser = new NotificationTypeSerialiser();
         private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
 
-        protected override void Serialise(ParticipationNotification message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, ParticipationNotification message)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, MessageIdentifier.ParticipationNotification);
-
             Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             notificationTypeSerialiser.Serialise(networkStream, message.NotificationType);
             participationSerialiser.Serialise(networkStream, message.Participation);

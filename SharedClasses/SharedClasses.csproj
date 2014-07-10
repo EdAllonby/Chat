@@ -74,6 +74,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Serialiser\BinarySerialiser.cs" />
     <Compile Include="ConnectionHandler.cs" />
     <Compile Include="ConnectionStatus.cs" />
     <Compile Include="Domain\Conversation.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Message\ConversationSnapshot.cs" />
     <Compile Include="Message\ConversationSnapshotRequest.cs" />
     <Compile Include="Message\LoginResult.cs" />
+    <Compile Include="Serialiser\ISerialisationType.cs" />
     <Compile Include="Serialiser\MessageSerialiser\NotificationTypeSerialiser.cs" />
     <Compile Include="Message\ParticipationRequest.cs" />
     <Compile Include="Message\ParticipationSnapshot.cs" />

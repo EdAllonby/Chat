@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using log4net;
 using SharedClasses.Message;
+using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace SharedClasses.Serialiser
 {
@@ -12,28 +13,32 @@ namespace SharedClasses.Serialiser
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof (Serialiser<T>));
 
+        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+
         /// <summary>
-        /// Serialise the <see cref="IMessage"/> down the wire.
+        /// Serialise the <see cref="IMessage" /> down the wire.
         /// </summary>
-        /// <param name="message">The <see cref="IMessage"/> to send.</param>
         /// <param name="networkStream">The stream that connects the Client and Server.</param>
-        public void Serialise(IMessage message, NetworkStream networkStream)
+        /// <param name="message">The <see cref="IMessage" /> to send.</param>
+        public void Serialise(NetworkStream networkStream, IMessage message)
         {
-            Serialise((T) message, networkStream);
+            messageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
+            Log.InfoFormat("Serialising an {0} across the network stream.", message.MessageIdentifier);
+            Serialise(networkStream, (T) message);
         }
 
         /// <summary>
-        /// Deserialises an <see cref="IMessage"/> that has been received.
+        /// Deserialises an <see cref="IMessage" /> that has been received.
         /// </summary>
         /// <param name="networkStream">The stream that connects the Client and Server.</param>
-        /// <returns>The <see cref="IMessage"/> that was received from the networkStream.</returns>
+        /// <returns>The <see cref="IMessage" /> that was received from the networkStream.</returns>
         public abstract IMessage Deserialise(NetworkStream networkStream);
 
         /// <summary>
-        /// Serialise <see cref="T"/> down the wire.
+        /// Serialise <see cref="T" /> down the wire.
         /// </summary>
-        /// <param name="message">The message which inherits from <see cref="IMessage" />.</param>
         /// <param name="networkStream">The networkStream that connects the Client and Server.</param>
-        protected abstract void Serialise(T message, NetworkStream networkStream);
+        /// <param name="message">The message which inherits from <see cref="IMessage" />.</param>
+        protected abstract void Serialise(NetworkStream networkStream, T message);
     }
 }

@@ -10,13 +10,11 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class UserNotificationSerialiser : Serialiser<UserNotification>
     {
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly NotificationTypeSerialiser notificationTypeSerialiser = new NotificationTypeSerialiser();
         private readonly UserSerialiser userSerialiser = new UserSerialiser();
 
-        protected override void Serialise(UserNotification message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, UserNotification message)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
             notificationTypeSerialiser.Serialise(networkStream, message.NotificationType);
             userSerialiser.Serialise(networkStream, message.User);
             Log.InfoFormat("{0} serialised and sent to network stream", message);

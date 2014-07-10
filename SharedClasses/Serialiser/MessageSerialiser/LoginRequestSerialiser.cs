@@ -11,13 +11,10 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class LoginRequestSerialiser : Serialiser<LoginRequest>
     {
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly UserSerialiser userSerialiser = new UserSerialiser();
 
-        protected override void Serialise(LoginRequest message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, LoginRequest message)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
-
             userSerialiser.Serialise(networkStream, message.User);
             Log.InfoFormat("{0} message serialised and sent to network stream", message.MessageIdentifier);
         }

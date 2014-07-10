@@ -56,7 +56,7 @@ namespace SharedClasses
             Contract.Requires(message != null);
 
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(message, tcpClient.GetStream());
+            messageSerialiser.Serialise(tcpClient.GetStream(), message);
             Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
         }
 

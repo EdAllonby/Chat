@@ -11,13 +11,10 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     internal sealed class ConversationNotificationSerialiser : Serialiser<ConversationNotification>
     {
         private readonly ConversationSerialiser conversationSerialiser = new ConversationSerialiser();
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly NotificationTypeSerialiser notificationTypeSerialiser = new NotificationTypeSerialiser();
 
-        protected override void Serialise(ConversationNotification message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, ConversationNotification message)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, MessageIdentifier.ConversationNotification);
-
             Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             notificationTypeSerialiser.Serialise(networkStream, message.NotificationType);
             conversationSerialiser.Serialise(networkStream, message.Conversation);

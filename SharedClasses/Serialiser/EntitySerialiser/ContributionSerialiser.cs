@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
 using SharedClasses.Message;
@@ -8,22 +7,22 @@ using SharedClasses.Message;
 namespace SharedClasses.Serialiser.EntitySerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise the <see cref="Contribution" /> Domain object
-    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class
+    /// Used to serialise and deserialise the <see cref="Contribution" /> Domain object.
+    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class.
     /// to do its the main serialisation work
     /// </summary>
     internal sealed class ContributionSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ContributionSerialiser));
 
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly ISerialisationType serialiser = new BinarySerialiser();
 
         public void Serialise(NetworkStream networkStream, Contribution contribution)
         {
             Contract.Requires(contribution != null);
             Contract.Requires(networkStream != null);
 
-            binaryFormatter.Serialize(networkStream, contribution);
+            serialiser.Serialise(networkStream, contribution);
             Log.Debug("Contribution serialised and sent to network stream");
         }
 
@@ -31,7 +30,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
         {
             Contract.Requires(networkStream != null);
 
-            var contribution = (Contribution) binaryFormatter.Deserialize(networkStream);
+            var contribution = (Contribution) serialiser.Deserialise(networkStream);
             Log.Debug("Network stream has received data and deserialised to a Contribution object");
             return contribution;
         }
