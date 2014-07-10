@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using log4net;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
-using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace SharedClasses
 {
@@ -26,34 +25,35 @@ namespace SharedClasses
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
-        /// 
+        /// Listens for incoming messages on the <see cref="NetworkStream"/>.
+        /// Fires a <see cref="MessageReceived"/> event when a new <see cref="IMessage"/> has been received.
         /// </summary>
         /// <param name="clientUserId"></param>
-        /// <param name="tcpClient"></param>
-        public void ReceiveMessages(int clientUserId, TcpClient tcpClient)
+        /// <param name="networkStream"></param>
+        public void ReceiveMessages(int clientUserId, NetworkStream networkStream)
         {
             Contract.Requires(clientUserId > 0);
-            Contract.Requires(tcpClient != null);
+            Contract.Requires(networkStream != null);
 
             try
             {
                 while (true)
                 {
-                    MessageIdentifier messageIdentifier =
-                        messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+                    MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
 
                     ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-                    IMessage message = serialiser.Deserialise(tcpClient.GetStream());
+                    IMessage message = serialiser.Deserialise(networkStream);
 
                     OnMessageReceived(new MessageEventArgs(message));
                 }
             }
             catch (IOException)
             {
-                Log.Info("Detected client disconnection, sending ClientDisconnection object to Server");
+                Log.Info("Detected client disconnection, sending ClientDisconnection message to Server");
                 IMessage message = new ClientDisconnection(clientUserId);
-                MessageReceived(this, new MessageEventArgs(message));
+
+                OnMessageReceived(new MessageEventArgs(message));
             }
         }
 

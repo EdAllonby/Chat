@@ -28,6 +28,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
                 contribution.Message);
 
             Log.Info("Contribution request message deserialised");
+
             return contributionRequest;
         }
     }

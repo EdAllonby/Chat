@@ -62,7 +62,7 @@ namespace SharedClasses
 
         private void CreateListenerThread()
         {
-            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
+            var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient.GetStream()))
             {
                 Name = "ReceiveMessageThread" + (totalListenerThreads++)
             };

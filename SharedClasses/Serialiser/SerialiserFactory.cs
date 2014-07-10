@@ -1,5 +1,5 @@
-﻿using SharedClasses.Message;
-using SharedClasses.Serialiser.MessageSerialiser;
+﻿using System;
+using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser
 {
@@ -27,6 +27,11 @@ namespace SharedClasses.Serialiser
         /// <returns></returns>
         public ISerialiser GetSerialiser(MessageIdentifier identifier)
         {
+            if (identifier == MessageIdentifier.UnrecognisedMessage)
+            {
+                throw new ArgumentException();
+            }
+
             return SerialiserRegistry.SerialisersByMessageIdentifier[identifier];
         }
     }
