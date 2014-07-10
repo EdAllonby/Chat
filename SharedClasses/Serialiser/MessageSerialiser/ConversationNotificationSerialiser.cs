@@ -27,6 +27,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
             var conversation = new ConversationNotification(conversationSerialiser.Deserialise(networkStream), notificationType);
 
             Log.InfoFormat("{0} message deserialised", conversation.MessageIdentifier);
+
             return conversation;
         }
     }

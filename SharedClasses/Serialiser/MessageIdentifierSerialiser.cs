@@ -3,11 +3,10 @@ using System.Diagnostics.Contracts;
 using System.Net.Sockets;
 using log4net;
 
-namespace SharedClasses.Serialiser.MessageSerialiser
+namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// This static class is used define what message gets what identifier,
-    /// and used to serialise and deserialise Message Identifiers to their related Typed
+    /// Defines  what message gets what identifier, and used to serialise and deserialise Message Identifiers to their related Type.
     /// </summary>
     public sealed class MessageIdentifierSerialiser
     {
@@ -26,10 +25,14 @@ namespace SharedClasses.Serialiser.MessageSerialiser
             Contract.Requires(stream != null);
 
             var messageTypeBuffer = new byte[4];
+
             stream.Read(messageTypeBuffer, 0, 4);
+
             int messageIdentifierNumber = BitConverter.ToInt32(messageTypeBuffer, 0);
             var messageIdentifier = (MessageIdentifier) messageIdentifierNumber;
+
             Log.DebugFormat("Message Identifier {0} received from client", messageIdentifier);
+
             return messageIdentifier;
         }
     }

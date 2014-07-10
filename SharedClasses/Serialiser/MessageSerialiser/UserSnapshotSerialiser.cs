@@ -7,7 +7,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// Used to Serialise and Deserialise a <see cref="UserSnapshot" /> object.
     /// </summary>
     internal sealed class UserSnapshotSerialiser : Serialiser<UserSnapshot>
-    {    
+    {
         private readonly ISerialisationType serialiser = new BinarySerialiser();
 
         protected override void Serialise(NetworkStream networkStream, UserSnapshot message)

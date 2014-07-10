@@ -8,7 +8,7 @@ namespace SharedClasses.Serialiser
     /// </summary>
     internal sealed class BinarySerialiser : ISerialisationType
     {
-        private BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
 
         /// <summary>
         /// Serialise an object across the stream.

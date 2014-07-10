@@ -25,6 +25,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
             var notification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream), notificationType);
 
             Log.InfoFormat("{0} message deserialised", notification.MessageIdentifier);
+
             return notification;
         }
     }

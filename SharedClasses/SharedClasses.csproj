@@ -94,7 +94,7 @@
     <Compile Include="Message\ConversationSnapshotRequest.cs" />
     <Compile Include="Message\LoginResult.cs" />
     <Compile Include="Serialiser\ISerialisationType.cs" />
-    <Compile Include="Serialiser\MessageSerialiser\NotificationTypeSerialiser.cs" />
+    <Compile Include="Serialiser\NotificationTypeSerialiser.cs" />
     <Compile Include="Message\ParticipationRequest.cs" />
     <Compile Include="Message\ParticipationSnapshot.cs" />
     <Compile Include="Message\ParticipationSnapshotRequest.cs" />
@@ -110,7 +110,7 @@
     <Compile Include="Serialiser\MessageSerialiser\ConversationNotificationSerialiser.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ParticipationNotificationSerialiser.cs" />
     <Compile Include="Message\NewConversationRequest.cs" />
-    <Compile Include="Serialiser\MessageSerialiser\NewConversationRequestSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\ConversationRequestSerialiser.cs" />
     <Compile Include="Serialiser\EntitySerialiser\ConversationSerialiser.cs" />
     <Compile Include="Message\IMessage.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ConversationSnapshotRequestSerialiser.cs" />
@@ -120,7 +120,7 @@
     <Compile Include="Serialiser\MessageSerialiser\LoginRequestSerialiser.cs" />
     <Compile Include="Message\LoginResponse.cs" />
     <Compile Include="Serialiser\MessageSerialiser\LoginResponseSerialiser.cs" />
-    <Compile Include="Serialiser\MessageSerialiser\MessageIdentifierSerialiser.cs" />
+    <Compile Include="Serialiser\MessageIdentifierSerialiser.cs" />
     <Compile Include="MessageIdentifier.cs" />
     <Compile Include="Message\NotificationType.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ParticipationRequestSerialiser.cs" />
