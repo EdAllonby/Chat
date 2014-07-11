@@ -92,20 +92,19 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private string GetChatTitle()
         {
+            List<string> usernames = new List<string>();
+
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in repositoryManager.ParticipationRepository.GetAllParticipations()
-                .Where(participant => participant.ConversationId == groupChat.Conversation.ConversationId))
+            foreach (Participation participant in repositoryManager.ParticipationRepository.GetParticipationsByConversationId(groupChat.Conversation.ConversationId))
             {
-                titleBuilder.Append(repositoryManager.UserRepository.FindUserByID(participant.UserId).Username);
-                titleBuilder.Append(" and ");
+                usernames.Add(repositoryManager.UserRepository.FindUserByID(participant.UserId).Username);
             }
 
-            titleBuilder.Length = titleBuilder.Length - " and ".Length;
-            string title = titleBuilder.ToString();
+            titleBuilder.Append(TitleBuilder.CreateUserList(usernames));
 
-            return title;
+            return titleBuilder.ToString();
         }
 
         private void UpdateConnectedUsersList()

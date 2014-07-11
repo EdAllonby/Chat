@@ -84,7 +84,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void OpenUserListWindow()
         {
-            Application.Current.Dispatcher.Invoke(() => Mediator.Instance.SendMessage(ViewName.UserListWindow, new UserListViewModel.UserListViewModel()));
+            Application.Current.Dispatcher.Invoke(() => Mediator.Instance.SendMessage(ViewName.MainWindow, new MainWindowViewModel.MainWindowViewModel()));
         }
 
         #region Commands

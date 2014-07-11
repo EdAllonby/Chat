@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using ChatClient.ViewMediator;
-using ChatClient.ViewModels.UserListViewModel;
+using ChatClient.ViewModels.MainWindowViewModel;
 using log4net;
 
 namespace ChatClient.Views
@@ -15,12 +15,12 @@ namespace ChatClient.Views
         {
             InitializeComponent();
 
-            Mediator.Instance.Register(ViewName.UserListWindow, ShowUserListWindow);
+            Mediator.Instance.Register(ViewName.MainWindow, ShowUserListWindow);
         }
 
         private void ShowUserListWindow(object param)
         {
-            var view = new UserListWindow((UserListViewModel) param);
+            var view = new MainWindow((MainWindowViewModel) param);
             Close();
             view.Show();
         }
