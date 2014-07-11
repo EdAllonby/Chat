@@ -5,10 +5,11 @@ using System.Windows.Input;
 using ChatClient.Services;
 using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
+using ChatClient.ViewModels.UserListViewModel;
 using SharedClasses;
 using SharedClasses.Domain;
 
-namespace ChatClient.ViewModels.UserListViewModel
+namespace ChatClient.ViewModels.MainWindowViewModel
 {
     /// <summary>
     /// Holds the logic for the view. Accesses the Service manager to receive and send messages. 
@@ -24,21 +25,20 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public UserListViewModel()
         {
-            clientService = ServiceManager.GetService<IClientService>();
+            // Horrible, horrible hack... Please make it go away.
+            if (!IsInDesignModeStatic)
+            {
+                clientService = ServiceManager.GetService<IClientService>();
+                
+                repositoryManager = clientService.RepositoryManager;
 
-            repositoryManager = clientService.RepositoryManager;
+                clientService.RepositoryManager.UserRepository.UserAdded += OnUserAdded;
+                clientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+                clientService.RepositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
+                clientService.RepositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
-            clientService.RepositoryManager.UserRepository.UserAdded += OnUserAdded;
-            clientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
-            clientService.RepositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
-            clientService.RepositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
-
-            UpdateConnectedUsers();
-        }
-
-        public string Username
-        {
-            get { return repositoryManager.UserRepository.FindUserByID(clientService.ClientUserId).Username; }
+                UpdateConnectedUsers();
+            }
         }
 
         public bool IsMultiUserConversation
@@ -79,11 +79,6 @@ namespace ChatClient.ViewModels.UserListViewModel
         public ICommand StartMultiUserConversation
         {
             get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
-        }
-
-        public static ICommand Closing
-        {
-            get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
         private static void OnConversationAdded(object sender, Conversation conversation)

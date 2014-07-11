@@ -6,16 +6,11 @@ using ChatClient.ViewModels.MainWindowViewModel;
 
 namespace ChatClient.Views
 {
-    /// <summary>
-    /// Interaction logic for UserListWindow.xaml
-    /// </summary>
-    public partial class UserListWindow
+    public partial class ActiveConversations
     {
-        public UserListWindow()
+        public ActiveConversations()
         {
             InitializeComponent();
-
-            Mediator.Instance.Register(ViewName.ChatWindow, ShowChatWindow);
         }
 
         /// <summary>
@@ -24,26 +19,20 @@ namespace ChatClient.Views
         /// </summary>
         /// <param name="sender">The textblock clicked on</param>
         /// <param name="e">Mouse events for the selected textblock</param>
-        private void OnNewUserSelection(object sender, MouseButtonEventArgs e)
+        private void OnNewConversationSelection(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
             {
-                var userClicked = (StackPanel) sender;
-                var participantId = (int) userClicked.Tag;
+                var conversationClicked = (StackPanel)sender;
+                var conversationId = (int)conversationClicked.Tag;
 
-                var viewmodel = DataContext as UserListViewModel;
+                var viewmodel = DataContext as ActiveConversationsViewModel;
 
                 if (viewmodel != null)
                 {
-                    viewmodel.StartNewSingleUserConversation(participantId);
+                    viewmodel.GetConversationWindow(conversationId);
                 }
             }
-        }
-
-        private static void ShowChatWindow(object param)
-        {
-            var view = new ChatWindow((ChatWindowViewModel)param);
-            view.Show();
         }
     }
 }

@@ -3,7 +3,7 @@
     public enum ViewName
     {
         LoginWindow,
-        UserListWindow,
+        MainWindow,
         ChatWindow
     }
 }
