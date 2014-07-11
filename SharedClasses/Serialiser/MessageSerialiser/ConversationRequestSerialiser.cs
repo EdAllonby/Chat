@@ -5,14 +5,15 @@ using SharedClasses.Serialiser.EntitySerialiser;
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="NewConversationRequest" /> message.
+    /// Used to serialise and deserialise a <see cref="ConversationRequest" /> message.
     /// </summary>
-    internal sealed class ConversationRequestSerialiser : Serialiser<NewConversationRequest>
+    internal sealed class ConversationRequestSerialiser : Serialiser<ConversationRequest>
     {
-        private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
         private readonly ISerialisationType serialiser = new BinarySerialiser();
 
-        protected override void Serialise(NetworkStream networkStream, NewConversationRequest message)
+        private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
+
+        protected override void Serialise(NetworkStream networkStream, ConversationRequest message)
         {
             Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             serialiser.Serialise(networkStream, message);
@@ -21,7 +22,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversation = (NewConversationRequest) serialiser.Deserialise(networkStream);
+            var conversation = (ConversationRequest) serialiser.Deserialise(networkStream);
             Log.InfoFormat("{0} message deserialised", conversation.MessageIdentifier);
 
             return conversation;

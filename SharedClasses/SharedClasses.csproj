@@ -72,6 +72,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Serialiser\BinarySerialiser.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="Message\ParticipationNotification.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ConversationNotificationSerialiser.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ParticipationNotificationSerialiser.cs" />
-    <Compile Include="Message\NewConversationRequest.cs" />
+    <Compile Include="Message\ConversationRequest.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ConversationRequestSerialiser.cs" />
     <Compile Include="Serialiser\EntitySerialiser\ConversationSerialiser.cs" />
     <Compile Include="Message\IMessage.cs" />

@@ -28,13 +28,12 @@ namespace ChatClient.ViewModels.UserListViewModel
 
             repositoryManager = clientService.RepositoryManager;
 
-            GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
-
+            clientService.RepositoryManager.UserRepository.UserAdded += OnUserAdded;
             clientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+            clientService.RepositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
+            clientService.RepositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
-            clientService.RepositoryManager.ConversationRepository.ConversationAdded += NewConversationNotification;
-
-            clientService.RepositoryManager.ConversationRepository.ContributionAdded += NewContributionNotification;
+            UpdateConnectedUsers();
         }
 
         public string Username
@@ -87,12 +86,12 @@ namespace ChatClient.ViewModels.UserListViewModel
             get { return new RelayCommand(() => Application.Current.Shutdown()); }
         }
 
-        private static void NewConversationNotification(object sender, Conversation conversation)
+        private static void OnConversationAdded(object sender, Conversation conversation)
         {
             CreateNewConversationWindow(conversation);
         }
 
-        private void NewContributionNotification(object sender, Contribution contribution)
+        private void OnContributionAdded(object sender, Contribution contribution)
         {
             Conversation conversation =
                 repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);
@@ -122,15 +121,19 @@ namespace ChatClient.ViewModels.UserListViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        private void OnUserUpdated(object sender, User user)
+        private void OnUserAdded(object sender, User user)
         {
-            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
-
-            GetAllUsers(users);
+            UpdateConnectedUsers();
         }
 
-        private void GetAllUsers(IEnumerable<User> users)
+        private void OnUserUpdated(object sender, User user)
         {
+            UpdateConnectedUsers();
+        }
+
+        private void UpdateConnectedUsers()
+        {
+            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
             List<User> newUserList = users.Where(user => user.UserId != clientService.ClientUserId)
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 

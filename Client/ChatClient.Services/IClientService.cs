@@ -27,7 +27,7 @@ namespace ChatClient.Services
         LoginResult LogOn(LoginDetails loginDetails);
 
         /// <summary>
-        /// Sends a <see cref="NewConversationRequest"/> message to the server.
+        /// Sends a <see cref="ConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="userIds">The participants that are included in the conversation.</param>
         void CreateConversation(List<int> userIds);

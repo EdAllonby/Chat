@@ -33,9 +33,9 @@ namespace SharedClassesTests.Domain
         [TestCase(1291)]
         public void UserIdIterationTest(int userCount)
         {
-            var entityGenerator = new EntityGeneratorFactory();
+            var entityGenerator = new EntityIdAllocatorFactory();
 
-            int baseId = entityGenerator.GetEntityID<User>();
+            int baseId = entityGenerator.AllocateEntityId<User>();
 
             int totalUsers = userCount;
 
@@ -43,7 +43,7 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i < totalUsers; i++)
             {
-                user = new User("User", entityGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
+                user = new User("User", entityGenerator.AllocateEntityId<User>(), ConnectionStatus.Connected);
             }
 
             Contract.Assert(user != null, "user != null");
@@ -53,15 +53,15 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UserEqualsTest()
         {
-            var entityGenerator = new EntityGeneratorFactory();
+            var entityGenerator = new EntityIdAllocatorFactory();
 
-            int user1EntityId = entityGenerator.GetEntityID<User>();
+            int user1EntityId = entityGenerator.AllocateEntityId<User>();
 
             var user1 = new User("User1", user1EntityId, ConnectionStatus.Connected);
 
             Assert.AreEqual(user1.UserId, user1EntityId);
 
-            var user2 = new User("User2", entityGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
+            var user2 = new User("User2", entityGenerator.AllocateEntityId<User>(), ConnectionStatus.Connected);
             Assert.AreNotSame(user1.UserId, user2.UserId);
 
             Assert.IsFalse(user1.Equals(user2 as object));

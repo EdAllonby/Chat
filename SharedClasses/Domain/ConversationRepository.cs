@@ -16,9 +16,9 @@ namespace SharedClasses.Domain
         private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
 
         public event EventHandler<Conversation> ConversationAdded;
-
         public event EventHandler<Contribution> ContributionAdded;
-
+        public event EventHandler<Conversation> ConversationUpdated;
+        
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.
         /// </summary>
@@ -27,10 +27,20 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(conversation != null);
 
-            conversationsIndexedById[conversation.ConversationId] = conversation;
-            Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
+            conversationsIndexedById.Add(conversation.ConversationId, conversation);
+            Log.DebugFormat("Conversation with Id {0} added.", conversation.ConversationId);
 
             OnConversationAdded(conversation);
+        }
+
+        public void UpdateConversation(Conversation conversation)
+        {
+            Contract.Requires(conversation != null);
+
+            conversationsIndexedById[conversation.ConversationId] = conversation;
+            Log.DebugFormat("Conversation with Id {0} has been updated.", conversation.ConversationId);
+
+            OnConversationUpdated(conversation);
         }
 
         public void AddContributionToConversation(Contribution contribution)
@@ -88,6 +98,16 @@ namespace SharedClasses.Domain
             if (conversationAddedCopy != null)
             {
                 conversationAddedCopy(this, conversation);
+            }
+        }
+
+        private void OnConversationUpdated(Conversation conversation)
+        {
+            EventHandler<Conversation> conversationUpdatedCopy = ConversationUpdated;
+
+            if (conversationUpdatedCopy != null)
+            {
+                conversationUpdatedCopy(this, conversation);
             }
         }
 

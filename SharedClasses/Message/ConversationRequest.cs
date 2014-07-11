@@ -7,9 +7,9 @@ namespace SharedClasses.Message
     /// Packages a List of user Ids that should be part of a new conversation
     /// </summary>
     [Serializable]
-    public sealed class NewConversationRequest : IMessage
+    public sealed class ConversationRequest : IMessage
     {
-        public NewConversationRequest(List<int> userIds)
+        public ConversationRequest(List<int> userIds)
         {
             UserIds = userIds;
         }

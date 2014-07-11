@@ -42,7 +42,11 @@ namespace ChatClient.Models.ChatModel
             get { return conversation; }
             set
             {
-                if (Equals(value, conversation)) return;
+                // Because sometimes the reference breaks between Conversation updates, check with a reference equals for this property.
+                if (ReferenceEquals(value, conversation))
+                {
+                    return;
+                }
                 conversation = value;
                 OnPropertyChanged();
             }

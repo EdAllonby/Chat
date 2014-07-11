@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server
@@ -13,45 +14,54 @@ namespace Server
         private ClientLoginHandler clientLoginHandler;
         private ConnectionHandler connectionHandler;
 
-        public void Dispose()
-        {
-            connectionHandler.Dispose();
-        }
-
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
         /// Logs in a requested Client to the Server.
         /// </summary>
         /// <param name="tcpClient">The client's connection.</param>
-        /// <param name="entityGeneratorFactory">A generator for assigning the client a unique user ID.</param>
-        /// <param name="repositoryManager">The server's list of repositories used to give the client necessary entity collections.</param>
-        /// <returns></returns>
-        public LoginResponse LoginClient(TcpClient tcpClient, RepositoryManager repositoryManager, EntityGeneratorFactory entityGenerator)
+        /// <param name="userRepository">A generator for assigning the client a unique user ID.</param>
+        /// <param name="entityIdAllocator">The server's list of repositories used to give the client necessary entity collections.</param>
+        /// <returns>A login response <see cref="IMessage"/> with the details of the login attempt.</returns>
+        public LoginResponse LoginClient(TcpClient tcpClient, UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocator)
         {
-            clientLoginHandler = new ClientLoginHandler(repositoryManager);
-            return clientLoginHandler.InitialiseNewClient(tcpClient, entityGenerator);
+            clientLoginHandler = new ClientLoginHandler(userRepository);
+            return clientLoginHandler.InitialiseNewClient(tcpClient, entityIdAllocator);
         }
 
         /// <summary>
         /// Creates a new <see cref="ConnectionHandler"/> to connect the client and the server.
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="tcpClient"></param>
+        /// <param name="userId">The user id to link this connection handler with.</param>
+        /// <param name="tcpClient">The TCP connection between this client and the Server.</param>
         public void CreateConnectionHandler(int userId, TcpClient tcpClient)
         {
             connectionHandler = new ConnectionHandler(userId, tcpClient);
-            connectionHandler.MessageReceived += OnConnectionHandlerNewMessageReceived;
+            connectionHandler.MessageReceived += OnMessageReceived;
         }
 
+        /// <summary>
+        /// Send an <see cref="IMessage"/> to the client.
+        /// </summary>
+        /// <param name="message">The <see cref="IMessage"/> to send to the client.</param>
         public void SendMessage(IMessage message)
         {
             connectionHandler.SendMessage(message);
         }
 
-        private void OnConnectionHandlerNewMessageReceived(object sender, MessageEventArgs e)
+        private void OnMessageReceived(object sender, MessageEventArgs e)
         {
-            MessageReceived(sender, e);
+            EventHandler<MessageEventArgs> messageReceivedCopy = MessageReceived;
+         
+            if (messageReceivedCopy != null)
+            {
+                MessageReceived(sender, e);
+            }
+        }
+
+        public void Dispose()
+        {
+            connectionHandler.Dispose();
         }
     }
 }

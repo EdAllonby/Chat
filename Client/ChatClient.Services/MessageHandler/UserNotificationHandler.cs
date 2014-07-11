@@ -1,4 +1,5 @@
 ﻿using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -10,18 +11,20 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            var userNotificationHandler = (UserNotification) message;
+            var userNotification = (UserNotification) message;
             var userNotificationContext = (UserNotificationContext) context;
 
-            UpdateUserInRepository(userNotificationHandler, userNotificationContext);
-        }
+            UserRepository userRepository = userNotificationContext.UserRepository;
 
-        private static void UpdateUserInRepository(UserNotification userNotification,
-            UserNotificationContext userNotificationContext)
-        {
-            if (userNotification.NotificationType == NotificationType.Update)
+            switch (userNotification.NotificationType)
             {
-                userNotificationContext.UserRepository.UpdateUser(userNotification.User);
+                case NotificationType.Create:
+                    userRepository.AddUser(userNotification.User);
+                    break;
+
+                case NotificationType.Update:
+                    userRepository.UpdateUser(userNotification.User);
+                    break;
             }
         }
     }

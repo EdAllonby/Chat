@@ -5,20 +5,20 @@ using SharedClasses.Domain;
 namespace Server
 {
     /// <summary>
-    /// Holds the <see cref="EntityIDGenerator"/>s for each entity type that needs one.
+    /// Holds the <see cref="EntityIdGenerator"/>s for each entity type that needs one.
     /// </summary>
-    internal sealed class EntityIDGeneratorRegistry
+    internal sealed class EntityIdGeneratorRegistry
     {
         /// <summary>
         /// A readonly version of an IDGenerator dictionary. No one can alter this dictionary after compiling.
         /// </summary>
-        public readonly IReadOnlyDictionary<Type, EntityIDGenerator> EntityIDGeneratorsIndexedByEntityType =
-            new Dictionary<Type, EntityIDGenerator>
+        public readonly IReadOnlyDictionary<Type, EntityIdGenerator> EntityIDGeneratorsIndexedByEntityType =
+            new Dictionary<Type, EntityIdGenerator>
             {
-                {typeof (User), new EntityIDGenerator()},
-                {typeof (Conversation), new EntityIDGenerator()},
-                {typeof (Contribution), new EntityIDGenerator()},
-                {typeof (Participation), new EntityIDGenerator()}
+                {typeof (User), new EntityIdGenerator()},
+                {typeof (Conversation), new EntityIdGenerator()},
+                {typeof (Contribution), new EntityIdGenerator()},
+                {typeof (Participation), new EntityIdGenerator()}
             };
     }
 }
