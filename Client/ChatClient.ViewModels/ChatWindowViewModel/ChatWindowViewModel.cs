@@ -33,15 +33,18 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             repositoryManager = clientService.RepositoryManager;
 
-            repositoryManager.ParticipationRepository.ParticipationAdded += OnNewParticipationNotification;
+            repositoryManager.UserRepository.UserAdded += OnUserAdded;
             repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
-            repositoryManager.ConversationRepository.ContributionAdded += NewContributionNotificationReceived;
+
+            repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
+            repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
             AddUserCommand = new AddUserToConversationCommand(this);
 
             groupChat.Conversation = conversation;
             groupChat.Users = GetUsers();
-            GetAllUsers(repositoryManager.UserRepository.GetAllUsers());
+
+            UpdateConnectedUsersList();
 
             groupChat.WindowTitle = repositoryManager.UserRepository.FindUserByID(clientService.ClientUserId).Username;
             groupChat.Title = GetChatTitle();
@@ -101,11 +104,14 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             titleBuilder.Length = titleBuilder.Length - " and ".Length;
             string title = titleBuilder.ToString();
+
             return title;
         }
 
-        private void GetAllUsers(IEnumerable<User> users)
+        private void UpdateConnectedUsersList()
         {
+            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
+
             List<User> newUserList = users.Where(user => user.UserId != clientService.ClientUserId)
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 
@@ -119,7 +125,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             GetMessages();
         }
 
-        private void NewContributionNotificationReceived(object sender, Contribution contribution)
+        private void OnContributionAdded(object sender, Contribution contribution)
         {
             if (contribution.ConversationId == groupChat.Conversation.ConversationId)
             {
@@ -132,11 +138,14 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
+        private void OnUserAdded(object sender, User e)
+        {
+            UpdateConnectedUsersList();
+        }
+
         private void OnUserUpdated(object sender, User user)
         {
-            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
-
-            GetAllUsers(users);
+            UpdateConnectedUsersList();
         }
 
         private void GetMessages()
@@ -160,9 +169,13 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.UserMessages = userMessages;
         }
 
-        private void OnNewParticipationNotification(object sender, Participation participation)
+        private void OnConversationUpdated(object sender, Conversation conversation)
         {
+            // The model is no longer referencing the same conversation as in the repository, give it the reference again.
+            groupChat.Conversation = repositoryManager.ConversationRepository.FindConversationById(conversation.ConversationId);
+
             groupChat.Title = GetChatTitle();
+
         }
 
         #region Commands

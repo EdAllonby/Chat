@@ -9,18 +9,18 @@ namespace Server.MessageHandler
     internal sealed class ContributionRequestContext : IMessageContext
     {
         private readonly ConversationRepository conversationRepository;
-        private readonly EntityGeneratorFactory entityGeneratorFactory;
+        private readonly EntityIdAllocatorFactory entityIdAllocatorFactory;
 
-        public ContributionRequestContext(EntityGeneratorFactory entityGeneratorFactory,
+        public ContributionRequestContext(EntityIdAllocatorFactory entityIdAllocatorFactory,
             ConversationRepository conversationRepository)
         {
-            this.entityGeneratorFactory = entityGeneratorFactory;
+            this.entityIdAllocatorFactory = entityIdAllocatorFactory;
             this.conversationRepository = conversationRepository;
         }
 
-        public EntityGeneratorFactory EntityGeneratorFactory
+        public EntityIdAllocatorFactory EntityIdAllocatorFactory
         {
-            get { return entityGeneratorFactory; }
+            get { return entityIdAllocatorFactory; }
         }
 
         public ConversationRepository ConversationRepository

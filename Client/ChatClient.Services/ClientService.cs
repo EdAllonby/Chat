@@ -69,12 +69,12 @@ namespace ChatClient.Services
         }
 
         /// <summary>
-        /// Sends a <see cref="NewConversationRequest"/> message to the server.
+        /// Sends a <see cref="ConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="userIds">The participants that are included in the conversation.</param>
         public void CreateConversation(List<int> userIds)
         {
-            connectionHandler.SendMessage(new NewConversationRequest(userIds));
+            connectionHandler.SendMessage(new ConversationRequest(userIds));
         }
 
         public void AddUserToConversation(int userId, int conversationId)

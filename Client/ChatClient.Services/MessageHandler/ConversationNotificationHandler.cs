@@ -11,17 +11,21 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            var contributionNotification = (ConversationNotification) message;
-            var contributionNotificationContext = (ConversationNotificationContext) context;
+            var conversationNotification = (ConversationNotification) message;
+            var conversationNotificationContext = (ConversationNotificationContext) context;
 
-            AddConversationToRepository(contributionNotification, contributionNotificationContext);
-        }
+            ConversationRepository conversationRepository = conversationNotificationContext.ConversationRepository;
 
-        private void AddConversationToRepository(ConversationNotification conversationNotification,
-            ConversationNotificationContext contributionNotificationContext)
-        {
-            var conversation = new Conversation(conversationNotification.Conversation.ConversationId);
-            contributionNotificationContext.ConversationRepository.AddConversation(conversation);
+            switch (conversationNotification.NotificationType)
+            {
+                case NotificationType.Create:
+                    conversationRepository.AddConversation(conversationNotification.Conversation);
+                    break;
+
+                case NotificationType.Update:
+                    conversationRepository.UpdateConversation(conversationNotification.Conversation);
+                    break;
+            }
         }
     }
 }

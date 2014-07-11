@@ -21,7 +21,7 @@ namespace Server.MessageHandler
             ContributionRequestContext contributionRequestContext)
         {
             var newContribution = new Contribution(
-                contributionRequestContext.EntityGeneratorFactory.GetEntityID<Contribution>(),
+                contributionRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Contribution>(),
                 contributionRequest.Contribution);
 
             contributionRequestContext.ConversationRepository.AddContributionToConversation(newContribution);

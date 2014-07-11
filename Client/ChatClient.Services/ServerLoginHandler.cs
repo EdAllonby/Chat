@@ -6,11 +6,12 @@ using log4net;
 using SharedClasses;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
+using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace ChatClient.Services
 {
     /// <summary>
-    /// Creates a connection to the Server and initialises the <see cref="repositoryManager"/> repositories.
+    /// Creates a connection to the Server and initialises the <see cref="repositoryManager"/> with 
     /// </summary>
     internal sealed class ServerLoginHandler
     {

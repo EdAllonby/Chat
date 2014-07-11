@@ -11,19 +11,19 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
 
-        private readonly RepositoryManager repositoryManager;
+        private readonly UserRepository userRepository;
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
-        public ClientLoginHandler(RepositoryManager repositoryManager)
+        public ClientLoginHandler(UserRepository userRepository)
         {
-            this.repositoryManager = repositoryManager;
+            this.userRepository = userRepository;
         }
 
-        public LoginResponse InitialiseNewClient(TcpClient tcpClient, EntityGeneratorFactory entityGenerator)
+        public LoginResponse InitialiseNewClient(TcpClient tcpClient, EntityIdAllocatorFactory entityIdAllocator)
         {
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
-            User user = repositoryManager.UserRepository.FindUserByUsername(loginRequest.User.Username);
+            User user = userRepository.FindUserByUsername(loginRequest.User.Username);
 
             LoginResponse loginResponse;
 
@@ -32,13 +32,13 @@ namespace Server
                 if (user == null)
                 {
                     // new user, give it unique ID and connection status of connected
-                    user = CreateUserEntity(loginRequest, entityGenerator);
+                    user = CreateUserEntity(loginRequest, entityIdAllocator);
                 }
                 else
                 {
                     // This user already exists, just update the status of it in the repository
                     user.ConnectionStatus = ConnectionStatus.Connected;
-                    repositoryManager.UserRepository.UpdateUser(user);
+                    userRepository.UpdateUser(user);
                 }
 
                 loginResponse = new LoginResponse(user, LoginResult.Success);
@@ -68,11 +68,11 @@ namespace Server
             return loginRequest;
         }
 
-        private User CreateUserEntity(LoginRequest clientLogin, EntityGeneratorFactory entityGenerator)
+        private User CreateUserEntity(LoginRequest clientLogin, EntityIdAllocatorFactory entityIdAllocator)
         {
-            var newUser = new User(clientLogin.User.Username, entityGenerator.GetEntityID<User>(), ConnectionStatus.Connected);
+            var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), ConnectionStatus.Connected);
 
-            repositoryManager.UserRepository.UpdateUser(newUser);
+            userRepository.AddUser(newUser);
 
             return newUser;
         }

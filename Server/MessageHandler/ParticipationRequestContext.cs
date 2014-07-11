@@ -8,14 +8,14 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ParticipationRequestContext : IMessageContext
     {
-        private readonly EntityGeneratorFactory entityGeneratorFactory;
+        private readonly EntityIdAllocatorFactory entityIdAllocatorFactory;
         private readonly ParticipationRepository participationRepository;
 
         public ParticipationRequestContext(ParticipationRepository participationRepository,
-            EntityGeneratorFactory entityGeneratorFactory)
+            EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
             this.participationRepository = participationRepository;
-            this.entityGeneratorFactory = entityGeneratorFactory;
+            this.entityIdAllocatorFactory = entityIdAllocatorFactory;
         }
 
         public ParticipationRepository ParticipationRepository
@@ -23,9 +23,9 @@ namespace Server.MessageHandler
             get { return participationRepository; }
         }
 
-        public EntityGeneratorFactory EntityGeneratorFactory
+        public EntityIdAllocatorFactory EntityIdAllocatorFactory
         {
-            get { return entityGeneratorFactory; }
+            get { return entityIdAllocatorFactory; }
         }
     }
 }

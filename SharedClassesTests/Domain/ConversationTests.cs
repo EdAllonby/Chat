@@ -24,8 +24,8 @@ namespace SharedClassesTests.Domain
         [TestCase(21326)]
         public void ConversationIdIterationTest(int conversationCount)
         {
-            var entityGenerator = new EntityGeneratorFactory();
-            int baseId = entityGenerator.GetEntityID<User>();
+            var entityGenerator = new EntityIdAllocatorFactory();
+            int baseId = entityGenerator.AllocateEntityId<User>();
 
             int totalUsers = conversationCount;
 
@@ -33,7 +33,7 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i < totalUsers; i++)
             {
-                conversation = new Conversation(entityGenerator.GetEntityID<User>());
+                conversation = new Conversation(entityGenerator.AllocateEntityId<User>());
             }
 
             if (conversation != null)

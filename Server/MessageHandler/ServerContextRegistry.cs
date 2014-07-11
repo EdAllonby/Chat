@@ -18,10 +18,10 @@ namespace Server.MessageHandler
         /// </summary>
         /// <param name="repositoryManager">Holds the repositories that each <see cref="IMessageContext"/> needs.</param>
         /// <param name="clientHandlersIndexedByUserId">Holds the currently connected clients that each <see cref="IMessageContext"/> needs.</param>
-        /// <param name="entityGeneratorFactory">Holds the entity ID Generator to create new domain objects.</param>
+        /// <param name="entityIdAllocatorFactory">Holds the entity ID Generator to create new domain objects.</param>
         public ServerContextRegistry(RepositoryManager repositoryManager,
             Dictionary<int, ClientHandler> clientHandlersIndexedByUserId,
-            EntityGeneratorFactory entityGeneratorFactory)
+            EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
             MessageHandlersIndexedByMessageIdentifier = new Dictionary<MessageIdentifier, IMessageContext>
             {
@@ -42,7 +42,7 @@ namespace Server.MessageHandler
                 },
                 {
                     MessageIdentifier.ContributionRequest,
-                    new ContributionRequestContext(entityGeneratorFactory, repositoryManager.ConversationRepository)
+                    new ContributionRequestContext(entityIdAllocatorFactory, repositoryManager.ConversationRepository)
                 },
                 {
                     MessageIdentifier.ClientDisconnection,
@@ -50,12 +50,12 @@ namespace Server.MessageHandler
                 },
                 {
                     MessageIdentifier.ParticipationRequest,
-                    new ParticipationRequestContext(repositoryManager.ParticipationRepository, entityGeneratorFactory)
+                    new ParticipationRequestContext(repositoryManager.ParticipationRepository, entityIdAllocatorFactory)
                 },
                 {
                     MessageIdentifier.NewConversationRequest,
                     new NewConversationRequestContext(repositoryManager.ParticipationRepository,
-                        repositoryManager.ConversationRepository, entityGeneratorFactory)
+                        repositoryManager.ConversationRepository, entityIdAllocatorFactory)
                 },
             };
         }

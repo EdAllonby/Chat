@@ -1,19 +1,19 @@
 ﻿namespace Server
 {
     /// <summary>
-    /// Used to allocate a unique ID for an entity
+    /// Used to create a unique Id number for an entity.
     /// </summary>
-    internal sealed class EntityIDGenerator
+    internal sealed class EntityIdGenerator
     {
-        private int nextID;
+        private int nextId;
 
         /// <summary>
-        /// Gets a unique ID for an entity
+        /// Creates a unique Id number for an entity.
         /// </summary>
-        /// <returns>A unique ID</returns>
-        public int GetEntityID()
+        /// <returns>A unique Id number</returns>
+        public int GenerateNextAvailableId()
         {
-            return ++nextID;
+            return ++nextId;
         }
     }
 }

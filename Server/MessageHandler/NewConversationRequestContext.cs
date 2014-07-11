@@ -9,15 +9,15 @@ namespace Server.MessageHandler
     internal sealed class NewConversationRequestContext : IMessageContext
     {
         private readonly ConversationRepository conversationRepository;
-        private readonly EntityGeneratorFactory entityGeneratorFactory;
+        private readonly EntityIdAllocatorFactory entityIdAllocatorFactory;
         private readonly ParticipationRepository participationRepository;
 
         public NewConversationRequestContext(ParticipationRepository participationRepository,
             ConversationRepository conversationRepository,
-            EntityGeneratorFactory entityGeneratorFactory)
+            EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
             this.participationRepository = participationRepository;
-            this.entityGeneratorFactory = entityGeneratorFactory;
+            this.entityIdAllocatorFactory = entityIdAllocatorFactory;
             this.conversationRepository = conversationRepository;
         }
 
@@ -26,9 +26,9 @@ namespace Server.MessageHandler
             get { return participationRepository; }
         }
 
-        public EntityGeneratorFactory EntityGeneratorFactory
+        public EntityIdAllocatorFactory EntityIdAllocatorFactory
         {
-            get { return entityGeneratorFactory; }
+            get { return entityIdAllocatorFactory; }
         }
 
         public ConversationRepository ConversationRepository

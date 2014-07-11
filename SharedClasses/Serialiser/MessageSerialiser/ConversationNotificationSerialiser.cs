@@ -5,7 +5,7 @@ using SharedClasses.Serialiser.EntitySerialiser;
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="NewConversationRequest" /> message
+    /// Used to serialise and deserialise a <see cref="ConversationRequest" /> message
     /// Uses <see cref="ConversationSerialiser" /> for its underlying serialiser
     /// </summary>
     internal sealed class ConversationNotificationSerialiser : Serialiser<ConversationNotification>

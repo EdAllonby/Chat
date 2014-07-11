@@ -8,7 +8,7 @@ using SharedClasses.Message;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="NewConversationRequest"/> the Server received.
+    /// Handles a <see cref="ConversationRequest"/> the Server received.
     /// </summary>
     internal sealed class NewConversationRequestHandler : IMessageHandler
     {
@@ -16,7 +16,7 @@ namespace Server.MessageHandler
 
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            var newConversationRequest = (NewConversationRequest) message;
+            var newConversationRequest = (ConversationRequest) message;
             var newConversationRequestContext = (NewConversationRequestContext) context;
 
             if (CheckConversationIsValid(newConversationRequest, newConversationRequestContext.ParticipationRepository))
@@ -25,31 +25,31 @@ namespace Server.MessageHandler
             }
         }
 
-        private static bool CheckConversationIsValid(NewConversationRequest newConversationRequest,
+        private static bool CheckConversationIsValid(ConversationRequest conversationRequest,
             ParticipationRepository participationRepository)
         {
             // Check for no repeating users
-            if (newConversationRequest.UserIds.Count != newConversationRequest.UserIds.Distinct().Count())
+            if (conversationRequest.UserIds.Count != conversationRequest.UserIds.Distinct().Count())
             {
                 Log.Warn("Cannot make a conversation between two users of same id");
                 return false;
             }
 
-            return !participationRepository.DoesConversationWithUsersExist(newConversationRequest.UserIds);
+            return !participationRepository.DoesConversationWithUsersExist(conversationRequest.UserIds);
         }
 
-        private void CreateConversationEntity(NewConversationRequest newConversationRequest,
+        private void CreateConversationEntity(ConversationRequest conversationRequest,
             NewConversationRequestContext newConversationRequestContext)
         {
-            int conversationId = newConversationRequestContext.EntityGeneratorFactory.GetEntityID<Conversation>();
+            int conversationId = newConversationRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
             var participations = new List<Participation>();
 
-            foreach (int userId in newConversationRequest.UserIds)
+            foreach (int userId in conversationRequest.UserIds)
             {
-                int participationId = newConversationRequestContext.EntityGeneratorFactory.GetEntityID<Participation>();
+                int participationId = newConversationRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Participation>();
                 participations.Add(new Participation(participationId, userId, conversationId));
             }
 

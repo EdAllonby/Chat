@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using SharedClasses.Domain;
 

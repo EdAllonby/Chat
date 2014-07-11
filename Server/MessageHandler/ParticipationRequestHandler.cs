@@ -20,7 +20,7 @@ namespace Server.MessageHandler
 
             if (CheckUserCanEnterConversation(participationRequest, participationRequestContext.ParticipationRepository))
             {
-                AddUserToConversation(participationRequest, participationRequestContext.EntityGeneratorFactory,
+                AddUserToConversation(participationRequest, participationRequestContext.EntityIdAllocatorFactory,
                     participationRequestContext.ParticipationRepository);
             }
         }
@@ -44,10 +44,10 @@ namespace Server.MessageHandler
         }
 
         private static void AddUserToConversation(ParticipationRequest participationRequest,
-            EntityGeneratorFactory entityGeneratorFactory,
+            EntityIdAllocatorFactory entityIdAllocatorFactory,
             ParticipationRepository participationRepository)
         {
-            int participationId = entityGeneratorFactory.GetEntityID<Participation>();
+            int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
 
             var participation = new Participation(participationId, participationRequest.Participation.UserId,
                 participationRequest.Participation.ConversationId);

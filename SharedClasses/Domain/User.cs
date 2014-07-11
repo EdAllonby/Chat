@@ -39,6 +39,14 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
+        /// A Unique number used to identify the User.
+        /// </summary>
+        public int UserId
+        {
+            get { return userId; }
+        }
+
+        /// <summary>
         /// The name of the User.
         /// </summary>
         public string Username
@@ -47,17 +55,9 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The status of the User.
+        /// The current status of the User.
         /// </summary>
         public ConnectionStatus ConnectionStatus { get; set; }
-
-        /// <summary>
-        /// A Unique number used to identify the User.
-        /// </summary>
-        public int UserId
-        {
-            get { return userId; }
-        }
 
         public bool Equals(User other)
         {

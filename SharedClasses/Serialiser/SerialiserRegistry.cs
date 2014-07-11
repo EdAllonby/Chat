@@ -49,7 +49,7 @@ namespace SharedClasses.Serialiser
                 {typeof (ConversationSnapshot), new ConversationSnapshotSerialiser()},
                 {typeof (ParticipationSnapshotRequest), new ParticipationSnapshotRequestSerialiser()},
                 {typeof (ParticipationSnapshot), new ParticipationSnapshotSerialiser()},
-                {typeof (NewConversationRequest), new ConversationRequestSerialiser()},
+                {typeof (ConversationRequest), new ConversationRequestSerialiser()},
                 {typeof (ConversationNotification), new ConversationNotificationSerialiser()},
                 {typeof (ParticipationRequest), new ParticipationRequestSerialiser()},
                 {typeof (ParticipationNotification), new ParticipationNotificationSerialiser()},

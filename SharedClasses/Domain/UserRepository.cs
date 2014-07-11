@@ -14,7 +14,18 @@ namespace SharedClasses.Domain
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
+        public event EventHandler<User> UserAdded; 
         public event EventHandler<User> UserUpdated;
+
+        public void AddUser(User user)
+        {
+            Contract.Requires(user != null);
+
+            usersIndexedById.Add(user.UserId, user);
+            Log.DebugFormat("User with Id {0} added.", + user.UserId);
+
+            OnUserAdded(user);
+        }
 
         /// <summary>
         /// Adds or updates a <see cref="User"/> entity to the repository.
@@ -24,16 +35,9 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(user != null);
 
-            if (usersIndexedById.ContainsKey(user.UserId))
-            {
-                Log.Debug("User with Id " + user.UserId + " has been updated");
-            }
-            else
-            {
-                Log.Debug("User with Id " + user.UserId + " added to user repository");
-            }
-
             usersIndexedById[user.UserId] = user;
+            Log.Debug("User with Id " + user.UserId + " has been updated");
+
             OnUserUpdated(user);
         }
 
@@ -76,6 +80,16 @@ namespace SharedClasses.Domain
         public IEnumerable<User> GetAllUsers()
         {
             return usersIndexedById.Values;
+        }
+
+        private void OnUserAdded(User user)
+        {
+            EventHandler<User> userAddedCopy = UserAdded;
+
+            if (userAddedCopy != null)
+            {
+                userAddedCopy(this, user);
+            }
         }
 
         private void OnUserUpdated(User user)

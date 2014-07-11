@@ -47,8 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientHandler.cs" />
-    <Compile Include="EntityGeneratorFactory.cs" />
-    <Compile Include="EntityIDGeneratorRegistry.cs" />
+    <Compile Include="EntityIdAllocatorFactory.cs" />
+    <Compile Include="EntityIdGeneratorRegistry.cs" />
     <Compile Include="MessageHandler\ClientDisconnectionContext.cs" />
     <Compile Include="MessageHandler\ClientDisconnectionHandler.cs" />
     <Compile Include="MessageHandler\ServerContextRegistry.cs" />

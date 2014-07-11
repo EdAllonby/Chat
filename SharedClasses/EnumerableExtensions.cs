@@ -7,12 +7,12 @@ namespace SharedClasses
     public static class EnumerableExtensions
     {
         /// <summary>
-        /// Checks if two collections contain the same elements in any permutation.
+        /// Checks if two lists contain the same items in any order
         /// </summary>
-        /// <typeparam name="T">Type of collections.</typeparam>
-        /// <param name="first">The first collections of randomly ordered elements.</param>
-        /// <param name="second">The second list of randomly ordered elements.</param>
-        /// <returns>Boolean result of if collections contain the same elements.</returns>
+        /// <typeparam name="T">Type of list</typeparam>
+        /// <param name="first">The first list of random ordered items</param>
+        /// <param name="second">The second list of random ordered items</param>
+        /// <returns>Boolean result of if lists are the same</returns>
         public static bool HasSameElementsAs<T>(this IEnumerable<T> first, IEnumerable<T> second)
         {
             Contract.Requires(first != null);
