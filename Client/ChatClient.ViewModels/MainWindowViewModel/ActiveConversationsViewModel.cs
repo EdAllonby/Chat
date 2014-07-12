@@ -12,7 +12,6 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private IList<ConversationViewModel> activeConversations = new List<ConversationViewModel>();
 
-
         public ActiveConversationsViewModel()
         {
             if (!IsInDesignModeStatic)
@@ -45,10 +44,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public void GetConversationWindow(int conversationId)
         {
-
+            WindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
         }
-
-
+        
         private void UpdateActiveConversations()
         {
             IEnumerable<Conversation> conversations = repositoryManager.ConversationRepository.GetAllConversations();
@@ -59,7 +57,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             ActiveConversations = updatedConversations;
         }
 
-        private void OnConversationUpdated(object sender, Conversation e)
+        private void OnConversationUpdated(object sender, Conversation conversation)
         {
             UpdateActiveConversations();
         }
