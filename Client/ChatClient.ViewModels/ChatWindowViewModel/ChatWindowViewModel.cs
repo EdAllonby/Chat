@@ -188,7 +188,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ICommand Closing
         {
-            get { return new RelayCommand(() => ConversationWindowsStatusCollection.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
+            get { return new RelayCommand(() => WindowManager.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
         }
 
         public void AddUser(object user)

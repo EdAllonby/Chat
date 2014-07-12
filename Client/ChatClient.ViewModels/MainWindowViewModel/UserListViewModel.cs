@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using ChatClient.Services;
-using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.UserListViewModel;
 using SharedClasses;
@@ -83,7 +81,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private static void OnConversationAdded(object sender, Conversation conversation)
         {
-            CreateNewConversationWindow(conversation);
+            WindowManager.CreateConversationWindow(conversation);
         }
 
         private void OnContributionAdded(object sender, Contribution contribution)
@@ -91,7 +89,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             Conversation conversation =
                 repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);
 
-            CreateNewConversationWindow(conversation);
+            WindowManager.CreateConversationWindow(conversation);
         }
 
         public void StartNewSingleUserConversation(int participant)
@@ -148,19 +146,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             else
             {
                 int conversationId = repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
-                CreateNewConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
-            }
-        }
-
-        private static void CreateNewConversationWindow(Conversation conversation)
-        {
-            // Check if conversation window already exists
-            if (ConversationWindowsStatusCollection.GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
-            {
-                Application.Current.Dispatcher.Invoke(
-                    () => Mediator.Instance.SendMessage(ViewName.ChatWindow, new ChatWindowViewModel.ChatWindowViewModel(conversation)));
-
-                ConversationWindowsStatusCollection.SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
+                WindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
             }
         }
     }

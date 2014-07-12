@@ -46,7 +46,6 @@
     <Compile Include="ChatWindowViewModel\ChatWindowViewModel.cs" />
     <Compile Include="Commands\AddUserToConversationCommand.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="ConversationWindowsStatusCollection.cs" />
     <Compile Include="IAudioPlayer.cs" />
     <Compile Include="LoginWindowViewModel\LoginWindowViewModel.cs" />
     <Compile Include="MainWindowViewModel\ConnectedUserViewModel.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="MainWindowViewModel\UserListViewModel.cs" />
     <Compile Include="TitleBuilder.cs" />
     <Compile Include="ViewModel.cs" />
+    <Compile Include="WindowManager.cs" />
     <Compile Include="WindowStatus.cs" />
   </ItemGroup>
   <ItemGroup>
