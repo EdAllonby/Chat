@@ -40,9 +40,9 @@ namespace ChatClient.Views
             }
         }
 
-        private static void ShowChatWindow(object param)
+        private static void ShowChatWindow(object viewModel)
         {
-            var view = new ChatWindow((ChatWindowViewModel)param);
+            var view = new ChatWindow((ChatWindowViewModel)viewModel);
             view.Show();
         }
     }
