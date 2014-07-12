@@ -18,9 +18,9 @@ namespace ChatClient.Views
             Mediator.Instance.Register(ViewName.MainWindow, ShowUserListWindow);
         }
 
-        private void ShowUserListWindow(object param)
+        private void ShowUserListWindow(object viewModel)
         {
-            var view = new MainWindow((MainWindowViewModel) param);
+            var view = new MainWindow((MainWindowViewModel) viewModel);
             Close();
             view.Show();
         }

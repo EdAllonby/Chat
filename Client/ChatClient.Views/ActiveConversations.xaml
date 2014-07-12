@@ -44,7 +44,7 @@
                     <StackPanel Width="250" Tag="{Binding ConversationId}" MouseLeftButtonDown="OnNewConversationSelection" Orientation="Horizontal">
                         <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                             HorizontalAlignment="Left">
-                            <Path Data="{StaticResource PersonIcon}"
+                            <Path Data="{StaticResource ChatIcon}"
                             Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
                         </Canvas>
                         <TextBlock Text="{Binding ConversationParticipants}"  FontSize="16" Height="30" Width="300"  TextAlignment="Left" Padding="3" />
