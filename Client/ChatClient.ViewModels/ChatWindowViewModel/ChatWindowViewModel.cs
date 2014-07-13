@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using ChatClient.Models.ChatModel;
 using ChatClient.Models.ChatWindowViewModel;
-using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
@@ -18,7 +17,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     public sealed class ChatWindowViewModel : ViewModel, IDisposable
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
         private readonly RepositoryManager repositoryManager;
 
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
@@ -31,23 +29,26 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public ChatWindowViewModel(Conversation conversation)
         {
-            repositoryManager = clientService.RepositoryManager;
+            if (!IsInDesignMode)
+            {
+                repositoryManager = ClientService.RepositoryManager;
 
-            repositoryManager.UserRepository.UserAdded += OnUserAdded;
-            repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+                repositoryManager.UserRepository.UserAdded += OnUserAdded;
+                repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
 
-            repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
-            repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
+                repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
+                repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
-            AddUserCommand = new AddUserToConversationCommand(this);
+                AddUserCommand = new AddUserToConversationCommand(this);
 
-            groupChat.Conversation = conversation;
-            groupChat.Users = GetUsers();
+                groupChat.Conversation = conversation;
+                groupChat.Users = GetUsers();
 
-            UpdateConnectedUsersList();
+                UpdateConnectedUsersList();
 
-            groupChat.WindowTitle = repositoryManager.UserRepository.FindUserByID(clientService.ClientUserId).Username;
-            groupChat.Title = GetChatTitle();
+                groupChat.WindowTitle = repositoryManager.UserRepository.FindUserByID(ClientService.ClientUserId).Username;
+                groupChat.Title = GetChatTitle();
+            }
         }
 
         public GroupChatModel GroupChat
@@ -83,8 +84,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private List<User> GetUsers()
         {
-            ParticipationRepository participationRepository = clientService.RepositoryManager.ParticipationRepository;
-            UserRepository userRepository = clientService.RepositoryManager.UserRepository;
+            ParticipationRepository participationRepository = ClientService.RepositoryManager.ParticipationRepository;
+            UserRepository userRepository = ClientService.RepositoryManager.UserRepository;
 
             return participationRepository.GetParticipationsByConversationId(groupChat.Conversation.ConversationId)
                 .Select(participation => userRepository.FindUserByID(participation.UserId)).ToList();
@@ -92,7 +93,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private string GetChatTitle()
         {
-            List<string> usernames = new List<string>();
+            var usernames = new List<string>();
 
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
@@ -111,7 +112,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
 
-            List<User> newUserList = users.Where(user => user.UserId != clientService.ClientUserId)
+            List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId)
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 
             List<ConnectedUserModel> otherUsers = newUserList.Select(user => new ConnectedUserModel(user)).ToList();
@@ -130,7 +131,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             {
                 Application.Current.Dispatcher.Invoke(GetMessages);
 
-                if (groupChat.Conversation.GetAllContributions().Last().ContributorUserId != clientService.ClientUserId)
+                if (groupChat.Conversation.GetAllContributions().Last().ContributorUserId != ClientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
@@ -174,7 +175,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.Conversation = repositoryManager.ConversationRepository.FindConversationById(conversation.ConversationId);
 
             groupChat.Title = GetChatTitle();
-
         }
 
         #region Commands
@@ -197,7 +197,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             if (selectedUser != null)
             {
-                clientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.ConversationId);
+                ClientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.ConversationId);
             }
         }
 
@@ -205,7 +205,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             var connectedUser = (ConnectedUserModel) user;
 
-            IEnumerable<Participation> participations = clientService.RepositoryManager.ParticipationRepository
+            IEnumerable<Participation> participations = ClientService.RepositoryManager.ParticipationRepository
                 .GetParticipationsByConversationId(groupChat.Conversation.ConversationId);
 
             return participations.All(participation => participation.UserId != connectedUser.UserId);
@@ -218,7 +218,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void NewConversationContributionRequest()
         {
-            clientService.SendContribution(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
+            ClientService.SendContribution(groupChat.Conversation.ConversationId, groupChat.MessageToAddToConversation);
 
             groupChat.MessageToAddToConversation = string.Empty;
         }

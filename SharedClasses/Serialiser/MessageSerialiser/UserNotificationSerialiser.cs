@@ -25,7 +25,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
             NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
 
             var userNotification = new UserNotification(userSerialiser.Deserialise(networkStream), notificationType);
-            
+
             Log.InfoFormat("Network stream has received data and deserialised to a {0} object", userNotification.MessageIdentifier);
             return userNotification;
         }

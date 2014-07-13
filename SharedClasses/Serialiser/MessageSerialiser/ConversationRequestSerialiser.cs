@@ -9,9 +9,8 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class ConversationRequestSerialiser : Serialiser<ConversationRequest>
     {
-        private readonly ISerialisationType serialiser = new BinarySerialiser();
-
         private readonly ParticipationSerialiser participationSerialiser = new ParticipationSerialiser();
+        private readonly ISerialisationType serialiser = new BinarySerialiser();
 
         protected override void Serialise(NetworkStream networkStream, ConversationRequest message)
         {

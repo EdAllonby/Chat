@@ -6,7 +6,6 @@ using log4net;
 using SharedClasses;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
-using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace ChatClient.Services
 {

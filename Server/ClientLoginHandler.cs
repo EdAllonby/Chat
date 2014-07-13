@@ -11,9 +11,8 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
 
-        private readonly UserRepository userRepository;
-
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly UserRepository userRepository;
 
         public ClientLoginHandler(UserRepository userRepository)
         {

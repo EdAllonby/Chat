@@ -1,26 +1,35 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using ChatClient.Services;
 using ChatClient.ViewModels.Properties;
+using SharedClasses;
 
 namespace ChatClient.ViewModels
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly IClientService clientService;
         private bool? isInDesignMode;
 
-        [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected ViewModel()
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (!IsInDesignMode)
+            {
+                clientService = ServiceManager.GetService<IClientService>();
+            }
+        }
+
+        public IClientService ClientService
+        {
+            get { return clientService; }
         }
 
         /// <summary>
         /// Gets a value indicating whether the control is in design mode (running in Blend or Visual Studio).
         /// </summary>
-        protected bool IsInDesignModeStatic
+        protected bool IsInDesignMode
         {
             get
             {
@@ -36,7 +45,7 @@ _isInDesignMode = DesignerProperties.IsInDesignTool;
 
                     if (!isInDesignMode.Value)
                     {
-                        if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.StartsWith(@"devenv"))
+                        if (Process.GetCurrentProcess().ProcessName.StartsWith(@"devenv"))
                         {
                             isInDesignMode = true;
                         }
@@ -49,6 +58,15 @@ _isInDesignMode = false;
                 }
                 return isInDesignMode.Value;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

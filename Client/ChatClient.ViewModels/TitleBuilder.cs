@@ -7,7 +7,7 @@ namespace ChatClient.ViewModels
     {
         public static string CreateUserList(IEnumerable<string> usernames)
         {
-            StringBuilder titleBuilder = new StringBuilder();
+            var titleBuilder = new StringBuilder();
 
             foreach (string username in usernames)
             {

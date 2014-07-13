@@ -1,7 +1,7 @@
 ﻿using SharedClasses;
 using SharedClasses.Domain;
 
-namespace ChatClient.ViewModels.UserListViewModel
+namespace ChatClient.ViewModels.MainWindowViewModel
 {
     /// <summary>
     /// Translates the <see cref="User"/> model for the View to use
@@ -14,7 +14,10 @@ namespace ChatClient.ViewModels.UserListViewModel
 
         public ConnectedUserViewModel(User user)
         {
-            this.user = user;
+            if (!IsInDesignMode)
+            {
+                this.user = user;
+            }
         }
 
         public bool IsSelectedForConversation
