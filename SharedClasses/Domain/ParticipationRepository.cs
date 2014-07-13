@@ -88,8 +88,8 @@ namespace SharedClasses.Domain
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
             return from participation in participationsIndexedById.Values
-                   where participation.UserId == userId
-                   select participation.ConversationId;
+                where participation.UserId == userId
+                select participation.ConversationId;
         }
 
         /// <summary>

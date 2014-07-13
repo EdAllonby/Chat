@@ -1,7 +1,6 @@
 ﻿using System.Net.Sockets;
 using log4net;
 using SharedClasses.Message;
-using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace SharedClasses.Serialiser
 {

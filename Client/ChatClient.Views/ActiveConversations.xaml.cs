@@ -1,7 +1,5 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using ChatClient.ViewMediator;
-using ChatClient.ViewModels.ChatWindowViewModel;
 using ChatClient.ViewModels.MainWindowViewModel;
 
 namespace ChatClient.Views
@@ -23,8 +21,8 @@ namespace ChatClient.Views
         {
             if (e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
             {
-                var conversationClicked = (StackPanel)sender;
-                var conversationId = (int)conversationClicked.Tag;
+                var conversationClicked = (StackPanel) sender;
+                var conversationId = (int) conversationClicked.Tag;
 
                 var viewmodel = DataContext as ActiveConversationsViewModel;
 

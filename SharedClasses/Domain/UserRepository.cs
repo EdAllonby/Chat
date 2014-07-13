@@ -14,7 +14,7 @@ namespace SharedClasses.Domain
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
-        public event EventHandler<User> UserAdded; 
+        public event EventHandler<User> UserAdded;
         public event EventHandler<User> UserUpdated;
 
         public void AddUser(User user)

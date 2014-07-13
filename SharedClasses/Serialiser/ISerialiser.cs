@@ -1,6 +1,5 @@
 ﻿using System.Net.Sockets;
 using SharedClasses.Message;
-using SharedClasses.Serialiser.MessageSerialiser;
 
 namespace SharedClasses.Serialiser
 {

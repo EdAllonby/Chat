@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using SharedClasses.Domain;
 
@@ -8,14 +7,17 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     public class ConversationViewModel : ViewModel
     {
         private readonly Conversation conversation;
-        private readonly UserRepository userRepository;
         private readonly ParticipationRepository participationRepository;
+        private readonly UserRepository userRepository;
 
         public ConversationViewModel(Conversation conversation, UserRepository userRepository, ParticipationRepository participationRepository)
         {
-            this.conversation = conversation;
-            this.userRepository = userRepository;
-            this.participationRepository = participationRepository;
+            if (!IsInDesignMode)
+            {
+                this.conversation = conversation;
+                this.userRepository = userRepository;
+                this.participationRepository = participationRepository;
+            }
         }
 
         public string ConversationParticipants
@@ -30,9 +32,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private string GetConversationParticipants()
         {
-            List<string> usernames = new List<string>();
+            var usernames = new List<string>();
 
-            StringBuilder titleBuilder = new StringBuilder();
+            var titleBuilder = new StringBuilder();
 
             foreach (Participation participant in participationRepository.GetParticipationsByConversationId(conversation.ConversationId))
             {

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
-using ChatClient.ViewModels.UserListViewModel;
 using SharedClasses;
 using SharedClasses.Domain;
 
@@ -14,7 +12,6 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     /// </summary>
     public class UserListViewModel : ViewModel
     {
-        private readonly IClientService clientService;
         private readonly RepositoryManager repositoryManager;
 
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
@@ -23,17 +20,14 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public UserListViewModel()
         {
-            // Horrible, horrible hack... Please make it go away.
-            if (!IsInDesignModeStatic)
+            if (!IsInDesignMode)
             {
-                clientService = ServiceManager.GetService<IClientService>();
-                
-                repositoryManager = clientService.RepositoryManager;
+                repositoryManager = ClientService.RepositoryManager;
 
-                clientService.RepositoryManager.UserRepository.UserAdded += OnUserAdded;
-                clientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
-                clientService.RepositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
-                clientService.RepositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
+                ClientService.RepositoryManager.UserRepository.UserAdded += OnUserAdded;
+                ClientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+                ClientService.RepositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
+                ClientService.RepositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
                 UpdateConnectedUsers();
             }
@@ -94,14 +88,14 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public void StartNewSingleUserConversation(int participant)
         {
-            var participantIds = new List<int> {clientService.ClientUserId, participant};
+            var participantIds = new List<int> {ClientService.ClientUserId, participant};
 
             NewConversation(participantIds);
         }
 
         private void StartNewMultiUserConversation()
         {
-            var participantIds = new List<int> {clientService.ClientUserId};
+            var participantIds = new List<int> {ClientService.ClientUserId};
 
             participantIds.AddRange(connectedUsers.Where(user => user.IsSelectedForConversation)
                 .Select(connectedUser => connectedUser.UserId));
@@ -127,7 +121,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         private void UpdateConnectedUsers()
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
-            List<User> newUserList = users.Where(user => user.UserId != clientService.ClientUserId)
+            List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId)
                 .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
@@ -141,7 +135,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
             if (!repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(participantIds))
             {
-                clientService.CreateConversation(participantIds);
+                ClientService.CreateConversation(participantIds);
             }
             else
             {

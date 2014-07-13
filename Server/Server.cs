@@ -167,7 +167,7 @@ namespace Server
         private void OnParticipationAdded(object sender, Participation participation)
         {
             IEnumerable<Participation> participations =
-                           repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
+                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
 
             IEnumerable<Participation> conversationParticipations = participations as Participation[] ??
                                                                     participations.ToArray();
@@ -188,7 +188,7 @@ namespace Server
             }
 
             Conversation conversation = repositoryManager.ConversationRepository
-                                                         .FindConversationById(participation.ConversationId);
+                .FindConversationById(participation.ConversationId);
 
             clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation, NotificationType.Create));
 

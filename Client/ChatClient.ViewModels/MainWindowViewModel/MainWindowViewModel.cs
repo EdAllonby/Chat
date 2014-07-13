@@ -1,19 +1,19 @@
-﻿using ChatClient.Services;
-using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
-    public sealed class MainWindowViewModel
+    public sealed class MainWindowViewModel : ViewModel
     {
-        private readonly UserRepository userRepository;
         private readonly int userId;
+        private readonly UserRepository userRepository;
 
         public MainWindowViewModel()
         {
-            IClientService clientService = ServiceManager.GetService<IClientService>();
-            userRepository = clientService.RepositoryManager.UserRepository;
-            userId = clientService.ClientUserId;
+            if (!IsInDesignMode)
+            {
+                userRepository = ClientService.RepositoryManager.UserRepository;
+                userId = ClientService.ClientUserId;
+            }
         }
 
         public string Username

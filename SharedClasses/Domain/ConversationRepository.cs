@@ -18,7 +18,7 @@ namespace SharedClasses.Domain
         public event EventHandler<Conversation> ConversationAdded;
         public event EventHandler<Contribution> ContributionAdded;
         public event EventHandler<Conversation> ConversationUpdated;
-        
+
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.
         /// </summary>

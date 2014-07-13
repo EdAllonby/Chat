@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ChatClient.Services;
 using SharedClasses;
 using SharedClasses.Domain;
 
@@ -14,11 +13,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public ActiveConversationsViewModel()
         {
-            if (!IsInDesignModeStatic)
+            if (!IsInDesignMode)
             {
-                IClientService clientService = ServiceManager.GetService<IClientService>();
-
-                repositoryManager = clientService.RepositoryManager;
+                repositoryManager = ClientService.RepositoryManager;
 
                 UpdateActiveConversations();
 
@@ -46,7 +43,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         {
             WindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
         }
-        
+
         private void UpdateActiveConversations()
         {
             IEnumerable<Conversation> conversations = repositoryManager.ConversationRepository.GetAllConversations();

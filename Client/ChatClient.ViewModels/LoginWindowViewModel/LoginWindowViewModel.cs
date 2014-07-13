@@ -8,7 +8,6 @@ using ChatClient.Services;
 using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
 using log4net;
-using SharedClasses;
 using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.LoginWindowViewModel
@@ -17,27 +16,28 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
 
-        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
-
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
 
         private LoginModel loginModel = new LoginModel();
 
         public LoginWindowViewModel()
         {
-            var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
-
-            commandLineArgs.RemoveAt(0);
-
-            if (commandLineArgs.Count != 0)
+            if (!IsInDesignMode)
             {
-                Log.Info("Command line arguments found, attempting to parse");
+                var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
 
-                LoginDetails loginDetails;
-                bool result = logOnParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
-                if (result)
+                commandLineArgs.RemoveAt(0);
+
+                if (commandLineArgs.Count != 0)
                 {
-                    AttemptLogin(loginDetails);
+                    Log.Info("Command line arguments found, attempting to parse");
+
+                    LoginDetails loginDetails;
+                    bool result = logOnParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
+                    if (result)
+                    {
+                        AttemptLogin(loginDetails);
+                    }
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         {
             try
             {
-                LoginResult result = clientService.LogOn(loginDetails);
+                LoginResult result = ClientService.LogOn(loginDetails);
 
                 switch (result)
                 {
