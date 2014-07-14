@@ -1,5 +1,6 @@
-﻿using SharedClasses;
+﻿using System.Drawing;
 using SharedClasses.Domain;
+using wpfBrush = System.Windows.Media;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
@@ -51,14 +52,35 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             get { return user.UserId; }
         }
 
-        public ConnectionStatus ConnectionStatus
+        public System.Windows.Media.Brush BorderColour
         {
-            get { return user.ConnectionStatus; }
+            get { return ConnectionStatusToColour(); }
+        }
+
+        public Image UserAvatar
+        {
+            get {
+                return user.Avatar != null ? user.Avatar.UserAvatar : null;
+            }
         }
 
         public string Username
         {
             get { return user.Username; }
+        }
+
+        private wpfBrush.Brush ConnectionStatusToColour()
+        {
+            ConnectionStatus connectionStatus = user.ConnectionStatus;
+            switch (connectionStatus.UserConnectionStatus)
+            {
+                case ConnectionStatus.Status.Connected:
+                    return wpfBrush.Brushes.Green;
+                case ConnectionStatus.Status.Disconnected:
+                    return wpfBrush.Brushes.Red;
+                default:
+                    return wpfBrush.Brushes.Red;
+            }
         }
     }
 }

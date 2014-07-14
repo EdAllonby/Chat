@@ -5,7 +5,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Message
 {
     /// <summary>
-    /// Packages a <see cref="Contribution"/> for the Server to send to the Client
+    /// Packages a <see cref="Contribution"/> and a <see cref="NotificationType"/> for the Server to send to the Client.
     /// </summary>
     [Serializable]
     public sealed class ContributionNotification : IMessage

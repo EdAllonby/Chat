@@ -15,7 +15,9 @@ namespace SharedClasses.Domain
         private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
 
         public event EventHandler<User> UserAdded;
-        public event EventHandler<User> UserUpdated;
+        public event EventHandler<User> UserConnectionUpdated;
+        public event EventHandler<User> UserAvatarUpdated;
+
 
         public void AddUser(User user)
         {
@@ -28,17 +30,34 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Adds or updates a <see cref="User"/> entity to the repository.
+        /// Updates a <see cref="User"/>'s <see cref="ConnectionStatus"/>
         /// </summary>
-        /// <param name="user"><see cref="User"/> entity to add.</param>
-        public void UpdateUser(User user)
+        /// <param name="userId"> The <see cref="User"/>'s Id to change connection status.</param>
+        /// <param name="connectionStatus"> The new connection status of the user.</param>
+
+        public void UpdateUserConnection(ConnectionStatus connectionStatus)
         {
-            Contract.Requires(user != null);
+            Contract.Requires(connectionStatus != null);
 
-            usersIndexedById[user.UserId] = user;
-            Log.Debug("User with Id " + user.UserId + " has been updated");
+            User user = FindUserById(connectionStatus.UserId);
+            user.ConnectionStatus = connectionStatus;
 
-            OnUserUpdated(user);
+            OnUserConnectionUpdated(user);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="avatar"></param>
+        public void UpdateUserAvatar(Avatar avatar)
+        {
+            Contract.Requires(avatar != null);
+
+            User user = FindUserById(avatar.UserId);
+
+            user.Avatar = avatar;
+
+            OnUserAvatarUpdated(user);
         }
 
         /// <summary>
@@ -63,9 +82,11 @@ namespace SharedClasses.Domain
         /// </summary>
         /// <param name="userId">The <see cref="User"/> entity ID to find.</param>
         /// <returns>The <see cref="User"/> which matches the ID. If no <see cref="User"/> is found, return null.</returns>
-        public User FindUserByID(int userId)
+        public User FindUserById(int userId)
         {
-            return usersIndexedById.ContainsKey(userId) ? usersIndexedById[userId] : null;
+            User user;
+
+            return usersIndexedById.TryGetValue(userId, out user) ? user : null;
         }
 
         public User FindUserByUsername(string username)
@@ -92,9 +113,19 @@ namespace SharedClasses.Domain
             }
         }
 
-        private void OnUserUpdated(User user)
+        private void OnUserConnectionUpdated(User user)
         {
-            EventHandler<User> userUpdatedCopy = UserUpdated;
+            EventHandler<User> userConnectionUpdatedCopy = UserConnectionUpdated;
+
+            if (userConnectionUpdatedCopy != null)
+            {
+                userConnectionUpdatedCopy(this, user);
+            }
+        }
+
+        private void OnUserAvatarUpdated(User user)
+        {
+            EventHandler<User> userUpdatedCopy = UserAvatarUpdated;
 
             if (userUpdatedCopy != null)
             {

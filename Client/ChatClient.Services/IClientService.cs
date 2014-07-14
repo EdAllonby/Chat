@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using SharedClasses;
 using SharedClasses.Message;
 
@@ -40,10 +41,16 @@ namespace ChatClient.Services
         void AddUserToConversation(int userId, int conversationId);
 
         /// <summary>
+        /// Sends an <see cref="AvatarRequest"/> message to the server to change a user's avatar.
+        /// </summary>
+        /// <param name="avatar">The new image the user requests to have.</param>
+        void SendAvatarRequest(Image avatar);
+
+        /// <summary>
         /// Sends a <see cref="ContributionRequest"/> message to the server.
         /// </summary>
-        /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
+        /// <param name="conversationId">The ID of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
-        void SendContribution(int conversationID, string message);
+        void SendContribution(int conversationId, string message);
     }
 }

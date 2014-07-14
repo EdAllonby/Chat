@@ -8,8 +8,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
 {
     /// <summary>
     /// Used to serialise and deserialise the <see cref="Contribution" /> Domain object.
-    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class.
-    /// to do its the main serialisation work
+    /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class to do its the main serialisation work.
     /// </summary>
     internal sealed class ContributionSerialiser
     {

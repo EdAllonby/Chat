@@ -14,11 +14,6 @@ namespace SharedClasses.Serialiser
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-        public MessageIdentifierSerialiser MessageIdentifierSerialiser
-        {
-            get { return messageIdentifierSerialiser; }
-        }
-
         /// <summary>
         /// Serialise the <see cref="IMessage" /> down the wire.
         /// </summary>

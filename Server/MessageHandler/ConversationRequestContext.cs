@@ -4,15 +4,15 @@ using SharedClasses.Domain;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Holds a reference to the necessary objects a <see cref="NewConversationRequestHandler"/> needs. 
+    /// Holds a reference to the necessary objects a <see cref="ConversationRequestHandler"/> needs. 
     /// </summary>
-    internal sealed class NewConversationRequestContext : IMessageContext
+    internal sealed class ConversationRequestContext : IMessageContext
     {
         private readonly ConversationRepository conversationRepository;
         private readonly EntityIdAllocatorFactory entityIdAllocatorFactory;
         private readonly ParticipationRepository participationRepository;
 
-        public NewConversationRequestContext(ParticipationRepository participationRepository,
+        public ConversationRequestContext(ParticipationRepository participationRepository,
             ConversationRepository conversationRepository,
             EntityIdAllocatorFactory entityIdAllocatorFactory)
         {

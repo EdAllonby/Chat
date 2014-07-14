@@ -75,9 +75,13 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Avatar.cs" />
+    <Compile Include="Message\AvatarNotification.cs" />
+    <Compile Include="Message\AvatarRequest.cs" />
+    <Compile Include="Message\ConnectionStatusNotification.cs" />
     <Compile Include="Serialiser\BinarySerialiser.cs" />
     <Compile Include="ConnectionHandler.cs" />
-    <Compile Include="ConnectionStatus.cs" />
+    <Compile Include="Domain\ConnectionStatus.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\ConversationRepository.cs" />
     <Compile Include="Domain\Participation.cs" />
@@ -94,7 +98,12 @@
     <Compile Include="Message\ConversationSnapshot.cs" />
     <Compile Include="Message\ConversationSnapshotRequest.cs" />
     <Compile Include="Message\LoginResult.cs" />
+    <Compile Include="Serialiser\EntitySerialiser\AvatarSerialiser.cs" />
+    <Compile Include="Serialiser\EntitySerialiser\ConnectionStatusSerialiser.cs" />
     <Compile Include="Serialiser\ISerialisationType.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\AvatarNotificationSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\AvatarRequestSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\ConnectionStatusNotificationSerialiser.cs" />
     <Compile Include="Serialiser\NotificationTypeSerialiser.cs" />
     <Compile Include="Message\ParticipationRequest.cs" />
     <Compile Include="Message\ParticipationSnapshot.cs" />

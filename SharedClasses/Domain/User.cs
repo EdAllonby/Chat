@@ -55,9 +55,16 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
+        /// The user's current Avatar
+        /// </summary>
+        public Avatar Avatar { get; set; }
+
+        /// <summary>
         /// The current status of the User.
         /// </summary>
         public ConnectionStatus ConnectionStatus { get; set; }
+
+        #region IEquality implementation
 
         public bool Equals(User other)
         {
@@ -85,5 +92,7 @@ namespace SharedClasses.Domain
         {
             return userId;
         }
+
+        #endregion
     }
 }

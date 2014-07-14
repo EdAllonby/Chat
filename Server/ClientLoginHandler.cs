@@ -26,7 +26,7 @@ namespace Server
 
             LoginResponse loginResponse;
 
-            if (user == null || user.ConnectionStatus != ConnectionStatus.Connected)
+            if (user == null || user.ConnectionStatus.UserConnectionStatus != ConnectionStatus.Status.Connected)
             {
                 if (user == null)
                 {
@@ -36,8 +36,7 @@ namespace Server
                 else
                 {
                     // This user already exists, just update the status of it in the repository
-                    user.ConnectionStatus = ConnectionStatus.Connected;
-                    userRepository.UpdateUser(user);
+                    userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
                 }
 
                 loginResponse = new LoginResponse(user, LoginResult.Success);
@@ -69,7 +68,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin, EntityIdAllocatorFactory entityIdAllocator)
         {
-            var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), ConnectionStatus.Connected);
+            var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), new ConnectionStatus(clientLogin.User.UserId, ConnectionStatus.Status.Connected));
 
             userRepository.AddUser(newUser);
 
