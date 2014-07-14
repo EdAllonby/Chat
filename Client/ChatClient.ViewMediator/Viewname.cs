@@ -4,6 +4,7 @@
     {
         LoginWindow,
         MainWindow,
-        ChatWindow
+        ChatWindow,
+        UserSettingsWindow
     }
 }

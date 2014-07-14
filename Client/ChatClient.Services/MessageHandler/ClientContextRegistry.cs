@@ -37,6 +37,14 @@ namespace ChatClient.Services.MessageHandler
                     MessageIdentifier.ParticipationNotification,
                     new ParticipationNotificationContext(repositoryManager.ParticipationRepository)
                 },
+                {
+                    MessageIdentifier.ConnectionStatusNotification,
+                    new ConnectionStatusNotificationContext(repositoryManager.UserRepository)
+                },
+                {
+                    MessageIdentifier.AvatarNotification,
+                    new AvatarNotificationContext(repositoryManager.UserRepository)
+                },
             };
         }
     }

@@ -24,10 +24,11 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             {
                 repositoryManager = ClientService.RepositoryManager;
 
-                ClientService.RepositoryManager.UserRepository.UserAdded += OnUserAdded;
-                ClientService.RepositoryManager.UserRepository.UserUpdated += OnUserUpdated;
-                ClientService.RepositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
-                ClientService.RepositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
+                repositoryManager.UserRepository.UserAdded += OnUserAdded;
+                repositoryManager.UserRepository.UserConnectionUpdated += OnUserConnectionUpdated;
+                repositoryManager.UserRepository.UserAvatarUpdated += OnUserAvatarUpdated;
+                repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
+                repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
                 UpdateConnectedUsers();
             }
@@ -113,16 +114,22 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             UpdateConnectedUsers();
         }
 
-        private void OnUserUpdated(object sender, User user)
+        private void OnUserConnectionUpdated(object sender, User user)
         {
             UpdateConnectedUsers();
         }
+
+        private void OnUserAvatarUpdated(object sender, User user)
+        {
+            UpdateConnectedUsers();
+        }
+
 
         private void UpdateConnectedUsers()
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
             List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId)
-                .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
+                .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
 

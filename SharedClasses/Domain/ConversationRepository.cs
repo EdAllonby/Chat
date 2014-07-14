@@ -79,7 +79,8 @@ namespace SharedClasses.Domain
         /// <returns>The <see cref="Conversation"/> which matches the ID. If no <see cref="Conversation"/> is found, return null.</returns>
         public Conversation FindConversationById(int conversationID)
         {
-            return conversationsIndexedById.ContainsKey(conversationID) ? conversationsIndexedById[conversationID] : null;
+            Conversation conversation;
+            return conversationsIndexedById.TryGetValue(conversationID, out conversation) ? conversation : null;
         }
 
         /// <summary>

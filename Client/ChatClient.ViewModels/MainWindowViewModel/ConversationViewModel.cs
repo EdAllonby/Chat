@@ -38,7 +38,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
             foreach (Participation participant in participationRepository.GetParticipationsByConversationId(conversation.ConversationId))
             {
-                usernames.Add(userRepository.FindUserByID(participant.UserId).Username);
+                usernames.Add(userRepository.FindUserById(participant.UserId).Username);
             }
 
             titleBuilder.Append(TitleBuilder.CreateUserList(usernames));

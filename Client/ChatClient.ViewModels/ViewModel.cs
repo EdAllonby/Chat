@@ -21,7 +21,7 @@ namespace ChatClient.ViewModels
             }
         }
 
-        public IClientService ClientService
+        protected IClientService ClientService
         {
             get { return clientService; }
         }

@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+﻿using ChatClient.ViewMediator;
 using ChatClient.ViewModels.MainWindowViewModel;
 
 namespace ChatClient.Views
@@ -10,14 +10,15 @@ namespace ChatClient.Views
             InitializeComponent();
 
             DataContext = viewModel;
+
+            Mediator.Instance.Register(ViewName.UserSettingsWindow, ShowUserSettingsWindow);
+
         }
 
-        private void MoveWindow(object sender, MouseButtonEventArgs e)
+        private static void ShowUserSettingsWindow(object obj)
         {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                DragMove();
-            }
+            var view = new UserSettingsWindow();
+            view.ShowDialog();
         }
     }
 }

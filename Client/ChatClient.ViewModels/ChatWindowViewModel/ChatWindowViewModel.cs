@@ -34,7 +34,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 repositoryManager = ClientService.RepositoryManager;
 
                 repositoryManager.UserRepository.UserAdded += OnUserAdded;
-                repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+                repositoryManager.UserRepository.UserConnectionUpdated += OnUserConnectionUpdated;
 
                 repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
                 repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
@@ -46,7 +46,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 UpdateConnectedUsersList();
 
-                groupChat.WindowTitle = repositoryManager.UserRepository.FindUserByID(ClientService.ClientUserId).Username;
+                groupChat.WindowTitle = repositoryManager.UserRepository.FindUserById(ClientService.ClientUserId).Username;
                 groupChat.Title = GetChatTitle();
             }
         }
@@ -88,7 +88,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             UserRepository userRepository = ClientService.RepositoryManager.UserRepository;
 
             return participationRepository.GetParticipationsByConversationId(groupChat.Conversation.ConversationId)
-                .Select(participation => userRepository.FindUserByID(participation.UserId)).ToList();
+                .Select(participation => userRepository.FindUserById(participation.UserId)).ToList();
         }
 
         private string GetChatTitle()
@@ -100,7 +100,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             foreach (Participation participant in repositoryManager.ParticipationRepository.GetParticipationsByConversationId(groupChat.Conversation.ConversationId))
             {
-                usernames.Add(repositoryManager.UserRepository.FindUserByID(participant.UserId).Username);
+                usernames.Add(repositoryManager.UserRepository.FindUserById(participant.UserId).Username);
             }
 
             titleBuilder.Append(TitleBuilder.CreateUserList(usernames));
@@ -113,7 +113,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
 
             List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId)
-                .Where(user => user.ConnectionStatus == ConnectionStatus.Connected).ToList();
+                .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).ToList();
 
             List<ConnectedUserModel> otherUsers = newUserList.Select(user => new ConnectedUserModel(user)).ToList();
 
@@ -143,7 +143,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             UpdateConnectedUsersList();
         }
 
-        private void OnUserUpdated(object sender, User user)
+        private void OnUserConnectionUpdated(object sender, User user)
         {
             UpdateConnectedUsersList();
         }
@@ -159,7 +159,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 string message = contribution.Message;
 
                 var messageDetails = new StringBuilder();
-                messageDetails.Append(repositoryManager.UserRepository.FindUserByID(contribution.ContributorUserId).Username);
+                messageDetails.Append(repositoryManager.UserRepository.FindUserById(contribution.ContributorUserId).Username);
                 messageDetails.Append(" sent at: ");
                 messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
 

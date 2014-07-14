@@ -15,16 +15,16 @@ namespace SharedClassesTests.Domain
         [TestCase(8)]
         public void AssignCustomIdtoUserTest(int userId)
         {
-            var user = new User("user", userId, ConnectionStatus.Connected);
+            var user = new User("user", userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
             Assert.AreEqual(user.UserId, userId);
         }
 
         [TestCase("Tim", "Eric", 3)]
         [TestCase("Tim", "Tim", 3)]
-        public void UsersWithSameIdEqualityTest(string firstUserUsername, string secondUserUsername, int userID)
+        public void UsersWithSameIdEqualityTest(string firstUserUsername, string secondUserUsername, int userId)
         {
-            var user1 = new User(firstUserUsername, userID, ConnectionStatus.Connected);
-            var user2 = new User(secondUserUsername, userID, ConnectionStatus.Connected);
+            var user1 = new User(firstUserUsername, userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
+            var user2 = new User(secondUserUsername, userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
 
             Assert.AreEqual(user1, user2);
         }
@@ -43,7 +43,8 @@ namespace SharedClassesTests.Domain
 
             for (int i = 0; i < totalUsers; i++)
             {
-                user = new User("User", entityGenerator.AllocateEntityId<User>(), ConnectionStatus.Connected);
+                int userId = entityGenerator.AllocateEntityId<User>();
+                user = new User("User", userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
             }
 
             Contract.Assert(user != null, "user != null");
@@ -57,11 +58,13 @@ namespace SharedClassesTests.Domain
 
             int user1EntityId = entityGenerator.AllocateEntityId<User>();
 
-            var user1 = new User("User1", user1EntityId, ConnectionStatus.Connected);
+            var user1 = new User("User1", user1EntityId, new ConnectionStatus(user1EntityId, ConnectionStatus.Status.Connected));
 
             Assert.AreEqual(user1.UserId, user1EntityId);
 
-            var user2 = new User("User2", entityGenerator.AllocateEntityId<User>(), ConnectionStatus.Connected);
+            int user2EntityId = entityGenerator.AllocateEntityId<User>();
+
+            var user2 = new User("User2", user2EntityId, new ConnectionStatus(user2EntityId, ConnectionStatus.Status.Connected));
             Assert.AreNotSame(user1.UserId, user2.UserId);
 
             Assert.IsFalse(user1.Equals(user2 as object));
@@ -70,8 +73,8 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UserHashCodeTest()
         {
-            var user1 = new User("User", 1, ConnectionStatus.Connected);
-            var user2 = new User("User", 1, ConnectionStatus.Connected);
+            var user1 = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
+            var user2 = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
 
             Assert.AreEqual(user1.GetHashCode(), user2.GetHashCode());
         }
@@ -79,7 +82,7 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UserReferenceEqualsTest()
         {
-            var user1 = new User("User", 2, ConnectionStatus.Disconnected);
+            var user1 = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
             User user2 = user1;
 
             Assert.IsTrue(user1.Equals(user2));
@@ -95,8 +98,8 @@ namespace SharedClassesTests.Domain
         [Test]
         public void UsersWithSameNameHaveDifferentIDsEqualityTest()
         {
-            var user1 = new User("User", 1, ConnectionStatus.Connected);
-            var user2 = new User("User", 2, ConnectionStatus.Connected);
+            var user1 = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
+            var user2 = new User("User", 2, new ConnectionStatus(2, ConnectionStatus.Status.Connected));
             Assert.AreNotEqual(user1, user2);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using ChatClient.Services.MessageHandler;
 using log4net;
 using SharedClasses;
@@ -77,6 +78,11 @@ namespace ChatClient.Services
             connectionHandler.SendMessage(new ConversationRequest(userIds));
         }
 
+        /// <summary>
+        /// Sends a <see cref="ParticipationRequest"/> message to the server to add a user to an existing conversation.
+        /// </summary>
+        /// <param name="userId">The participant that will be added to the conversation.</param>
+        /// <param name="conversationId">The targetted conversation the participant will be added to.</param>
         public void AddUserToConversation(int userId, int conversationId)
         {
             connectionHandler.SendMessage(new ParticipationRequest(new Participation(userId, conversationId)));
@@ -85,11 +91,20 @@ namespace ChatClient.Services
         /// <summary>
         /// Sends a <see cref="ContributionRequest"/> message to the server.
         /// </summary>
-        /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
+        /// <param name="conversationId">The ID of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
-        public void SendContribution(int conversationID, string message)
+        public void SendContribution(int conversationId, string message)
         {
-            connectionHandler.SendMessage(new ContributionRequest(conversationID, ClientUserId, message));
+            connectionHandler.SendMessage(new ContributionRequest(conversationId, ClientUserId, message));
+        }
+
+        /// <summary>
+        /// Sends an <see cref="AvatarRequest"/> message to the server to change a user's avatar.
+        /// </summary>
+        /// <param name="avatar">The new image the user requests to have.</param>
+        public void SendAvatarRequest(Image avatar)
+        {
+            connectionHandler.SendMessage(new AvatarRequest(ClientUserId, avatar));
         }
 
         private void OnNewMessageReceived(object sender, MessageEventArgs e)

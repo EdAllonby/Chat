@@ -21,10 +21,6 @@ namespace ChatClient.Services.MessageHandler
                 case NotificationType.Create:
                     userRepository.AddUser(userNotification.User);
                     break;
-
-                case NotificationType.Update:
-                    userRepository.UpdateUser(userNotification.User);
-                    break;
             }
         }
     }

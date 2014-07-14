@@ -10,8 +10,6 @@ namespace SharedClasses.Serialiser
     /// </summary>
     public interface ISerialiser
     {
-        MessageIdentifierSerialiser MessageIdentifierSerialiser { get; }
-
         /// <summary>
         /// Serialise an <see cref="IMessage" /> down the NetworkStream
         /// </summary>

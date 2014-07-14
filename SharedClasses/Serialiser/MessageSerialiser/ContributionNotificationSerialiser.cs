@@ -5,8 +5,8 @@ using SharedClasses.Serialiser.EntitySerialiser;
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="ContributionNotification" /> object
-    /// Uses <see cref="ContributionSerialiser" /> for its underlying serialiser
+    /// Used to serialise and deserialise a <see cref="ContributionNotification" /> object.
+    /// Uses a <see cref="ContributionSerialiser" /> for its underlying serialiser
     /// </summary>
     internal sealed class ContributionNotificationSerialiser : Serialiser<ContributionNotification>
     {
@@ -22,11 +22,11 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
-            var notification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream), notificationType);
+            var contributionNotification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream), notificationType);
 
-            Log.InfoFormat("{0} message deserialised", notification.MessageIdentifier);
+            Log.InfoFormat("{0} message deserialised.", contributionNotification.MessageIdentifier);
 
-            return notification;
+            return contributionNotification;
         }
     }
 }

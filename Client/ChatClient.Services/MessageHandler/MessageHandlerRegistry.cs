@@ -19,6 +19,8 @@ namespace ChatClient.Services.MessageHandler
                 {MessageIdentifier.UserNotification, new UserNotificationHandler()},
                 {MessageIdentifier.ConversationNotification, new ConversationNotificationHandler()},
                 {MessageIdentifier.ParticipationNotification, new ParticipationNotificationHandler()},
+                {MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationHandler()},
+                {MessageIdentifier.AvatarNotification, new AvatarNotificationHandler()}
             };
     }
 }

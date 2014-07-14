@@ -29,7 +29,8 @@ namespace Server
             serverContextRegistry = new ServerContextRegistry(repositoryManager, clientHandlersIndexedByUserId, entityIdAllocatorFactory);
 
             repositoryManager.UserRepository.UserAdded += OnUserAdded;
-            repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
+            repositoryManager.UserRepository.UserConnectionUpdated += OnUserConnectionUpdated;
+            repositoryManager.UserRepository.UserAvatarUpdated += OnUserAvatarUpdated;
             repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
             repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
             repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
@@ -111,9 +112,9 @@ namespace Server
             }
         }
 
-        private void OnUserUpdated(object sender, User user)
+        private void OnUserConnectionUpdated(object sender, User user)
         {
-            var userNotification = new UserNotification(user, NotificationType.Update);
+            var userNotification = new ConnectionStatusNotification(user.ConnectionStatus, NotificationType.Update);
 
             foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
             {
@@ -133,6 +134,16 @@ namespace Server
             }
         }
 
+        private void OnUserAvatarUpdated(object sender, User user)
+        {
+            var avatarNotification = new AvatarNotification(user.Avatar, NotificationType.Update);
+
+            foreach (var clientHandler in clientHandlersIndexedByUserId.Values)
+            {
+                clientHandler.SendMessage(avatarNotification);
+            }
+        }
+
         private void OnContributionAdded(object sender, Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
@@ -142,8 +153,8 @@ namespace Server
 
             foreach (User user in
                 repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.ConversationId)
-                    .Select(participant => repositoryManager.UserRepository.FindUserByID(participant.UserId))
-                    .Where(user => user.ConnectionStatus == ConnectionStatus.Connected))
+                    .Select(participant => repositoryManager.UserRepository.FindUserById(participant.UserId))
+                    .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected))
             {
                 clientHandlersIndexedByUserId[user.UserId].SendMessage(contributionNotification);
             }

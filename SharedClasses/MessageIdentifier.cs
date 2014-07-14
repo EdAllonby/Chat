@@ -22,5 +22,9 @@
         ParticipationNotification,
         LoginResponse,
         ConversationNotification,
+        AvatarRequest,
+        AvatarNotification,
+        ConnectionStatusRequest,
+        ConnectionStatusNotification
     }
 }

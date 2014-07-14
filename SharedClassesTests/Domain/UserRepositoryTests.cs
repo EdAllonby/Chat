@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using SharedClasses;
 using SharedClasses.Domain;
 
 namespace SharedClassesTests.Domain
@@ -11,23 +10,24 @@ namespace SharedClassesTests.Domain
         [Test]
         public void AddAndUpdateUserEntityTest()
         {
-            var user = new User("User", 2, ConnectionStatus.Connected);
+            var user = new User("User", 2, new ConnectionStatus(2, ConnectionStatus.Status.Connected));
             var userRepository = new UserRepository();
-            userRepository.UpdateUser(user);
+            userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
 
-            Assert.AreEqual(user, userRepository.FindUserByID(user.UserId));
+            Assert.AreEqual(user, userRepository.FindUserById(user.UserId));
 
-            user.ConnectionStatus = ConnectionStatus.Disconnected;
-            userRepository.UpdateUser(user);
+            user.ConnectionStatus = new ConnectionStatus(2, ConnectionStatus.Status.Connected);
 
-            Assert.AreEqual(user, userRepository.FindUserByID(user.UserId));
+            userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+
+            Assert.AreEqual(user, userRepository.FindUserById(user.UserId));
         }
 
         [Test]
         public void AddUserEntitiesTest()
         {
-            var user1 = new User("User", 1, ConnectionStatus.Connected);
-            var user2 = new User("User", 2, ConnectionStatus.Connected);
+            var user1 = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
+            var user2 = new User("User", 2, new ConnectionStatus(2, ConnectionStatus.Status.Connected));
             var users = new List<User> {user1, user2};
 
             var userRepository = new UserRepository();
@@ -39,12 +39,12 @@ namespace SharedClassesTests.Domain
         [Test]
         public void CanNotAddSameUserEntityTwice()
         {
-            var user = new User("User", 1, ConnectionStatus.Connected);
+            var user = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
 
             var userRepository = new UserRepository();
 
-            userRepository.UpdateUser(user);
-            userRepository.UpdateUser(user);
+            userRepository.AddUser(user);
+            userRepository.AddUser(user);
 
             var users = new List<User> {user};
 
@@ -56,7 +56,7 @@ namespace SharedClassesTests.Domain
         {
             var userRepository = new UserRepository();
 
-            Assert.IsNull(userRepository.FindUserByID(3));
+            Assert.IsNull(userRepository.FindUserById(3));
         }
 
         [Test]
@@ -65,8 +65,8 @@ namespace SharedClassesTests.Domain
             var userRepository = new UserRepository();
 
             string username = "User";
-            var user = new User(username, 3, ConnectionStatus.Connected);
-            userRepository.UpdateUser(user);
+            var user = new User(username, 3, new ConnectionStatus(3, ConnectionStatus.Status.Connected));
+            userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
 
             Assert.AreEqual(user, userRepository.FindUserByUsername(username));
 

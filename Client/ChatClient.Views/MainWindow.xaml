@@ -3,16 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
-        Title="Chat Program" Height="600" Width="350" MouseDown="MoveWindow">
+        Title="Chat Program" Height="600" Width="350">
     <Window.DataContext>
         <mainWindowViewModel:MainWindowViewModel />
     </Window.DataContext>
 
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.Background>
             <ImageBrush ImageSource="Resources/halftone.png" />
         </Grid.Background>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -21,7 +22,13 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid>
+        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=MainGrid, Path=ActualWidth}">
+            <MenuItem Header="_Edit">
+               <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -39,7 +46,7 @@
                    FontSize="32" />
         </Grid>
 
-        <TabControl Grid.Row="1" Background="Transparent">
+        <TabControl Grid.Row="2" Background="Transparent">
             <TabItem Header="Connected Users">
                 <views:UserListWindow />
             </TabItem>

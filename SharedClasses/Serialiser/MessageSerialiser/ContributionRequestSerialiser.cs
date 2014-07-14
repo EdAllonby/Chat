@@ -6,7 +6,7 @@ using SharedClasses.Serialiser.EntitySerialiser;
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="ContributionRequest" /> message
+    /// Used to serialise and deserialise a <see cref="ContributionRequest" /> message.
     /// </summary>
     internal sealed class ContributionRequestSerialiser : Serialiser<ContributionRequest>
     {
