@@ -3,13 +3,14 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.ViewModels.Commands;
+using ChatClient.ViewModels.Properties;
 using GongSolutions.Wpf.DragDrop;
 
 namespace ChatClient.ViewModels.Test
 {
     public sealed class UserSettingsViewModel : ViewModel, IDropTarget
     {
-        private Image avatar;
+        private Image avatar = Resources.DefaultDropImage;
 
         public Image Avatar
         {

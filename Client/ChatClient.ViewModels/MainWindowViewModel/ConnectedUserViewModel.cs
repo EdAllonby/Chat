@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ChatClient.ViewModels.Properties;
 using SharedClasses.Domain;
 using wpfBrush = System.Windows.Media;
 
@@ -59,10 +60,8 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public Image UserAvatar
         {
-            get {
-                return user.Avatar != null ? user.Avatar.UserAvatar : null;
-            }
-        }
+            get { return user.Avatar != null ? user.Avatar.UserAvatar : Resources.DefaultUserImage; }
+        } 
 
         public string Username
         {
@@ -75,7 +74,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             switch (connectionStatus.UserConnectionStatus)
             {
                 case ConnectionStatus.Status.Connected:
-                    return wpfBrush.Brushes.Green;
+                    return wpfBrush.Brushes.LimeGreen;
                 case ConnectionStatus.Status.Disconnected:
                     return wpfBrush.Brushes.Red;
                 default:

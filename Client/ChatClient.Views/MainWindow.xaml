@@ -3,10 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
+        xmlns:converter="clr-namespace:ChatClient.Views.Converter"
         Title="Chat Program" Height="600" Width="350">
     <Window.DataContext>
         <mainWindowViewModel:MainWindowViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <converter:BitmapToBitmapSourceConverter x:Key="BitmapToBitmapSourceConverter" />
+    </Window.Resources>
 
     <Grid Name="MainGrid">
         <Grid.Background>
@@ -28,23 +32,17 @@
             </MenuItem>
         </Menu>
 
-        <Grid Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Column="0" Grid.Row="0"
-                   FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Border BorderBrush="LimeGreen" BorderThickness="3" CornerRadius="5" Height="50" Width="50">
+                <Image Source="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
+                                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant"/>
+            </Border>
+            <Label FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
                    HorizontalContentAlignment="Left"
                    Foreground="#64645a" Margin="10,0,0,0"
                    VerticalContentAlignment="Center" Content="{Binding Username, FallbackValue='User name'}"
                    FontSize="32" />
-        </Grid>
+        </StackPanel>
 
         <TabControl Grid.Row="2" Background="Transparent">
             <TabItem Header="Connected Users">
