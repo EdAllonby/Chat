@@ -62,7 +62,7 @@
                         
                         <Border CornerRadius="5" Width="50" Height="50" BorderBrush="{Binding BorderColour}" BorderThickness="3">
                             <Image Source="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
-                                   Stretch="UniformToFill"/>
+                                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
                         </Border>
                         
                         <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" Width="300"  TextAlignment="Left" Padding="3" />

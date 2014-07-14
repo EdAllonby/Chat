@@ -20,14 +20,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="Change Display Picture" />
+        <Label Grid.Row="0" Content="Drag a picture inside the box..." />
 
-        <Border BorderThickness="2" CornerRadius="10" BorderBrush="#e74c3c" Width="150" Height="150" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" Grid.Row="1"
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="#e74c3c" Width="150" Height="150" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" Grid.Row="1"
                 dragDrop:DragDrop.IsDragSource="False"
                             dragDrop:DragDrop.IsDropTarget="True"
                             dragDrop:DragDrop.DropHandler="{Binding}">
             <Border.Background>
-                <ImageBrush ImageSource="{Binding Path=Avatar, Converter={StaticResource BitmapConverter}}" Stretch="UniformToFill" />
+                <ImageBrush ImageSource="{Binding Path=Avatar, Converter={StaticResource BitmapConverter}}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
             </Border.Background>
         </Border>
         
