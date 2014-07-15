@@ -17,14 +17,13 @@
         ParticipationSnapshotRequest,
         ParticipationSnapshot,
         ClientDisconnection,
-        NewConversationRequest,
+        ConversationRequest,
         ParticipationRequest,
         ParticipationNotification,
         LoginResponse,
         ConversationNotification,
         AvatarRequest,
         AvatarNotification,
-        ConnectionStatusRequest,
         ConnectionStatusNotification
     }
 }

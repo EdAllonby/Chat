@@ -15,11 +15,15 @@ namespace ChatClient.Services
     public sealed class ClientService : IClientService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
-        private readonly ClientContextRegistry clientContextRegistry;
 
+        private readonly ClientContextRegistry clientContextRegistry;
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
+
         private ConnectionHandler connectionHandler;
 
+        /// <summary>
+        /// Initialises a new <see cref="ClientService"/>.
+        /// </summary>
         public ClientService()
         {
             clientContextRegistry = new ClientContextRegistry(repositoryManager);
@@ -45,18 +49,12 @@ namespace ChatClient.Services
         /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
         public LoginResult LogOn(LoginDetails loginDetails)
         {
-            var loginHandler = new ServerLoginHandler(repositoryManager);
+            var serverLoginHandler = new ServerLoginHandler(repositoryManager);
 
-            LoginResponse response = loginHandler.ConnectToServer(loginDetails);
+            LoginResponse response = serverLoginHandler.ConnectToServer(loginDetails, out connectionHandler);
 
             if (response.LoginResult == LoginResult.Success)
             {
-                loginHandler.BootstrapRepositories(response.User.UserId);
-
-                connectionHandler = loginHandler.CreateServerConnectionHandler(response.User.UserId);
-
-                Log.DebugFormat("Connection process to the server has finished");
-
                 ClientUserId = response.User.UserId;
 
                 connectionHandler.MessageReceived += OnNewMessageReceived;

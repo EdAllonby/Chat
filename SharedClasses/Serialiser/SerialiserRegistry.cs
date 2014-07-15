@@ -26,7 +26,7 @@ namespace SharedClasses.Serialiser
                 {MessageIdentifier.ConversationSnapshot, new ConversationSnapshotSerialiser()},
                 {MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser()},
                 {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
-                {MessageIdentifier.NewConversationRequest, new ConversationRequestSerialiser()},
+                {MessageIdentifier.ConversationRequest, new ConversationRequestSerialiser()},
                 {MessageIdentifier.ConversationNotification, new ConversationNotificationSerialiser()},
                 {MessageIdentifier.ParticipationRequest, new ParticipationRequestSerialiser()},
                 {MessageIdentifier.ParticipationNotification, new ParticipationNotificationSerialiser()},

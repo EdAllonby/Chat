@@ -174,10 +174,6 @@
       <Project>{524E9A53-B24B-43EB-A285-62B44C520CFE}</Project>
       <Name>ChatClient.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ChatClient.ViewMediator\ChatClient.ViewMediator.csproj">
-      <Project>{5C93F04B-A655-4A87-A814-D63BE6A3A1F0}</Project>
-      <Name>ChatClient.ViewMediator</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ChatClient.ViewModels\ChatClient.ViewModels.csproj">
       <Project>{76016a71-8749-4364-b242-d4c231634d23}</Project>
       <Name>ChatClient.ViewModels</Name>

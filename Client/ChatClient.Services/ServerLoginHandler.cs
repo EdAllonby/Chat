@@ -18,42 +18,50 @@ namespace ChatClient.Services
 
         private readonly RepositoryManager repositoryManager;
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-
-        private TcpClient loginConnection;
+        private readonly TcpClient serverConnection = new TcpClient();
 
         public ServerLoginHandler(RepositoryManager repositoryManager)
         {
             this.repositoryManager = repositoryManager;
         }
 
-        public ConnectionHandler CreateServerConnectionHandler(int clientUserId)
-        {
-            return new ConnectionHandler(clientUserId, loginConnection);
-        }
-
-        public LoginResponse ConnectToServer(LoginDetails loginDetails)
+        public LoginResponse ConnectToServer(LoginDetails loginDetails, out ConnectionHandler connectionHandler)
         {
             CreateConnection(loginDetails.Address, loginDetails.Port);
 
             IMessage userRequest = new LoginRequest(loginDetails.Username);
-            SendConnectionMessage(userRequest, loginConnection);
-            var loginResponse = (LoginResponse) GetConnectionIMessage(loginConnection);
+            SendConnectionMessage(userRequest);
+            var loginResponse = (LoginResponse)GetConnectionIMessage();
+
+            if (loginResponse.LoginResult == LoginResult.Success)
+            {
+                BootstrapRepositories(loginResponse.User.UserId);
+
+                connectionHandler = new ConnectionHandler(loginResponse.User.UserId, serverConnection);
+
+                Log.DebugFormat("Connection process to the server has finished");
+            }
+            else
+            {
+                connectionHandler = null;
+            }
+            
             return loginResponse;
         }
 
-        public void BootstrapRepositories(int userId)
+        private void BootstrapRepositories(int userId)
         {
-            SendConnectionMessage(new UserSnapshotRequest(userId), loginConnection);
+            SendConnectionMessage(new UserSnapshotRequest(userId));
 
-            var userSnapshot = (UserSnapshot) GetConnectionIMessage(loginConnection);
+            var userSnapshot = (UserSnapshot) GetConnectionIMessage();
 
-            SendConnectionMessage(new ConversationSnapshotRequest(userId), loginConnection);
+            SendConnectionMessage(new ConversationSnapshotRequest(userId));
 
-            var conversationSnapshot = (ConversationSnapshot) GetConnectionIMessage(loginConnection);
+            var conversationSnapshot = (ConversationSnapshot) GetConnectionIMessage();
 
-            SendConnectionMessage(new ParticipationSnapshotRequest(userId), loginConnection);
+            SendConnectionMessage(new ParticipationSnapshotRequest(userId));
 
-            var participationSnapshot = (ParticipationSnapshot) GetConnectionIMessage(loginConnection);
+            var participationSnapshot = (ParticipationSnapshot) GetConnectionIMessage();
 
             repositoryManager.UserRepository.AddUsers(userSnapshot.Users);
             repositoryManager.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
@@ -66,46 +74,43 @@ namespace ChatClient.Services
 
             Log.Info("ClientService looking for server with address: " + targetAddress + ":" + targetPort);
 
-            var connection = new TcpClient();
+            serverConnection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-            connection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-            IAsyncResult asyncResult = connection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
+            IAsyncResult asyncResult = serverConnection.BeginConnect(targetAddress.ToString(), targetPort, null, null);
             WaitHandle waitHandle = asyncResult.AsyncWaitHandle;
             try
             {
                 if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(TimeoutSeconds), false))
                 {
-                    connection.Close();
+                    serverConnection.Close();
                     throw new TimeoutException();
                 }
 
-                connection.EndConnect(asyncResult);
+                serverConnection.EndConnect(asyncResult);
             }
             finally
             {
                 waitHandle.Close();
             }
 
-            Log.Info("ClientService found server, connection created");
-            loginConnection = connection;
+            Log.Info("ClientService found server, connection created");   
         }
 
-        private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
+        private void SendConnectionMessage(IMessage message)
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(tcpClient.GetStream(), message);
+            messageSerialiser.Serialise(serverConnection.GetStream(), message);
         }
 
-        private IMessage GetConnectionIMessage(TcpClient tcpClient)
+        private IMessage GetConnectionIMessage()
         {
             var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
 
-            MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
 
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-            return serialiser.Deserialise(tcpClient.GetStream());
+            return serialiser.Deserialise(serverConnection.GetStream());
         }
     }
 }

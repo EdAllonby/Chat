@@ -76,7 +76,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private static void OnConversationAdded(object sender, Conversation conversation)
         {
-            WindowManager.CreateConversationWindow(conversation);
+            ConversationWindowManager.CreateConversationWindow(conversation);
         }
 
         private void OnContributionAdded(object sender, Contribution contribution)
@@ -84,7 +84,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             Conversation conversation =
                 repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);
 
-            WindowManager.CreateConversationWindow(conversation);
+            ConversationWindowManager.CreateConversationWindow(conversation);
         }
 
         public void StartNewSingleUserConversation(int participant)
@@ -128,8 +128,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         private void UpdateConnectedUsers()
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
-            List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId)
-                .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).ToList();
+            List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
 
@@ -147,7 +146,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             else
             {
                 int conversationId = repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
-                WindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
+                ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
             }
         }
     }
