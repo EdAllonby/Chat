@@ -11,6 +11,9 @@
     <Window.Resources>
         <converter:BitmapToBitmapSourceConverter x:Key="BitmapToBitmapSourceConverter" />
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenUserSettings}"></KeyBinding>
+    </Window.InputBindings>
 
     <Grid Name="MainGrid">
         <Grid.Background>
@@ -28,7 +31,7 @@
 
         <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=MainGrid, Path=ActualWidth}">
             <MenuItem Header="_Edit">
-               <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}"/>
+                <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}" InputGestureText="Ctrl+,"/>
             </MenuItem>
         </Menu>
 

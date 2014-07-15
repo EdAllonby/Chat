@@ -18,7 +18,7 @@ namespace ChatClient.Views
             ConversationWindowManager.OpenChatWindowRequest += OnOpenChatWindowRequest;
         }
 
-        private void OnOpenChatWindowRequest(object sender, ChatWindowViewModel viewModel)
+        private static void OnOpenChatWindowRequest(object sender, ChatWindowViewModel viewModel)
         {
             var view = new ChatWindow(viewModel);
             view.Show();
@@ -28,8 +28,8 @@ namespace ChatClient.Views
         /// I can't find a good way of doing this directly with MVVM and bindings.
         /// Succumbed to creating the click event in the code-behind and then delegating the work off to the viewmodel.
         /// </summary>
-        /// <param name="sender">The textblock clicked on</param>
-        /// <param name="e">Mouse events for the selected textblock</param>
+        /// <param name="sender">The textblock clicked on.</param>
+        /// <param name="e">Mouse events for the selected textblock.</param>
         private void OnNewUserSelection(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && e.ClickCount == 2)
