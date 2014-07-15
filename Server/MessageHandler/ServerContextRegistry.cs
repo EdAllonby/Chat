@@ -53,7 +53,7 @@ namespace Server.MessageHandler
                     new ParticipationRequestContext(repositoryManager.ParticipationRepository, entityIdAllocatorFactory)
                 },
                 {
-                    MessageIdentifier.NewConversationRequest,
+                    MessageIdentifier.ConversationRequest,
                     new ConversationRequestContext(repositoryManager.ParticipationRepository,
                                                       repositoryManager.ConversationRepository, entityIdAllocatorFactory)
                 },

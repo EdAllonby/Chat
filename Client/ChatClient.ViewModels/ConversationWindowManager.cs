@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
-using ChatClient.ViewMediator;
 using log4net;
 using SharedClasses.Domain;
 
@@ -9,11 +9,13 @@ namespace ChatClient.ViewModels
     /// <summary>
     /// Holds the active conversation windows for the user. Can request to create a new conversation window, or change the status of a window.
     /// </summary>
-    internal static class WindowManager
+    public static class ConversationWindowManager
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (WindowManager));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationWindowManager));
 
         private static readonly Dictionary<int, WindowStatus> ConversationWindowStatusesIndexedByConversationId = new Dictionary<int, WindowStatus>();
+
+        public static EventHandler<ChatWindowViewModel.ChatWindowViewModel> OpenChatWindowRequest;
 
         /// <summary>
         /// Creates a new chat window if the current chat window is closed.
@@ -25,7 +27,7 @@ namespace ChatClient.ViewModels
             if (GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
             {
                 Application.Current.Dispatcher.Invoke(
-                    () => Mediator.Instance.SendMessage(ViewName.ChatWindow, new ChatWindowViewModel.ChatWindowViewModel(conversation)));
+                    () => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation)));
 
                 SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
                 Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.ConversationId);
@@ -65,6 +67,15 @@ namespace ChatClient.ViewModels
             bool isFound = ConversationWindowStatusesIndexedByConversationId.TryGetValue(conversationId, out windowStatus);
 
             return isFound ? windowStatus : WindowStatus.Closed;
+        }
+
+        private static void OnOpenChatWindowRequest(ChatWindowViewModel.ChatWindowViewModel chatWindowViewModel)
+        {
+            EventHandler<ChatWindowViewModel.ChatWindowViewModel> openChatWindowRequestCopy = OpenChatWindowRequest;
+            if (openChatWindowRequestCopy != null)
+            {
+                openChatWindowRequestCopy(null, chatWindowViewModel);
+            }
         }
     }
 }

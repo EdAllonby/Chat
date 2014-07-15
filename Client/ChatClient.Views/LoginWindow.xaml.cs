@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ChatClient.ViewMediator;
-using ChatClient.ViewModels.MainWindowViewModel;
+using ChatClient.ViewModels.LoginWindowViewModel;
 using log4net;
 
 namespace ChatClient.Views
@@ -15,12 +15,13 @@ namespace ChatClient.Views
         {
             InitializeComponent();
 
-            Mediator.Instance.Register(ViewName.MainWindow, ShowUserListWindow);
+            LoginWindowViewModel viewModel = (LoginWindowViewModel) DataContext;
+            viewModel.OpenMainWindowRequested += OnOpenMainWindowRequested;
         }
 
-        private void ShowUserListWindow(object viewModel)
+        private void OnOpenMainWindowRequested(object sender, EventArgs e)
         {
-            var view = new MainWindow((MainWindowViewModel) viewModel);
+            var view = new MainWindow();
             Close();
             view.Show();
         }

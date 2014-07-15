@@ -1,10 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
-using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
-using ChatClient.ViewModels.Test;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
@@ -14,6 +13,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         private readonly int userId;
         private readonly UserRepository userRepository;
         private Image userAvatar = Resources.DefaultUserImage;
+        
         public MainWindowViewModel()
         {
             if (!IsInDesignMode)
@@ -23,6 +23,8 @@ namespace ChatClient.ViewModels.MainWindowViewModel
                 userId = ClientService.ClientUserId;
             }
         }
+
+        public EventHandler OpenUserSettingsWindowRequested;
 
         public Image UserAvatar
         {
@@ -39,21 +41,29 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             get { return userRepository.FindUserById(userId).Username; }
         }
 
-        public static ICommand OpenUserSettings
+        public ICommand OpenUserSettings
         {
             get { return new RelayCommand(OpenUserSettingsWindow); }
         }
 
-        private static void OpenUserSettingsWindow()
+        private void OpenUserSettingsWindow()
         {
-            Application.Current.Dispatcher.Invoke(
-                () => Mediator.Instance.SendMessage(ViewName.UserSettingsWindow, new UserSettingsViewModel()));
+            Application.Current.Dispatcher.Invoke(OnOpenUserSettingsWindowRequested);
         }
         private void OnUserAvatarUpdated(object sender, User user)
         {
             if (user.UserId == ClientService.ClientUserId)
             {
                 UserAvatar = user.Avatar.UserAvatar;
+            }
+        }
+
+        private void OnOpenUserSettingsWindowRequested()
+        {
+            EventHandler openUserSettingsWindowRequestedCopy = OpenUserSettingsWindowRequested;
+            if (openUserSettingsWindowRequestedCopy != null)
+            {
+                openUserSettingsWindowRequestedCopy(this, EventArgs.Empty);
             }
         }
     }

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
-        Background="Transparent">
+        Background="Transparent" RenderOptions.BitmapScalingMode="Fant" >
     
     <UserControl.DataContext>
         <mainWindowViewModel:UserListViewModel />
@@ -61,8 +61,10 @@
                             Name="UserCheckedCheckBox"  HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding IsSelectedForConversation}" Style="{StaticResource CheckBoxStyle}" />
                         
                         <Border CornerRadius="5" Width="50" Height="50" BorderBrush="{Binding BorderColour}" BorderThickness="3">
-                            <Image Source="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
-                                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
+                                       Stretch="UniformToFill" />
+                            </Border.Background>
                         </Border>
                         
                         <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" Width="300"  TextAlignment="Left" Padding="3" />

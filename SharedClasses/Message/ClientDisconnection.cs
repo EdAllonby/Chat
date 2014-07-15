@@ -7,7 +7,7 @@ namespace SharedClasses.Message
     /// Note that this has no <see cref="ISerialiser"/> associated with it.
     /// This is because a Client could have no way of sending this to a server,
     /// therefore it is generated when the Server decides a Client has disconnected
-    /// by using the associated userID in the <see cref="ConnectionHandler"/>
+    /// by using the associated clientUserId in the <see cref="ConnectionHandler"/>
     /// </summary>
     public sealed class ClientDisconnection : IMessage
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using ChatClient.ViewMediator;
+using ChatClient.ViewModels;
 using ChatClient.ViewModels.ChatWindowViewModel;
 using ChatClient.ViewModels.MainWindowViewModel;
 
@@ -15,7 +15,13 @@ namespace ChatClient.Views
         {
             InitializeComponent();
 
-            Mediator.Instance.Register(ViewName.ChatWindow, ShowChatWindow);
+            ConversationWindowManager.OpenChatWindowRequest += OnOpenChatWindowRequest;
+        }
+
+        private void OnOpenChatWindowRequest(object sender, ChatWindowViewModel viewModel)
+        {
+            var view = new ChatWindow(viewModel);
+            view.Show();
         }
 
         /// <summary>
@@ -38,12 +44,6 @@ namespace ChatClient.Views
                     viewmodel.StartNewSingleUserConversation(participantId);
                 }
             }
-        }
-
-        private static void ShowChatWindow(object viewModel)
-        {
-            var view = new ChatWindow((ChatWindowViewModel) viewModel);
-            view.Show();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace SharedClasses.Message
 
         public MessageIdentifier MessageIdentifier
         {
-            get { return MessageIdentifier.NewConversationRequest; }
+            get { return MessageIdentifier.ConversationRequest; }
         }
     }
 }

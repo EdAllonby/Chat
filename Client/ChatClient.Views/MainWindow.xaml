@@ -4,7 +4,7 @@
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
-        Title="Chat Program" Height="600" Width="350">
+        Title="Chat Program" Height="600" Width="350" RenderOptions.BitmapScalingMode="Fant">
     <Window.DataContext>
         <mainWindowViewModel:MainWindowViewModel />
     </Window.DataContext>
@@ -34,8 +34,10 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Border BorderBrush="LimeGreen" BorderThickness="3" CornerRadius="5" Height="50" Width="50">
-                <Image Source="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
-                                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant"/>
+                <Border.Background >
+                    <ImageBrush ImageSource="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
+                                Stretch="UniformToFill"/>
+                </Border.Background>
             </Border>
             <Label FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
                    HorizontalContentAlignment="Left"

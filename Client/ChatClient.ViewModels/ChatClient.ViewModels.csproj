@@ -56,7 +56,7 @@
     <Compile Include="MainWindowViewModel\ConnectedUserViewModel.cs" />
     <Compile Include="MainWindowViewModel\ConversationViewModel.cs" />
     <Compile Include="MainWindowViewModel\MainWindowViewModel.cs" />
-    <Compile Include="Test\UserSettingsViewModel.cs" />
+    <Compile Include="UserSettingsViewModel\UserSettingsViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -67,7 +67,7 @@
     <Compile Include="MainWindowViewModel\UserListViewModel.cs" />
     <Compile Include="TitleBuilder.cs" />
     <Compile Include="ViewModel.cs" />
-    <Compile Include="WindowManager.cs" />
+    <Compile Include="ConversationWindowManager.cs" />
     <Compile Include="WindowStatus.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -82,10 +82,6 @@
     <ProjectReference Include="..\ChatClient.Services\ChatClient.Services.csproj">
       <Project>{524e9a53-b24b-43eb-a285-62b44c520cfe}</Project>
       <Name>ChatClient.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ChatClient.ViewMediator\ChatClient.ViewMediator.csproj">
-      <Project>{5C93F04B-A655-4A87-A814-D63BE6A3A1F0}</Project>
-      <Name>ChatClient.ViewMediator</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

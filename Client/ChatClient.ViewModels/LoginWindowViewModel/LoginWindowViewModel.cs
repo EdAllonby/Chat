@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using ChatClient.Models.LoginModel;
 using ChatClient.Services;
-using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
 using log4net;
 using SharedClasses.Message;
@@ -41,6 +40,8 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                 }
             }
         }
+
+        public EventHandler OpenMainWindowRequested;
 
         public LoginModel LoginModel
         {
@@ -84,7 +85,17 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void OpenUserListWindow()
         {
-            Application.Current.Dispatcher.Invoke(() => Mediator.Instance.SendMessage(ViewName.MainWindow, new MainWindowViewModel.MainWindowViewModel()));
+            Application.Current.Dispatcher.Invoke(OnOpenMainWindowRequested);
+        }
+
+        private void OnOpenMainWindowRequested()
+        {
+            EventHandler openMainWindowRequestedCopy = OpenMainWindowRequested;
+
+            if (openMainWindowRequestedCopy != null)
+            {
+                openMainWindowRequestedCopy(this, EventArgs.Empty);
+            }
         }
 
         #region Commands

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -6,11 +7,13 @@ using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using GongSolutions.Wpf.DragDrop;
 
-namespace ChatClient.ViewModels.Test
+namespace ChatClient.ViewModels.UserSettingsViewModel
 {
     public sealed class UserSettingsViewModel : ViewModel, IDropTarget
     {
         private Image avatar = Resources.DefaultDropImage;
+
+        private bool isImageChangedSinceLastApply;
 
         public Image Avatar
         {
@@ -18,9 +21,14 @@ namespace ChatClient.ViewModels.Test
             set
             {
                 avatar = value;
+
+                isImageChangedSinceLastApply = true;
+                
                 OnPropertyChanged();
             }
         }
+
+        public event EventHandler CloseUserSettingsWindowRequest;
 
         public void DragOver(IDropInfo dropInfo)
         {
@@ -48,19 +56,49 @@ namespace ChatClient.ViewModels.Test
             }
         }
 
-        public ICommand SendAvatarRequestCommand
+        public ICommand ApplyAvatarCommand
         {
-            get { return new RelayCommand(SendAvatarRequest, CanSendAvatarRequest);}
+            get
+            {
+                return new RelayCommand(SendAvatarRequest, CanSendAvatarRequest);
+            }
         }
 
-        private bool CanSendAvatarRequest()
+        public ICommand ApplyAvatarCommandAndClose
         {
-            return Avatar != null;
+            get
+            {
+                return new RelayCommand(SendAvatarRequestAndClose);
+            }
+        }
+
+        public ICommand CancelCommand
+        {
+            get { return new RelayCommand(OnCloseUserSettingsRequest); }
         }
 
         private void SendAvatarRequest()
         {
-            ClientService.SendAvatarRequest(Avatar);
+            if (isImageChangedSinceLastApply)
+            {
+                ClientService.SendAvatarRequest(Avatar);
+                isImageChangedSinceLastApply = false;
+            }
+        }
+
+        private void SendAvatarRequestAndClose()
+        {
+            if (isImageChangedSinceLastApply)
+            {
+                ClientService.SendAvatarRequest(Avatar);
+            }
+
+            OnCloseUserSettingsRequest();
+        }
+
+        private bool CanSendAvatarRequest()
+        {
+            return isImageChangedSinceLastApply;
         }
 
         private static bool TryLoadImageFromFile(string filename, out Image image)
@@ -78,6 +116,15 @@ namespace ChatClient.ViewModels.Test
                 }
 
                 return false;
+            }
+        }
+
+        private void OnCloseUserSettingsRequest()
+        {
+            var closeUserSettingsWindowRequestCopy = CloseUserSettingsWindowRequest;
+            if (closeUserSettingsWindowRequestCopy != null)
+            {
+                closeUserSettingsWindowRequestCopy(this, EventArgs.Empty);
             }
         }
     }

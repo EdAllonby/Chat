@@ -4,10 +4,10 @@
 
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
-        xmlns:test="clr-namespace:ChatClient.ViewModels.Test;assembly=ChatClient.ViewModels"
-        Title="UserSettingsWindow" Height="300" Width="300" ResizeMode="NoResize">
+        xmlns:userSettingsViewModel="clr-namespace:ChatClient.ViewModels.UserSettingsViewModel;assembly=ChatClient.ViewModels"
+        Title="UserSettingsWindow" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" >
     <Window.DataContext>
-        <test:UserSettingsViewModel/>
+        <userSettingsViewModel:UserSettingsViewModel/>
     </Window.DataContext>
     <Window.Resources>
         <converter:BitmapToBitmapSourceConverter x:Key="BitmapConverter" />
@@ -15,22 +15,24 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="Drag a picture inside the box..." />
-
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="#e74c3c" Width="150" Height="150" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" Grid.Row="1"
-                dragDrop:DragDrop.IsDragSource="False"
-                            dragDrop:DragDrop.IsDropTarget="True"
-                            dragDrop:DragDrop.DropHandler="{Binding}">
-            <Border.Background>
-                <ImageBrush ImageSource="{Binding Path=Avatar, Converter={StaticResource BitmapConverter}}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="Fant" />
-            </Border.Background>
-        </Border>
-        
-        <Button HorizontalAlignment="Right" Margin="5,5,20,5" Grid.Row="2" Height="24" Width="74" Content="Apply" Command="{Binding SendAvatarRequestCommand, UpdateSourceTrigger=PropertyChanged}"/>
+        <GroupBox Grid.Row="0" Header="Change Avatar">
+            <Border BorderThickness="1" CornerRadius="10" BorderBrush="#e74c3c" Width="150" Height="150" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True"
+                    dragDrop:DragDrop.IsDragSource="False"
+                                dragDrop:DragDrop.IsDropTarget="True"
+                                dragDrop:DragDrop.DropHandler="{Binding}">
+                <Border.Background>
+                    <ImageBrush ImageSource="{Binding Path=Avatar, Converter={StaticResource BitmapConverter}}" Stretch="UniformToFill" />
+                </Border.Background>
+            </Border>
+        </GroupBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="5,5,5,5" Height="24" Width="74" Content="OK" Command="{Binding ApplyAvatarCommandAndClose, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,5,5,5" Height="24" Width="74" Content="Cancel" Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,5,20,5" Height="24" Width="74" Content="Apply" Command="{Binding ApplyAvatarCommand, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
     </Grid>
 </Window>

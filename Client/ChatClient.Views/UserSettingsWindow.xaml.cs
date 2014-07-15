@@ -1,4 +1,6 @@
-﻿namespace ChatClient.Views
+﻿using ChatClient.ViewModels.UserSettingsViewModel;
+
+namespace ChatClient.Views
 {
     /// <summary>
     /// Interaction logic for UserSettingsWindow.xaml
@@ -8,6 +10,13 @@
         public UserSettingsWindow()
         {
             InitializeComponent();
+            var userSettingsViewModel = (UserSettingsViewModel) DataContext;
+            userSettingsViewModel.CloseUserSettingsWindowRequest += OnCloseUserSettingsWindowRequest;
+        }
+
+        void OnCloseUserSettingsWindowRequest(object sender, System.EventArgs e)
+        {
+            Close();
         }
     }
 }

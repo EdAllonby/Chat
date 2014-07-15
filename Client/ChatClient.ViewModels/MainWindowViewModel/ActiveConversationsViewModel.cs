@@ -41,7 +41,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public void GetConversationWindow(int conversationId)
         {
-            WindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
+            ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
         }
 
         private void UpdateActiveConversations()
