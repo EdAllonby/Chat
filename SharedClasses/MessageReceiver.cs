@@ -50,7 +50,7 @@ namespace SharedClasses
             }
             catch (IOException)
             {
-                Log.Info("Detected client disconnection, sending ClientDisconnection message to Server");
+                Log.Info("Detected client disconnection, notifying Server of ClientDisconnection.");
                 IMessage message = new ClientDisconnection(clientUserId);
 
                 OnMessageReceived(new MessageEventArgs(message));
