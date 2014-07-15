@@ -21,7 +21,7 @@ namespace ChatClient.ViewModels
         /// Creates a new chat window if the current chat window is closed.
         /// </summary>
         /// <param name="conversation">The conversation id of the chat window.</param>
-        public static void CreateConversationWindow(Conversation conversation)
+        internal static void CreateConversationWindow(Conversation conversation)
         {
             // Check if conversation window already exists
             if (GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
@@ -43,7 +43,7 @@ namespace ChatClient.ViewModels
         /// </summary>
         /// <param name="conversationId">The conversation's ID relating to the window.</param>
         /// <param name="windowStatus">The status of the conversation window we want to set.</param>
-        public static void SetWindowStatus(int conversationId, WindowStatus windowStatus)
+        internal static void SetWindowStatus(int conversationId, WindowStatus windowStatus)
         {
             if (!ConversationWindowStatusesIndexedByConversationId.ContainsKey(conversationId))
             {

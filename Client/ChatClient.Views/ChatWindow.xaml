@@ -24,7 +24,7 @@
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=mainGrid,Path=ActualWidth}">
-            <MenuItem Header="Add User" DisplayMemberPath="Username"  ItemsSource="{Binding Path=ConnectedUsers}">
+            <MenuItem Header="_Add User" DisplayMemberPath="Username"  ItemsSource="{Binding Path=ConnectedUsers}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}">
                         <Setter Property="Command" Value="{Binding DataContext.AddUserCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=1}}" />
