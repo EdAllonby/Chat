@@ -22,6 +22,7 @@ namespace SharedClasses
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly object locker = new object();
         private readonly TcpClient tcpClient;
 
         /// <summary>
@@ -55,11 +56,14 @@ namespace SharedClasses
         {
             Contract.Requires(message != null);
 
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(tcpClient.GetStream(), message);
-            Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
+            lock (locker)
+            {
+                ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
+                messageSerialiser.Serialise(tcpClient.GetStream(), message);
+                Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
+            }
         }
-
+        
         private void CreateListenerThread()
         {
             var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient.GetStream()))
