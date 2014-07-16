@@ -18,7 +18,7 @@ namespace SharedClasses
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-
+        private readonly object locker = new object();
         /// <summary>
         /// Fires a <see cref="MessageEventArgs"/> encapsulating an <see cref="IMessage"/> when a new message is received.
         /// </summary>
@@ -39,13 +39,16 @@ namespace SharedClasses
             {
                 while (true)
                 {
-                    MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
+                    lock (locker)
+                    {
+                        MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
 
-                    ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+                        ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-                    IMessage message = serialiser.Deserialise(networkStream);
+                        IMessage message = serialiser.Deserialise(networkStream);
 
-                    OnMessageReceived(new MessageEventArgs(message));
+                        OnMessageReceived(new MessageEventArgs(message));
+                    }
                 }
             }
             catch (IOException)
