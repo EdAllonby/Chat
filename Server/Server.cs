@@ -54,12 +54,7 @@ namespace Server
 
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-                var clientLoginWorkerThread = new Thread(() => InitialiseNewClient(client))
-                {
-                    Name = "Client Login Worker Thread"
-                };
-
-                clientLoginWorkerThread.Start();
+                InitialiseNewClient(client);
             }
         }
 
