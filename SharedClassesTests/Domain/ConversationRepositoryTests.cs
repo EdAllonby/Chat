@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SharedClasses.Domain;
 
@@ -35,11 +36,7 @@ namespace SharedClassesTests.Domain
             var conversationRepository = new ConversationRepository();
 
             conversationRepository.AddConversation(conversation);
-            conversationRepository.AddConversation(conversation);
-
-            var conversations = new List<Conversation> {conversation};
-
-            Assert.AreEqual(conversations, conversationRepository.GetAllConversations());
+            Assert.Throws<ArgumentException>(() => conversationRepository.AddConversation(conversation));
         }
 
         [Test]
