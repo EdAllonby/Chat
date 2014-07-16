@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ChatClient.Services;
+using ClientSimulator.Properties;
 
 namespace ClientSimulator
 {
@@ -27,7 +28,7 @@ namespace ClientSimulator
 
             StartMultiUserConversation();
 
-            
+
             foreach (Thread thread in Clients.Select(clientService => new Thread(() => SendContributions(clientService))))
             {
                 Thread.Sleep(1000);
@@ -35,6 +36,12 @@ namespace ClientSimulator
                 thread.Start();
             }
 
+         
+            Thread sendAvatarThread = new Thread(()=> SendAvatar(Clients[2]));
+            Thread.Sleep(1000);
+
+            sendAvatarThread.Start();
+                
             Console.ReadKey();
         }
 
@@ -47,7 +54,7 @@ namespace ClientSimulator
             // Make sure all clients have finished running their initialisation threads.
             Thread.Sleep(1000);
 
-            ClientRepositoryValidator.ValidateUserRepository(Clients);
+            //ClientRepositoryValidator.ValidateUserRepository(Clients);
         }
 
         private static void StartMultiUserConversation()
@@ -67,6 +74,11 @@ namespace ClientSimulator
             {
                 client.SendContribution(1, "hello");    
             }
+        }
+
+        private static void SendAvatar(IClientService client)
+        {
+            client.SendAvatarRequest(Resources.LargeImage);
         }
     }
 }
