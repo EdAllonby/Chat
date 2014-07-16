@@ -49,11 +49,17 @@
     <Compile Include="MessageHandler\ContributionNotificationHandler.cs" />
     <Compile Include="MessageHandler\ConversationNotificationContext.cs" />
     <Compile Include="MessageHandler\ConversationNotificationHandler.cs" />
+    <Compile Include="MessageHandler\ConversationSnapshotContext.cs" />
+    <Compile Include="MessageHandler\ConversationSnapshotHandler.cs" />
     <Compile Include="MessageHandler\MessageHandlerRegistry.cs" />
     <Compile Include="MessageHandler\ParticipationNotificationContext.cs" />
     <Compile Include="MessageHandler\ParticipationNotificationHandler.cs" />
+    <Compile Include="MessageHandler\ParticipationSnapshotContext.cs" />
+    <Compile Include="MessageHandler\ParticipationSnapshotHandler.cs" />
     <Compile Include="MessageHandler\UserNotificationContext.cs" />
     <Compile Include="MessageHandler\UserNotificationHandler.cs" />
+    <Compile Include="MessageHandler\UserSnapshotContext.cs" />
+    <Compile Include="MessageHandler\UserSnapshotHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClientService.cs" />
     <Compile Include="IClientService.cs" />

@@ -53,19 +53,9 @@ namespace ChatClient.Services
         {
             SendConnectionMessage(new UserSnapshotRequest(userId));
 
-            var userSnapshot = (UserSnapshot) GetConnectionIMessage();
-
             SendConnectionMessage(new ConversationSnapshotRequest(userId));
 
-            var conversationSnapshot = (ConversationSnapshot) GetConnectionIMessage();
-
             SendConnectionMessage(new ParticipationSnapshotRequest(userId));
-
-            var participationSnapshot = (ParticipationSnapshot) GetConnectionIMessage();
-
-            repositoryManager.UserRepository.AddUsers(userSnapshot.Users);
-            repositoryManager.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
-            repositoryManager.ParticipationRepository.AddParticipations(participationSnapshot.Participations);
         }
 
         private void CreateConnection(IPAddress targetAddress, int targetPort)
