@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using log4net;
 using SharedClasses.Message;
 
-namespace SharedClasses.Serialiser.MessageSerialiser
+namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Serialise and deserialise a <see cref="NotificationType"/> when a notification <see cref="IMessage"/> is serialised.
