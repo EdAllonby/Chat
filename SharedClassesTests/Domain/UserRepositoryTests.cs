@@ -12,7 +12,7 @@ namespace SharedClassesTests.Domain
         {
             var user = new User("User", 2, new ConnectionStatus(2, ConnectionStatus.Status.Connected));
             var userRepository = new UserRepository();
-            userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+            userRepository.AddUser(user);
 
             Assert.AreEqual(user, userRepository.FindUserById(user.UserId));
 
@@ -64,11 +64,12 @@ namespace SharedClassesTests.Domain
         {
             var userRepository = new UserRepository();
 
-            string username = "User";
-            var user = new User(username, 3, new ConnectionStatus(3, ConnectionStatus.Status.Connected));
-            userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+            const string Username = "User";
+            var user = new User(Username, 3, new ConnectionStatus(3, ConnectionStatus.Status.Connected));
 
-            Assert.AreEqual(user, userRepository.FindUserByUsername(username));
+            userRepository.AddUser(user);
+
+            Assert.AreEqual(user, userRepository.FindUserByUsername(Username));
 
             Assert.IsNull(userRepository.FindUserByUsername("Anon"));
         }
