@@ -36,12 +36,12 @@ namespace ClientSimulator
                 thread.Start();
             }
 
-         
-            Thread sendAvatarThread = new Thread(()=> SendAvatar(Clients[2]));
+
+            var sendAvatarThread = new Thread(() => SendAvatar(Clients[2]));
             Thread.Sleep(1000);
 
             sendAvatarThread.Start();
-                
+
             Console.ReadKey();
         }
 
@@ -59,7 +59,7 @@ namespace ClientSimulator
 
         private static void StartMultiUserConversation()
         {
-            List<int> participants = new List<int>();
+            var participants = new List<int>();
             for (int i = 1; i <= TotalClients; i++)
             {
                 participants.Add(i);
@@ -72,7 +72,7 @@ namespace ClientSimulator
         {
             while (true)
             {
-                client.SendContribution(1, "hello");    
+                client.SendContribution(1, "hello");
             }
         }
 
