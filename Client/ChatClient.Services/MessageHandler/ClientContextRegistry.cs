@@ -45,6 +45,18 @@ namespace ChatClient.Services.MessageHandler
                     MessageIdentifier.AvatarNotification,
                     new AvatarNotificationContext(repositoryManager.UserRepository)
                 },
+                {
+                    MessageIdentifier.UserSnapshot,
+                    new UserSnapshotContext(repositoryManager.UserRepository)
+                },
+                {
+                    MessageIdentifier.ConversationSnapshot,
+                    new ConversationSnapshotContext(repositoryManager.ConversationRepository)
+                },
+                {
+                    MessageIdentifier.ParticipationSnapshot,
+                    new ParticipationSnapshotContext(repositoryManager.ParticipationRepository)
+                }
             };
         }
     }

@@ -20,7 +20,10 @@ namespace ChatClient.Services.MessageHandler
                 {MessageIdentifier.ConversationNotification, new ConversationNotificationHandler()},
                 {MessageIdentifier.ParticipationNotification, new ParticipationNotificationHandler()},
                 {MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationHandler()},
-                {MessageIdentifier.AvatarNotification, new AvatarNotificationHandler()}
+                {MessageIdentifier.AvatarNotification, new AvatarNotificationHandler()},
+                {MessageIdentifier.UserSnapshot, new UserSnapshotHandler()},
+                {MessageIdentifier.ConversationSnapshot, new ConversationSnapshotHandler()},
+                {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotHandler()}
             };
     }
 }
