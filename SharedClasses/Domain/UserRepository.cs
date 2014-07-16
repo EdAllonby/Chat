@@ -35,7 +35,6 @@ namespace SharedClasses.Domain
         /// </summary>
         /// <param name="userId"> The <see cref="User"/>'s Id to change connection status.</param>
         /// <param name="connectionStatus"> The new connection status of the user.</param>
-
         public void UpdateUserConnection(ConnectionStatus connectionStatus)
         {
             Contract.Requires(connectionStatus != null);

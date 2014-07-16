@@ -1,4 +1,5 @@
-﻿using ChatClient.ViewModels.UserSettingsViewModel;
+﻿using System;
+using ChatClient.ViewModels.UserSettingsViewModel;
 
 namespace ChatClient.Views
 {
@@ -14,7 +15,7 @@ namespace ChatClient.Views
             userSettingsViewModel.CloseUserSettingsWindowRequest += OnCloseUserSettingsWindowRequest;
         }
 
-        void OnCloseUserSettingsWindowRequest(object sender, System.EventArgs e)
+        private void OnCloseUserSettingsWindowRequest(object sender, EventArgs e)
         {
             Close();
         }

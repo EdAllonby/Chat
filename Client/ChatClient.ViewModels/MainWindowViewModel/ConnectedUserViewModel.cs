@@ -53,7 +53,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             get { return user.UserId; }
         }
 
-        public System.Windows.Media.Brush BorderColour
+        public wpfBrush.Brush BorderColour
         {
             get { return ConnectionStatusToColour(); }
         }
@@ -61,7 +61,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         public Image UserAvatar
         {
             get { return user.Avatar != null ? user.Avatar.UserAvatar : Resources.DefaultUserImage; }
-        } 
+        }
 
         public string Username
         {

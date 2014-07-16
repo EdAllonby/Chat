@@ -19,10 +19,10 @@ namespace SharedClasses
         private static int totalListenerThreads;
 
         private readonly int clientUserId;
+        private readonly object locker = new object();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-        private readonly object locker = new object();
         private readonly TcpClient tcpClient;
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace SharedClasses
                 Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
             }
         }
-        
+
         private void CreateListenerThread()
         {
             var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient.GetStream()))

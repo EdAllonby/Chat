@@ -14,6 +14,11 @@ namespace Server
         private ClientLoginHandler clientLoginHandler;
         private ConnectionHandler connectionHandler;
 
+        public void Dispose()
+        {
+            connectionHandler.Dispose();
+        }
+
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
@@ -52,16 +57,11 @@ namespace Server
         private void OnMessageReceived(object sender, MessageEventArgs e)
         {
             EventHandler<MessageEventArgs> messageReceivedCopy = MessageReceived;
-         
+
             if (messageReceivedCopy != null)
             {
                 MessageReceived(sender, e);
             }
-        }
-
-        public void Dispose()
-        {
-            connectionHandler.Dispose();
         }
     }
 }

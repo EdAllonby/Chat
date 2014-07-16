@@ -15,7 +15,7 @@ namespace ChatClient.Views
         {
             InitializeComponent();
 
-            LoginWindowViewModel viewModel = (LoginWindowViewModel) DataContext;
+            var viewModel = (LoginWindowViewModel) DataContext;
             viewModel.OpenMainWindowRequested += OnOpenMainWindowRequested;
         }
 

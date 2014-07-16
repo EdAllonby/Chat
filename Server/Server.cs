@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using log4net;
 using Server.MessageHandler;
 using SharedClasses;
@@ -133,7 +132,7 @@ namespace Server
         {
             var avatarNotification = new AvatarNotification(user.Avatar, NotificationType.Update);
 
-            foreach (var clientHandler in clientHandlersIndexedByUserId.Values)
+            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
             {
                 clientHandler.SendMessage(avatarNotification);
             }

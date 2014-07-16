@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 
 namespace ChatClient.Models.ChatWindowViewModel
 {

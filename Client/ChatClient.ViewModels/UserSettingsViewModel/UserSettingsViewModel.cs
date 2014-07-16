@@ -23,12 +23,25 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
                 avatar = value;
 
                 isImageChangedSinceLastApply = true;
-                
+
                 OnPropertyChanged();
             }
         }
 
-        public event EventHandler CloseUserSettingsWindowRequest;
+        public ICommand ApplyAvatarCommand
+        {
+            get { return new RelayCommand(SendAvatarRequest, CanSendAvatarRequest); }
+        }
+
+        public ICommand ApplyAvatarCommandAndClose
+        {
+            get { return new RelayCommand(SendAvatarRequestAndClose); }
+        }
+
+        public ICommand CancelCommand
+        {
+            get { return new RelayCommand(OnCloseUserSettingsRequest); }
+        }
 
         public void DragOver(IDropInfo dropInfo)
         {
@@ -56,26 +69,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             }
         }
 
-        public ICommand ApplyAvatarCommand
-        {
-            get
-            {
-                return new RelayCommand(SendAvatarRequest, CanSendAvatarRequest);
-            }
-        }
-
-        public ICommand ApplyAvatarCommandAndClose
-        {
-            get
-            {
-                return new RelayCommand(SendAvatarRequestAndClose);
-            }
-        }
-
-        public ICommand CancelCommand
-        {
-            get { return new RelayCommand(OnCloseUserSettingsRequest); }
-        }
+        public event EventHandler CloseUserSettingsWindowRequest;
 
         private void SendAvatarRequest()
         {
@@ -109,8 +103,8 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             {
                 if (fileStream.IsJpegImage() || fileStream.IsPngImage())
                 {
-                    Bitmap bitmap = new Bitmap(fileStream);
-                    Bitmap scaledBitmap = new Bitmap(bitmap, 300, 300);
+                    var bitmap = new Bitmap(fileStream);
+                    var scaledBitmap = new Bitmap(bitmap, 300, 300);
                     image = scaledBitmap;
                     return true;
                 }
@@ -121,7 +115,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
 
         private void OnCloseUserSettingsRequest()
         {
-            var closeUserSettingsWindowRequestCopy = CloseUserSettingsWindowRequest;
+            EventHandler closeUserSettingsWindowRequestCopy = CloseUserSettingsWindowRequest;
             if (closeUserSettingsWindowRequestCopy != null)
             {
                 closeUserSettingsWindowRequestCopy(this, EventArgs.Empty);

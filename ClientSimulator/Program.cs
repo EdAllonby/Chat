@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ChatClient.Services;
-using SharedClasses.Domain;
 
 namespace ClientSimulator
 {
@@ -15,8 +12,8 @@ namespace ClientSimulator
     /// </summary>
     internal static class Program
     {
-        private static readonly List<IClientService> Clients = new List<IClientService>();
         private const int TotalClients = 30;
+        private static readonly List<IClientService> Clients = new List<IClientService>();
 
         private static void Main()
         {

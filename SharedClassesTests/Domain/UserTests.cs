@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using NUnit.Framework;
 using Server;
-using SharedClasses;
 using SharedClasses.Domain;
 
 namespace SharedClassesTests.Domain

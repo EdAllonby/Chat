@@ -20,8 +20,8 @@ namespace Server.MessageHandler
         /// <param name="clientHandlersIndexedByUserId">Holds the currently connected clients that each <see cref="IMessageContext"/> needs.</param>
         /// <param name="entityIdAllocatorFactory">Holds the entity ID Generator to create new domain objects.</param>
         public ServerContextRegistry(RepositoryManager repositoryManager,
-                                     Dictionary<int, ClientHandler> clientHandlersIndexedByUserId,
-                                     EntityIdAllocatorFactory entityIdAllocatorFactory)
+            Dictionary<int, ClientHandler> clientHandlersIndexedByUserId,
+            EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
             MessageHandlersIndexedByMessageIdentifier = new Dictionary<MessageIdentifier, IMessageContext>
             {
@@ -32,13 +32,13 @@ namespace Server.MessageHandler
                 {
                     MessageIdentifier.ConversationSnapshotRequest,
                     new ConversationSnapshotRequestContext(repositoryManager.ParticipationRepository,
-                                                           repositoryManager.ConversationRepository,
-                                                           clientHandlersIndexedByUserId)
+                        repositoryManager.ConversationRepository,
+                        clientHandlersIndexedByUserId)
                 },
                 {
                     MessageIdentifier.ParticipationSnapshotRequest,
                     new ParticipationSnapshotRequestContext(repositoryManager.ParticipationRepository,
-                                                            clientHandlersIndexedByUserId)
+                        clientHandlersIndexedByUserId)
                 },
                 {
                     MessageIdentifier.ContributionRequest,
@@ -55,7 +55,7 @@ namespace Server.MessageHandler
                 {
                     MessageIdentifier.ConversationRequest,
                     new ConversationRequestContext(repositoryManager.ParticipationRepository,
-                                                      repositoryManager.ConversationRepository, entityIdAllocatorFactory)
+                        repositoryManager.ConversationRepository, entityIdAllocatorFactory)
                 },
                 {
                     MessageIdentifier.AvatarRequest,

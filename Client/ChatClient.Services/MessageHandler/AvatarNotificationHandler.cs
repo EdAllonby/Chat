@@ -11,8 +11,8 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            AvatarNotification avatarNotification = (AvatarNotification) message;
-            AvatarNotificationContext avatarNotificationContext = (AvatarNotificationContext) context;
+            var avatarNotification = (AvatarNotification) message;
+            var avatarNotificationContext = (AvatarNotificationContext) context;
 
             UserRepository userRepository = avatarNotificationContext.UserRepository;
 

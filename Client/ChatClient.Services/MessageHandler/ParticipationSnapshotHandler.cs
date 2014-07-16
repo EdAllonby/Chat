@@ -10,8 +10,8 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            ParticipationSnapshot participationSnapshot = (ParticipationSnapshot) message;
-            ParticipationSnapshotContext participationSnapshotContext = (ParticipationSnapshotContext) context;
+            var participationSnapshot = (ParticipationSnapshot) message;
+            var participationSnapshotContext = (ParticipationSnapshotContext) context;
 
             participationSnapshotContext.ParticipationRepository.AddParticipations(participationSnapshot.Participations);
         }

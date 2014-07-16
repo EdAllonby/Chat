@@ -7,7 +7,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
 {
     public sealed class ConnectionStatusSerialiser
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(ConnectionStatusSerialiser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (ConnectionStatusSerialiser));
 
         private readonly ISerialisationType serialiser = new BinarySerialiser();
 
@@ -23,7 +23,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
         {
             Contract.Requires(networkStream != null);
 
-            var connectionStatus = (ConnectionStatus)serialiser.Deserialise(networkStream);
+            var connectionStatus = (ConnectionStatus) serialiser.Deserialise(networkStream);
             Log.Debug("Network stream has received data and deserialised to an ConnectionStatus object.");
             return connectionStatus;
         }

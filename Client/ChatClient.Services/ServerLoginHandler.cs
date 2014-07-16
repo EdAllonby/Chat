@@ -31,7 +31,7 @@ namespace ChatClient.Services
 
             IMessage userRequest = new LoginRequest(loginDetails.Username);
             SendConnectionMessage(userRequest);
-            var loginResponse = (LoginResponse)GetConnectionIMessage();
+            var loginResponse = (LoginResponse) GetConnectionIMessage();
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
@@ -45,7 +45,7 @@ namespace ChatClient.Services
             {
                 connectionHandler = null;
             }
-            
+
             return loginResponse;
         }
 
@@ -83,7 +83,7 @@ namespace ChatClient.Services
                 waitHandle.Close();
             }
 
-            Log.Info("ClientService found server, connection created");   
+            Log.Info("ClientService found server, connection created");
         }
 
         private void SendConnectionMessage(IMessage message)

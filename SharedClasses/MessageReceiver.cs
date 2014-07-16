@@ -15,10 +15,11 @@ namespace SharedClasses
     public sealed class MessageReceiver
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageReceiver));
+        private readonly object locker = new object();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-        private readonly object locker = new object();
+
         /// <summary>
         /// Fires a <see cref="MessageEventArgs"/> encapsulating an <see cref="IMessage"/> when a new message is received.
         /// </summary>
