@@ -29,8 +29,8 @@ namespace SharedClasses
         /// Listens for incoming messages on the <see cref="NetworkStream"/>.
         /// Fires a <see cref="MessageReceived"/> event when a new <see cref="IMessage"/> has been received.
         /// </summary>
-        /// <param name="clientUserId"></param>
-        /// <param name="networkStream"></param>
+        /// <param name="clientUserId">The Id of the user the NetworkStream is linked to.</param>
+        /// <param name="networkStream">The stream between the Client and the Server.</param>
         public void ReceiveMessages(int clientUserId, NetworkStream networkStream)
         {
             Contract.Requires(clientUserId > 0);
