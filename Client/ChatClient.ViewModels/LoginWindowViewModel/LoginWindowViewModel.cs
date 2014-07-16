@@ -16,6 +16,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
 
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
+        public EventHandler OpenMainWindowRequested;
 
         private LoginModel loginModel = new LoginModel();
 
@@ -40,8 +41,6 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                 }
             }
         }
-
-        public EventHandler OpenMainWindowRequested;
 
         public LoginModel LoginModel
         {

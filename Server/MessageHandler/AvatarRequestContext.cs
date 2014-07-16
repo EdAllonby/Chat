@@ -8,8 +8,8 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class AvatarRequestContext : IMessageContext
     {
-        private readonly UserRepository userRepository;
         private readonly EntityIdAllocatorFactory entityIdAllocatorFactory;
+        private readonly UserRepository userRepository;
 
         public AvatarRequestContext(UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocatorFactory)
         {

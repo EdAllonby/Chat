@@ -10,8 +10,8 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            ConversationSnapshot conversationSnapshot = (ConversationSnapshot) message;
-            ConversationSnapshotContext conversationSnapshotContext = (ConversationSnapshotContext) context;
+            var conversationSnapshot = (ConversationSnapshot) message;
+            var conversationSnapshotContext = (ConversationSnapshotContext) context;
 
             conversationSnapshotContext.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
         }

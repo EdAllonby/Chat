@@ -12,7 +12,7 @@
         <converter:BitmapToBitmapSourceConverter x:Key="BitmapToBitmapSourceConverter" />
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenUserSettings}"></KeyBinding>
+        <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenUserSettings}" />
     </Window.InputBindings>
 
     <Grid Name="MainGrid">

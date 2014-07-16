@@ -11,8 +11,8 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            ConnectionStatusNotification connectionStatusNotification = (ConnectionStatusNotification) message;
-            ConnectionStatusNotificationContext connectionStatusNotificationContext = (ConnectionStatusNotificationContext) context;
+            var connectionStatusNotification = (ConnectionStatusNotification) message;
+            var connectionStatusNotificationContext = (ConnectionStatusNotificationContext) context;
 
             UserRepository userRepository = connectionStatusNotificationContext.UserRepository;
 

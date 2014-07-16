@@ -12,8 +12,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     {
         private readonly int userId;
         private readonly UserRepository userRepository;
+        public EventHandler OpenUserSettingsWindowRequested;
         private Image userAvatar = Resources.DefaultUserImage;
-        
+
         public MainWindowViewModel()
         {
             if (!IsInDesignMode)
@@ -23,8 +24,6 @@ namespace ChatClient.ViewModels.MainWindowViewModel
                 userId = ClientService.ClientUserId;
             }
         }
-
-        public EventHandler OpenUserSettingsWindowRequested;
 
         public Image UserAvatar
         {
@@ -50,6 +49,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         {
             Application.Current.Dispatcher.Invoke(OnOpenUserSettingsWindowRequested);
         }
+
         private void OnUserAvatarUpdated(object sender, User user)
         {
             if (user.UserId == ClientService.ClientUserId)

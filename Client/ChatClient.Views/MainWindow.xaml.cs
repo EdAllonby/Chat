@@ -9,7 +9,7 @@ namespace ChatClient.Views
         {
             InitializeComponent();
 
-            MainWindowViewModel viewModel = (MainWindowViewModel) DataContext;
+            var viewModel = (MainWindowViewModel) DataContext;
             viewModel.OpenUserSettingsWindowRequested += OnOpenUserSettingsWindowRequested;
         }
 

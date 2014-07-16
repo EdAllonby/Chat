@@ -10,8 +10,8 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IMessageContext context)
         {
-            UserSnapshot userSnapshot = (UserSnapshot) message;
-            UserSnapshotContext userSnapshotContext = (UserSnapshotContext) context;
+            var userSnapshot = (UserSnapshot) message;
+            var userSnapshotContext = (UserSnapshotContext) context;
 
             userSnapshotContext.UserRepository.AddUsers(userSnapshot.Users);
         }

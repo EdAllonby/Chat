@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Point = System.Drawing.Point;
 
@@ -15,16 +16,15 @@ namespace ChatClient.Views.Converter
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             BitmapSource bitmapSource = null;
-            Bitmap bitmap = value as Bitmap;
+            var bitmap = value as Bitmap;
 
             if (bitmap != null)
             {
-
-                var hBitmap = bitmap.GetHbitmap();
+                IntPtr hBitmap = bitmap.GetHbitmap();
 
                 try
                 {
-                    bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
                         hBitmap,
                         IntPtr.Zero,
                         Int32Rect.Empty,
@@ -41,22 +41,22 @@ namespace ChatClient.Views.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            BitmapSource bitmapSource = value as BitmapSource;
+            var bitmapSource = value as BitmapSource;
 
             if (bitmapSource != null)
             {
-                Bitmap bitmap = new Bitmap(bitmapSource.PixelWidth,
-                                           bitmapSource.PixelHeight,
-                                           PixelFormat.Format32bppPArgb);
+                var bitmap = new Bitmap(bitmapSource.PixelWidth,
+                    bitmapSource.PixelHeight,
+                    PixelFormat.Format32bppPArgb);
 
                 BitmapData data = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size),
-                                                  ImageLockMode.WriteOnly,
-                                                  PixelFormat.Format32bppPArgb);
+                    ImageLockMode.WriteOnly,
+                    PixelFormat.Format32bppPArgb);
 
                 bitmapSource.CopyPixels(Int32Rect.Empty,
-                                        data.Scan0,
-                                        data.Height * data.Stride,
-                                        data.Stride);
+                    data.Scan0,
+                    data.Height*data.Stride,
+                    data.Stride);
 
                 bitmap.UnlockBits(data);
 
