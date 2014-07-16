@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace ClientSimulator
     /// </summary>
     internal static class Program
     {
-        private const int TotalClients = 30;
+        private const int TotalClients = 10;
         private static readonly List<IClientService> Clients = new List<IClientService>();
 
         private static void Main()
@@ -23,6 +24,17 @@ namespace ClientSimulator
             }
 
             LoginClients();
+
+            StartMultiUserConversation();
+
+            
+            foreach (Thread thread in Clients.Select(clientService => new Thread(() => SendContributions(clientService))))
+            {
+                Thread.Sleep(1000);
+
+                thread.Start();
+            }
+
             Console.ReadKey();
         }
 
@@ -36,6 +48,25 @@ namespace ClientSimulator
             Thread.Sleep(1000);
 
             ClientRepositoryValidator.ValidateUserRepository(Clients);
+        }
+
+        private static void StartMultiUserConversation()
+        {
+            List<int> participants = new List<int>();
+            for (int i = 1; i <= TotalClients; i++)
+            {
+                participants.Add(i);
+            }
+
+            Clients[0].CreateConversation(participants);
+        }
+
+        private static void SendContributions(IClientService client)
+        {
+            while (true)
+            {
+                client.SendContribution(1, "hello");    
+            }
         }
     }
 }

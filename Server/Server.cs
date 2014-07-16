@@ -91,7 +91,7 @@ namespace Server
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
-                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
+                Log.Error("Server is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
                     keyNotFoundException);
             }
         }
