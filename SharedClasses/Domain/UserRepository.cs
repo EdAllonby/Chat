@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace SharedClasses.Domain
     public sealed class UserRepository
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
-        private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
+        private readonly ConcurrentDictionary<int, User> usersIndexedById = new ConcurrentDictionary<int, User>();
 
         public event EventHandler<User> UserAdded;
         public event EventHandler<User> UserConnectionUpdated;
@@ -23,7 +24,7 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(user != null);
 
-            usersIndexedById.Add(user.UserId, user);
+            usersIndexedById.TryAdd(user.UserId, user);
             Log.DebugFormat("User with Id {0} added.", + user.UserId);
 
             OnUserAdded(user);
