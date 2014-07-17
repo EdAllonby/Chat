@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ChatClient.Services.MessageHandler;
 using log4net;
@@ -20,6 +21,8 @@ namespace ChatClient.Services
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
         private ConnectionHandler connectionHandler;
+
+        public event EventHandler BootstrapCompleted;
 
         /// <summary>
         /// Initialises a new <see cref="ClientService"/>.
@@ -49,8 +52,8 @@ namespace ChatClient.Services
         /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
         public LoginResult LogOn(LoginDetails loginDetails)
         {
-            var serverLoginHandler = new ServerLoginHandler(repositoryManager);
-
+            var serverLoginHandler = new ServerLoginHandler();
+            serverLoginHandler.BootstrapCompleted += OnBootstrapCompleted;
             LoginResponse response = serverLoginHandler.ConnectToServer(loginDetails, out connectionHandler);
 
             if (response.LoginResult == LoginResult.Success)
@@ -124,6 +127,11 @@ namespace ChatClient.Services
                 Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
                     keyNotFoundException);
             }
+        }
+
+        private void OnBootstrapCompleted(object sender, EventArgs e)
+        {
+            BootstrapCompleted(this, EventArgs.Empty);
         }
     }
 }

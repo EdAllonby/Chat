@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using SharedClasses;
@@ -10,6 +11,11 @@ namespace ChatClient.Services
     /// </summary>
     public interface IClientService : IService
     {
+        /// <summary>
+        /// Signifies when the client has finished successfully bootstrapping
+        /// </summary>
+        event EventHandler BootstrapCompleted;
+        
         /// <summary>
         /// This Client's unique User Id.
         /// </summary>

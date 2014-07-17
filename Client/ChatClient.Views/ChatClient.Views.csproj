@@ -83,6 +83,7 @@
       <DependentUpon>ActiveConversations.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\BitmapToBitmapSourceConverter.cs" />
+    <Compile Include="ExtendedControls\BindableRichTextBox.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

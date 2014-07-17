@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ChatClient.Services.MessageHandler;
 using log4net;
 using SharedClasses;
 using SharedClasses.Message;
@@ -10,21 +11,59 @@ using SharedClasses.Serialiser;
 namespace ChatClient.Services
 {
     /// <summary>
-    /// Creates a connection to the Server and initialises the <see cref="repositoryManager"/> with 
+    /// Creates a connection to the Server.
     /// </summary>
     internal sealed class ServerLoginHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ServerLoginHandler));
 
-        private readonly RepositoryManager repositoryManager;
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly TcpClient serverConnection = new TcpClient();
 
-        public ServerLoginHandler(RepositoryManager repositoryManager)
+        private bool hasUserSnapshotBeenSent;
+        private bool hasParticipationSnapshotBeenSent;
+        private bool hasConversationSnapshotBeenSent;
+
+        public event EventHandler BootstrapCompleted;
+
+        public ServerLoginHandler()
         {
-            this.repositoryManager = repositoryManager;
+            UserSnapshotHandler userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
+            ParticipationSnapshotHandler participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
+            ConversationSnapshotHandler conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
+
+            userSnapshotHandler.UserBootstrapCompleted += OnUserBootstrapCompleted;
+            participationSnapshotHandler.ParticipationBootstrapCompleted += OnParticipationBootstrapCompleted;
+            conversationSnapshotHandler.ConversationBootstrapCompleted += OnConversationBootstrapCompleted;
         }
 
+        void OnUserBootstrapCompleted(object sender, EventArgs e)
+        {
+            hasUserSnapshotBeenSent = true;
+            TrySendBootstrapCompleteEvent();
+        }
+
+        private void OnParticipationBootstrapCompleted(object sender, EventArgs e)
+        {
+            hasParticipationSnapshotBeenSent = true;
+            TrySendBootstrapCompleteEvent();
+        }
+
+        private void OnConversationBootstrapCompleted(object sender, EventArgs e)
+        {
+            hasConversationSnapshotBeenSent = true;
+            TrySendBootstrapCompleteEvent();
+        }
+
+        private void TrySendBootstrapCompleteEvent()
+        {
+            if (hasUserSnapshotBeenSent && hasParticipationSnapshotBeenSent && hasConversationSnapshotBeenSent)
+            {
+                Log.Debug("Client bootstrap complete. Sending Bootstrap Completed event.");
+                OnBootstrapCompleted();
+            }
+        }
+        
         public LoginResponse ConnectToServer(LoginDetails loginDetails, out ConnectionHandler connectionHandler)
         {
             CreateConnection(loginDetails.Address, loginDetails.Port);
@@ -101,6 +140,12 @@ namespace ChatClient.Services
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
             return serialiser.Deserialise(serverConnection.GetStream());
+        }
+
+        private void OnBootstrapCompleted()
+        {
+            EventHandler handler = BootstrapCompleted;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
     }
 }
