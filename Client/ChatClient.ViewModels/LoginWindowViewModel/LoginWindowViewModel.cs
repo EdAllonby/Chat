@@ -18,12 +18,15 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
         public EventHandler OpenMainWindowRequested;
 
+        private bool canOpenWindow;
+
         private LoginModel loginModel = new LoginModel();
 
         public LoginWindowViewModel()
         {
             if (!IsInDesignMode)
             {
+                ClientService.BootstrapCompleted += OnClientBootstrapCompleted;
                 var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
 
                 commandLineArgs.RemoveAt(0);
@@ -62,7 +65,8 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                 switch (result)
                 {
                     case LoginResult.Success:
-                        OpenUserListWindow();
+                        Log.Debug("Waiting for client bootstrap to complete");
+                        canOpenWindow = true;
                         break;
 
                     case LoginResult.AlreadyConnected:
@@ -94,6 +98,14 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             if (openMainWindowRequestedCopy != null)
             {
                 openMainWindowRequestedCopy(this, EventArgs.Empty);
+            }
+        }
+
+        void OnClientBootstrapCompleted(object sender, EventArgs e)
+        {
+            if (canOpenWindow)
+            {
+                OpenUserListWindow();
             }
         }
 

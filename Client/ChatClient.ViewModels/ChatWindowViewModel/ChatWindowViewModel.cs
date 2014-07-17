@@ -4,7 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using ChatClient.Models.ChatModel;
 using ChatClient.Models.ChatWindowViewModel;
 using ChatClient.ViewModels.Commands;
@@ -129,8 +131,14 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             if (contribution.ConversationId == groupChat.Conversation.ConversationId)
             {
-                Application.Current.Dispatcher.Invoke(GetMessages);
 
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var messages = GroupChat.Messages;
+                    messages.Blocks.Add(FormatContribution(contribution));
+                    GroupChat.Messages = messages;
+                });
+             
                 if (groupChat.Conversation.GetAllContributions().Last().ContributorUserId != ClientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
@@ -152,21 +160,15 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             IEnumerable<Contribution> contributions = groupChat.Conversation.GetAllContributions();
 
-            var userMessages = new List<UserMessageModel>();
+            FlowDocument messages = GroupChat.Messages;
 
             foreach (Contribution contribution in contributions)
             {
-                string message = contribution.Message;
-
-                var messageDetails = new StringBuilder();
-                messageDetails.Append(repositoryManager.UserRepository.FindUserById(contribution.ContributorUserId).Username);
-                messageDetails.Append(" sent at: ");
-                messageDetails.Append(contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
-
-                userMessages.Add(new UserMessageModel(message, messageDetails.ToString()));
+                Paragraph formattedContribution = FormatContribution(contribution);
+                messages.Blocks.Add(formattedContribution);
             }
 
-            groupChat.UserMessages = userMessages;
+            groupChat.Messages = messages;
         }
 
         private void OnConversationUpdated(object sender, Conversation conversation)
@@ -175,6 +177,38 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.Conversation = repositoryManager.ConversationRepository.FindConversationById(conversation.ConversationId);
 
             groupChat.Title = GetChatTitle();
+        }
+
+        private Paragraph FormatContribution(Contribution contribution)
+        {
+            TextAlignment alignment;
+            Brush brush;
+            if (contribution.ContributorUserId == ClientService.ClientUserId)
+            {
+                brush = Brushes.Beige;
+                alignment = TextAlignment.Right;
+            }
+            else
+            {
+                brush = Brushes.Bisque;
+                alignment = TextAlignment.Left;
+            }
+
+            Paragraph paragraph = new Paragraph {TextAlignment = alignment};
+            paragraph.Background = brush;
+            Run user = new Run(repositoryManager.UserRepository.FindUserById(contribution.ContributorUserId).Username + " said:");
+           
+            Run message = new Run(contribution.Message);
+
+            Run timeStamp = new Run("at: " + contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
+
+            paragraph.Inlines.Add(user);
+            paragraph.Inlines.Add(new LineBreak());
+            paragraph.Inlines.Add(message);
+            paragraph.Inlines.Add(new LineBreak());
+            paragraph.Inlines.Add(timeStamp);
+
+            return paragraph;
         }
 
         #region Commands

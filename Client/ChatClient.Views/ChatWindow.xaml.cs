@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Controls;
 using ChatClient.ViewModels.ChatWindowViewModel;
 
 namespace ChatClient.Views
@@ -23,6 +24,11 @@ namespace ChatClient.Views
             {
                 viewModel.Closing.Execute(null);
             }
+        }
+
+        private void OnMessageTextBoxTextChanged(object sender, TextChangedEventArgs e)
+        {
+            MessageTextBox.ScrollToEnd();
         }
     }
 }
