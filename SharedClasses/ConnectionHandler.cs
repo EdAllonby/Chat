@@ -76,7 +76,12 @@ namespace SharedClasses
 
         private void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
         {
-            MessageReceived(sender, e);
+            EventHandler<MessageEventArgs> messageReceivedCopy = MessageReceived;
+
+            if (messageReceivedCopy != null)
+            {
+                messageReceivedCopy(sender, e);
+            }
         }
     }
 }

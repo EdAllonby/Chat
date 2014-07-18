@@ -18,8 +18,7 @@ namespace SharedClasses.Domain
         public event EventHandler<User> UserAdded;
         public event EventHandler<User> UserConnectionUpdated;
         public event EventHandler<User> UserAvatarUpdated;
-
-
+        
         public void AddUser(User user)
         {
             Contract.Requires(user != null);
