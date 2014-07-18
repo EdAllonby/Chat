@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using ChatClient.Models.ChatModel;
 using ChatClient.Models.ChatWindowViewModel;
 using ChatClient.ViewModels.Commands;
@@ -20,6 +18,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private readonly RepositoryManager repositoryManager;
+        private readonly ContributionMessageFormatter contributionMessageFormatter;
 
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
         private GroupChatModel groupChat = new GroupChatModel();
@@ -33,6 +32,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             if (!IsInDesignMode)
             {
+                contributionMessageFormatter = new ContributionMessageFormatter(ClientService.ClientUserId, ClientService.RepositoryManager.UserRepository);
+
                 repositoryManager = ClientService.RepositoryManager;
 
                 repositoryManager.UserRepository.UserAdded += OnUserAdded;
@@ -135,7 +136,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var messages = GroupChat.Messages;
-                    messages.Blocks.Add(FormatContribution(contribution));
+                    messages.Blocks.Add(ContributionMessageFormatter.FormatContribution(contribution));
                     GroupChat.Messages = messages;
                 });
              
@@ -164,7 +165,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             foreach (Contribution contribution in contributions)
             {
-                Paragraph formattedContribution = FormatContribution(contribution);
+                Paragraph formattedContribution = ContributionMessageFormatter.FormatContribution(contribution);
                 messages.Blocks.Add(formattedContribution);
             }
 
@@ -179,38 +180,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.Title = GetChatTitle();
         }
 
-        private Paragraph FormatContribution(Contribution contribution)
-        {
-            TextAlignment alignment;
-            Brush brush;
-            if (contribution.ContributorUserId == ClientService.ClientUserId)
-            {
-                brush = Brushes.Beige;
-                alignment = TextAlignment.Right;
-            }
-            else
-            {
-                brush = Brushes.Bisque;
-                alignment = TextAlignment.Left;
-            }
-
-            Paragraph paragraph = new Paragraph {TextAlignment = alignment};
-            paragraph.Background = brush;
-            Run user = new Run(repositoryManager.UserRepository.FindUserById(contribution.ContributorUserId).Username + " said:");
-           
-            Run message = new Run(contribution.Message);
-
-            Run timeStamp = new Run("at: " + contribution.MessageTimeStamp.ToString("HH:mm:ss dd/MM/yyyy", new CultureInfo("en-GB")));
-
-            paragraph.Inlines.Add(user);
-            paragraph.Inlines.Add(new LineBreak());
-            paragraph.Inlines.Add(message);
-            paragraph.Inlines.Add(new LineBreak());
-            paragraph.Inlines.Add(timeStamp);
-
-            return paragraph;
-        }
-
         #region Commands
 
         public ICommand SendMessage
@@ -223,6 +192,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         public ICommand Closing
         {
             get { return new RelayCommand(() => ConversationWindowManager.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
+        }
+
+        public ContributionMessageFormatter ContributionMessageFormatter
+        {
+            get { return contributionMessageFormatter; }
         }
 
         public void AddUser(object user)

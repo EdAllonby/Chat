@@ -131,7 +131,12 @@ namespace ChatClient.Services
 
         private void OnBootstrapCompleted(object sender, EventArgs e)
         {
-            BootstrapCompleted(this, EventArgs.Empty);
+            var bootstrapCompletedCopy = BootstrapCompleted;
+
+            if (bootstrapCompletedCopy != null)
+            {
+                bootstrapCompletedCopy(this, EventArgs.Empty);
+            }
         }
     }
 }
