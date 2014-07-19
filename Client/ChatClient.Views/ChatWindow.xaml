@@ -11,9 +11,12 @@
     <Window.DataContext>
         <viewModel:ChatWindowViewModel/>
     </Window.DataContext>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenUserSettings}" />
+    </Window.InputBindings>
 
-        <Grid Name="MainGrid"
-          xmlns:controlExtenders="clr-namespace:ChatClient.Views.ControlExtenders">
+    <Grid Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
@@ -25,6 +28,9 @@
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=MainGrid,Path=ActualWidth}">
+                <MenuItem Header="_Edit">
+                    <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}" InputGestureText="Ctrl+,"/>
+                </MenuItem>
             <MenuItem Header="_Add User" DisplayMemberPath="Username"  ItemsSource="{Binding Path=ConnectedUsers}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}">

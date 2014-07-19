@@ -5,7 +5,7 @@
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         xmlns:userSettingsViewModel="clr-namespace:ChatClient.ViewModels.UserSettingsViewModel;assembly=ChatClient.ViewModels"
-        Title="UserSettingsWindow" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" >
+        Title="User Settings" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" >
     <Window.DataContext>
         <userSettingsViewModel:UserSettingsViewModel/>
     </Window.DataContext>
