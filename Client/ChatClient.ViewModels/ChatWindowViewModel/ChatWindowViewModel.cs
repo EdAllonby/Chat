@@ -20,6 +20,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly RepositoryManager repositoryManager;
         private readonly ContributionMessageFormatter contributionMessageFormatter;
 
+        public EventHandler OpenUserSettingsWindowRequested;
+
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
         private GroupChatModel groupChat = new GroupChatModel();
 
@@ -136,10 +138,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var messages = GroupChat.Messages;
-                    messages.Blocks.Add(ContributionMessageFormatter.FormatContribution(contribution));
+                    messages.Blocks.Add(contributionMessageFormatter.FormatContribution(contribution));
                     GroupChat.Messages = messages;
                 });
-             
+
                 if (groupChat.Conversation.GetAllContributions().Last().ContributorUserId != ClientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
@@ -165,7 +167,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             foreach (Contribution contribution in contributions)
             {
-                Paragraph formattedContribution = ContributionMessageFormatter.FormatContribution(contribution);
+                Paragraph formattedContribution = contributionMessageFormatter.FormatContribution(contribution);
                 messages.Blocks.Add(formattedContribution);
             }
 
@@ -194,9 +196,23 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             get { return new RelayCommand(() => ConversationWindowManager.SetWindowStatus(groupChat.Conversation.ConversationId, WindowStatus.Closed)); }
         }
 
-        public ContributionMessageFormatter ContributionMessageFormatter
+        public ICommand OpenUserSettings
         {
-            get { return contributionMessageFormatter; }
+            get { return new RelayCommand(OpenUserSettingsWindow); }
+        }
+
+        private void OpenUserSettingsWindow()
+        {
+            Application.Current.Dispatcher.Invoke(OnOpenUserSettingsWindowRequested);
+        }
+
+        private void OnOpenUserSettingsWindowRequested()
+        {
+            EventHandler openUserSettingsWindowRequestedCopy = OpenUserSettingsWindowRequested;
+            if (openUserSettingsWindowRequestedCopy != null)
+            {
+                openUserSettingsWindowRequestedCopy(this, EventArgs.Empty);
+            }
         }
 
         public void AddUser(object user)
