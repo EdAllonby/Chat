@@ -14,6 +14,13 @@ namespace SharedClasses.Domain
         private readonly Image userAvatar;
         private readonly int userId;
 
+        /// <summary>
+        /// Create a null Avatar object.
+        /// </summary>
+        public Avatar()
+        {
+        }
+
         public Avatar(int userId, Image userAvatar)
         {
             Contract.Requires(userId > 0);

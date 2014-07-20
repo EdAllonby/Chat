@@ -27,9 +27,8 @@ namespace Server
         {
             serverContextRegistry = new ServerContextRegistry(repositoryManager, clientHandlersIndexedByUserId, entityIdAllocatorFactory);
 
-            repositoryManager.UserRepository.UserAdded += OnUserAdded;
-            repositoryManager.UserRepository.UserConnectionUpdated += OnUserConnectionUpdated;
-            repositoryManager.UserRepository.UserAvatarUpdated += OnUserAvatarUpdated;
+            repositoryManager.UserRepository.UserChanged += OnUserChanged;
+
             repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
             repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
             repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
@@ -96,7 +95,31 @@ namespace Server
             }
         }
 
-        private void OnUserAdded(object sender, User user)
+
+        private void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
+        {
+            User previousUser = e.PreviousEntity;
+            User newUser = e.Entity;
+
+            switch (e.NotificationType)
+            {
+                case NotificationType.Create:
+                    OnUserAdded(e.Entity);
+                    break;
+                case NotificationType.Update:
+                    if (previousUser.ConnectionStatus.UserConnectionStatus != e.Entity.ConnectionStatus.UserConnectionStatus)
+                    {
+                        OnUserConnectionUpdated(e.Entity);
+                    }
+                    if (!previousUser.Avatar.Equals(e.Entity.Avatar))
+                    {
+                        OnUserAvatarUpdated(e.Entity);
+                    }
+                    break;
+            }
+        }
+
+        private void OnUserAdded(User user)
         {
             var userNotification = new UserNotification(user, NotificationType.Create);
 
@@ -106,13 +129,23 @@ namespace Server
             }
         }
 
-        private void OnUserConnectionUpdated(object sender, User user)
+        private void OnUserConnectionUpdated(User user)
         {
             var userNotification = new ConnectionStatusNotification(user.ConnectionStatus, NotificationType.Update);
 
             foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
             {
                 clientHandler.SendMessage(userNotification);
+            }
+        }
+
+        private void OnUserAvatarUpdated(User user)
+        {
+            var avatarNotification = new AvatarNotification(user.Avatar, NotificationType.Update);
+
+            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
+            {
+                clientHandler.SendMessage(avatarNotification);
             }
         }
 
@@ -125,16 +158,6 @@ namespace Server
                     conversation.ConversationId))
             {
                 clientHandlersIndexedByUserId[participant.UserId].SendMessage(conversationNotification);
-            }
-        }
-
-        private void OnUserAvatarUpdated(object sender, User user)
-        {
-            var avatarNotification = new AvatarNotification(user.Avatar, NotificationType.Update);
-
-            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
-            {
-                clientHandler.SendMessage(avatarNotification);
             }
         }
 

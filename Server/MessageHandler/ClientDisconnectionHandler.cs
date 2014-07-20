@@ -31,7 +31,7 @@ namespace Server.MessageHandler
 
         private static void DisconnectUser(int disconnectedUserId, UserRepository userRepository)
         {
-            userRepository.UpdateUserConnection(new ConnectionStatus(disconnectedUserId, ConnectionStatus.Status.Disconnected));
+            userRepository.UpdateUserConnectionStatus(new ConnectionStatus(disconnectedUserId, ConnectionStatus.Status.Disconnected));
         }
     }
 }

@@ -60,7 +60,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public Image UserAvatar
         {
-            get { return user.Avatar != null ? user.Avatar.UserAvatar : Resources.DefaultUserImage; }
+            get { return user.Avatar.UserAvatar ?? Resources.DefaultUserImage; }
         }
 
         public string Username

@@ -26,15 +26,10 @@ namespace ChatClient.ViewModels
             // Check if conversation window already exists
             if (GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
             {
-                Application.Current.Dispatcher.Invoke(
-                    () => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation)));
+                Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation)));
 
                 SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
                 Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.ConversationId);
-            }
-            else
-            {
-                Log.DebugFormat("Window with conversation Id {0} has already been created. Cannot create another.", conversation.ConversationId);
             }
         }
 
