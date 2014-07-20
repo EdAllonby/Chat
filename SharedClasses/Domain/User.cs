@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SharedClasses.Domain
 {
@@ -11,6 +14,7 @@ namespace SharedClasses.Domain
     {
         private readonly int userId;
         private readonly string username;
+        private Avatar avatar;
 
         /// <summary>
         /// Creates an incomplete user entity.
@@ -20,6 +24,7 @@ namespace SharedClasses.Domain
             Contract.Requires(username != null);
 
             this.username = username;
+            avatar = new Avatar();
         }
 
         /// <summary>
@@ -57,12 +62,34 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The user's current Avatar
         /// </summary>
-        public Avatar Avatar { get; set; }
+        public Avatar Avatar
+        {
+            get { return avatar; }
+            set { avatar = value; }
+        }
 
         /// <summary>
         /// The current status of the User.
         /// </summary>
         public ConnectionStatus ConnectionStatus { get; set; }
+
+        /// <summary>
+        /// Deep clone a <see cref="User"/> entity.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static User DeepClone(User obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+
+                return (User)formatter.Deserialize(ms);
+            }
+        }
 
         #region IEquality implementation
 

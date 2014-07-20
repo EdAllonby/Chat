@@ -36,7 +36,7 @@ namespace Server
                 else
                 {
                     // This user already exists, just update the status of it in the repository
-                    userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+                    userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
                 }
 
                 loginResponse = new LoginResponse(user, LoginResult.Success);

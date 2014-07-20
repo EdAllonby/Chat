@@ -17,7 +17,7 @@ namespace SharedClasses.Serialiser
             Contract.Requires(stream != null);
 
             stream.Write(BitConverter.GetBytes((int) messageIdentifier), 0, 4);
-            Log.DebugFormat("Sent Message Identifier: {0} to stream", messageIdentifier);
+            Log.DebugFormat("Sent Message Identifier: {0} to stream.", messageIdentifier);
         }
 
         public MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
@@ -31,7 +31,7 @@ namespace SharedClasses.Serialiser
             int messageIdentifierNumber = BitConverter.ToInt32(messageTypeBuffer, 0);
             var messageIdentifier = (MessageIdentifier) messageIdentifierNumber;
 
-            Log.DebugFormat("Message Identifier {0} received from client", messageIdentifier);
+            Log.DebugFormat("Message Identifier {0} received from stream.", messageIdentifier);
 
             return messageIdentifier;
         }

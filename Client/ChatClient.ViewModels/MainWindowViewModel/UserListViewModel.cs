@@ -24,9 +24,8 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             {
                 repositoryManager = ClientService.RepositoryManager;
 
-                repositoryManager.UserRepository.UserAdded += OnUserAdded;
-                repositoryManager.UserRepository.UserConnectionUpdated += OnUserConnectionUpdated;
-                repositoryManager.UserRepository.UserAvatarUpdated += OnUserAvatarUpdated;
+                repositoryManager.UserRepository.UserChanged += OnUserChanged;
+
                 repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
                 repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
 
@@ -109,17 +108,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        private void OnUserAdded(object sender, User user)
-        {
-            UpdateConnectedUsers();
-        }
-
-        private void OnUserConnectionUpdated(object sender, User user)
-        {
-            UpdateConnectedUsers();
-        }
-
-        private void OnUserAvatarUpdated(object sender, User user)
+        void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
         {
             UpdateConnectedUsers();
         }

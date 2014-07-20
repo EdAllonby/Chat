@@ -15,9 +15,7 @@ namespace SharedClasses.Domain
         private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
         private readonly ConcurrentDictionary<int, User> usersIndexedById = new ConcurrentDictionary<int, User>();
 
-        public event EventHandler<User> UserAdded;
-        public event EventHandler<User> UserConnectionUpdated;
-        public event EventHandler<User> UserAvatarUpdated;
+        public event EventHandler<EntityChangedEventArgs<User>> UserChanged;
         
         public void AddUser(User user)
         {
@@ -26,37 +24,51 @@ namespace SharedClasses.Domain
             usersIndexedById.TryAdd(user.UserId, user);
             Log.DebugFormat("User with Id {0} added.", + user.UserId);
 
-            OnUserAdded(user);
+            EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
+
+            userChangedEventArgs.EntityAdded(user);
+
+            OnUserChanged(userChangedEventArgs);
         }
 
         /// <summary>
         /// Updates a <see cref="User"/>'s <see cref="ConnectionStatus"/>
         /// </summary>
-        /// <param name="userId"> The <see cref="User"/>'s Id to change connection status.</param>
-        /// <param name="connectionStatus"> The new connection status of the user.</param>
-        public void UpdateUserConnection(ConnectionStatus connectionStatus)
+        /// <param name="connectionStatus">The new connection status of the user.</param>
+        public void UpdateUserConnectionStatus(ConnectionStatus connectionStatus)
         {
             Contract.Requires(connectionStatus != null);
-
+            
             User user = FindUserById(connectionStatus.UserId);
+
+            User previousUser = User.DeepClone(user);
+
             user.ConnectionStatus = connectionStatus;
 
-            OnUserConnectionUpdated(user);
+            EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
+
+            userChangedEventArgs.EntityUpdated(user, previousUser);
+
+            OnUserChanged(userChangedEventArgs);
         }
 
         /// <summary>
-        /// 
+        /// Updates a <see cref="User"/>'s <see cref="Avatar"/>.
         /// </summary>
-        /// <param name="avatar"></param>
+        /// <param name="avatar">The new avatar to give a user.</param>
         public void UpdateUserAvatar(Avatar avatar)
         {
             Contract.Requires(avatar != null);
-
             User user = FindUserById(avatar.UserId);
+
+            User previousUser = User.DeepClone(user);
 
             user.Avatar = avatar;
 
-            OnUserAvatarUpdated(user);
+            EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
+            userChangedEventArgs.EntityUpdated(user, previousUser);
+
+            OnUserChanged(userChangedEventArgs);
         }
 
         /// <summary>
@@ -83,9 +95,7 @@ namespace SharedClasses.Domain
         /// <returns>The <see cref="User"/> which matches the ID. If no <see cref="User"/> is found, return null.</returns>
         public User FindUserById(int userId)
         {
-            User user;
-
-            return usersIndexedById.TryGetValue(userId, out user) ? user : null;
+            return usersIndexedById[userId];
         }
 
         public User FindUserByUsername(string username)
@@ -102,33 +112,13 @@ namespace SharedClasses.Domain
             return usersIndexedById.Values;
         }
 
-        private void OnUserAdded(User user)
+        private void OnUserChanged(EntityChangedEventArgs<User> entityChangedEventArgs)
         {
-            EventHandler<User> userAddedCopy = UserAdded;
+            EventHandler<EntityChangedEventArgs<User>> userChangedCopy = UserChanged;
 
-            if (userAddedCopy != null)
+            if (userChangedCopy != null)
             {
-                userAddedCopy(this, user);
-            }
-        }
-
-        private void OnUserConnectionUpdated(User user)
-        {
-            EventHandler<User> userConnectionUpdatedCopy = UserConnectionUpdated;
-
-            if (userConnectionUpdatedCopy != null)
-            {
-                userConnectionUpdatedCopy(this, user);
-            }
-        }
-
-        private void OnUserAvatarUpdated(User user)
-        {
-            EventHandler<User> userUpdatedCopy = UserAvatarUpdated;
-
-            if (userUpdatedCopy != null)
-            {
-                userUpdatedCopy(this, user);
+                userChangedCopy(this, entityChangedEventArgs);
             }
         }
     }

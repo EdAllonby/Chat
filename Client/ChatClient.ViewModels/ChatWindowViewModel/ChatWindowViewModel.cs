@@ -38,8 +38,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 repositoryManager = ClientService.RepositoryManager;
 
-                repositoryManager.UserRepository.UserAdded += OnUserAdded;
-                repositoryManager.UserRepository.UserConnectionUpdated += OnUserConnectionUpdated;
+                repositoryManager.UserRepository.UserChanged += OnUserChanged;
 
                 repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
                 repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
@@ -149,12 +148,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        private void OnUserAdded(object sender, User e)
-        {
-            UpdateConnectedUsersList();
-        }
-
-        private void OnUserConnectionUpdated(object sender, User user)
+        void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
         {
             UpdateConnectedUsersList();
         }

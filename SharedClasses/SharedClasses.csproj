@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Avatar.cs" />
+    <Compile Include="EntityChangedEventArgs.cs" />
     <Compile Include="Message\AvatarNotification.cs" />
     <Compile Include="Message\AvatarRequest.cs" />
     <Compile Include="Message\ConnectionStatusNotification.cs" />

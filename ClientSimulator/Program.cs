@@ -36,12 +36,6 @@ namespace ClientSimulator
                 thread.Start();
             }
 
-
-            var sendAvatarThread = new Thread(() => SendAvatar(Clients[2]));
-            Thread.Sleep(1000);
-
-            sendAvatarThread.Start();
-
             Console.ReadKey();
         }
 

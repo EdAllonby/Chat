@@ -16,7 +16,7 @@ namespace ChatClient.Services.MessageHandler
 
             UserRepository userRepository = connectionStatusNotificationContext.UserRepository;
 
-            userRepository.UpdateUserConnection(connectionStatusNotification.ConnectionStatus);
+            userRepository.UpdateUserConnectionStatus(connectionStatusNotification.ConnectionStatus);
         }
     }
 }

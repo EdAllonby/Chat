@@ -18,7 +18,7 @@ namespace SharedClassesTests.Domain
 
             user.ConnectionStatus = new ConnectionStatus(2, ConnectionStatus.Status.Connected);
 
-            userRepository.UpdateUserConnection(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+            userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
 
             Assert.AreEqual(user, userRepository.FindUserById(user.UserId));
         }

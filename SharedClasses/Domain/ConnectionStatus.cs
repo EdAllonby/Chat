@@ -8,13 +8,6 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class ConnectionStatus
     {
-        public enum Status
-        {
-            Unknown,
-            Connected,
-            Disconnected
-        }
-
         private readonly Status userConnectionStatus;
         private readonly int userId;
 
@@ -32,6 +25,13 @@ namespace SharedClasses.Domain
         public Status UserConnectionStatus
         {
             get { return userConnectionStatus; }
+        }
+
+        public enum Status
+        {
+            Unknown,
+            Connected,
+            Disconnected
         }
     }
 }
