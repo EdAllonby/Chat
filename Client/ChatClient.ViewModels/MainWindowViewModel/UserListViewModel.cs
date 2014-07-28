@@ -117,7 +117,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         private void UpdateConnectedUsers()
         {
             IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
-            List<User> newUserList = users.Where(user => user.UserId != ClientService.ClientUserId).ToList();
+            List<User> newUserList = users.Where(user => user.Id != ClientService.ClientUserId).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
 

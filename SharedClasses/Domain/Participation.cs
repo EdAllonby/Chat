@@ -7,16 +7,15 @@ namespace SharedClasses.Domain
     /// The relationship between a User and a Conversation
     /// </summary>
     [Serializable]
-    public class Participation : IEquatable<Participation>
+    public class Participation : IEntity, IEquatable<Participation>
     {
         private readonly int conversationId;
-        private readonly int participationId;
+        private readonly int id;
         private readonly int userId;
 
         /// <summary>
         /// Create an incomplete Participation entity without an Id.
         /// </summary>
-        /// <param name="participationStatus">What context will this participation object be used for?</param>
         /// <param name="userId">The identity of the user to link to a conversation.</param>
         /// <param name="conversationId">The identity of the conversation that the user wants to link to.</param>
         public Participation(int userId, int conversationId)
@@ -31,22 +30,22 @@ namespace SharedClasses.Domain
         /// <summary>
         /// Creates a new participation entity.
         /// </summary>
-        /// <param name="participationId">The identity of this participation entity object.</param>
+        /// <param name="id">The identity of this participation entity object.</param>
         /// <param name="userId">The identity of the user to link to a conversation.</param>
         /// <param name="conversationId">The identity of the conversation that the user wants to link to.</param>
-        public Participation(int participationId, int userId, int conversationId)
+        public Participation(int id, int userId, int conversationId)
             : this(userId, conversationId)
         {
             Contract.Requires(conversationId > 0);
             Contract.Requires(userId > 0);
-            Contract.Requires(participationId > 0);
+            Contract.Requires(id > 0);
 
-            this.participationId = participationId;
+            this.id = id;
         }
 
-        public int ParticipationId
+        public int Id
         {
-            get { return participationId; }
+            get { return id; }
         }
 
         public int UserId

@@ -17,7 +17,7 @@ namespace SharedClassesTests.Domain
         public void AssignCustomIdToConversationTest(int conversationId)
         {
             var conversation = new Conversation(conversationId);
-            Assert.AreEqual(conversation.ConversationId, conversationId);
+            Assert.AreEqual(conversation.Id, conversationId);
         }
 
         [TestCase(12)]
@@ -38,7 +38,7 @@ namespace SharedClassesTests.Domain
 
             if (conversation != null)
             {
-                Assert.AreEqual(conversation.ConversationId, totalUsers + baseId);
+                Assert.AreEqual(conversation.Id, totalUsers + baseId);
             }
         }
 

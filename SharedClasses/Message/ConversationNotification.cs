@@ -10,7 +10,7 @@ namespace SharedClasses.Message
         public ConversationNotification(Conversation conversation, NotificationType notificationType)
         {
             Contract.Requires(conversation != null);
-            Contract.Requires(conversation.ConversationId > 0);
+            Contract.Requires(conversation.Id > 0);
 
             Conversation = conversation;
             NotificationType = notificationType;

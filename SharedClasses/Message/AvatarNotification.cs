@@ -13,7 +13,7 @@ namespace SharedClasses.Message
         public AvatarNotification(Avatar avatar, NotificationType notificationType)
         {
             Contract.Requires(avatar != null);
-            Contract.Requires(avatar.AvatarId > 0);
+            Contract.Requires(avatar.Id > 0);
 
             Avatar = avatar;
             NotificationType = notificationType;

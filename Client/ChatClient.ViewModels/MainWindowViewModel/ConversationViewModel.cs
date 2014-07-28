@@ -27,7 +27,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public int ConversationId
         {
-            get { return conversation.ConversationId; }
+            get { return conversation.Id; }
         }
 
         private string GetConversationParticipants()
@@ -36,7 +36,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
             var titleBuilder = new StringBuilder();
 
-            foreach (Participation participant in participationRepository.GetParticipationsByConversationId(conversation.ConversationId))
+            foreach (Participation participant in participationRepository.GetParticipationsByConversationId(conversation.Id))
             {
                 usernames.Add(userRepository.FindUserById(participant.UserId).Username);
             }

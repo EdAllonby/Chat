@@ -50,7 +50,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public int UserId
         {
-            get { return user.UserId; }
+            get { return user.Id; }
         }
 
         public wpfBrush.Brush BorderColour

@@ -8,9 +8,9 @@ namespace SharedClasses.Domain
     /// An image linked with a <see cref="User"/> used as an avatar.
     /// </summary>
     [Serializable]
-    public sealed class Avatar : IEquatable<Avatar>
+    public sealed class Avatar : IEntity, IEquatable<Avatar>
     {
-        private readonly int avatarId;
+        private readonly int id;
         private readonly Image userAvatar;
         private readonly int userId;
 
@@ -30,20 +30,20 @@ namespace SharedClasses.Domain
             this.userAvatar = userAvatar;
         }
 
-        public Avatar(int avatarId, Avatar incompleteAvatar)
+        public Avatar(int id, Avatar incompleteAvatar)
             : this(incompleteAvatar.UserId, incompleteAvatar.UserAvatar)
         {
             Contract.Requires(incompleteAvatar != null);
-            Contract.Requires(avatarId > 0);
+            Contract.Requires(id > 0);
             Contract.Requires(incompleteAvatar.UserId > 0);
             Contract.Requires(incompleteAvatar.UserAvatar != null);
 
-            this.avatarId = avatarId;
+            this.id = id;
         }
 
-        public int AvatarId
+        public int Id
         {
-            get { return avatarId; }
+            get { return id; }
         }
 
         public int UserId
@@ -62,7 +62,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return avatarId == other.avatarId;
+            return id == other.id;
         }
 
         public override bool Equals(object obj)
@@ -74,7 +74,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return avatarId;
+            return id;
         }
 
         #endregion

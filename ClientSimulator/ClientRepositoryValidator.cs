@@ -28,7 +28,7 @@ namespace ClientSimulator
 
             foreach (UserRepository userRepository in clients.Select(client => client.RepositoryManager.UserRepository))
             {
-                sum = userRepository.GetAllUsers().Sum(user => user.UserId);
+                sum = userRepository.GetAllUsers().Sum(user => user.Id);
                 Debug.Assert(sum == userIdSum);
             }
         }

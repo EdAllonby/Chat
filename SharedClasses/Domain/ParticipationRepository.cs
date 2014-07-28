@@ -104,9 +104,9 @@ namespace SharedClasses.Domain
         private void AddParticipationToRepository(Participation participation)
         {
             Contract.Requires(participation != null);
-            Contract.Requires(participation.ParticipationId > 0);
+            Contract.Requires(participation.Id > 0);
 
-            participationsIndexedById.Add(participation.ParticipationId, participation);
+            participationsIndexedById.Add(participation.Id, participation);
 
             Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository",
                 participation.UserId, participation.ConversationId);

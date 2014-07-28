@@ -25,7 +25,7 @@ namespace SharedClassesTests.Domain
             var conversation = new Conversation(1);
             var conversationRepository = new ConversationRepository();
             conversationRepository.AddConversation(conversation);
-            Assert.AreEqual(conversation, conversationRepository.FindConversationById(conversation.ConversationId));
+            Assert.AreEqual(conversation, conversationRepository.FindConversationById(conversation.Id));
         }
 
         [Test]

@@ -13,7 +13,7 @@ namespace SharedClasses.Message
         public ContributionNotification(Contribution contribution, NotificationType notificationType)
         {
             Contract.Requires(contribution != null);
-            Contract.Requires(contribution.ContributionId > 0);
+            Contract.Requires(contribution.Id > 0);
 
             Contribution = contribution;
             NotificationType = notificationType;
