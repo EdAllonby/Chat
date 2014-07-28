@@ -56,7 +56,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         {
             if (e.NotificationType == NotificationType.Update &&
                 !e.PreviousEntity.Avatar.Equals(e.Entity.Avatar) &&
-                e.Entity.UserId == userId)
+                e.Entity.Id == userId)
             {
                 UserAvatar = e.Entity.Avatar.UserAvatar;
             }

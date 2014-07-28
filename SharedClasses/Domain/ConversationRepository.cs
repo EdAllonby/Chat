@@ -27,8 +27,8 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(conversation != null);
 
-            conversationsIndexedById.Add(conversation.ConversationId, conversation);
-            Log.DebugFormat("Conversation with Id {0} added.", conversation.ConversationId);
+            conversationsIndexedById.Add(conversation.Id, conversation);
+            Log.DebugFormat("Conversation with Id {0} added.", conversation.Id);
 
             OnConversationAdded(conversation);
         }
@@ -37,8 +37,8 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(conversation != null);
 
-            conversationsIndexedById[conversation.ConversationId] = conversation;
-            Log.DebugFormat("Conversation with Id {0} has been updated.", conversation.ConversationId);
+            conversationsIndexedById[conversation.Id] = conversation;
+            Log.DebugFormat("Conversation with Id {0} has been updated.", conversation.Id);
 
             OnConversationUpdated(conversation);
         }
@@ -46,7 +46,7 @@ namespace SharedClasses.Domain
         public void AddContributionToConversation(Contribution contribution)
         {
             Contract.Requires(contribution != null);
-            Contract.Requires(contribution.ContributionId > 0);
+            Contract.Requires(contribution.Id > 0);
             Contract.Requires(contribution.ConversationId > 0);
 
             Conversation conversation = FindConversationById(contribution.ConversationId);
@@ -67,8 +67,8 @@ namespace SharedClasses.Domain
             IEnumerable<Conversation> conversationsEnumerable = conversations as IList<Conversation> ?? conversations.ToList();
             foreach (Conversation conversation in conversationsEnumerable)
             {
-                conversationsIndexedById[conversation.ConversationId] = conversation;
-                Log.Debug("Conversation with Id " + conversation.ConversationId + " added to conversation repository");
+                conversationsIndexedById[conversation.Id] = conversation;
+                Log.Debug("Conversation with Id " + conversation.Id + " added to conversation repository");
             }
         }
 

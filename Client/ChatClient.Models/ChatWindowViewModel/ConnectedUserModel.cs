@@ -13,7 +13,7 @@ namespace ChatClient.Models.ChatWindowViewModel
 
         public int UserId
         {
-            get { return user.UserId; }
+            get { return user.Id; }
         }
 
         public string Username

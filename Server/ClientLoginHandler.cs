@@ -36,7 +36,7 @@ namespace Server
                 else
                 {
                     // This user already exists, just update the status of it in the repository
-                    userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+                    userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.Id, ConnectionStatus.Status.Connected));
                 }
 
                 loginResponse = new LoginResponse(user, LoginResult.Success);
@@ -45,7 +45,7 @@ namespace Server
             }
             else
             {
-                Log.InfoFormat("User with user Id {0} already connected, denying user login.", user.UserId);
+                Log.InfoFormat("User with user Id {0} already connected, denying user login.", user.Id);
                 loginResponse = new LoginResponse(null, LoginResult.AlreadyConnected);
                 SendConnectionMessage(loginResponse, tcpClient);
             }
@@ -68,7 +68,7 @@ namespace Server
 
         private User CreateUserEntity(LoginRequest clientLogin, EntityIdAllocatorFactory entityIdAllocator)
         {
-            var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), new ConnectionStatus(clientLogin.User.UserId, ConnectionStatus.Status.Connected));
+            var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), new ConnectionStatus(clientLogin.User.Id, ConnectionStatus.Status.Connected));
 
             userRepository.AddUser(newUser);
 

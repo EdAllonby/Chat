@@ -9,36 +9,36 @@ namespace SharedClasses.Domain
     /// Holds a collection of <see cref="Contribution"/>s that are linked by a Conversation
     /// </summary>
     [Serializable]
-    public sealed class Conversation : IEquatable<Conversation>
+    public sealed class Conversation : IEntity, IEquatable<Conversation>
     {
         private readonly Dictionary<int, Contribution> contributionsIndexedByContributionID = new Dictionary<int, Contribution>();
 
-        private readonly int conversationId;
+        private readonly int id;
 
         /// <summary>
         /// Creates a conversation entity with conversation Id.
         /// </summary>
-        /// <param name="conversationId">The Id to assign to the conversation.</param>
-        public Conversation(int conversationId)
+        /// <param name="id">The Id to assign to the conversation.</param>
+        public Conversation(int id)
         {
-            Contract.Requires(conversationId > 0);
+            Contract.Requires(id > 0);
 
-            this.conversationId = conversationId;
+            this.id = id;
         }
 
         /// <summary>
         /// Conversation is a domain entity class and gets a unique Id.
         /// </summary>
-        public int ConversationId
+        public int Id
         {
-            get { return conversationId; }
+            get { return id; }
         }
 
         public bool Equals(Conversation other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return conversationId == other.conversationId;
+            return id == other.id;
         }
 
         /// <summary>
@@ -47,9 +47,9 @@ namespace SharedClasses.Domain
         public void AddContribution(Contribution newContribution)
         {
             Contract.Requires(newContribution != null);
-            Contract.Requires(newContribution.ConversationId == ConversationId);
+            Contract.Requires(newContribution.ConversationId == Id);
 
-            contributionsIndexedByContributionID[newContribution.ContributionId] = newContribution;
+            contributionsIndexedByContributionID[newContribution.Id] = newContribution;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(contributionNotification != null);
 
-            contributionsIndexedByContributionID[contributionNotification.Contribution.ContributionId] = contributionNotification.Contribution;
+            contributionsIndexedByContributionID[contributionNotification.Contribution.Id] = contributionNotification.Contribution;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return conversationId;
+            return id;
         }
     }
 }

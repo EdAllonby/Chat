@@ -64,7 +64,7 @@ namespace Server
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
-                int userId = loginResponse.User.UserId;
+                int userId = loginResponse.User.Id;
 
                 clientHandler.CreateConnectionHandler(userId, tcpClient);
 
@@ -155,7 +155,7 @@ namespace Server
 
             foreach (Participation participant in repositoryManager.ParticipationRepository
                 .GetParticipationsByConversationId(
-                    conversation.ConversationId))
+                    conversation.Id))
             {
                 clientHandlersIndexedByUserId[participant.UserId].SendMessage(conversationNotification);
             }
@@ -169,11 +169,11 @@ namespace Server
                 .FindConversationById(contribution.ConversationId);
 
             foreach (User user in
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.ConversationId)
+                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.Id)
                     .Select(participant => repositoryManager.UserRepository.FindUserById(participant.UserId))
                     .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected))
             {
-                clientHandlersIndexedByUserId[user.UserId].SendMessage(contributionNotification);
+                clientHandlersIndexedByUserId[user.Id].SendMessage(contributionNotification);
             }
         }
 

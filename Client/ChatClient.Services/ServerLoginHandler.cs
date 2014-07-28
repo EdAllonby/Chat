@@ -74,9 +74,9 @@ namespace ChatClient.Services
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
-                BootstrapRepositories(loginResponse.User.UserId);
+                BootstrapRepositories(loginResponse.User.Id);
 
-                connectionHandler = new ConnectionHandler(loginResponse.User.UserId, serverConnection);
+                connectionHandler = new ConnectionHandler(loginResponse.User.Id, serverConnection);
 
                 Log.DebugFormat("Connection process to the server has finished");
             }

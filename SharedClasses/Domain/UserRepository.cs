@@ -21,8 +21,8 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(user != null);
 
-            usersIndexedById.TryAdd(user.UserId, user);
-            Log.DebugFormat("User with Id {0} added.", + user.UserId);
+            usersIndexedById.TryAdd(user.Id, user);
+            Log.DebugFormat("User with Id {0} added.", + user.Id);
 
             EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
 
@@ -83,8 +83,8 @@ namespace SharedClasses.Domain
 
             foreach (User user in usersEnumerable)
             {
-                usersIndexedById[user.UserId] = user;
-                Log.Debug("User with Id " + user.UserId + " added to user repository");
+                usersIndexedById[user.Id] = user;
+                Log.Debug("User with Id " + user.Id + " added to user repository");
             }
         }
 

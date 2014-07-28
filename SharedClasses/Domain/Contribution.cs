@@ -7,16 +7,16 @@ namespace SharedClasses.Domain
     /// A fundamental domain entity object needed to model a contribution to a conversation.
     /// </summary>
     [Serializable]
-    public sealed class Contribution : IEquatable<Contribution>
+    public sealed class Contribution : IEntity, IEquatable<Contribution>
     {
-        private readonly int contributionId;
+        private readonly int id;
         private readonly int contributorUserId;
         private readonly int conversationId;
         private readonly string message;
         private readonly DateTime messageTimeStamp;
 
         /// <summary>
-        /// Create a contribution that will later get assigned an ID.
+        /// Create a contribution that will later get assigned an Id.
         /// </summary>
         public Contribution(int contributorUserId, string message, int conversationId)
         {
@@ -31,15 +31,15 @@ namespace SharedClasses.Domain
         /// <summary>
         /// Creates a complete contribution entity
         /// </summary>
-        /// <param name="contributionId">The unique ID of the entity.</param>
+        /// <param name="id">The unique Id of the contribution entity.</param>
         /// <param name="incompleteContribution">The extra details of the <see cref="Contribution"/>.</param>
-        public Contribution(int contributionId, Contribution incompleteContribution)
+        public Contribution(int id, Contribution incompleteContribution)
             : this(incompleteContribution.ContributorUserId, incompleteContribution.Message, incompleteContribution.ConversationId)
         {
-            Contract.Requires(contributionId > 0);
+            Contract.Requires(id > 0);
             Contract.Requires(incompleteContribution != null);
 
-            this.contributionId = contributionId;
+            this.id = id;
             messageTimeStamp = DateTime.Now;
         }
 
@@ -54,9 +54,9 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The Unique ID of this Contribution
         /// </summary>
-        public int ContributionId
+        public int Id
         {
-            get { return contributionId; }
+            get { return id; }
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace SharedClasses.Domain
                 return true;
             }
 
-            return ContributionId == other.ContributionId;
+            return Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -107,7 +107,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return ContributionId;
+            return Id;
         }
     }
 }

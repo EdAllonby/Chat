@@ -15,7 +15,7 @@ namespace SharedClassesTests.Domain
         public void AssignCustomIdtoUserTest(int userId)
         {
             var user = new User("user", userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
-            Assert.AreEqual(user.UserId, userId);
+            Assert.AreEqual(user.Id, userId);
         }
 
         [TestCase("Tim", "Eric", 3)]
@@ -47,7 +47,7 @@ namespace SharedClassesTests.Domain
             }
 
             Contract.Assert(user != null, "user != null");
-            Assert.AreEqual(user.UserId, totalUsers + baseId);
+            Assert.AreEqual(user.Id, totalUsers + baseId);
         }
 
         [Test]
@@ -59,12 +59,12 @@ namespace SharedClassesTests.Domain
 
             var user1 = new User("User1", user1EntityId, new ConnectionStatus(user1EntityId, ConnectionStatus.Status.Connected));
 
-            Assert.AreEqual(user1.UserId, user1EntityId);
+            Assert.AreEqual(user1.Id, user1EntityId);
 
             int user2EntityId = entityGenerator.AllocateEntityId<User>();
 
             var user2 = new User("User2", user2EntityId, new ConnectionStatus(user2EntityId, ConnectionStatus.Status.Connected));
-            Assert.AreNotSame(user1.UserId, user2.UserId);
+            Assert.AreNotSame(user1.Id, user2.Id);
 
             Assert.IsFalse(user1.Equals(user2 as object));
         }

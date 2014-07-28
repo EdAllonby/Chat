@@ -14,13 +14,13 @@ namespace SharedClassesTests.Domain
             var userRepository = new UserRepository();
             userRepository.AddUser(user);
 
-            Assert.AreEqual(user, userRepository.FindUserById(user.UserId));
+            Assert.AreEqual(user, userRepository.FindUserById(user.Id));
 
             user.ConnectionStatus = new ConnectionStatus(2, ConnectionStatus.Status.Connected);
 
-            userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.UserId, ConnectionStatus.Status.Connected));
+            userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.Id, ConnectionStatus.Status.Connected));
 
-            Assert.AreEqual(user, userRepository.FindUserById(user.UserId));
+            Assert.AreEqual(user, userRepository.FindUserById(user.Id));
         }
 
         [Test]
@@ -49,14 +49,6 @@ namespace SharedClassesTests.Domain
             var users = new List<User> {user};
 
             Assert.AreEqual(users, userRepository.GetAllUsers());
-        }
-
-        [Test]
-        public void FindNonExistentUserTest()
-        {
-            var userRepository = new UserRepository();
-
-            Assert.IsNull(userRepository.FindUserById(3));
         }
 
         [Test]

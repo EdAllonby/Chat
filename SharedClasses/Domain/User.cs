@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -10,9 +9,9 @@ namespace SharedClasses.Domain
     /// Models a user in the system as an entity.
     /// </summary>
     [Serializable]
-    public sealed class User : IEquatable<User>
+    public sealed class User : IEntity, IEquatable<User>
     {
-        private readonly int userId;
+        private readonly int id;
         private readonly string username;
         private Avatar avatar;
 
@@ -31,24 +30,24 @@ namespace SharedClasses.Domain
         /// Creates a user entity with an Id.
         /// </summary>
         /// <param name="username">The name of the user.</param>
-        /// <param name="userId">The unique Id of the user.</param>
+        /// <param name="id">The unique Id of the user.</param>
         /// <param name="status">The current status of the user.</param>
-        public User(string username, int userId, ConnectionStatus status)
+        public User(string username, int id, ConnectionStatus status)
             : this(username)
         {
             Contract.Requires(username != null);
-            Contract.Requires(userId > 0);
+            Contract.Requires(id > 0);
 
-            this.userId = userId;
+            this.id = id;
             ConnectionStatus = status;
         }
 
         /// <summary>
         /// A Unique number used to identify the User.
         /// </summary>
-        public int UserId
+        public int Id
         {
-            get { return userId; }
+            get { return id; }
         }
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace SharedClasses.Domain
                 return true;
             }
 
-            return userId == other.userId;
+            return id == other.id;
         }
 
         public override bool Equals(object obj)
@@ -117,7 +116,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return userId;
+            return id;
         }
 
         #endregion

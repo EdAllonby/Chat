@@ -58,7 +58,7 @@ namespace ChatClient.Services
 
             if (response.LoginResult == LoginResult.Success)
             {
-                ClientUserId = response.User.UserId;
+                ClientUserId = response.User.Id;
 
                 connectionHandler.MessageReceived += OnNewMessageReceived;
             }

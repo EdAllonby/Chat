@@ -24,12 +24,12 @@ namespace ChatClient.ViewModels
         internal static void CreateConversationWindow(Conversation conversation)
         {
             // Check if conversation window already exists
-            if (GetWindowStatus(conversation.ConversationId) == WindowStatus.Closed)
+            if (GetWindowStatus(conversation.Id) == WindowStatus.Closed)
             {
                 Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation)));
 
-                SetWindowStatus(conversation.ConversationId, WindowStatus.Open);
-                Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.ConversationId);
+                SetWindowStatus(conversation.Id, WindowStatus.Open);
+                Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.Id);
             }
         }
 
