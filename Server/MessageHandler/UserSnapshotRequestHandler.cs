@@ -21,7 +21,7 @@ namespace Server.MessageHandler
         private static void SendUserSnapshot(UserSnapshotRequest userSnapshotRequest,
             UserSnapshotRequestContext userSnapshotRequestContext)
         {
-            IEnumerable<User> currentUsers = userSnapshotRequestContext.UserRepository.GetAllUsers();
+            IEnumerable<User> currentUsers = userSnapshotRequestContext.UserRepository.GetAllEntities();
             var userSnapshot = new UserSnapshot(currentUsers);
             userSnapshotRequestContext.ClientHandlersIndexedByUserId[userSnapshotRequest.UserId].SendMessage(userSnapshot);
         }

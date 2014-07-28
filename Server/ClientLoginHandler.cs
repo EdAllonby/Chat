@@ -70,7 +70,7 @@ namespace Server
         {
             var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), new ConnectionStatus(clientLogin.User.Id, ConnectionStatus.Status.Connected));
 
-            userRepository.AddUser(newUser);
+            userRepository.AddEntity(newUser);
 
             return newUser;
         }

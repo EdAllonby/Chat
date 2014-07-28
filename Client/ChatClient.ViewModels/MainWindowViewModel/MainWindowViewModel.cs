@@ -22,7 +22,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             if (!IsInDesignMode)
             {
                 userRepository = ClientService.RepositoryManager.UserRepository;
-                userRepository.UserChanged += OnUserChanged;
+                userRepository.EntityChanged += OnUserChanged;
                 userId = ClientService.ClientUserId;
             }
         }
@@ -39,7 +39,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public string Username
         {
-            get { return userRepository.FindUserById(userId).Username; }
+            get { return userRepository.FindEntityById(userId).Username; }
         }
 
         public ICommand OpenUserSettings

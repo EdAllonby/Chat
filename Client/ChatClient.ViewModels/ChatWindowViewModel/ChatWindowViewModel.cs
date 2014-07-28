@@ -38,7 +38,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 repositoryManager = ClientService.RepositoryManager;
 
-                repositoryManager.UserRepository.UserChanged += OnUserChanged;
+                repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
                 repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
                 repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
@@ -50,7 +50,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 UpdateConnectedUsersList();
 
-                groupChat.WindowTitle = repositoryManager.UserRepository.FindUserById(ClientService.ClientUserId).Username;
+                groupChat.WindowTitle = repositoryManager.UserRepository.FindEntityById(ClientService.ClientUserId).Username;
                 groupChat.Title = GetChatTitle();
             }
         }
@@ -92,7 +92,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             UserRepository userRepository = ClientService.RepositoryManager.UserRepository;
 
             return participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id)
-                .Select(participation => userRepository.FindUserById(participation.UserId)).ToList();
+                .Select(participation => userRepository.FindEntityById(participation.UserId)).ToList();
         }
 
         private string GetChatTitle()
@@ -104,7 +104,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             foreach (Participation participant in repositoryManager.ParticipationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id))
             {
-                usernames.Add(repositoryManager.UserRepository.FindUserById(participant.UserId).Username);
+                usernames.Add(repositoryManager.UserRepository.FindEntityById(participant.UserId).Username);
             }
 
             titleBuilder.Append(TitleBuilder.CreateUserList(usernames));
@@ -114,7 +114,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void UpdateConnectedUsersList()
         {
-            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
+            IEnumerable<User> users = repositoryManager.UserRepository.GetAllEntities();
 
             List<User> newUserList = users.Where(user => user.Id != ClientService.ClientUserId)
                 .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).ToList();

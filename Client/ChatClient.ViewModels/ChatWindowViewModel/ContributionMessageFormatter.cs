@@ -101,7 +101,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private Run FormatUser(Contribution contribution)
         {
-            return new Run(userRepository.FindUserById(contribution.ContributorUserId).Username)
+            return new Run(userRepository.FindEntityById(contribution.ContributorUserId).Username)
             {
                 FontWeight = FontWeights.Bold
             };

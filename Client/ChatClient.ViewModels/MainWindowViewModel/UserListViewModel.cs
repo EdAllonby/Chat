@@ -24,7 +24,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             {
                 repositoryManager = ClientService.RepositoryManager;
 
-                repositoryManager.UserRepository.UserChanged += OnUserChanged;
+                repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
                 repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
                 repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
@@ -116,7 +116,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private void UpdateConnectedUsers()
         {
-            IEnumerable<User> users = repositoryManager.UserRepository.GetAllUsers();
+            IEnumerable<User> users = repositoryManager.UserRepository.GetAllEntities();
             List<User> newUserList = users.Where(user => user.Id != ClientService.ClientUserId).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();

@@ -12,15 +12,15 @@ namespace SharedClassesTests.Domain
         {
             var user = new User("User", 2, new ConnectionStatus(2, ConnectionStatus.Status.Connected));
             var userRepository = new UserRepository();
-            userRepository.AddUser(user);
+            userRepository.AddEntity(user);
 
-            Assert.AreEqual(user, userRepository.FindUserById(user.Id));
+            Assert.AreEqual(user, userRepository.FindEntityById(user.Id));
 
             user.ConnectionStatus = new ConnectionStatus(2, ConnectionStatus.Status.Connected);
 
             userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.Id, ConnectionStatus.Status.Connected));
 
-            Assert.AreEqual(user, userRepository.FindUserById(user.Id));
+            Assert.AreEqual(user, userRepository.FindEntityById(user.Id));
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace SharedClassesTests.Domain
             var userRepository = new UserRepository();
 
             userRepository.AddUsers(users);
-            Assert.AreEqual(users, userRepository.GetAllUsers());
+            Assert.AreEqual(users, userRepository.GetAllEntities());
         }
 
         [Test]
@@ -43,12 +43,12 @@ namespace SharedClassesTests.Domain
 
             var userRepository = new UserRepository();
 
-            userRepository.AddUser(user);
-            userRepository.AddUser(user);
+            userRepository.AddEntity(user);
+            userRepository.AddEntity(user);
 
             var users = new List<User> {user};
 
-            Assert.AreEqual(users, userRepository.GetAllUsers());
+            Assert.AreEqual(users, userRepository.GetAllEntities());
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace SharedClassesTests.Domain
             const string Username = "User";
             var user = new User(Username, 3, new ConnectionStatus(3, ConnectionStatus.Status.Connected));
 
-            userRepository.AddUser(user);
+            userRepository.AddEntity(user);
 
             Assert.AreEqual(user, userRepository.FindUserByUsername(Username));
 

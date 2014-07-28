@@ -1,36 +1,14 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using log4net;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
-    public sealed class UserRepository
+    public sealed class UserRepository : Repository<User>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
-        private readonly ConcurrentDictionary<int, User> usersIndexedById = new ConcurrentDictionary<int, User>();
-
-        public event EventHandler<EntityChangedEventArgs<User>> UserChanged;
-        
-        public void AddUser(User user)
-        {
-            Contract.Requires(user != null);
-
-            usersIndexedById.TryAdd(user.Id, user);
-            Log.DebugFormat("User with Id {0} added.", + user.Id);
-
-            EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
-
-            userChangedEventArgs.EntityAdded(user);
-
-            OnUserChanged(userChangedEventArgs);
-        }
-
         /// <summary>
         /// Updates a <see cref="User"/>'s <see cref="ConnectionStatus"/>
         /// </summary>
@@ -39,17 +17,17 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(connectionStatus != null);
             
-            User user = FindUserById(connectionStatus.UserId);
+            User user = FindEntityById(connectionStatus.UserId);
 
             User previousUser = User.DeepClone(user);
 
             user.ConnectionStatus = connectionStatus;
 
-            EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
+            var userChangedEventArgs = new EntityChangedEventArgs<User>();
 
             userChangedEventArgs.EntityUpdated(user, previousUser);
 
-            OnUserChanged(userChangedEventArgs);
+            OnEntityChanged(userChangedEventArgs);
         }
 
         /// <summary>
@@ -59,16 +37,16 @@ namespace SharedClasses.Domain
         public void UpdateUserAvatar(Avatar avatar)
         {
             Contract.Requires(avatar != null);
-            User user = FindUserById(avatar.UserId);
+            User user = FindEntityById(avatar.UserId);
 
             User previousUser = User.DeepClone(user);
 
             user.Avatar = avatar;
 
-            EntityChangedEventArgs<User> userChangedEventArgs = new EntityChangedEventArgs<User>();
+            var userChangedEventArgs = new EntityChangedEventArgs<User>();
             userChangedEventArgs.EntityUpdated(user, previousUser);
 
-            OnUserChanged(userChangedEventArgs);
+            OnEntityChanged(userChangedEventArgs);
         }
 
         /// <summary>
@@ -83,43 +61,19 @@ namespace SharedClasses.Domain
 
             foreach (User user in usersEnumerable)
             {
-                usersIndexedById[user.Id] = user;
+                EntitiesIndexedById[user.Id] = user;
                 Log.Debug("User with Id " + user.Id + " added to user repository");
             }
         }
 
         /// <summary>
-        /// Retrieves a <see cref="User"/> entity from the repository.
+        /// Gets a <see cref="User"/> entity by username.
         /// </summary>
-        /// <param name="userId">The <see cref="User"/> entity ID to find.</param>
-        /// <returns>The <see cref="User"/> which matches the ID. If no <see cref="User"/> is found, return null.</returns>
-        public User FindUserById(int userId)
-        {
-            return usersIndexedById[userId];
-        }
-
+        /// <param name="username">The username that is used to find the <see cref="User"/>.</param>
+        /// <returns>The <see cref="User"/> that matches the username.</returns>
         public User FindUserByUsername(string username)
         {
-            return usersIndexedById.Where(user => user.Value.Username == username).Select(user => user.Value).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Retrieves all <see cref="User"/> entities from the repository.
-        /// </summary>
-        /// <returns>A collection of all <see cref="User"/> entities in the repository.</returns>
-        public IEnumerable<User> GetAllUsers()
-        {
-            return usersIndexedById.Values;
-        }
-
-        private void OnUserChanged(EntityChangedEventArgs<User> entityChangedEventArgs)
-        {
-            EventHandler<EntityChangedEventArgs<User>> userChangedCopy = UserChanged;
-
-            if (userChangedCopy != null)
-            {
-                userChangedCopy(this, entityChangedEventArgs);
-            }
+            return EntitiesIndexedById.Where(user => user.Value.Username == username).Select(user => user.Value).FirstOrDefault();
         }
     }
 }

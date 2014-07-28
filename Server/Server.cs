@@ -27,7 +27,7 @@ namespace Server
         {
             serverContextRegistry = new ServerContextRegistry(repositoryManager, clientHandlersIndexedByUserId, entityIdAllocatorFactory);
 
-            repositoryManager.UserRepository.UserChanged += OnUserChanged;
+            repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
             repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
             repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
@@ -170,7 +170,7 @@ namespace Server
 
             foreach (User user in
                 repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.Id)
-                    .Select(participant => repositoryManager.UserRepository.FindUserById(participant.UserId))
+                    .Select(participant => repositoryManager.UserRepository.FindEntityById(participant.UserId))
                     .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected))
             {
                 clientHandlersIndexedByUserId[user.Id].SendMessage(contributionNotification);

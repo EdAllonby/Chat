@@ -75,18 +75,19 @@ namespace SharedClasses.Domain
         /// <summary>
         /// Deep clone a <see cref="User"/> entity.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static User DeepClone(User obj)
+        /// <param name="user">The user to deep clone.</param>
+        /// <returns>The deep cloned user object.</returns>
+        public static User DeepClone(User user)
         {
-            using (var ms = new MemoryStream())
+            Contract.Requires(user != null);
+
+            using (var memoryStream = new MemoryStream())
             {
                 var formatter = new BinaryFormatter();
-                formatter.Serialize(ms, obj);
-                ms.Position = 0;
+                formatter.Serialize(memoryStream, user);
+                memoryStream.Position = 0;
 
-                return (User)formatter.Deserialize(ms);
+                return (User)formatter.Deserialize(memoryStream);
             }
         }
 
