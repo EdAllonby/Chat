@@ -19,7 +19,7 @@ namespace ChatClient.Services.MessageHandler
             switch (userNotification.NotificationType)
             {
                 case NotificationType.Create:
-                    userRepository.AddUser(userNotification.User);
+                    userRepository.AddEntity(userNotification.User);
                     break;
             }
         }

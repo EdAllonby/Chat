@@ -1,8 +1,9 @@
-﻿using SharedClasses.Message;
+﻿using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace SharedClasses
 {
-    public sealed class EntityChangedEventArgs<T>
+    public sealed class EntityChangedEventArgs<T> where T : IEntity
     {
         public NotificationType NotificationType { get; private set; }
 
