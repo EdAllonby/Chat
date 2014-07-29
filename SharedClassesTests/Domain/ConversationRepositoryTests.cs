@@ -27,24 +27,5 @@ namespace SharedClassesTests.Domain
             conversationRepository.AddConversation(conversation);
             Assert.AreEqual(conversation, conversationRepository.FindEntityById(conversation.Id));
         }
-
-        [Test]
-        public void CanNotAddSameConversationEntityTwice()
-        {
-            var conversation = new Conversation(1);
-
-            var conversationRepository = new ConversationRepository();
-
-            conversationRepository.AddConversation(conversation);
-            Assert.Throws<ArgumentException>(() => conversationRepository.AddConversation(conversation));
-        }
-
-        [Test]
-        public void FindNonExistentConversationTest()
-        {
-            var conversationRepository = new ConversationRepository();
-
-            Assert.IsNull(conversationRepository.FindEntityById(3));
-        }
     }
 }

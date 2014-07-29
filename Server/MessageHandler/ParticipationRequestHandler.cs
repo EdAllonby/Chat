@@ -52,7 +52,7 @@ namespace Server.MessageHandler
             var participation = new Participation(participationId, participationRequest.Participation.UserId,
                 participationRequest.Participation.ConversationId);
 
-            participationRepository.AddParticipation(participation);
+            participationRepository.AddEntity(participation);
         }
     }
 }

@@ -6,7 +6,7 @@ using log4net;
 
 namespace SharedClasses.Domain
 {
-    public class Repository<T> where T : IEntity
+    public abstract class Repository<T> where T : IEntity
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof(Repository<T>));
 
