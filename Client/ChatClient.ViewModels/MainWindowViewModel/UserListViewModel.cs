@@ -4,6 +4,7 @@ using System.Windows.Input;
 using ChatClient.ViewModels.Commands;
 using SharedClasses;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
@@ -26,10 +27,25 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
                 repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
-                repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
-                repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
+                repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
 
                 UpdateConnectedUsers();
+            }
+        }
+
+        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            switch (e.NotificationType)
+            {
+                case NotificationType.Create:
+                    OnConversationAdded(e.Entity);
+                    break;
+                case NotificationType.Update:
+                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
+                    {
+                        OnContributionAdded(e.Entity.LastContribution);
+                    }
+                    break;
             }
         }
 
@@ -73,15 +89,14 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
         }
 
-        private static void OnConversationAdded(object sender, Conversation conversation)
+        private static void OnConversationAdded(Conversation conversation)
         {
             ConversationWindowManager.CreateConversationWindow(conversation);
         }
 
-        private void OnContributionAdded(object sender, Contribution contribution)
+        private void OnContributionAdded(Contribution contribution)
         {
-            Conversation conversation =
-                repositoryManager.ConversationRepository.FindConversationById(contribution.ConversationId);
+            Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(contribution.ConversationId);
 
             ConversationWindowManager.CreateConversationWindow(conversation);
         }
@@ -135,7 +150,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             else
             {
                 int conversationId = repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
-                ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
+                ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindEntityById(conversationId));
             }
         }
     }

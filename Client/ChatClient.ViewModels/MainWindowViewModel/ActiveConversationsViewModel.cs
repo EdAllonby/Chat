@@ -19,9 +19,13 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
                 UpdateActiveConversations();
 
-                repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
-                repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
+                repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
             }
+        }
+
+        void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            UpdateActiveConversations();
         }
 
         public IList<ConversationViewModel> ActiveConversations
@@ -41,27 +45,17 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public void GetConversationWindow(int conversationId)
         {
-            ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindConversationById(conversationId));
+            ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindEntityById(conversationId));
         }
 
         private void UpdateActiveConversations()
         {
-            IEnumerable<Conversation> conversations = repositoryManager.ConversationRepository.GetAllConversations();
+            IEnumerable<Conversation> conversations = repositoryManager.ConversationRepository.GetAllEntities();
 
             List<ConversationViewModel> updatedConversations = conversations.Select(conversation =>
                 new ConversationViewModel(conversation, repositoryManager.UserRepository, repositoryManager.ParticipationRepository)).ToList();
 
             ActiveConversations = updatedConversations;
-        }
-
-        private void OnConversationUpdated(object sender, Conversation conversation)
-        {
-            UpdateActiveConversations();
-        }
-
-        private void OnConversationAdded(object sender, Conversation e)
-        {
-            UpdateActiveConversations();
         }
     }
 }

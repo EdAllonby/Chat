@@ -1,46 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using log4net;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
     /// Holds a collection of <see cref="Conversation"/>s with basic CRUD operations.
     /// </summary>
-    public sealed class ConversationRepository
+    public sealed class ConversationRepository : Repository<Conversation>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRepository));
-
-        private readonly Dictionary<int, Conversation> conversationsIndexedById = new Dictionary<int, Conversation>();
-
-        public event EventHandler<Conversation> ConversationAdded;
-        public event EventHandler<Contribution> ContributionAdded;
-        public event EventHandler<Conversation> ConversationUpdated;
-
         /// <summary>
         /// Adds a <see cref="Conversation"/> entity to the repository.
         /// </summary>
         /// <param name="conversation"><see cref="Conversation"/> entity to add.</param>
         public void AddConversation(Conversation conversation)
         {
-            Contract.Requires(conversation != null);
-
-            conversationsIndexedById.Add(conversation.Id, conversation);
-            Log.DebugFormat("Conversation with Id {0} added.", conversation.Id);
-
-            OnConversationAdded(conversation);
+            AddEntity(conversation);
         }
 
         public void UpdateConversation(Conversation conversation)
         {
             Contract.Requires(conversation != null);
 
-            conversationsIndexedById[conversation.Id] = conversation;
-            Log.DebugFormat("Conversation with Id {0} has been updated.", conversation.Id);
+            Conversation previousConversation = Conversation.DeepClone(EntitiesIndexedById[conversation.Id]);
 
-            OnConversationUpdated(conversation);
+            EntitiesIndexedById[conversation.Id] = conversation;
+
+            var conversationChangedEventArgs = new EntityChangedEventArgs<Conversation>();
+            conversationChangedEventArgs.EntityUpdated(conversation, previousConversation);
+            OnEntityChanged(conversationChangedEventArgs);
+
+            Log.DebugFormat("Conversation with Id {0} has been updated.", conversation.Id);
         }
 
         public void AddContributionToConversation(Contribution contribution)
@@ -49,11 +39,15 @@ namespace SharedClasses.Domain
             Contract.Requires(contribution.Id > 0);
             Contract.Requires(contribution.ConversationId > 0);
 
-            Conversation conversation = FindConversationById(contribution.ConversationId);
+            Conversation conversation = FindEntityById(contribution.ConversationId);
+            Conversation previousConversation = Conversation.DeepClone(conversation);
 
             conversation.AddContribution(contribution);
 
-            OnContributionAdded(contribution);
+            var conversationChangedEventArgs = new EntityChangedEventArgs<Conversation>();
+            conversationChangedEventArgs.EntityUpdated(conversation, previousConversation);
+
+            OnEntityChanged(conversationChangedEventArgs);
         }
 
         /// <summary>
@@ -64,61 +58,12 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(conversations != null);
 
-            IEnumerable<Conversation> conversationsEnumerable = conversations as IList<Conversation> ?? conversations.ToList();
+            IEnumerable<Conversation> conversationsEnumerable = conversations as IList<Conversation> ??
+                                                                conversations.ToList();
             foreach (Conversation conversation in conversationsEnumerable)
             {
-                conversationsIndexedById[conversation.Id] = conversation;
+                EntitiesIndexedById[conversation.Id] = conversation;
                 Log.Debug("Conversation with Id " + conversation.Id + " added to conversation repository");
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a <see cref="Conversation"/> entity from the repository.
-        /// </summary>
-        /// <param name="conversationID">The <see cref="Conversation"/> entity ID to find.</param>
-        /// <returns>The <see cref="Conversation"/> which matches the ID. If no <see cref="Conversation"/> is found, return null.</returns>
-        public Conversation FindConversationById(int conversationID)
-        {
-            Conversation conversation;
-            return conversationsIndexedById.TryGetValue(conversationID, out conversation) ? conversation : null;
-        }
-
-        /// <summary>
-        /// Retrieves all <see cref="Conversation"/> entities from the repository.
-        /// </summary>
-        /// <returns>A collection of all <see cref="Conversation"/> entities in the repository.</returns>
-        public IEnumerable<Conversation> GetAllConversations()
-        {
-            return conversationsIndexedById.Values;
-        }
-
-        private void OnConversationAdded(Conversation conversation)
-        {
-            EventHandler<Conversation> conversationAddedCopy = ConversationAdded;
-
-            if (conversationAddedCopy != null)
-            {
-                conversationAddedCopy(this, conversation);
-            }
-        }
-
-        private void OnConversationUpdated(Conversation conversation)
-        {
-            EventHandler<Conversation> conversationUpdatedCopy = ConversationUpdated;
-
-            if (conversationUpdatedCopy != null)
-            {
-                conversationUpdatedCopy(this, conversation);
-            }
-        }
-
-        private void OnContributionAdded(Contribution contribution)
-        {
-            EventHandler<Contribution> conversationAddedCopy = ContributionAdded;
-
-            if (conversationAddedCopy != null)
-            {
-                conversationAddedCopy(this, contribution);
             }
         }
     }
