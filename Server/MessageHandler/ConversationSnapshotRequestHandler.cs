@@ -31,7 +31,7 @@ namespace Server.MessageHandler
             List<Conversation> conversations =
                 conversationEnumerable.Select(
                     conversationId =>
-                        conversationSnapshotRequestContext.ConversationRepository.FindConversationById(conversationId)).ToList();
+                        conversationSnapshotRequestContext.ConversationRepository.FindEntityById(conversationId)).ToList();
 
             var conversationSnapshot = new ConversationSnapshot(conversations);
 

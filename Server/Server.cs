@@ -29,8 +29,7 @@ namespace Server
 
             repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
-            repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
-            repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
+            repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
             repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
             repositoryManager.ParticipationRepository.ParticipationAdded += OnParticipationAdded;
 
@@ -98,20 +97,17 @@ namespace Server
 
         private void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
         {
-            User previousUser = e.PreviousEntity;
-            User newUser = e.Entity;
-
             switch (e.NotificationType)
             {
                 case NotificationType.Create:
                     OnUserAdded(e.Entity);
                     break;
                 case NotificationType.Update:
-                    if (previousUser.ConnectionStatus.UserConnectionStatus != e.Entity.ConnectionStatus.UserConnectionStatus)
+                    if (e.PreviousEntity.ConnectionStatus.UserConnectionStatus != e.Entity.ConnectionStatus.UserConnectionStatus)
                     {
                         OnUserConnectionUpdated(e.Entity);
                     }
-                    if (!previousUser.Avatar.Equals(e.Entity.Avatar))
+                    if (!e.PreviousEntity.Avatar.Equals(e.Entity.Avatar))
                     {
                         OnUserAvatarUpdated(e.Entity);
                     }
@@ -149,7 +145,7 @@ namespace Server
             }
         }
 
-        private void OnConversationAdded(object sender, Conversation conversation)
+        private void OnConversationAdded(Conversation conversation)
         {
             var conversationNotification = new ConversationNotification(conversation, NotificationType.Create);
 
@@ -161,15 +157,28 @@ namespace Server
             }
         }
 
-        private void OnContributionAdded(object sender, Contribution contribution)
+        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            switch (e.NotificationType)
+            {
+                case NotificationType.Create:
+                    OnConversationAdded(e.Entity);
+                    break;
+                case NotificationType.Update:
+                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
+                    {
+                        OnContributionAdded(e.Entity.LastContribution);
+                    }
+                    break;
+            }
+        }
+
+        private void OnContributionAdded(Contribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
 
-            Conversation conversation = repositoryManager.ConversationRepository
-                .FindConversationById(contribution.ConversationId);
-
             foreach (User user in
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.Id)
+                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(contribution.ConversationId)
                     .Select(participant => repositoryManager.UserRepository.FindEntityById(participant.UserId))
                     .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected))
             {
@@ -216,7 +225,7 @@ namespace Server
             }
 
             Conversation conversation = repositoryManager.ConversationRepository
-                .FindConversationById(participation.ConversationId);
+                .FindEntityById(participation.ConversationId);
 
             clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation, NotificationType.Create));
 

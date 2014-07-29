@@ -11,6 +11,7 @@ using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
@@ -40,8 +41,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
-                repositoryManager.ConversationRepository.ConversationUpdated += OnConversationUpdated;
-                repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
+                repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
 
                 AddUserCommand = new AddUserToConversationCommand(this);
 
@@ -52,6 +52,25 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 groupChat.WindowTitle = repositoryManager.UserRepository.FindEntityById(ClientService.ClientUserId).Username;
                 groupChat.Title = GetChatTitle();
+            }
+        }
+
+        void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            
+            switch (e.NotificationType)
+            {
+                    case NotificationType.Update:
+                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
+                    {
+                        OnContributionAdded(e.Entity.LastContribution);                        
+                    }
+                    else
+                    {
+                        OnConversationUpdated(e.Entity);
+                    }
+
+                    break;
             }
         }
 
@@ -129,7 +148,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             GetMessages();
         }
 
-        private void OnContributionAdded(object sender, Contribution contribution)
+        private void OnContributionAdded(Contribution contribution)
         {
             if (contribution.ConversationId == groupChat.Conversation.Id)
             {
@@ -141,7 +160,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                     GroupChat.Messages = messages;
                 });
 
-                if (groupChat.Conversation.GetAllContributions().Last().ContributorUserId != ClientService.ClientUserId)
+                if (groupChat.Conversation.LastContribution.ContributorUserId != ClientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
@@ -168,10 +187,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.Messages = messages;
         }
 
-        private void OnConversationUpdated(object sender, Conversation conversation)
+        private void OnConversationUpdated(IEntity conversation)
         {
             // The model is no longer referencing the same conversation as in the repository, give it the reference again.
-            groupChat.Conversation = repositoryManager.ConversationRepository.FindConversationById(conversation.Id);
+            groupChat.Conversation = repositoryManager.ConversationRepository.FindEntityById(conversation.Id);
 
             groupChat.Title = GetChatTitle();
         }

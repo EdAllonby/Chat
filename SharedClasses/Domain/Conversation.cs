@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using SharedClasses.Message;
 
 namespace SharedClasses.Domain
@@ -11,7 +14,7 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Conversation : IEntity, IEquatable<Conversation>
     {
-        private readonly Dictionary<int, Contribution> contributionsIndexedByContributionID = new Dictionary<int, Contribution>();
+        private readonly Dictionary<int, Contribution> contributionsIndexedByContributionId = new Dictionary<int, Contribution>();
 
         private readonly int id;
 
@@ -34,6 +37,11 @@ namespace SharedClasses.Domain
             get { return id; }
         }
 
+        public Contribution LastContribution
+        {
+            get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
+        }
+
         public bool Equals(Conversation other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -49,7 +57,7 @@ namespace SharedClasses.Domain
             Contract.Requires(newContribution != null);
             Contract.Requires(newContribution.ConversationId == Id);
 
-            contributionsIndexedByContributionID[newContribution.Id] = newContribution;
+            contributionsIndexedByContributionId[newContribution.Id] = newContribution;
         }
 
         /// <summary>
@@ -61,7 +69,7 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(contributionNotification != null);
 
-            contributionsIndexedByContributionID[contributionNotification.Contribution.Id] = contributionNotification.Contribution;
+            contributionsIndexedByContributionId[contributionNotification.Contribution.Id] = contributionNotification.Contribution;
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace SharedClasses.Domain
         /// <returns>A collection of all contributions associated with the conversation.</returns>
         public IEnumerable<Contribution> GetAllContributions()
         {
-            return new List<Contribution>(contributionsIndexedByContributionID.Values);
+            return new List<Contribution>(contributionsIndexedByContributionId.Values);
         }
 
         public override bool Equals(object obj)
@@ -83,6 +91,20 @@ namespace SharedClasses.Domain
         public override int GetHashCode()
         {
             return id;
+        }
+
+        public static Conversation DeepClone(Conversation conversation)
+        {
+            Contract.Requires(conversation != null);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(memoryStream, conversation);
+                memoryStream.Position = 0;
+
+                return (Conversation)formatter.Deserialize(memoryStream);
+            }
         }
     }
 }

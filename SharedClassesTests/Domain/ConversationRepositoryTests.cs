@@ -16,7 +16,7 @@ namespace SharedClassesTests.Domain
             var conversations = new List<Conversation> {new Conversation(1), new Conversation(2)};
 
             conversationRepository.AddConversations(conversations);
-            Assert.AreEqual(conversations, conversationRepository.GetAllConversations());
+            Assert.AreEqual(conversations, conversationRepository.GetAllEntities());
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace SharedClassesTests.Domain
             var conversation = new Conversation(1);
             var conversationRepository = new ConversationRepository();
             conversationRepository.AddConversation(conversation);
-            Assert.AreEqual(conversation, conversationRepository.FindConversationById(conversation.Id));
+            Assert.AreEqual(conversation, conversationRepository.FindEntityById(conversation.Id));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace SharedClassesTests.Domain
         {
             var conversationRepository = new ConversationRepository();
 
-            Assert.IsNull(conversationRepository.FindConversationById(3));
+            Assert.IsNull(conversationRepository.FindEntityById(3));
         }
     }
 }
