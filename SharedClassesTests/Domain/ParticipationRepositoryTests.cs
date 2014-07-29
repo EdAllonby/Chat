@@ -14,8 +14,8 @@ namespace SharedClassesTests.Domain
             var participationRepository = new ParticipationRepository();
 
             var participation = new Participation(1, 1, 1);
-            participationRepository.AddParticipation(participation);
-            Assert.AreEqual(participation, participationRepository.GetAllParticipations().First());
+            participationRepository.AddEntity(participation);
+            Assert.AreEqual(participation, participationRepository.GetAllEntities().First());
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace SharedClassesTests.Domain
             };
             participationRepository.AddParticipations(participations);
 
-            Assert.AreEqual(participations, participationRepository.GetAllParticipations());
+            Assert.AreEqual(participations, participationRepository.GetAllEntities());
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace SharedClassesTests.Domain
         {
             var participationRepository = new ParticipationRepository();
             var participation = new Participation(1, 1, 1);
-            participationRepository.AddParticipation(participation);
+            participationRepository.AddEntity(participation);
 
             Assert.True(participationRepository.DoesConversationWithUsersExist(new List<int> {participation.UserId}));
         }
@@ -62,9 +62,9 @@ namespace SharedClassesTests.Domain
                 participation3.ConversationId
             };
 
-            participationRepository.AddParticipation(participation1);
-            participationRepository.AddParticipation(participation2);
-            participationRepository.AddParticipation(participation3);
+            participationRepository.AddEntity(participation1);
+            participationRepository.AddEntity(participation2);
+            participationRepository.AddEntity(participation3);
 
             IEnumerable<int> actualConversationIds = participationRepository.GetAllConversationIdsByUserId(userId);
 
@@ -87,7 +87,7 @@ namespace SharedClassesTests.Domain
 
             participationRepository.AddParticipations(participations);
 
-            Assert.AreEqual(participations, participationRepository.GetAllParticipations());
+            Assert.AreEqual(participations, participationRepository.GetAllEntities());
         }
 
         [Test]
@@ -98,8 +98,8 @@ namespace SharedClassesTests.Domain
             var participation1 = new Participation(1, 1, conversationId);
             var participation2 = new Participation(2, 2, conversationId);
 
-            participationRepository.AddParticipation(participation1);
-            participationRepository.AddParticipation(participation2);
+            participationRepository.AddEntity(participation1);
+            participationRepository.AddEntity(participation2);
 
             var participantIds = new List<int> {participation1.UserId, participation2.UserId};
 
@@ -112,13 +112,14 @@ namespace SharedClassesTests.Domain
         [Test]
         public void GetParticipationsByConversationIdTest()
         {
+            const int conversationId = 10;
+
             var participationRepository = new ParticipationRepository();
-            int conversationId = 10;
             var participation1 = new Participation(1, 1, conversationId);
             var participation2 = new Participation(2, 2, conversationId);
 
-            participationRepository.AddParticipation(participation1);
-            participationRepository.AddParticipation(participation2);
+            participationRepository.AddEntity(participation1);
+            participationRepository.AddEntity(participation2);
 
             var expectedParticipations = new List<Participation> {participation1, participation2};
 

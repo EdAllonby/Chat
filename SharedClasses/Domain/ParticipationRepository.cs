@@ -2,32 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using log4net;
 
 namespace SharedClasses.Domain
 {
-    public sealed class ParticipationRepository
+    public sealed class ParticipationRepository : Repository<Participation>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
-
-        private readonly Dictionary<int, Participation> participationsIndexedById = new Dictionary<int, Participation>();
-
-        public event EventHandler<Participation> ParticipationAdded;
-
         public event EventHandler<IEnumerable<Participation>> ParticipationsAdded;
-
-        /// <summary>
-        /// Adds a <see cref="Participation"/> entity to the repository
-        /// </summary>
-        /// <param name="participation">The <see cref="Participation"/> entity to add to the repository. Participation must not be null and must have an id greater than 0.</param>
-        public void AddParticipation(Participation participation)
-        {
-            Contract.Requires(participation != null);
-
-            AddParticipationToRepository(participation);
-
-            OnParticipationAdded(participation);
-        }
 
         /// <summary>
         /// Adds a group of participations 
@@ -67,7 +47,7 @@ namespace SharedClasses.Domain
         public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
         {
             return
-                participationsIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
+                EntitiesIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
         }
 
         /// <summary>
@@ -87,18 +67,9 @@ namespace SharedClasses.Domain
 
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
-            return from participation in participationsIndexedById.Values
+            return from participation in EntitiesIndexedById.Values
                 where participation.UserId == userId
                 select participation.ConversationId;
-        }
-
-        /// <summary>
-        /// Returns all of the <see cref="Participation"/> entities held in the repository.
-        /// </summary>
-        /// <returns>The collection of <see cref="Participation"/> held in the repository.</returns>
-        public IEnumerable<Participation> GetAllParticipations()
-        {
-            return participationsIndexedById.Values;
         }
 
         private void AddParticipationToRepository(Participation participation)
@@ -106,7 +77,7 @@ namespace SharedClasses.Domain
             Contract.Requires(participation != null);
             Contract.Requires(participation.Id > 0);
 
-            participationsIndexedById.Add(participation.Id, participation);
+            EntitiesIndexedById.TryAdd(participation.Id, participation);
 
             Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository",
                 participation.UserId, participation.ConversationId);
@@ -116,7 +87,7 @@ namespace SharedClasses.Domain
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
-            foreach (Participation participation in participationsIndexedById.Values)
+            foreach (Participation participation in EntitiesIndexedById.Values)
             {
                 if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
                 {
@@ -127,16 +98,6 @@ namespace SharedClasses.Domain
             }
 
             return userIdsIndexedByConversationId;
-        }
-
-        private void OnParticipationAdded(Participation participation)
-        {
-            EventHandler<Participation> participationAddedCopy = ParticipationAdded;
-
-            if (participationAddedCopy != null)
-            {
-                ParticipationAdded(this, participation);
-            }
         }
 
         private void OnParticipationsAdded(IEnumerable<Participation> participation)

@@ -19,7 +19,7 @@ namespace ChatClient.Services.MessageHandler
         private void AddParticipationToRepository(ParticipationNotification participationNotification,
             ParticipationNotificationContext participationNotificationContext)
         {
-            participationNotificationContext.ParticipationRepository.AddParticipation(participationNotification.Participation);
+            participationNotificationContext.ParticipationRepository.AddEntity(participationNotification.Participation);
         }
     }
 }

@@ -31,10 +31,18 @@ namespace Server
 
             repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
             repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
-            repositoryManager.ParticipationRepository.ParticipationAdded += OnParticipationAdded;
+            repositoryManager.ParticipationRepository.EntityChanged += ParticipationEntityChanged;
 
             Log.Info("Server instance started");
             ListenForNewClients();
+        }
+
+        private void ParticipationEntityChanged(object sender, EntityChangedEventArgs<Participation> e)
+        {
+            if (e.NotificationType == NotificationType.Create)
+            {
+                OnParticipationAdded(e.Entity);
+            }
         }
 
         private void ListenForNewClients()
@@ -201,7 +209,7 @@ namespace Server
             }
         }
 
-        private void OnParticipationAdded(object sender, Participation participation)
+        private void OnParticipationAdded(Participation participation)
         {
             IEnumerable<Participation> participations =
                 repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
