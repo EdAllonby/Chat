@@ -18,8 +18,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     public sealed class ChatWindowViewModel : ViewModel, IDisposable
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
-        private readonly RepositoryManager repositoryManager;
         private readonly ContributionMessageFormatter contributionMessageFormatter;
+        private readonly RepositoryManager repositoryManager;
 
         public EventHandler OpenUserSettingsWindowRequested;
 
@@ -55,25 +55,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
-        {
-            
-            switch (e.NotificationType)
-            {
-                    case NotificationType.Update:
-                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
-                    {
-                        OnContributionAdded(e.Entity.LastContribution);                        
-                    }
-                    else
-                    {
-                        OnConversationUpdated(e.Entity);
-                    }
-
-                    break;
-            }
-        }
-
         public GroupChatModel GroupChat
         {
             get { return groupChat; }
@@ -103,6 +84,24 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         public void Dispose()
         {
             audioPlayer.Dispose();
+        }
+
+        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            switch (e.NotificationType)
+            {
+                case NotificationType.Update:
+                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
+                    {
+                        OnContributionAdded(e.Entity.LastContribution);
+                    }
+                    else
+                    {
+                        OnConversationUpdated(e.Entity);
+                    }
+
+                    break;
+            }
         }
 
         private List<User> GetUsers()
@@ -152,10 +151,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             if (contribution.ConversationId == groupChat.Conversation.Id)
             {
-
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    var messages = GroupChat.Messages;
+                    FlowDocument messages = GroupChat.Messages;
                     messages.Blocks.Add(contributionMessageFormatter.FormatContribution(contribution));
                     GroupChat.Messages = messages;
                 });
@@ -167,7 +165,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
+        private void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
         {
             UpdateConnectedUsersList();
         }

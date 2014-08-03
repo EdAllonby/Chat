@@ -11,10 +11,10 @@ namespace ChatClient.Models.ChatModel
     {
         private Conversation conversation;
         private string messageToAddToConversation;
+        private FlowDocument messages = new FlowDocument();
         private string title;
         private List<User> users;
         private string windowTitle;
-        private FlowDocument messages = new FlowDocument();
 
         public string WindowTitle
         {

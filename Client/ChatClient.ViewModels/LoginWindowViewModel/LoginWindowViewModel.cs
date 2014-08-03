@@ -101,7 +101,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
             }
         }
 
-        void OnClientBootstrapCompleted(object sender, EventArgs e)
+        private void OnClientBootstrapCompleted(object sender, EventArgs e)
         {
             if (canOpenWindow)
             {

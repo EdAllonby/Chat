@@ -33,22 +33,6 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
-        {
-            switch (e.NotificationType)
-            {
-                case NotificationType.Create:
-                    OnConversationAdded(e.Entity);
-                    break;
-                case NotificationType.Update:
-                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
-                    {
-                        OnContributionAdded(e.Entity.LastContribution);
-                    }
-                    break;
-            }
-        }
-
         public bool IsMultiUserConversation
         {
             get { return isMultiUserConversation; }
@@ -89,6 +73,22 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
         }
 
+        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            switch (e.NotificationType)
+            {
+                case NotificationType.Create:
+                    OnConversationAdded(e.Entity);
+                    break;
+                case NotificationType.Update:
+                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
+                    {
+                        OnContributionAdded(e.Entity.LastContribution);
+                    }
+                    break;
+            }
+        }
+
         private static void OnConversationAdded(Conversation conversation)
         {
             ConversationWindowManager.CreateConversationWindow(conversation);
@@ -123,7 +123,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             return connectedUsers.Any(connectedUser => connectedUser.IsSelectedForConversation);
         }
 
-        void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
+        private void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
         {
             UpdateConnectedUsers();
         }

@@ -9,17 +9,17 @@ namespace ChatClient.Services.MessageHandler
     /// </summary>
     internal sealed class UserSnapshotHandler : IMessageHandler
     {
-        public event EventHandler UserBootstrapCompleted;
-
         public void HandleMessage(IMessage message, IMessageContext context)
         {
             var userSnapshot = (UserSnapshot) message;
             var userSnapshotContext = (UserSnapshotContext) context;
 
             userSnapshotContext.UserRepository.AddUsers(userSnapshot.Users);
-            
+
             OnUserBootstrapCompleted();
         }
+
+        public event EventHandler UserBootstrapCompleted;
 
         private void OnUserBootstrapCompleted()
         {

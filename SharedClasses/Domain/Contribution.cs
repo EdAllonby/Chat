@@ -9,9 +9,9 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class Contribution : IEntity, IEquatable<Contribution>
     {
-        private readonly int id;
         private readonly int contributorUserId;
         private readonly int conversationId;
+        private readonly int id;
         private readonly string message;
         private readonly DateTime messageTimeStamp;
 
@@ -52,14 +52,6 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The Unique ID of this Contribution
-        /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
-
-        /// <summary>
         /// The User who sent this Contribution message.
         /// </summary>
         public int ContributorUserId
@@ -81,6 +73,14 @@ namespace SharedClasses.Domain
         public DateTime MessageTimeStamp
         {
             get { return messageTimeStamp; }
+        }
+
+        /// <summary>
+        /// The Unique ID of this Contribution
+        /// </summary>
+        public int Id
+        {
+            get { return id; }
         }
 
         public bool Equals(Contribution other)

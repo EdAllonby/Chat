@@ -23,11 +23,6 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
-        {
-            UpdateActiveConversations();
-        }
-
         public IList<ConversationViewModel> ActiveConversations
         {
             get { return activeConversations; }
@@ -41,6 +36,11 @@ namespace ChatClient.ViewModels.MainWindowViewModel
                 activeConversations = value;
                 OnPropertyChanged();
             }
+        }
+
+        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            UpdateActiveConversations();
         }
 
         public void GetConversationWindow(int conversationId)

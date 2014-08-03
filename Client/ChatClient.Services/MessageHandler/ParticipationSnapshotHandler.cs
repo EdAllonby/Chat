@@ -9,8 +9,6 @@ namespace ChatClient.Services.MessageHandler
     /// </summary>
     internal sealed class ParticipationSnapshotHandler : IMessageHandler
     {
-        public event EventHandler ParticipationBootstrapCompleted;
-
         public void HandleMessage(IMessage message, IMessageContext context)
         {
             var participationSnapshot = (ParticipationSnapshot) message;
@@ -20,6 +18,8 @@ namespace ChatClient.Services.MessageHandler
 
             OnParticipationBootstrapCompleted();
         }
+
+        public event EventHandler ParticipationBootstrapCompleted;
 
         private void OnParticipationBootstrapCompleted()
         {

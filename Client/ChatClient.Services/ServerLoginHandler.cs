@@ -20,24 +20,24 @@ namespace ChatClient.Services
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly TcpClient serverConnection = new TcpClient();
 
-        private bool hasUserSnapshotBeenSent;
-        private bool hasParticipationSnapshotBeenSent;
         private bool hasConversationSnapshotBeenSent;
-
-        public event EventHandler BootstrapCompleted;
+        private bool hasParticipationSnapshotBeenSent;
+        private bool hasUserSnapshotBeenSent;
 
         public ServerLoginHandler()
         {
-            UserSnapshotHandler userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
-            ParticipationSnapshotHandler participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
-            ConversationSnapshotHandler conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
+            var userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
+            var participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
+            var conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
 
             userSnapshotHandler.UserBootstrapCompleted += OnUserBootstrapCompleted;
             participationSnapshotHandler.ParticipationBootstrapCompleted += OnParticipationBootstrapCompleted;
             conversationSnapshotHandler.ConversationBootstrapCompleted += OnConversationBootstrapCompleted;
         }
 
-        void OnUserBootstrapCompleted(object sender, EventArgs e)
+        public event EventHandler BootstrapCompleted;
+
+        private void OnUserBootstrapCompleted(object sender, EventArgs e)
         {
             hasUserSnapshotBeenSent = true;
             TrySendBootstrapCompleteEvent();
@@ -63,7 +63,7 @@ namespace ChatClient.Services
                 OnBootstrapCompleted();
             }
         }
-        
+
         public LoginResponse ConnectToServer(LoginDetails loginDetails, out ConnectionHandler connectionHandler)
         {
             CreateConnection(loginDetails.Address, loginDetails.Port);

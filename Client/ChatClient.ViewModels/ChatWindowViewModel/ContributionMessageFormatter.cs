@@ -12,10 +12,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     /// </summary>
     public sealed class ContributionMessageFormatter
     {
+        private readonly Brush receiverBackground = new SolidColorBrush(Color.FromArgb(50, 250, 100, 200));
+        private readonly Brush senderBackground = new SolidColorBrush(Color.FromArgb(70, 135, 206, 250));
         private readonly int userId;
         private readonly UserRepository userRepository;
-        private readonly Brush senderBackground = new SolidColorBrush(Color.FromArgb(70, 135, 206, 250));
-        private readonly Brush receiverBackground = new SolidColorBrush(Color.FromArgb(50, 250, 100, 200));
 
         private DateTime lastMessageSentDate = new DateTime(1999, 01, 01);
         private int lastUserId;
@@ -55,7 +55,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             if (IsLastMessageOld(contribution))
             {
-                paragraph.Inlines.Add(new LineBreak());            
+                paragraph.Inlines.Add(new LineBreak());
                 paragraph.Inlines.Add(timeStamp);
             }
 

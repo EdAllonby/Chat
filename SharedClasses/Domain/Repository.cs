@@ -8,7 +8,7 @@ namespace SharedClasses.Domain
 {
     public abstract class Repository<T> where T : IEntity
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof(Repository<T>));
+        protected static readonly ILog Log = LogManager.GetLogger(typeof (Repository<T>));
 
         protected readonly ConcurrentDictionary<int, T> EntitiesIndexedById = new ConcurrentDictionary<int, T>();
 

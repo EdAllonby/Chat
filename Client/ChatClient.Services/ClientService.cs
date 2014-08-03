@@ -22,8 +22,6 @@ namespace ChatClient.Services
 
         private ConnectionHandler connectionHandler;
 
-        public event EventHandler BootstrapCompleted;
-
         /// <summary>
         /// Initialises a new <see cref="ClientService"/>.
         /// </summary>
@@ -31,6 +29,8 @@ namespace ChatClient.Services
         {
             clientContextRegistry = new ClientContextRegistry(repositoryManager);
         }
+
+        public event EventHandler BootstrapCompleted;
 
         /// <summary>
         /// This Client's unique User Id.
@@ -131,7 +131,7 @@ namespace ChatClient.Services
 
         private void OnBootstrapCompleted(object sender, EventArgs e)
         {
-            var bootstrapCompletedCopy = BootstrapCompleted;
+            EventHandler bootstrapCompletedCopy = BootstrapCompleted;
 
             if (bootstrapCompletedCopy != null)
             {
