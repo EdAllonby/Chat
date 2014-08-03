@@ -41,11 +41,6 @@ namespace SharedClasses.Domain
             this.id = id;
         }
 
-        public int Id
-        {
-            get { return id; }
-        }
-
         public int UserId
         {
             get { return userId; }
@@ -78,5 +73,10 @@ namespace SharedClasses.Domain
         }
 
         #endregion
+
+        public int Id
+        {
+            get { return id; }
+        }
     }
 }

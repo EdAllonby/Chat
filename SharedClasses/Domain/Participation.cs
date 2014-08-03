@@ -43,11 +43,6 @@ namespace SharedClasses.Domain
             this.id = id;
         }
 
-        public int Id
-        {
-            get { return id; }
-        }
-
         public int UserId
         {
             get { return userId; }
@@ -56,6 +51,11 @@ namespace SharedClasses.Domain
         public int ConversationId
         {
             get { return conversationId; }
+        }
+
+        public int Id
+        {
+            get { return id; }
         }
 
         public bool Equals(Participation other)

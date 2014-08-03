@@ -16,7 +16,7 @@ namespace SharedClasses.Domain
         public void UpdateUserConnectionStatus(ConnectionStatus connectionStatus)
         {
             Contract.Requires(connectionStatus != null);
-            
+
             User user = FindEntityById(connectionStatus.UserId);
 
             User previousUser = User.DeepClone(user);

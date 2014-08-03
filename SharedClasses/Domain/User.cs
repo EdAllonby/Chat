@@ -43,14 +43,6 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// A Unique number used to identify the User.
-        /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
-
-        /// <summary>
         /// The name of the User.
         /// </summary>
         public string Username
@@ -73,6 +65,14 @@ namespace SharedClasses.Domain
         public ConnectionStatus ConnectionStatus { get; set; }
 
         /// <summary>
+        /// A Unique number used to identify the User.
+        /// </summary>
+        public int Id
+        {
+            get { return id; }
+        }
+
+        /// <summary>
         /// Deep clone a <see cref="User"/> entity.
         /// </summary>
         /// <param name="user">The user to deep clone.</param>
@@ -87,7 +87,7 @@ namespace SharedClasses.Domain
                 formatter.Serialize(memoryStream, user);
                 memoryStream.Position = 0;
 
-                return (User)formatter.Deserialize(memoryStream);
+                return (User) formatter.Deserialize(memoryStream);
             }
         }
 

@@ -65,9 +65,7 @@
                                  Grid.Column="0"
                                  Background="AliceBlue"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                 Document="{Binding GroupChat.Messages, UpdateSourceTrigger=PropertyChanged}">
-                
-            </extendedControls:BindableRichTextBox>
+                                 Document="{Binding GroupChat.Messages, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <Grid Grid.Row="3">

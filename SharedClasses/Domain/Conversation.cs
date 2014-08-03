@@ -29,17 +29,17 @@ namespace SharedClasses.Domain
             this.id = id;
         }
 
+        public Contribution LastContribution
+        {
+            get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
+        }
+
         /// <summary>
         /// Conversation is a domain entity class and gets a unique Id.
         /// </summary>
         public int Id
         {
             get { return id; }
-        }
-
-        public Contribution LastContribution
-        {
-            get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
         }
 
         public bool Equals(Conversation other)
@@ -103,7 +103,7 @@ namespace SharedClasses.Domain
                 formatter.Serialize(memoryStream, conversation);
                 memoryStream.Position = 0;
 
-                return (Conversation)formatter.Deserialize(memoryStream);
+                return (Conversation) formatter.Deserialize(memoryStream);
             }
         }
     }

@@ -12,11 +12,6 @@ namespace ChatClient.Services
     public interface IClientService : IService
     {
         /// <summary>
-        /// Signifies when the client has finished successfully bootstrapping
-        /// </summary>
-        event EventHandler BootstrapCompleted;
-        
-        /// <summary>
         /// This Client's unique User Id.
         /// </summary>
         int ClientUserId { get; }
@@ -25,6 +20,11 @@ namespace ChatClient.Services
         /// Holds the repositories for the Client.
         /// </summary>
         RepositoryManager RepositoryManager { get; }
+
+        /// <summary>
+        /// Signifies when the client has finished successfully bootstrapping
+        /// </summary>
+        event EventHandler BootstrapCompleted;
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
