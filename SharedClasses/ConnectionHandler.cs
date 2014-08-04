@@ -19,7 +19,7 @@ namespace SharedClasses
         private static int totalListenerThreads;
 
         private readonly int clientUserId;
-        private readonly object locker = new object();
+        private readonly object messageSenderLock = new object();
 
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -56,7 +56,7 @@ namespace SharedClasses
         {
             Contract.Requires(message != null);
 
-            lock (locker)
+            lock (messageSenderLock)
             {
                 ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
                 messageSerialiser.Serialise(tcpClient.GetStream(), message);

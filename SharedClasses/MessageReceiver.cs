@@ -40,16 +40,13 @@ namespace SharedClasses
             {
                 while (true)
                 {
-                    lock (locker)
-                    {
-                        MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
+                    MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
 
-                        ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+                    ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-                        IMessage message = serialiser.Deserialise(networkStream);
+                    IMessage message = serialiser.Deserialise(networkStream);
 
-                        OnMessageReceived(new MessageEventArgs(message));
-                    }
+                    OnMessageReceived(new MessageEventArgs(message));
                 }
             }
             catch (IOException)
