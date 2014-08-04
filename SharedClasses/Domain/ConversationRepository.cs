@@ -22,9 +22,7 @@ namespace SharedClasses.Domain
         {
             Contract.Requires(conversation != null);
 
-            Conversation previousConversation = Conversation.DeepClone(EntitiesIndexedById[conversation.Id]);
-
-            EntitiesIndexedById[conversation.Id] = conversation;
+            Conversation previousConversation = Conversation.DeepClone(FindEntityById(conversation.Id));
 
             var conversationChangedEventArgs = new EntityChangedEventArgs<Conversation>();
             conversationChangedEventArgs.EntityUpdated(conversation, previousConversation);

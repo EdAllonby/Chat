@@ -24,19 +24,6 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void AddUserEntitiesTest()
-        {
-            var user1 = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));
-            var user2 = new User("User", 2, new ConnectionStatus(2, ConnectionStatus.Status.Connected));
-            var users = new List<User> {user1, user2};
-
-            var userRepository = new UserRepository();
-
-            userRepository.AddUsers(users);
-            Assert.AreEqual(users, userRepository.GetAllEntities());
-        }
-
-        [Test]
         public void CanNotAddSameUserEntityTwice()
         {
             var user = new User("User", 1, new ConnectionStatus(1, ConnectionStatus.Status.Connected));

@@ -46,8 +46,7 @@ namespace SharedClasses.Domain
 
         public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
         {
-            return
-                EntitiesIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
+            return GetAllEntities().Where(participation => participation.ConversationId == conversationId).ToList();
         }
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace SharedClasses.Domain
 
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
-            return from participation in EntitiesIndexedById.Values
+            return from participation in GetAllEntities()
                 where participation.UserId == userId
                 select participation.ConversationId;
         }
@@ -87,7 +86,7 @@ namespace SharedClasses.Domain
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
-            foreach (Participation participation in EntitiesIndexedById.Values)
+            foreach (Participation participation in GetAllEntities())
             {
                 if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
                 {

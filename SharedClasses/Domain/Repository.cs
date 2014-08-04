@@ -23,32 +23,32 @@ namespace SharedClasses.Domain
             Contract.Requires(!entity.Equals(null));
 
             EntitiesIndexedById.TryAdd(entity.Id, entity);
-            Log.DebugFormat("User with Id {0} added.", entity.Id);
+            Log.DebugFormat("Entity with Id {0} added.", entity.Id);
 
-            var userChangedEventArgs = new EntityChangedEventArgs<T>();
+            var entityChangedEventArgs = new EntityChangedEventArgs<T>();
 
-            userChangedEventArgs.EntityAdded(entity);
+            entityChangedEventArgs.EntityAdded(entity);
 
-            OnEntityChanged(userChangedEventArgs);
+            OnEntityChanged(entityChangedEventArgs);
         }
 
         /// <summary>
         /// Retrieves an <see cref="IEntity"/> entity from the repository.
         /// </summary>
-        /// <param name="userId">The <see cref="IEntity"/> entity Id to find.</param>
+        /// <param name="entityId">The <see cref="IEntity"/> entity Id to find.</param>
         /// <returns>The <see cref="IEntity"/> which matches the ID. If no <see cref="IEntity"/> is found, return null.</returns>
-        public T FindEntityById(int userId)
+        public T FindEntityById(int entityId)
         {
-            return EntitiesIndexedById[userId];
+            return EntitiesIndexedById[entityId];
         }
 
         protected void OnEntityChanged(EntityChangedEventArgs<T> entityChangedEventArgs)
         {
-            EventHandler<EntityChangedEventArgs<T>> userChangedCopy = EntityChanged;
+            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityChanged;
 
-            if (userChangedCopy != null)
+            if (entityChangedCopy != null)
             {
-                userChangedCopy(this, entityChangedEventArgs);
+                entityChangedCopy(this, entityChangedEventArgs);
             }
         }
 

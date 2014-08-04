@@ -1,5 +1,6 @@
 ﻿using System;
 using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -14,7 +15,10 @@ namespace ChatClient.Services.MessageHandler
             var userSnapshot = (UserSnapshot) message;
             var userSnapshotContext = (UserSnapshotContext) context;
 
-            userSnapshotContext.UserRepository.AddUsers(userSnapshot.Users);
+            foreach (User user in userSnapshot.Users)
+            {
+                userSnapshotContext.UserRepository.AddEntity(user);
+            }
 
             OnUserBootstrapCompleted();
         }
