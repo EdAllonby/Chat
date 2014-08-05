@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using log4net;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -13,15 +12,14 @@ namespace Server.MessageHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var participationRequest = (ParticipationRequest) message;
-            var participationRequestContext = (ParticipationRequestContext) context;
 
-            if (CheckUserCanEnterConversation(participationRequest, participationRequestContext.ParticipationRepository))
+            if (CheckUserCanEnterConversation(participationRequest, context.RepositoryManager.ParticipationRepository))
             {
-                AddUserToConversation(participationRequest, participationRequestContext.EntityIdAllocatorFactory,
-                    participationRequestContext.ParticipationRepository);
+                AddUserToConversation(participationRequest, context.EntityIdAllocatorFactory,
+                    context.RepositoryManager.ParticipationRepository);
             }
         }
 
@@ -45,7 +43,7 @@ namespace Server.MessageHandler
 
         private static void AddUserToConversation(ParticipationRequest participationRequest,
             EntityIdAllocatorFactory entityIdAllocatorFactory,
-            ParticipationRepository participationRepository)
+            Repository<Participation> participationRepository)
         {
             int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
 

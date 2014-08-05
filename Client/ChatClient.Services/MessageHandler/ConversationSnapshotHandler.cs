@@ -1,5 +1,4 @@
 ﻿using System;
-using SharedClasses;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -7,14 +6,13 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="ConversationSnapshot"/> the Client received.
     /// </summary>
-    internal sealed class ConversationSnapshotHandler : IMessageHandler
+    internal sealed class ConversationSnapshotHandler : IClientMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IClientMessageContext context)
         {
             var conversationSnapshot = (ConversationSnapshot) message;
-            var conversationSnapshotContext = (ConversationSnapshotContext) context;
 
-            conversationSnapshotContext.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
+            context.RepositoryManager.ConversationRepository.AddConversations(conversationSnapshot.Conversations);
 
             OnConversationBootstrapCompleted();
         }

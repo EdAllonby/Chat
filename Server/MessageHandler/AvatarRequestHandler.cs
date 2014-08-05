@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server.MessageHandler
@@ -9,15 +8,14 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class AvatarRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var avatarRequest = (AvatarRequest) message;
-            var avatarRequestContext = (AvatarRequestContext) context;
 
-            var avatar = new Avatar(avatarRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Avatar>(),
+            var avatar = new Avatar(context.EntityIdAllocatorFactory.AllocateEntityId<Avatar>(),
                 avatarRequest.Avatar);
 
-            avatarRequestContext.UserRepository.UpdateUserAvatar(avatar);
+            context.RepositoryManager.UserRepository.UpdateUserAvatar(avatar);
         }
     }
 }

@@ -1,25 +1,23 @@
-﻿using SharedClasses;
-using SharedClasses.Message;
+﻿using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
     /// Handles a <see cref="ContributionNotification"/> the Client received.
     /// </summary>
-    internal sealed class ContributionNotificationHandler : IMessageHandler
+    internal sealed class ContributionNotificationHandler : IClientMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IClientMessageContext context)
         {
             var contributionNotification = (ContributionNotification) message;
-            var contributionNotificationContext = (ContributionNotificationContext) context;
 
-            AddContributionToConversation(contributionNotification, contributionNotificationContext);
+            AddContributionToConversation(contributionNotification, context);
         }
 
         private static void AddContributionToConversation(ContributionNotification contributionNotification,
-            ContributionNotificationContext contributionNotificationContext)
+            IClientMessageContext context)
         {
-            contributionNotificationContext.ConversationRepository
+            context.RepositoryManager.ConversationRepository
                 .AddContributionToConversation(contributionNotification.Contribution);
         }
     }

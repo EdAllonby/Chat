@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -7,14 +6,13 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="UserNotification"/> the Client received.
     /// </summary>
-    internal sealed class UserNotificationHandler : IMessageHandler
+    internal sealed class UserNotificationHandler : IClientMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IClientMessageContext context)
         {
             var userNotification = (UserNotification) message;
-            var userNotificationContext = (UserNotificationContext) context;
 
-            UserRepository userRepository = userNotificationContext.UserRepository;
+            UserRepository userRepository = context.RepositoryManager.UserRepository;
 
             switch (userNotification.NotificationType)
             {
