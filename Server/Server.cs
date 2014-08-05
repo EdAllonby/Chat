@@ -27,7 +27,7 @@ namespace Server
             repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
             repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
-            repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
+            repositoryManager.ParticipationRepository.EntitiesAdded += OnParticipationsAdded;
             repositoryManager.ParticipationRepository.EntityChanged += ParticipationEntityChanged;
 
             Log.Info("Server instance started");

@@ -17,7 +17,7 @@ namespace ChatClient.Services.MessageHandler
             switch (conversationNotification.NotificationType)
             {
                 case NotificationType.Create:
-                    conversationRepository.AddConversation(conversationNotification.Conversation);
+                    conversationRepository.AddEntity(conversationNotification.Conversation);
                     break;
 
                 case NotificationType.Update:

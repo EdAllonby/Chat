@@ -12,7 +12,7 @@ namespace ChatClient.Services.MessageHandler
         {
             var participationSnapshot = (ParticipationSnapshot) message;
 
-            context.RepositoryManager.ParticipationRepository.AddParticipations(participationSnapshot.Participations);
+            context.RepositoryManager.ParticipationRepository.AddEntities(participationSnapshot.Participations);
 
             OnParticipationBootstrapCompleted();
         }

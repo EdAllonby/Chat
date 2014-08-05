@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
@@ -7,28 +6,6 @@ namespace SharedClasses.Domain
 {
     public sealed class ParticipationRepository : Repository<Participation>
     {
-        public event EventHandler<IEnumerable<Participation>> ParticipationsAdded;
-
-        /// <summary>
-        /// Adds a group of participations 
-        /// </summary>
-        /// <param name="participationsToAdd"></param>
-        public void AddParticipations(IEnumerable<Participation> participationsToAdd)
-        {
-            Contract.Requires(participationsToAdd != null);
-
-
-            IEnumerable<Participation> participations = participationsToAdd as Participation[] ??
-                                                        participationsToAdd.ToArray();
-
-            foreach (Participation participation in participations)
-            {
-                AddParticipationToRepository(participation);
-            }
-
-            OnParticipationsAdded(participations);
-        }
-
         /// <summary>
         /// Checks whether a conversation exists with a group of participants.
         /// </summary>
@@ -71,17 +48,6 @@ namespace SharedClasses.Domain
                 select participation.ConversationId;
         }
 
-        private void AddParticipationToRepository(Participation participation)
-        {
-            Contract.Requires(participation != null);
-            Contract.Requires(participation.Id > 0);
-
-            EntitiesIndexedById.TryAdd(participation.Id, participation);
-
-            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository",
-                participation.UserId, participation.ConversationId);
-        }
-
         private Dictionary<int, List<int>> GetUserIdsIndexedByConversationId()
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
@@ -97,16 +63,6 @@ namespace SharedClasses.Domain
             }
 
             return userIdsIndexedByConversationId;
-        }
-
-        private void OnParticipationsAdded(IEnumerable<Participation> participation)
-        {
-            EventHandler<IEnumerable<Participation>> participationsAddedCopy = ParticipationsAdded;
-
-            if (participationsAddedCopy != null)
-            {
-                ParticipationsAdded(this, participation);
-            }
         }
     }
 }

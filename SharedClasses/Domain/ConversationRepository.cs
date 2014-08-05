@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
+﻿using System.Diagnostics.Contracts;
 
 namespace SharedClasses.Domain
 {
@@ -9,15 +7,6 @@ namespace SharedClasses.Domain
     /// </summary>
     public sealed class ConversationRepository : Repository<Conversation>
     {
-        /// <summary>
-        /// Adds a <see cref="Conversation"/> entity to the repository.
-        /// </summary>
-        /// <param name="conversation"><see cref="Conversation"/> entity to add.</param>
-        public void AddConversation(Conversation conversation)
-        {
-            AddEntity(conversation);
-        }
-
         public void UpdateConversation(Conversation conversation)
         {
             Contract.Requires(conversation != null);
@@ -46,23 +35,6 @@ namespace SharedClasses.Domain
             conversationChangedEventArgs.EntityUpdated(conversation, previousConversation);
 
             OnEntityChanged(conversationChangedEventArgs);
-        }
-
-        /// <summary>
-        /// Adds <see cref="Conversation"/> entities to the repository.
-        /// </summary>
-        /// <param name="conversations"><see cref="Conversation"/> entities to add to the repository.</param>
-        public void AddConversations(IEnumerable<Conversation> conversations)
-        {
-            Contract.Requires(conversations != null);
-
-            IEnumerable<Conversation> conversationsEnumerable = conversations as IList<Conversation> ??
-                                                                conversations.ToList();
-            foreach (Conversation conversation in conversationsEnumerable)
-            {
-                EntitiesIndexedById[conversation.Id] = conversation;
-                Log.Debug("Conversation with Id " + conversation.Id + " added to conversation repository");
-            }
         }
     }
 }
