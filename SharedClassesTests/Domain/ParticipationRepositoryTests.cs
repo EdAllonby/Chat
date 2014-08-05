@@ -29,7 +29,7 @@ namespace SharedClassesTests.Domain
                 new Participation(1, 1, conversationId),
                 new Participation(2, 2, conversationId)
             };
-            participationRepository.AddParticipations(participations);
+            participationRepository.AddEntities(participations);
 
             Assert.AreEqual(participations, participationRepository.GetAllEntities());
         }
@@ -85,7 +85,7 @@ namespace SharedClassesTests.Domain
                 new Participation(4, 5, conversationId)
             };
 
-            participationRepository.AddParticipations(participations);
+            participationRepository.AddEntities(participations);
 
             Assert.AreEqual(participations, participationRepository.GetAllEntities());
         }
