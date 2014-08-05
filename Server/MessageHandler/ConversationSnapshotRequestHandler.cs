@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -11,19 +10,18 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ConversationSnapshotRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var conversationSnapshotRequest = (ConversationSnapshotRequest) message;
-            var conversationSnapshotRequestContext = (ConversationSnapshotRequestContext) context;
 
-            SendConversationSnapshot(conversationSnapshotRequest, conversationSnapshotRequestContext);
+            SendConversationSnapshot(conversationSnapshotRequest, context);
         }
 
         private static void SendConversationSnapshot(ConversationSnapshotRequest conversationSnapshotRequest,
-            ConversationSnapshotRequestContext conversationSnapshotRequestContext)
+            IServerMessageContext context)
         {
             IEnumerable<int> conversationIds =
-                conversationSnapshotRequestContext.ParticipationRepository.GetAllConversationIdsByUserId(
+                context.RepositoryManager.ParticipationRepository.GetAllConversationIdsByUserId(
                     conversationSnapshotRequest.UserId);
 
             IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
@@ -31,12 +29,11 @@ namespace Server.MessageHandler
             List<Conversation> conversations =
                 conversationEnumerable.Select(
                     conversationId =>
-                        conversationSnapshotRequestContext.ConversationRepository.FindEntityById(conversationId)).ToList();
+                        context.RepositoryManager.ConversationRepository.FindEntityById(conversationId)).ToList();
 
             var conversationSnapshot = new ConversationSnapshot(conversations);
 
-            conversationSnapshotRequestContext.ClientHandlersIndexedByUserId[conversationSnapshotRequest.UserId].SendMessage(
-                conversationSnapshot);
+            context.ClientManager.SendMessageToClient(conversationSnapshot, conversationSnapshotRequest.UserId);
         }
     }
 }

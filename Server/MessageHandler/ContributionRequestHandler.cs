@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server.MessageHandler
@@ -9,22 +8,15 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ContributionRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var contributionRequest = (ContributionRequest) message;
-            var contributionRequestContext = (ContributionRequestContext) context;
 
-            CreateContributionEntity(contributionRequest, contributionRequestContext);
-        }
-
-        private static void CreateContributionEntity(ContributionRequest contributionRequest,
-            ContributionRequestContext contributionRequestContext)
-        {
             var newContribution = new Contribution(
-                contributionRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Contribution>(),
+                context.EntityIdAllocatorFactory.AllocateEntityId<Contribution>(),
                 contributionRequest.Contribution);
 
-            contributionRequestContext.ConversationRepository.AddContributionToConversation(newContribution);
+            context.RepositoryManager.ConversationRepository.AddContributionToConversation(newContribution);
         }
     }
 }

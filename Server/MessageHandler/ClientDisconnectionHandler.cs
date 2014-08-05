@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using log4net;
-using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server.MessageHandler
@@ -11,27 +8,15 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ClientDisconnectionHandler : IMessageHandler
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ClientDisconnectionHandler));
-
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var clientDisconnection = (ClientDisconnection) message;
-            var clientDisconnectionContext = (ClientDisconnectionContext) context;
 
-            RemoveClientHandler(clientDisconnection.UserId, clientDisconnectionContext.ClientHandlersIndexedByUserId);
-            DisconnectUser(clientDisconnection.UserId, clientDisconnectionContext.UserRepository);
-        }
+            context.ClientManager.RemoveClientHandler(clientDisconnection.UserId);
 
-        private static void RemoveClientHandler(int disconnectedUserId,
-            IDictionary<int, ClientHandler> clientHandlersIndexedByUserId)
-        {
-            clientHandlersIndexedByUserId.Remove(disconnectedUserId);
-            Log.Info("User with id " + disconnectedUserId + " logged out. Removing from ServerHandler's ConnectionHandler list");
-        }
+            var connectionStatus = new ConnectionStatus(clientDisconnection.UserId, ConnectionStatus.Status.Disconnected);
 
-        private static void DisconnectUser(int disconnectedUserId, UserRepository userRepository)
-        {
-            userRepository.UpdateUserConnectionStatus(new ConnectionStatus(disconnectedUserId, ConnectionStatus.Status.Disconnected));
+            context.RepositoryManager.UserRepository.UpdateUserConnectionStatus(connectionStatus);
         }
     }
 }

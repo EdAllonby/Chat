@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -7,14 +6,13 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="AvatarNotification"/> the Client received.
     /// </summary>
-    internal sealed class AvatarNotificationHandler : IMessageHandler
+    internal sealed class AvatarNotificationHandler : IClientMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IClientMessageContext context)
         {
             var avatarNotification = (AvatarNotification) message;
-            var avatarNotificationContext = (AvatarNotificationContext) context;
 
-            UserRepository userRepository = avatarNotificationContext.UserRepository;
+            UserRepository userRepository = context.RepositoryManager.UserRepository;
 
             userRepository.UpdateUserAvatar(avatarNotification.Avatar);
         }

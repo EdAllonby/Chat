@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -7,14 +6,13 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="ConnectionStatusNotification"/> the Client received.
     /// </summary>
-    internal sealed class ConnectionStatusNotificationHandler : IMessageHandler
+    internal sealed class ConnectionStatusNotificationHandler : IClientMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IClientMessageContext context)
         {
             var connectionStatusNotification = (ConnectionStatusNotification) message;
-            var connectionStatusNotificationContext = (ConnectionStatusNotificationContext) context;
 
-            UserRepository userRepository = connectionStatusNotificationContext.UserRepository;
+            UserRepository userRepository = context.RepositoryManager.UserRepository;
 
             userRepository.UpdateUserConnectionStatus(connectionStatusNotification.ConnectionStatus);
         }

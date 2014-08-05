@@ -18,15 +18,12 @@ namespace Server
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
+        private readonly ClientManager clientManager = new ClientManager();
         private readonly EntityIdAllocatorFactory entityIdAllocatorFactory = new EntityIdAllocatorFactory();
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
-        private readonly ServerContextRegistry serverContextRegistry;
 
         public Server()
         {
-            serverContextRegistry = new ServerContextRegistry(repositoryManager, clientHandlersIndexedByUserId, entityIdAllocatorFactory);
-
             repositoryManager.UserRepository.EntityChanged += OnUserChanged;
 
             repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
@@ -75,7 +72,7 @@ namespace Server
 
                 clientHandler.CreateConnectionHandler(userId, tcpClient);
 
-                clientHandlersIndexedByUserId[userId] = clientHandler;
+                clientManager.AddClientHandler(userId, clientHandler);
 
                 clientHandler.MessageReceived += OnMessageReceived;
 
@@ -92,7 +89,8 @@ namespace Server
                 IMessageHandler handler =
                     MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                IMessageContext context = serverContextRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                IServerMessageContext context = new ServerMessageContext(clientManager, entityIdAllocatorFactory, repositoryManager);
+
                 handler.HandleMessage(message, context);
             }
             catch (KeyNotFoundException keyNotFoundException)
@@ -127,42 +125,30 @@ namespace Server
         {
             var userNotification = new UserNotification(user, NotificationType.Create);
 
-            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
-            {
-                clientHandler.SendMessage(userNotification);
-            }
+            clientManager.SendMessageToClients(userNotification);
         }
 
         private void OnUserConnectionUpdated(User user)
         {
             var userNotification = new ConnectionStatusNotification(user.ConnectionStatus, NotificationType.Update);
 
-            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
-            {
-                clientHandler.SendMessage(userNotification);
-            }
+            clientManager.SendMessageToClients(userNotification);
         }
 
         private void OnUserAvatarUpdated(User user)
         {
             var avatarNotification = new AvatarNotification(user.Avatar, NotificationType.Update);
 
-            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
-            {
-                clientHandler.SendMessage(avatarNotification);
-            }
+            clientManager.SendMessageToClients(avatarNotification);
         }
 
         private void OnConversationAdded(Conversation conversation)
         {
             var conversationNotification = new ConversationNotification(conversation, NotificationType.Create);
 
-            foreach (Participation participant in repositoryManager.ParticipationRepository
-                .GetParticipationsByConversationId(
-                    conversation.Id))
-            {
-                clientHandlersIndexedByUserId[participant.UserId].SendMessage(conversationNotification);
-            }
+            IEnumerable<int> userIds = repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.Id).Select(participation => participation.UserId);
+
+            clientManager.SendMessageToClients(conversationNotification, userIds);
         }
 
         private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
@@ -185,13 +171,11 @@ namespace Server
         {
             var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
 
-            foreach (User user in
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(contribution.ConversationId)
-                    .Select(participant => repositoryManager.UserRepository.FindEntityById(participant.UserId))
-                    .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected))
-            {
-                clientHandlersIndexedByUserId[user.Id].SendMessage(contributionNotification);
-            }
+            IEnumerable<int> userIds = repositoryManager.ParticipationRepository.GetParticipationsByConversationId(contribution.ConversationId)
+                .Select(participant => repositoryManager.UserRepository.FindEntityById(participant.UserId))
+                .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).Select(user => user.Id);
+
+            clientManager.SendMessageToClients(contributionNotification, userIds);
         }
 
         private void OnParticipationsAdded(object sender, IEnumerable<Participation> participations)
@@ -202,10 +186,8 @@ namespace Server
 
             foreach (Participation participation in participationsEnumerable)
             {
-                foreach (int userId in userIds)
-                {
-                    clientHandlersIndexedByUserId[userId].SendMessage(new ParticipationNotification(participation, NotificationType.Create));
-                }
+                var participationNotification = new ParticipationNotification(participation, NotificationType.Create);
+                clientManager.SendMessageToClients(participationNotification, userIds);
             }
         }
 
@@ -218,30 +200,26 @@ namespace Server
                                                                     participations.ToArray();
 
             // Update other users of the new conversation participant
-            foreach (Participation conversationParticipation in conversationParticipations.Where(
-                conversationParticipation => conversationParticipation.UserId != participation.UserId))
-            {
-                clientHandlersIndexedByUserId[conversationParticipation.UserId].SendMessage(
-                    new ParticipationNotification(participation, NotificationType.Create));
-            }
+            IEnumerable<int> userIds = conversationParticipations.Where(conversationParticipation => conversationParticipation.UserId != participation.UserId).Select(participant => participant.UserId);
+
+            var newParticipantNotification = new ParticipationNotification(participation, NotificationType.Create);
+
+            clientManager.SendMessageToClients(newParticipantNotification, userIds);
 
             // Give the new user all participations for this new conversation they are entering.
             foreach (Participation conversationParticipation in conversationParticipations)
             {
-                clientHandlersIndexedByUserId[participation.UserId].SendMessage(
-                    new ParticipationNotification(conversationParticipation, NotificationType.Create));
+                clientManager.SendMessageToClient(new ParticipationNotification(conversationParticipation, NotificationType.Create), participation.UserId);
             }
 
-            Conversation conversation = repositoryManager.ConversationRepository
-                .FindEntityById(participation.ConversationId);
+            Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(participation.ConversationId);
 
-            clientHandlersIndexedByUserId[participation.UserId].SendMessage(new ConversationNotification(conversation, NotificationType.Create));
+            clientManager.SendMessageToClient(new ConversationNotification(conversation, NotificationType.Create), participation.UserId);
 
             // Update other conversation participants of conversation update.
-            foreach (Participation conversationParticipation in conversationParticipations.Where(conversationParticipation => !conversationParticipation.Equals(participation)))
-            {
-                clientHandlersIndexedByUserId[conversationParticipation.UserId].SendMessage(new ConversationNotification(conversation, NotificationType.Update));
-            }
+            IEnumerable<int> currentConversationParticipantsUserIds = conversationParticipations.Where(conversationParticipation => !conversationParticipation.Equals(participation)).Select(participant => participant.UserId);
+
+            clientManager.SendMessageToClients(new ConversationNotification(conversation, NotificationType.Update), currentConversationParticipantsUserIds);
         }
     }
 }

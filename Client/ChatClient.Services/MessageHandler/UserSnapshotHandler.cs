@@ -1,5 +1,4 @@
 ﻿using System;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -8,16 +7,15 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="UserSnapshot"/> the Client received.
     /// </summary>
-    internal sealed class UserSnapshotHandler : IMessageHandler
+    internal sealed class UserSnapshotHandler : IClientMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IClientMessageContext context)
         {
             var userSnapshot = (UserSnapshot) message;
-            var userSnapshotContext = (UserSnapshotContext) context;
 
             foreach (User user in userSnapshot.Users)
             {
-                userSnapshotContext.UserRepository.AddEntity(user);
+                context.RepositoryManager.UserRepository.AddEntity(user);
             }
 
             OnUserBootstrapCompleted();

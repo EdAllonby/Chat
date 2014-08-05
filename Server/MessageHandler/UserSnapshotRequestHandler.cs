@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -10,20 +9,14 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class UserSnapshotRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var userSnapshotRequest = (UserSnapshotRequest) message;
-            var userSnapshotRequestContext = (UserSnapshotRequestContext) context;
 
-            SendUserSnapshot(userSnapshotRequest, userSnapshotRequestContext);
-        }
-
-        private static void SendUserSnapshot(UserSnapshotRequest userSnapshotRequest,
-            UserSnapshotRequestContext userSnapshotRequestContext)
-        {
-            IEnumerable<User> currentUsers = userSnapshotRequestContext.UserRepository.GetAllEntities();
+            IEnumerable<User> currentUsers = context.RepositoryManager.UserRepository.GetAllEntities();
             var userSnapshot = new UserSnapshot(currentUsers);
-            userSnapshotRequestContext.ClientHandlersIndexedByUserId[userSnapshotRequest.UserId].SendMessage(userSnapshot);
+
+            context.ClientManager.SendMessageToClient(userSnapshot, userSnapshotRequest.UserId);
         }
     }
 }

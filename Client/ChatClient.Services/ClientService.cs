@@ -17,18 +17,9 @@ namespace ChatClient.Services
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
 
-        private readonly ClientContextRegistry clientContextRegistry;
         private readonly RepositoryManager repositoryManager = new RepositoryManager();
 
         private ConnectionHandler connectionHandler;
-
-        /// <summary>
-        /// Initialises a new <see cref="ClientService"/>.
-        /// </summary>
-        public ClientService()
-        {
-            clientContextRegistry = new ClientContextRegistry(repositoryManager);
-        }
 
         public event EventHandler BootstrapCompleted;
 
@@ -114,11 +105,10 @@ namespace ChatClient.Services
 
             try
             {
-                IMessageHandler handler =
+                IClientMessageHandler handler =
                     MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                IMessageContext context =
-                    clientContextRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                IClientMessageContext context = new ClientMessageContext(repositoryManager);
 
                 handler.HandleMessage(message, context);
             }

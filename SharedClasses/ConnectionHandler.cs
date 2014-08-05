@@ -19,9 +19,8 @@ namespace SharedClasses
         private static int totalListenerThreads;
 
         private readonly int clientUserId;
-        private readonly object messageSenderLock = new object();
-
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
+        private readonly object messageSenderLock = new object();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly TcpClient tcpClient;
 

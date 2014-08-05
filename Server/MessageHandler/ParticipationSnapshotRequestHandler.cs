@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -10,31 +9,29 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ParticipationSnapshotRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var participationSnapshotRequest = (ParticipationSnapshotRequest) message;
-            var participationSnapshotRequestContext = (ParticipationSnapshotRequestContext) context;
 
-            SendParticipationSnapshot(participationSnapshotRequest, participationSnapshotRequestContext);
+            SendParticipationSnapshot(participationSnapshotRequest, context);
         }
 
         private static void SendParticipationSnapshot(ParticipationSnapshotRequest participationSnapshotRequest,
-            ParticipationSnapshotRequestContext participationSnapshotRequestContext)
+            IServerMessageContext context)
         {
             var userParticipations = new List<Participation>();
 
-            foreach (int conversationId in participationSnapshotRequestContext.ParticipationRepository
+            foreach (int conversationId in context.RepositoryManager.ParticipationRepository
                 .GetAllConversationIdsByUserId(
                     participationSnapshotRequest.UserId))
             {
-                userParticipations.AddRange(participationSnapshotRequestContext.ParticipationRepository
+                userParticipations.AddRange(context.RepositoryManager.ParticipationRepository
                     .GetParticipationsByConversationId(conversationId));
             }
 
             var participationSnapshot = new ParticipationSnapshot(userParticipations);
 
-            participationSnapshotRequestContext.ClientHandlersIndexedByUserId[participationSnapshotRequest.UserId]
-                .SendMessage(participationSnapshot);
+            context.ClientManager.SendMessageToClient(participationSnapshot, participationSnapshotRequest.UserId);
         }
     }
 }

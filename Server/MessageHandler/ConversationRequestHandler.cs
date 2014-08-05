@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using log4net;
-using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -14,14 +13,13 @@ namespace Server.MessageHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRequestHandler));
 
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServerMessageContext context)
         {
             var newConversationRequest = (ConversationRequest) message;
-            var newConversationRequestContext = (ConversationRequestContext) context;
 
-            if (CheckConversationIsValid(newConversationRequest, newConversationRequestContext.ParticipationRepository))
+            if (CheckConversationIsValid(newConversationRequest, context.RepositoryManager.ParticipationRepository))
             {
-                CreateConversationEntity(newConversationRequest, newConversationRequestContext);
+                CreateConversationEntity(newConversationRequest, context);
             }
         }
 
@@ -38,10 +36,10 @@ namespace Server.MessageHandler
             return !participationRepository.DoesConversationWithUsersExist(conversationRequest.UserIds);
         }
 
-        private void CreateConversationEntity(ConversationRequest conversationRequest,
-            ConversationRequestContext conversationRequestContext)
+        private static void CreateConversationEntity(ConversationRequest conversationRequest,
+            IServerMessageContext context)
         {
-            int conversationId = conversationRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Conversation>();
+            int conversationId = context.EntityIdAllocatorFactory.AllocateEntityId<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
@@ -49,13 +47,13 @@ namespace Server.MessageHandler
 
             foreach (int userId in conversationRequest.UserIds)
             {
-                int participationId = conversationRequestContext.EntityIdAllocatorFactory.AllocateEntityId<Participation>();
+                int participationId = context.EntityIdAllocatorFactory.AllocateEntityId<Participation>();
                 participations.Add(new Participation(participationId, userId, conversationId));
             }
 
-            conversationRequestContext.ParticipationRepository.AddParticipations(participations);
+            context.RepositoryManager.ParticipationRepository.AddParticipations(participations);
 
-            conversationRequestContext.ConversationRepository.AddConversation(newConversation);
+            context.RepositoryManager.ConversationRepository.AddConversation(newConversation);
         }
     }
 }
