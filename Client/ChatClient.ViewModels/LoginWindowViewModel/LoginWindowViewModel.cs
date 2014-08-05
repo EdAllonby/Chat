@@ -58,31 +58,22 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void AttemptLogin(LoginDetails loginDetails)
         {
-            try
-            {
-                LoginResult result = ClientService.LogOn(loginDetails);
+            LoginResult result = ClientService.LogOn(loginDetails);
 
-                switch (result)
-                {
-                    case LoginResult.Success:
-                        Log.Debug("Waiting for client bootstrap to complete");
-                        canOpenWindow = true;
-                        break;
+            switch (result)
+            {
+                case LoginResult.Success:
+                    Log.Debug("Waiting for client bootstrap to complete");
+                    canOpenWindow = true;
+                    break;
 
-                    case LoginResult.AlreadyConnected:
-                        MessageBox.Show(string.Format("User already connected with username: {0}", LoginModel.Username), "Login Denied");
-                        break;
-                }
-            }
-            catch (TimeoutException timeoutException)
-            {
-                Log.Error("Cannot find server", timeoutException);
-                MessageBox.Show("Could not find server, check the IP Address");
-            }
-            catch (SocketException socketException)
-            {
-                Log.Error("Port is incorrect", socketException);
-                MessageBox.Show("Could log in to server, check the port");
+                case LoginResult.AlreadyConnected:
+                    MessageBox.Show(string.Format("User already connected with username: {0}", LoginModel.Username), "Login Denied");
+                    break;
+
+                case LoginResult.ServerNotFound:
+                    MessageBox.Show("Could not find server, check connection settings.");
+                    break;
             }
         }
 

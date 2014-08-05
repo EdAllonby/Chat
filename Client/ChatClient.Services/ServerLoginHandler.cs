@@ -16,9 +16,13 @@ namespace ChatClient.Services
     internal sealed class ServerLoginHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ServerLoginHandler));
+        private readonly ConversationSnapshotHandler conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
+        private readonly ParticipationSnapshotHandler participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
 
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly TcpClient serverConnection = new TcpClient();
+
+        private readonly UserSnapshotHandler userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
 
         private bool hasConversationSnapshotBeenSent;
         private bool hasParticipationSnapshotBeenSent;
@@ -26,10 +30,6 @@ namespace ChatClient.Services
 
         public ServerLoginHandler()
         {
-            var userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
-            var participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
-            var conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
-
             userSnapshotHandler.UserBootstrapCompleted += OnUserBootstrapCompleted;
             participationSnapshotHandler.ParticipationBootstrapCompleted += OnParticipationBootstrapCompleted;
             conversationSnapshotHandler.ConversationBootstrapCompleted += OnConversationBootstrapCompleted;
@@ -42,6 +42,7 @@ namespace ChatClient.Services
             hasUserSnapshotBeenSent = true;
             TrySendBootstrapCompleteEvent();
         }
+
 
         private void OnParticipationBootstrapCompleted(object sender, EventArgs e)
         {
@@ -66,7 +67,15 @@ namespace ChatClient.Services
 
         public LoginResponse ConnectToServer(LoginDetails loginDetails, out ConnectionHandler connectionHandler)
         {
-            CreateConnection(loginDetails.Address, loginDetails.Port);
+            bool foundServer = CreateConnection(loginDetails.Address, loginDetails.Port);
+
+            if (!foundServer)
+            {
+                connectionHandler = null;
+                RemoveBootstrapEventSubscriptions();
+
+                return new LoginResponse(LoginResult.ServerNotFound);
+            }
 
             IMessage userRequest = new LoginRequest(loginDetails.Username);
             SendConnectionMessage(userRequest);
@@ -83,6 +92,7 @@ namespace ChatClient.Services
             else
             {
                 connectionHandler = null;
+                RemoveBootstrapEventSubscriptions();
             }
 
             return loginResponse;
@@ -97,7 +107,7 @@ namespace ChatClient.Services
             SendConnectionMessage(new ParticipationSnapshotRequest(userId));
         }
 
-        private void CreateConnection(IPAddress targetAddress, int targetPort)
+        private bool CreateConnection(IPAddress targetAddress, int targetPort)
         {
             const int TimeoutSeconds = 5;
 
@@ -112,17 +122,24 @@ namespace ChatClient.Services
                 if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(TimeoutSeconds), false))
                 {
                     serverConnection.Close();
-                    throw new TimeoutException();
+                    Log.Warn("Timed out trying to find server.");
+                    return false;
                 }
 
                 serverConnection.EndConnect(asyncResult);
+                Log.Info("ClientService found server, connection created");
+
+                return true;
+            }
+            catch (SocketException)
+            {
+                Log.Info("Port value is incorrect.");
+                return false;
             }
             finally
             {
                 waitHandle.Close();
             }
-
-            Log.Info("ClientService found server, connection created");
         }
 
         private void SendConnectionMessage(IMessage message)
@@ -140,6 +157,12 @@ namespace ChatClient.Services
             ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
             return serialiser.Deserialise(serverConnection.GetStream());
+        }
+        private void RemoveBootstrapEventSubscriptions()
+        {
+            userSnapshotHandler.UserBootstrapCompleted -= OnUserBootstrapCompleted;
+            participationSnapshotHandler.ParticipationBootstrapCompleted -= OnParticipationBootstrapCompleted;
+            conversationSnapshotHandler.ConversationBootstrapCompleted -= OnConversationBootstrapCompleted;
         }
 
         private void OnBootstrapCompleted()

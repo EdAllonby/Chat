@@ -6,6 +6,7 @@
     public enum LoginResult
     {
         Success,
-        AlreadyConnected
+        AlreadyConnected,
+        ServerNotFound
     }
 }
