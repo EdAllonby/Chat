@@ -45,17 +45,21 @@ namespace ChatClient.Services
         {
             var serverLoginHandler = new ServerLoginHandler();
             serverLoginHandler.BootstrapCompleted += OnBootstrapCompleted;
+
             LoginResponse response = serverLoginHandler.ConnectToServer(loginDetails, out connectionHandler);
 
-            if (response.LoginResult == LoginResult.Success)
+            switch (response.LoginResult)
             {
-                ClientUserId = response.User.Id;
-
-                connectionHandler.MessageReceived += OnNewMessageReceived;
-            }
-            else
-            {
-                Log.WarnFormat("User {0} already connected.", loginDetails.Username);
+                case LoginResult.Success:
+                    ClientUserId = response.User.Id;
+                    connectionHandler.MessageReceived += OnNewMessageReceived;
+                    break;
+                case LoginResult.AlreadyConnected:
+                    Log.WarnFormat("User {0} already connected.", loginDetails.Username);
+                    break;
+                case LoginResult.ServerNotFound:
+                    Log.WarnFormat("Cannot find server.");
+                    break;
             }
 
             return response.LoginResult;
