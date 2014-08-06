@@ -64,19 +64,15 @@ namespace Server
         {
             var clientHandler = new ClientHandler();
 
-            LoginResponse loginResponse = clientHandler.LoginClient(tcpClient, repositoryManager.UserRepository, entityIdAllocatorFactory);
+            LoginResponse loginResponse = clientHandler.InitialiseClient(tcpClient, repositoryManager.UserRepository, entityIdAllocatorFactory);
 
             if (loginResponse.LoginResult == LoginResult.Success)
-            {
-                int userId = loginResponse.User.Id;
-
-                clientHandler.CreateConnectionHandler(userId, tcpClient);
-
-                clientManager.AddClientHandler(userId, clientHandler);
+            {              
+                clientManager.AddClientHandler(loginResponse.User.Id, clientHandler);
 
                 clientHandler.MessageReceived += OnMessageReceived;
 
-                Log.InfoFormat("Client with User Id {0} has successfully logged in.", userId);
+                Log.InfoFormat("Client with User Id {0} has successfully logged in.", loginResponse.User.Id);
             }
         }
 

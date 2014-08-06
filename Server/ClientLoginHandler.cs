@@ -7,6 +7,9 @@ using SharedClasses.Serialiser;
 
 namespace Server
 {
+    /// <summary>
+    /// Handles a client attempting to log in to the server.
+    /// </summary>
     internal sealed class ClientLoginHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
@@ -19,6 +22,12 @@ namespace Server
             this.userRepository = userRepository;
         }
 
+        /// <summary>
+        /// From a <see cref="TcpClient"/> object, attempt to initialise a new <see cref="User"/> <see cref="IEntity"/>.
+        /// </summary>
+        /// <param name="tcpClient">The connection between the attempting-to-connect client.</param>
+        /// <param name="entityIdAllocator">An Id allocator for initialising a potentially new <see cref="User"/>.</param>
+        /// <returns></returns>
         public LoginResponse InitialiseNewClient(TcpClient tcpClient, EntityIdAllocatorFactory entityIdAllocator)
         {
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
@@ -26,19 +35,18 @@ namespace Server
 
             LoginResponse loginResponse;
 
-            if (user == null || user.ConnectionStatus.UserConnectionStatus != ConnectionStatus.Status.Connected)
+            if (IsNewUser(user))
             {
-                if (user == null)
-                {
-                    // new user, give it unique ID and connection status of connected
-                    user = CreateUserEntity(loginRequest, entityIdAllocator);
-                }
-                else
-                {
-                    // This user already exists, just update the status of it in the repository
-                    userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.Id, ConnectionStatus.Status.Connected));
-                }
+                // new user, give it unique Id and connection status of connected
+                user = CreateUserEntity(loginRequest, entityIdAllocator);
+                loginResponse = new LoginResponse(user, LoginResult.Success);
 
+                SendConnectionMessage(loginResponse, tcpClient);
+            }
+            else if (IsExistingUser(user))
+            {
+                // This user already exists, just update the status of it in the repository
+                userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.Id, ConnectionStatus.Status.Connected));
                 loginResponse = new LoginResponse(user, LoginResult.Success);
 
                 SendConnectionMessage(loginResponse, tcpClient);
@@ -79,6 +87,16 @@ namespace Server
         {
             ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(tcpClient.GetStream(), message);
+        }
+
+        private static bool IsNewUser(User user)
+        {
+            return user == null;
+        }
+
+        private static bool IsExistingUser(User user)
+        {
+            return user.ConnectionStatus.UserConnectionStatus != ConnectionStatus.Status.Connected;
         }
     }
 }
