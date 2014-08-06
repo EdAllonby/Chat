@@ -14,11 +14,9 @@ namespace Server
         private ClientLoginHandler clientLoginHandler;
         private ConnectionHandler connectionHandler;
 
-        public void Dispose()
-        {
-            connectionHandler.Dispose();
-        }
-
+        /// <summary>
+        /// Fires when a message has been sent from the client.
+        /// </summary>
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
@@ -28,10 +26,17 @@ namespace Server
         /// <param name="userRepository">A generator for assigning the client a unique user ID.</param>
         /// <param name="entityIdAllocator">The server's list of repositories used to give the client necessary entity collections.</param>
         /// <returns>A login response <see cref="IMessage"/> with the details of the login attempt.</returns>
-        public LoginResponse LoginClient(TcpClient tcpClient, UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocator)
+        public LoginResponse InitialiseClient(TcpClient tcpClient, UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocator)
         {
             clientLoginHandler = new ClientLoginHandler(userRepository);
-            return clientLoginHandler.InitialiseNewClient(tcpClient, entityIdAllocator);
+            LoginResponse loginResponse = clientLoginHandler.InitialiseNewClient(tcpClient, entityIdAllocator);
+
+            if (loginResponse.LoginResult == LoginResult.Success)
+            {
+                CreateConnectionHandler(loginResponse.User.Id, tcpClient);
+            }
+
+            return loginResponse;
         }
 
         /// <summary>
@@ -39,7 +44,7 @@ namespace Server
         /// </summary>
         /// <param name="userId">The user id to link this connection handler with.</param>
         /// <param name="tcpClient">The TCP connection between this client and the Server.</param>
-        public void CreateConnectionHandler(int userId, TcpClient tcpClient)
+        private void CreateConnectionHandler(int userId, TcpClient tcpClient)
         {
             connectionHandler = new ConnectionHandler(userId, tcpClient);
             connectionHandler.MessageReceived += OnMessageReceived;
@@ -62,6 +67,11 @@ namespace Server
             {
                 MessageReceived(sender, e);
             }
+        }
+
+        public void Dispose()
+        {
+            connectionHandler.Dispose();
         }
     }
 }
