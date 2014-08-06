@@ -13,9 +13,7 @@ namespace SharedClasses.Domain
 
             Conversation previousConversation = Conversation.DeepClone(FindEntityById(conversation.Id));
 
-            var conversationChangedEventArgs = new EntityChangedEventArgs<Conversation>();
-            conversationChangedEventArgs.EntityUpdated(conversation, previousConversation);
-            OnEntityChanged(conversationChangedEventArgs);
+            OnEntityUpdated(conversation, previousConversation);
 
             Log.DebugFormat("Conversation with Id {0} has been updated.", conversation.Id);
         }
@@ -31,10 +29,7 @@ namespace SharedClasses.Domain
 
             conversation.AddContribution(contribution);
 
-            var conversationChangedEventArgs = new EntityChangedEventArgs<Conversation>();
-            conversationChangedEventArgs.EntityUpdated(conversation, previousConversation);
-
-            OnEntityChanged(conversationChangedEventArgs);
+            OnEntityUpdated(conversation, previousConversation);
         }
     }
 }

@@ -3,31 +3,52 @@ using SharedClasses.Message;
 
 namespace SharedClasses
 {
+    /// <summary>
+    /// Signifies a entity change in a <see cref="Repository{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The entity that has been changed in the repository.</typeparam>
     public sealed class EntityChangedEventArgs<T> where T : IEntity
     {
-        public NotificationType NotificationType { get; private set; }
-
-        public T Entity { get; private set; }
-
-        public T PreviousEntity { get; private set; }
-
-        public void EntityAdded(T entity)
+        /// <summary>
+        /// Signifies either an entity creation or entity deletion. When an entity is deleted, <see cref="PreviousEntity"/> is set to the current entity.
+        /// </summary>
+        /// <param name="entity">The entity that is created or deleted.</param>
+        /// <param name="notificationType">What is happening to the entity in the repository.</param>
+        public EntityChangedEventArgs(T entity, NotificationType notificationType)
         {
-            NotificationType = NotificationType.Create;
             Entity = entity;
+            if (notificationType == NotificationType.Delete)
+            {
+                PreviousEntity = entity;
+            }
         }
 
-        public void EntityUpdated(T entity, T previousEntity)
+        /// <summary>
+        /// Signifies an entity being updated in the <see cref="Repository{T}"/>.
+        /// </summary>
+        /// <param name="entity">The entity being updated.</param>
+        /// <param name="previousEntity">The entity state before being updated.</param>
+        public EntityChangedEventArgs(T entity, T previousEntity)
         {
             Entity = entity;
             PreviousEntity = previousEntity;
+
             NotificationType = NotificationType.Update;
         }
 
-        public void EntityDeleted(T entity)
-        {
-            Entity = entity;
-            NotificationType = NotificationType.Delete;
-        }
+        /// <summary>
+        /// The action being applied to the entity.
+        /// </summary>
+        public NotificationType NotificationType { get; private set; }
+
+        /// <summary>
+        /// The new entity.
+        /// </summary>
+        public T Entity { get; private set; }
+
+        /// <summary>
+        /// The previous state of the entity.
+        /// </summary>
+        public T PreviousEntity { get; private set; }
     }
 }

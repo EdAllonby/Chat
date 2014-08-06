@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using log4net;
+using SharedClasses.Message;
 
 namespace SharedClasses.Domain
 {
@@ -29,11 +30,7 @@ namespace SharedClasses.Domain
 
             Log.DebugFormat("Entity with Id {0} added.", entity.Id);
 
-            var entityChangedEventArgs = new EntityChangedEventArgs<T>();
-
-            entityChangedEventArgs.EntityAdded(entity);
-
-            OnEntityChanged(entityChangedEventArgs);
+            OnEntityAdded(entity);
         }
 
         /// <summary>
@@ -64,16 +61,6 @@ namespace SharedClasses.Domain
             return entitiesIndexedById[entityId];
         }
 
-        protected void OnEntityChanged(EntityChangedEventArgs<T> entityChangedEventArgs)
-        {
-            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityChanged;
-
-            if (entityChangedCopy != null)
-            {
-                entityChangedCopy(this, entityChangedEventArgs);
-            }
-        }
-
         private void OnEntitiesAdded(IEnumerable<T> entities)
         {
             EventHandler<IEnumerable<T>> entitiesAddedCopy = EntitiesAdded;
@@ -91,6 +78,30 @@ namespace SharedClasses.Domain
         public IEnumerable<T> GetAllEntities()
         {
             return new List<T>(entitiesIndexedById.Values);
+        }
+
+        protected void OnEntityAdded(T entity)
+        {
+            EntityChangedEventArgs<T> entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, NotificationType.Create);
+
+            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityChanged;
+
+            if (entityChangedCopy != null)
+            {
+                entityChangedCopy(this, entityChangedEventArgs);
+            }
+        }
+
+        protected void OnEntityUpdated(T entity, T previousEntity)
+        {
+            EntityChangedEventArgs<T> entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, previousEntity);
+
+            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityChanged;
+
+            if (entityChangedCopy != null)
+            {
+                entityChangedCopy(this, entityChangedEventArgs);
+            }
         }
     }
 }
