@@ -22,11 +22,7 @@ namespace SharedClasses.Domain
 
             user.ConnectionStatus = connectionStatus;
 
-            var userChangedEventArgs = new EntityChangedEventArgs<User>();
-
-            userChangedEventArgs.EntityUpdated(user, previousUser);
-
-            OnEntityChanged(userChangedEventArgs);
+            OnEntityUpdated(user, previousUser);
         }
 
         /// <summary>
@@ -42,10 +38,7 @@ namespace SharedClasses.Domain
 
             user.Avatar = avatar;
 
-            var userChangedEventArgs = new EntityChangedEventArgs<User>();
-            userChangedEventArgs.EntityUpdated(user, previousUser);
-
-            OnEntityChanged(userChangedEventArgs);
+            OnEntityUpdated(user, previousUser);
         }
 
         /// <summary>
