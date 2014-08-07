@@ -14,7 +14,11 @@ namespace SharedClasses.Domain
 
         private readonly ConcurrentDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
 
-        public event EventHandler<EntityChangedEventArgs<T>> EntityChanged;
+        public event EventHandler<EntityChangedEventArgs<T>> EntityAdded;
+
+        public event EventHandler<EntityChangedEventArgs<T>> EntityUpdated;
+
+        public event EventHandler<EntityChangedEventArgs<T>> EntityRemoved; 
 
         public event EventHandler<IEnumerable<T>> EntitiesAdded;
 
@@ -80,11 +84,11 @@ namespace SharedClasses.Domain
             return new List<T>(entitiesIndexedById.Values);
         }
 
-        protected void OnEntityAdded(T entity)
+        private void OnEntityAdded(T entity)
         {
             EntityChangedEventArgs<T> entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, NotificationType.Create);
 
-            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityChanged;
+            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityAdded;
 
             if (entityChangedCopy != null)
             {
@@ -96,11 +100,11 @@ namespace SharedClasses.Domain
         {
             EntityChangedEventArgs<T> entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, previousEntity);
 
-            EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityChanged;
+            EventHandler<EntityChangedEventArgs<T>> entityUpdatedCopy = EntityUpdated;
 
-            if (entityChangedCopy != null)
+            if (entityUpdatedCopy != null)
             {
-                entityChangedCopy(this, entityChangedEventArgs);
+                entityUpdatedCopy(this, entityChangedEventArgs);
             }
         }
     }

@@ -11,7 +11,6 @@ using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
@@ -39,9 +38,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 repositoryManager = ClientService.RepositoryManager;
 
-                repositoryManager.UserRepository.EntityChanged += OnUserChanged;
+                repositoryManager.UserRepository.EntityAdded += OnUserChanged;
+                repositoryManager.UserRepository.EntityUpdated += OnUserChanged;
 
-                repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
+                repositoryManager.ConversationRepository.EntityUpdated += OnConversationChanged;
 
                 AddUserCommand = new AddUserToConversationCommand(this);
 
@@ -88,19 +88,13 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
         {
-            switch (e.NotificationType)
+            if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
             {
-                case NotificationType.Update:
-                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
-                    {
-                        OnContributionAdded(e.Entity.LastContribution);
-                    }
-                    else
-                    {
-                        OnConversationUpdated(e.Entity);
-                    }
-
-                    break;
+                OnContributionAdded(e.Entity.LastContribution);
+            }
+            else
+            {
+                OnConversationUpdated(e.Entity);
             }
         }
 

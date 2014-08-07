@@ -24,22 +24,22 @@ namespace Server
 
         public Server()
         {
-            repositoryManager.UserRepository.EntityChanged += OnUserChanged;
+            repositoryManager.UserRepository.EntityAdded += OnUserAdded;
+            repositoryManager.UserRepository.EntityUpdated += OnUserUpdated;
 
-            repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
+            repositoryManager.ConversationRepository.EntityAdded += OnConversationAdded;
+            repositoryManager.ConversationRepository.EntityUpdated += OnConversationUpdated;
+
             repositoryManager.ParticipationRepository.EntitiesAdded += OnParticipationsAdded;
-            repositoryManager.ParticipationRepository.EntityChanged += ParticipationEntityChanged;
+            repositoryManager.ParticipationRepository.EntityAdded += OnParticipationAdded;
 
             Log.Info("Server instance started");
             ListenForNewClients();
         }
 
-        private void ParticipationEntityChanged(object sender, EntityChangedEventArgs<Participation> e)
+        private void OnParticipationAdded(object sender, EntityChangedEventArgs<Participation> e)
         {
-            if (e.NotificationType == NotificationType.Create)
-            {
-                OnParticipationAdded(e.Entity);
-            }
+            OnParticipationAdded(e.Entity);
         }
 
         private void ListenForNewClients()
@@ -96,32 +96,23 @@ namespace Server
             }
         }
 
-
-        private void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
+        private void OnUserAdded(object sender, EntityChangedEventArgs<User> e)
         {
-            switch (e.NotificationType)
-            {
-                case NotificationType.Create:
-                    OnUserAdded(e.Entity);
-                    break;
-                case NotificationType.Update:
-                    if (e.PreviousEntity.ConnectionStatus.UserConnectionStatus != e.Entity.ConnectionStatus.UserConnectionStatus)
-                    {
-                        OnUserConnectionUpdated(e.Entity);
-                    }
-                    if (!e.PreviousEntity.Avatar.Equals(e.Entity.Avatar))
-                    {
-                        OnUserAvatarUpdated(e.Entity);
-                    }
-                    break;
-            }
-        }
-
-        private void OnUserAdded(User user)
-        {
-            var userNotification = new UserNotification(user, NotificationType.Create);
+            var userNotification = new UserNotification(e.Entity, NotificationType.Create);
 
             clientManager.SendMessageToClients(userNotification);
+        }
+        
+        private void OnUserUpdated(object sender, EntityChangedEventArgs<User> e)
+        {
+            if (e.PreviousEntity.ConnectionStatus.UserConnectionStatus != e.Entity.ConnectionStatus.UserConnectionStatus)
+            {
+                OnUserConnectionUpdated(e.Entity);
+            }
+            if (!e.PreviousEntity.Avatar.Equals(e.Entity.Avatar))
+            {
+                OnUserAvatarUpdated(e.Entity);
+            }
         }
 
         private void OnUserConnectionUpdated(User user)
@@ -147,19 +138,16 @@ namespace Server
             clientManager.SendMessageToClients(conversationNotification, userIds);
         }
 
-        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
         {
-            switch (e.NotificationType)
+            OnConversationAdded(e.Entity);
+        }
+
+        private void OnConversationUpdated(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
             {
-                case NotificationType.Create:
-                    OnConversationAdded(e.Entity);
-                    break;
-                case NotificationType.Update:
-                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
-                    {
-                        OnContributionAdded(e.Entity.LastContribution);
-                    }
-                    break;
+                OnContributionAdded(e.Entity.LastContribution);
             }
         }
 

@@ -6,7 +6,6 @@ using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
@@ -22,7 +21,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             if (!IsInDesignMode)
             {
                 userRepository = ClientService.RepositoryManager.UserRepository;
-                userRepository.EntityChanged += OnUserChanged;
+                userRepository.EntityUpdated += OnUserUpdated;
                 userId = ClientService.ClientUserId;
             }
         }
@@ -52,11 +51,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             Application.Current.Dispatcher.Invoke(OnOpenUserSettingsWindowRequested);
         }
 
-        private void OnUserChanged(object sender, EntityChangedEventArgs<User> e)
+        private void OnUserUpdated(object sender, EntityChangedEventArgs<User> e)
         {
-            if (e.NotificationType == NotificationType.Update &&
-                !e.PreviousEntity.Avatar.Equals(e.Entity.Avatar) &&
-                e.Entity.Id == userId)
+            if ( e.Entity.Id == userId && !e.PreviousEntity.Avatar.Equals(e.Entity.Avatar))
             {
                 UserAvatar = e.Entity.Avatar.UserAvatar;
             }
