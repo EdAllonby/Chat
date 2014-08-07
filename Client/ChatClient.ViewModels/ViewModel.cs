@@ -37,7 +37,7 @@ namespace ChatClient.ViewModels
                 {
 #if DEBUG
 #if SILVERLIGHT
-_isInDesignMode = DesignerProperties.IsInDesignTool;
+isInDesignMode = DesignerProperties.IsInDesignTool;
 #else
                     DependencyProperty prop = DesignerProperties.IsInDesignModeProperty;
                     isInDesignMode =
@@ -53,7 +53,7 @@ _isInDesignMode = DesignerProperties.IsInDesignTool;
 #endif
 
 #else
-_isInDesignMode = false;
+isInDesignMode = false;
 #endif
                 }
                 return isInDesignMode.Value;

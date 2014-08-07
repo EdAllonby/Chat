@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using ChatClient.Services;
 using SharedClasses;
@@ -10,11 +11,18 @@ namespace ChatClient.Views
     /// </summary>
     public partial class App
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool FreeConsole();
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            // First thing is to name the main thread, then continue with the normal startup procedure.
-            Thread mainThread = Thread.CurrentThread;
-            mainThread.Name = "Main Thread";
+#if DEBUG
+            AllocConsole();
+#endif
+            Thread.CurrentThread.Name = "Main Thread";
 
             RegisterServices();
 
@@ -24,6 +32,14 @@ namespace ChatClient.Views
         private static void RegisterServices()
         {
             ServiceManager.RegisterService<IClientService>(new ClientService());
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+#if DEBUG
+            FreeConsole();
+#endif
+            base.OnExit(e);
         }
     }
 }
