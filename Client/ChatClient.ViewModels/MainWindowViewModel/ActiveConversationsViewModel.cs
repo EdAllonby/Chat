@@ -19,7 +19,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
                 UpdateActiveConversations();
 
-                repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
+                repositoryManager.ConversationRepository.EntityAdded += OnConversationChanged;
+                repositoryManager.ConversationRepository.EntityUpdated += OnConversationChanged;
+
             }
         }
 

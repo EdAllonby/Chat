@@ -4,7 +4,6 @@ using System.Windows.Input;
 using ChatClient.ViewModels.Commands;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
@@ -25,9 +24,11 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             {
                 repositoryManager = ClientService.RepositoryManager;
 
-                repositoryManager.UserRepository.EntityChanged += OnUserChanged;
+                repositoryManager.UserRepository.EntityAdded += OnUserChanged;
+                repositoryManager.UserRepository.EntityUpdated += OnUserChanged;
 
-                repositoryManager.ConversationRepository.EntityChanged += OnConversationChanged;
+                repositoryManager.ConversationRepository.EntityAdded += OnConversationAdded;
+                repositoryManager.ConversationRepository.EntityUpdated += OnConversationUpdated;
 
                 UpdateConnectedUsers();
             }
@@ -73,27 +74,19 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
         }
 
-        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        private static void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
         {
-            switch (e.NotificationType)
+            ConversationWindowManager.CreateConversationWindow(e.Entity);
+        }
+
+        private void OnConversationUpdated(object sender, EntityChangedEventArgs<Conversation> e)
+        {
+            if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
             {
-                case NotificationType.Create:
-                    OnConversationAdded(e.Entity);
-                    break;
-                case NotificationType.Update:
-                    if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
-                    {
-                        OnContributionAdded(e.Entity.LastContribution);
-                    }
-                    break;
+                OnContributionAdded(e.Entity.LastContribution);
             }
         }
-
-        private static void OnConversationAdded(Conversation conversation)
-        {
-            ConversationWindowManager.CreateConversationWindow(conversation);
-        }
-
+        
         private void OnContributionAdded(Contribution contribution)
         {
             Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(contribution.ConversationId);
