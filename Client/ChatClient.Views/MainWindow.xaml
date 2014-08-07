@@ -4,7 +4,7 @@
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
-        Title="Chat Program" Height="600" Width="350" RenderOptions.BitmapScalingMode="Fant">
+        Title="Chat Program" Height="600" Width="350" RenderOptions.BitmapScalingMode="Fant" Closed="OnMainWindowClosed">
     <Window.DataContext>
         <mainWindowViewModel:MainWindowViewModel />
     </Window.DataContext>
