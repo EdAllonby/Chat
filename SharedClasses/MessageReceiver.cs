@@ -15,7 +15,6 @@ namespace SharedClasses
     public sealed class MessageReceiver
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageReceiver));
-        private readonly object locker = new object();
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
         private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
@@ -30,31 +29,34 @@ namespace SharedClasses
         /// Fires a <see cref="MessageReceived"/> event when a new <see cref="IMessage"/> has been received.
         /// </summary>
         /// <param name="clientUserId">The Id of the user the NetworkStream is linked to.</param>
-        /// <param name="networkStream">The stream between the Client and the Server.</param>
-        public void ReceiveMessages(int clientUserId, NetworkStream networkStream)
+        /// <param name="tcpClient">The stream between the Client and the Server.</param>
+        public void ReceiveMessages(int clientUserId, TcpClient tcpClient)
         {
             Contract.Requires(clientUserId > 0);
-            Contract.Requires(networkStream != null);
+            Contract.Requires(tcpClient != null);
 
-            try
+            using (var networkStream = tcpClient.GetStream())
             {
-                while (true)
+                try
                 {
-                    MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
+                    while (true)
+                    {
+                        MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
 
-                    ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+                        ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
 
-                    IMessage message = serialiser.Deserialise(networkStream);
+                        IMessage message = serialiser.Deserialise(networkStream);
+
+                        OnMessageReceived(new MessageEventArgs(message));
+                    }
+                }
+                catch (IOException)
+                {
+                    Log.Info("Detected client disconnection, notifying Server of ClientDisconnection.");
+                    IMessage message = new ClientDisconnection(clientUserId);
 
                     OnMessageReceived(new MessageEventArgs(message));
                 }
-            }
-            catch (IOException)
-            {
-                Log.Info("Detected client disconnection, notifying Server of ClientDisconnection.");
-                IMessage message = new ClientDisconnection(clientUserId);
-
-                OnMessageReceived(new MessageEventArgs(message));
             }
         }
 
