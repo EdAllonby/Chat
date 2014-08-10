@@ -149,9 +149,7 @@ namespace ChatClient.Services
 
         private IMessage GetConnectionIMessage()
         {
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-            MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
+            MessageIdentifier messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
 
             ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
