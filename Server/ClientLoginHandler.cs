@@ -60,11 +60,9 @@ namespace Server
             return loginResponse;
         }
 
-        private LoginRequest GetLoginRequest(TcpClient tcpClient)
+        private static LoginRequest GetLoginRequest(TcpClient tcpClient)
         {
-            var messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-            MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
+            MessageIdentifier messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
             ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 

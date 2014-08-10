@@ -12,8 +12,6 @@ namespace SharedClasses.Serialiser
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof (Serialiser<T>));
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
         /// <summary>
         /// Serialise the <see cref="IMessage" /> down the wire.
         /// </summary>
@@ -21,7 +19,7 @@ namespace SharedClasses.Serialiser
         /// <param name="message">The <see cref="IMessage" /> to send.</param>
         public void Serialise(NetworkStream networkStream, IMessage message)
         {
-            messageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
+            MessageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
             Log.InfoFormat("Serialising an {0} across the network stream.", message.MessageIdentifier);
             Serialise(networkStream, (T) message);
         }

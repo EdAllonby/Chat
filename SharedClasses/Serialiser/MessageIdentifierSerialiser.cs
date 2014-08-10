@@ -8,11 +8,11 @@ namespace SharedClasses.Serialiser
     /// <summary>
     /// Defines  what message gets what identifier, and used to serialise and deserialise Message Identifiers to their related Type.
     /// </summary>
-    public sealed class MessageIdentifierSerialiser
+    public static class MessageIdentifierSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 
-        public void Serialise(NetworkStream stream, MessageIdentifier messageIdentifier)
+        public static void Serialise(NetworkStream stream, MessageIdentifier messageIdentifier)
         {
             Contract.Requires(stream != null);
 
@@ -20,7 +20,7 @@ namespace SharedClasses.Serialiser
             Log.DebugFormat("Sent Message Identifier: {0} to stream.", messageIdentifier);
         }
 
-        public MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
+        public static MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
         {
             Contract.Requires(stream != null);
 
