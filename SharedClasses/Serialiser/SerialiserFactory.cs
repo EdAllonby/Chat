@@ -6,7 +6,7 @@ namespace SharedClasses.Serialiser
     /// <summary>
     /// Get the correct serialiser for the given <see cref="IMessage" /> identifier.
     /// </summary>
-    public sealed class SerialiserFactory
+    public static class SerialiserFactory
     {
         /// <summary>
         /// Returns the correct serialiser for the <see cref="IMessage" /> object identifier
@@ -14,7 +14,7 @@ namespace SharedClasses.Serialiser
         /// </summary>
         /// <typeparam name="T">="T">The type of message that will be sent</typeparam>
         /// <returns>The serialiser used to serialise and deserialise the message</returns>
-        public Serialiser<T> GetSerialiser<T>() where T : IMessage
+        public static Serialiser<T> GetSerialiser<T>() where T : IMessage
         {
             return SerialiserRegistry.SerialisersByMessageType[typeof (T)] as Serialiser<T>;
         }
@@ -25,7 +25,7 @@ namespace SharedClasses.Serialiser
         /// </summary>
         /// <param name="identifier"></param>
         /// <returns></returns>
-        public ISerialiser GetSerialiser(MessageIdentifier identifier)
+        public static ISerialiser GetSerialiser(MessageIdentifier identifier)
         {
             if (identifier == MessageIdentifier.UnrecognisedMessage)
             {

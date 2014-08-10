@@ -13,7 +13,7 @@ namespace SharedClassesTests
         [Test]
         public void GetSerialiserFromGenericTest()
         {
-            ISerialiser serialiser = serialiserFactory.GetSerialiser<ParticipationNotification>();
+            ISerialiser serialiser = SerialiserFactory.GetSerialiser<ParticipationNotification>();
             Assert.IsInstanceOf<ParticipationNotificationSerialiser>(serialiser);
         }
 
@@ -22,7 +22,7 @@ namespace SharedClassesTests
         {
             IMessage message = new LoginRequest("User");
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
+            ISerialiser serialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
             Assert.IsInstanceOf<LoginRequestSerialiser>(serialiser);
         }
     }

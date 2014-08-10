@@ -14,7 +14,6 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
 
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly UserRepository userRepository;
 
         public ClientLoginHandler(UserRepository userRepository)
@@ -67,7 +66,7 @@ namespace Server
 
             MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
             var loginRequest = (LoginRequest) serialiser.Deserialise(tcpClient.GetStream());
 
@@ -85,7 +84,7 @@ namespace Server
 
         private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
         {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
+            ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(tcpClient.GetStream(), message);
         }
 
