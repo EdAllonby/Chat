@@ -19,7 +19,6 @@ namespace ChatClient.Services
         private readonly ConversationSnapshotHandler conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
         private readonly ParticipationSnapshotHandler participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
 
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly TcpClient serverConnection = new TcpClient();
 
         private readonly UserSnapshotHandler userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
@@ -144,7 +143,7 @@ namespace ChatClient.Services
 
         private void SendConnectionMessage(IMessage message)
         {
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
+            ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(serverConnection.GetStream(), message);
         }
 
@@ -154,7 +153,7 @@ namespace ChatClient.Services
 
             MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
 
-            ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+            ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
             return serialiser.Deserialise(serverConnection.GetStream());
         }

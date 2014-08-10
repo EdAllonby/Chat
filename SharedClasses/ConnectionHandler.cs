@@ -21,7 +21,6 @@ namespace SharedClasses
         private readonly int clientUserId;
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
         private readonly object messageSenderLock = new object();
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
         private readonly TcpClient tcpClient;
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace SharedClasses
 
             lock (messageSenderLock)
             {
-                ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
+                ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
                 messageSerialiser.Serialise(tcpClient.GetStream(), message);
                 Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
             }

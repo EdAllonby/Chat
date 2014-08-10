@@ -17,7 +17,6 @@ namespace SharedClasses
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageReceiver));
 
         private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
 
         /// <summary>
         /// Fires a <see cref="MessageEventArgs"/> encapsulating an <see cref="IMessage"/> when a new message is received.
@@ -43,7 +42,7 @@ namespace SharedClasses
                     {
                         MessageIdentifier messageIdentifier = messageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
 
-                        ISerialiser serialiser = serialiserFactory.GetSerialiser(messageIdentifier);
+                        ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
                         IMessage message = serialiser.Deserialise(networkStream);
 
