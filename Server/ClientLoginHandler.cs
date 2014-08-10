@@ -10,24 +10,19 @@ namespace Server
     /// <summary>
     /// Handles a client attempting to log in to the server.
     /// </summary>
-    internal sealed class ClientLoginHandler
+    internal static class ClientLoginHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
-
-        private readonly UserRepository userRepository;
-
-        public ClientLoginHandler(UserRepository userRepository)
-        {
-            this.userRepository = userRepository;
-        }
 
         /// <summary>
         /// From a <see cref="TcpClient"/> object, attempt to initialise a new <see cref="User"/> <see cref="IEntity"/>.
         /// </summary>
+        /// 
         /// <param name="tcpClient">The connection between the attempting-to-connect client.</param>
+        /// <param name="userRepository">The server's collection of users.</param>
         /// <param name="entityIdAllocator">An Id allocator for initialising a potentially new <see cref="User"/>.</param>
         /// <returns></returns>
-        public LoginResponse InitialiseNewClient(TcpClient tcpClient, EntityIdAllocatorFactory entityIdAllocator)
+        public static LoginResponse InitialiseNewClient(TcpClient tcpClient, UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocator)
         {
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
             User user = userRepository.FindUserByUsername(loginRequest.User.Username);
@@ -37,10 +32,10 @@ namespace Server
             if (IsNewUser(user))
             {
                 // new user, give it unique Id and connection status of connected
-                user = CreateUserEntity(loginRequest, entityIdAllocator);
+                user = CreateUserEntity(loginRequest, userRepository, entityIdAllocator);
                 loginResponse = new LoginResponse(user, LoginResult.Success);
 
-                SendConnectionMessage(loginResponse, tcpClient);
+                SendLoginResponse(loginResponse, tcpClient);
             }
             else if (IsExistingUser(user))
             {
@@ -48,13 +43,13 @@ namespace Server
                 userRepository.UpdateUserConnectionStatus(new ConnectionStatus(user.Id, ConnectionStatus.Status.Connected));
                 loginResponse = new LoginResponse(user, LoginResult.Success);
 
-                SendConnectionMessage(loginResponse, tcpClient);
+                SendLoginResponse(loginResponse, tcpClient);
             }
             else
             {
                 Log.InfoFormat("User with user Id {0} already connected, denying user login.", user.Id);
                 loginResponse = new LoginResponse(null, LoginResult.AlreadyConnected);
-                SendConnectionMessage(loginResponse, tcpClient);
+                SendLoginResponse(loginResponse, tcpClient);
             }
 
             return loginResponse;
@@ -71,7 +66,7 @@ namespace Server
             return loginRequest;
         }
 
-        private User CreateUserEntity(LoginRequest clientLogin, EntityIdAllocatorFactory entityIdAllocator)
+        private static User CreateUserEntity(LoginRequest clientLogin, Repository<User> userRepository, EntityIdAllocatorFactory entityIdAllocator)
         {
             var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), new ConnectionStatus(clientLogin.User.Id, ConnectionStatus.Status.Connected));
 
@@ -80,10 +75,10 @@ namespace Server
             return newUser;
         }
 
-        private void SendConnectionMessage(IMessage message, TcpClient tcpClient)
+        private static void SendLoginResponse(IMessage loginResponse, TcpClient tcpClient)
         {
-            ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(tcpClient.GetStream(), message);
+            ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(loginResponse.MessageIdentifier);
+            messageSerialiser.Serialise(tcpClient.GetStream(), loginResponse);
         }
 
         private static bool IsNewUser(User user)

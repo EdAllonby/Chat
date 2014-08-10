@@ -8,8 +8,6 @@ namespace SharedClassesTests
     [TestFixture]
     public class SerialiserFactoryTests
     {
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
-
         [Test]
         public void GetSerialiserFromGenericTest()
         {
