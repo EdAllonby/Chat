@@ -11,7 +11,6 @@ namespace Server
     /// </summary>
     internal sealed class ClientHandler : IDisposable
     {
-        private ClientLoginHandler clientLoginHandler;
         private ConnectionHandler connectionHandler;
 
         /// <summary>
@@ -28,8 +27,7 @@ namespace Server
         /// <returns>A login response <see cref="IMessage"/> with the details of the login attempt.</returns>
         public LoginResponse InitialiseClient(TcpClient tcpClient, UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocator)
         {
-            clientLoginHandler = new ClientLoginHandler(userRepository);
-            LoginResponse loginResponse = clientLoginHandler.InitialiseNewClient(tcpClient, entityIdAllocator);
+            LoginResponse loginResponse = ClientLoginHandler.InitialiseNewClient(tcpClient, userRepository, entityIdAllocator);
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
