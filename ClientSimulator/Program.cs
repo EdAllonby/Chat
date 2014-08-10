@@ -16,6 +16,7 @@ namespace ClientSimulator
     {
         private const int TotalClients = 10;
         private static readonly List<IClientService> Clients = new List<IClientService>();
+        private static bool areRepositoriesValid;
 
         private static void Main()
         {
@@ -26,17 +27,19 @@ namespace ClientSimulator
 
             LoginClients();
 
-            StartMultiUserConversation();
-
-
-            foreach (Thread thread in Clients.Select(clientService => new Thread(() => SendContributions(clientService))))
+            if (areRepositoriesValid)
             {
-                Thread.Sleep(1000);
+                StartMultiUserConversation();
 
-                thread.Start();
+                foreach (Thread thread in Clients.Select(clientService => new Thread(() => SendContributions(clientService))))
+                {
+                    Thread.Sleep(1000);
+
+                    thread.Start();
+                }
+
+                Console.ReadKey();
             }
-
-            Console.ReadKey();
         }
 
         private static void LoginClients()
@@ -47,8 +50,8 @@ namespace ClientSimulator
 
             // Make sure all clients have finished running their initialisation threads.
             Thread.Sleep(1000);
-
-            //ClientRepositoryValidator.ValidateUserRepository(Clients);
+            areRepositoriesValid = ClientRepositoryValidator.ValidateUserRepository(Clients);
+            Thread.Sleep(1000);
         }
 
         private static void StartMultiUserConversation()
