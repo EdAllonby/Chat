@@ -29,7 +29,11 @@ namespace SharedClassesTests.Domain
                 new Participation(1, 1, conversationId),
                 new Participation(2, 2, conversationId)
             };
-            participationRepository.AddEntities(participations);
+
+            foreach (Participation participation in participations)
+            {
+                participationRepository.AddEntity(participation);
+            }
 
             Assert.AreEqual(participations, participationRepository.GetAllEntities());
         }
@@ -84,8 +88,10 @@ namespace SharedClassesTests.Domain
                 new Participation(3, 3, conversationId),
                 new Participation(4, 5, conversationId)
             };
-
-            participationRepository.AddEntities(participations);
+            foreach (Participation participation in participations)
+            {
+                participationRepository.AddEntity(participation);
+            }
 
             Assert.AreEqual(participations, participationRepository.GetAllEntities());
         }
