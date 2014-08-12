@@ -51,7 +51,10 @@ namespace Server.MessageHandler
                 participations.Add(new Participation(participationId, userId, conversationId));
             }
 
-            context.RepositoryManager.ParticipationRepository.AddEntities(participations);
+            foreach (Participation participation in participations)
+            {
+                context.RepositoryManager.ParticipationRepository.AddEntity(participation);
+            }
 
             context.RepositoryManager.ConversationRepository.AddEntity(newConversation);
         }

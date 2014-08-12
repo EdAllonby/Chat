@@ -30,7 +30,6 @@ namespace Server
             repositoryManager.ConversationRepository.EntityAdded += OnConversationAdded;
             repositoryManager.ConversationRepository.EntityUpdated += OnConversationUpdated;
 
-            repositoryManager.ParticipationRepository.EntitiesAdded += OnParticipationsAdded;
             repositoryManager.ParticipationRepository.EntityAdded += OnParticipationAdded;
 
             Log.Info("Server instance started");
@@ -39,7 +38,35 @@ namespace Server
 
         private void OnParticipationAdded(object sender, EntityChangedEventArgs<Participation> e)
         {
-            OnParticipationAdded(e.Entity);
+            Participation participation = e.Entity;
+
+            List<Participation> conversationParticipants =
+                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
+
+            ParticipationNotification participationNotification = new ParticipationNotification(participation, NotificationType.Create);
+
+            IEnumerable<int> conversationParticipantUserIds = conversationParticipants.Select(conversationParticipation => conversationParticipation.UserId);
+
+            clientManager.SendMessageToClients(participationNotification, conversationParticipantUserIds);
+
+            foreach (Participation conversationParticipant in conversationParticipants)
+            {
+                if (!conversationParticipant.Equals(participation))
+                {
+                    clientManager.SendMessageToClient(new ParticipationNotification(conversationParticipant, NotificationType.Create), participation.UserId);
+                }
+            }
+
+            Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(participation.ConversationId);
+
+            if (conversation != null)
+            {
+                clientManager.SendMessageToClient(new ConversationNotification(conversation, NotificationType.Create), participation.UserId);
+
+                IEnumerable<int> currentConversationParticipantsUserIds = conversationParticipants.Where(conversationParticipation => !conversationParticipation.Equals(participation)).Select(participant => participant.UserId);
+
+                clientManager.SendMessageToClients(new ConversationNotification(conversation, NotificationType.Update), currentConversationParticipantsUserIds);
+            }
         }
 
         private void ListenForNewClients()
@@ -67,7 +94,7 @@ namespace Server
             LoginResponse loginResponse = clientHandler.InitialiseClient(tcpClient, repositoryManager.UserRepository, entityIdAllocatorFactory);
 
             if (loginResponse.LoginResult == LoginResult.Success)
-            {              
+            {
                 clientManager.AddClientHandler(loginResponse.User.Id, clientHandler);
 
                 clientHandler.MessageReceived += OnMessageReceived;
@@ -102,7 +129,7 @@ namespace Server
 
             clientManager.SendMessageToClients(userNotification);
         }
-        
+
         private void OnUserUpdated(object sender, EntityChangedEventArgs<User> e)
         {
             if (e.PreviousEntity.ConnectionStatus.UserConnectionStatus != e.Entity.ConnectionStatus.UserConnectionStatus)
@@ -138,7 +165,7 @@ namespace Server
             clientManager.SendMessageToClients(conversationNotification, userIds);
         }
 
-        void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
+        private void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
         {
             OnConversationAdded(e.Entity);
         }
@@ -160,50 +187,6 @@ namespace Server
                 .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).Select(user => user.Id);
 
             clientManager.SendMessageToClients(contributionNotification, userIds);
-        }
-
-        private void OnParticipationsAdded(object sender, IEnumerable<Participation> participations)
-        {
-            IList<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
-
-            List<int> userIds = participationsEnumerable.Select(participation => participation.UserId).ToList();
-
-            foreach (Participation participation in participationsEnumerable)
-            {
-                var participationNotification = new ParticipationNotification(participation, NotificationType.Create);
-                clientManager.SendMessageToClients(participationNotification, userIds);
-            }
-        }
-
-        private void OnParticipationAdded(Participation participation)
-        {
-            IEnumerable<Participation> participations =
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
-
-            IEnumerable<Participation> conversationParticipations = participations as Participation[] ??
-                                                                    participations.ToArray();
-
-            // Update other users of the new conversation participant
-            IEnumerable<int> userIds = conversationParticipations.Where(conversationParticipation => conversationParticipation.UserId != participation.UserId).Select(participant => participant.UserId);
-
-            var newParticipantNotification = new ParticipationNotification(participation, NotificationType.Create);
-
-            clientManager.SendMessageToClients(newParticipantNotification, userIds);
-
-            // Give the new user all participations for this new conversation they are entering.
-            foreach (Participation conversationParticipation in conversationParticipations)
-            {
-                clientManager.SendMessageToClient(new ParticipationNotification(conversationParticipation, NotificationType.Create), participation.UserId);
-            }
-
-            Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(participation.ConversationId);
-
-            clientManager.SendMessageToClient(new ConversationNotification(conversation, NotificationType.Create), participation.UserId);
-
-            // Update other conversation participants of conversation update.
-            IEnumerable<int> currentConversationParticipantsUserIds = conversationParticipations.Where(conversationParticipation => !conversationParticipation.Equals(participation)).Select(participant => participant.UserId);
-
-            clientManager.SendMessageToClients(new ConversationNotification(conversation, NotificationType.Update), currentConversationParticipantsUserIds);
         }
     }
 }

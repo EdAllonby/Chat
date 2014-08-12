@@ -1,4 +1,5 @@
 ﻿using System;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -12,7 +13,10 @@ namespace ChatClient.Services.MessageHandler
         {
             var participationSnapshot = (ParticipationSnapshot) message;
 
-            context.RepositoryManager.ParticipationRepository.AddEntities(participationSnapshot.Participations);
+            foreach (Participation participation in participationSnapshot.Participations)
+            {
+                context.RepositoryManager.ParticipationRepository.AddEntity(participation);
+            }
 
             OnParticipationBootstrapCompleted();
         }
