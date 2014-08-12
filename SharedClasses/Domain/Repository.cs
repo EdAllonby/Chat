@@ -20,8 +20,6 @@ namespace SharedClasses.Domain
 
         public event EventHandler<EntityChangedEventArgs<T>> EntityRemoved; 
 
-        public event EventHandler<IEnumerable<T>> EntitiesAdded;
-
         /// <summary>
         /// Adds an <see cref="IEntity"/> to the repository.
         /// </summary>
@@ -38,41 +36,15 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// TODO: I don't like this. This only exists for the sake of Participations. I might rethink how participations get added.
-        /// </summary>
-        /// <param name="entities"></param>
-        public void AddEntities(IEnumerable<T> entities)
-        {
-            IEnumerable<T> entityEnumerable = entities as IList<T> ?? entities.ToList();
-
-            foreach (T entity in entityEnumerable)
-            {
-                entitiesIndexedById.TryAdd(entity.Id, entity);
-                Log.DebugFormat("Entity with Id {0} added.", entity.Id);
-
-            }
-
-            OnEntitiesAdded(entityEnumerable);
-        }
-
-        /// <summary>
         /// Retrieves an <see cref="IEntity"/> entity from the repository.
         /// </summary>
         /// <param name="entityId">The <see cref="IEntity"/> entity Id to find.</param>
         /// <returns>The <see cref="IEntity"/> which matches the ID. If no <see cref="IEntity"/> is found, return null.</returns>
         public T FindEntityById(int entityId)
         {
-            return entitiesIndexedById[entityId];
-        }
-
-        private void OnEntitiesAdded(IEnumerable<T> entities)
-        {
-            EventHandler<IEnumerable<T>> entitiesAddedCopy = EntitiesAdded;
-
-            if (entitiesAddedCopy != null)
-            {
-                entitiesAddedCopy(this, entities);
-            }
+            T entity;
+            entitiesIndexedById.TryGetValue(entityId, out entity);
+            return entity;
         }
 
         /// <summary>

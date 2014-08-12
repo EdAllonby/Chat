@@ -21,7 +21,7 @@ namespace SharedClasses.Domain
                 .Any(isConversation => isConversation);
         }
 
-        public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
+        public List<Participation> GetParticipationsByConversationId(int conversationId)
         {
             return GetAllEntities().Where(participation => participation.ConversationId == conversationId).ToList();
         }
