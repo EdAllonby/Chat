@@ -39,9 +39,8 @@ namespace Server
         private void OnParticipationAdded(object sender, EntityChangedEventArgs<Participation> e)
         {
             Participation participation = e.Entity;
-
-            List<Participation> conversationParticipants =
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
+            
+            List<Participation> conversationParticipants = repositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
 
             ParticipationNotification participationNotification = new ParticipationNotification(participation, NotificationType.Create);
 
@@ -49,23 +48,24 @@ namespace Server
 
             clientManager.SendMessageToClients(participationNotification, conversationParticipantUserIds);
 
-            foreach (Participation conversationParticipant in conversationParticipants)
-            {
-                if (!conversationParticipant.Equals(participation))
-                {
-                    clientManager.SendMessageToClient(new ParticipationNotification(conversationParticipant, NotificationType.Create), participation.UserId);
-                }
-            }
+            List<Participation> otherParticipants = conversationParticipants.Where(conversationParticipant => !conversationParticipant.Equals(participation)).ToList();
+
+            otherParticipants.ForEach(otherParticipant => clientManager.SendMessageToClient(new ParticipationNotification(otherParticipant, NotificationType.Create), participation.UserId));
 
             Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(participation.ConversationId);
 
+            SendConversationNotificationToParticipants(conversation, participation.UserId, otherParticipants);
+        }
+
+        private void SendConversationNotificationToParticipants(Conversation conversation, int newParticipantUserId, IEnumerable<Participation> otherParticipants)
+        {
             if (conversation != null)
             {
-                clientManager.SendMessageToClient(new ConversationNotification(conversation, NotificationType.Create), participation.UserId);
+                clientManager.SendMessageToClient(new ConversationNotification(conversation, NotificationType.Create), newParticipantUserId);
 
-                IEnumerable<int> currentConversationParticipantsUserIds = conversationParticipants.Where(conversationParticipation => !conversationParticipation.Equals(participation)).Select(participant => participant.UserId);
+                IEnumerable<int> currentConversationParticipantUserIds = otherParticipants.Select(participant => participant.UserId);
 
-                clientManager.SendMessageToClients(new ConversationNotification(conversation, NotificationType.Update), currentConversationParticipantsUserIds);
+                clientManager.SendMessageToClients(new ConversationNotification(conversation, NotificationType.Update), currentConversationParticipantUserIds);
             }
         }
 
@@ -182,11 +182,11 @@ namespace Server
         {
             var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
 
-            IEnumerable<int> userIds = repositoryManager.ParticipationRepository.GetParticipationsByConversationId(contribution.ConversationId)
-                .Select(participant => repositoryManager.UserRepository.FindEntityById(participant.UserId))
-                .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).Select(user => user.Id);
+            List<Participation> participationsByConversationId = repositoryManager.ParticipationRepository.GetParticipationsByConversationId(contribution.ConversationId);
+            IEnumerable<User> participantUsers = participationsByConversationId.Select(participant => repositoryManager.UserRepository.FindEntityById(participant.UserId));
+            IEnumerable<int> connectedUserIds = participantUsers.Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).Select(user => user.Id);
 
-            clientManager.SendMessageToClients(contributionNotification, userIds);
+            clientManager.SendMessageToClients(contributionNotification, connectedUserIds);
         }
     }
 }
