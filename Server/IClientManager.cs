@@ -38,5 +38,12 @@ namespace Server
         /// </summary>
         /// <param name="userId">The <see cref="ClientHandler"/>'s associated <see cref="User"/> Id.</param>
         void RemoveClientHandler(int userId);
+
+        /// <summary>
+        /// Check to see if <see cref="ClientHandler"/> exists.
+        /// </summary>
+        /// <param name="userId">The <see cref="ClientHandler"/>'s associated <see cref="User"/> Id.</param>
+        /// <returns></returns>
+        bool HasClientHandler(int userId);
     }
 }

@@ -68,5 +68,10 @@ namespace Server
             clientHandlersIndexedByUserId.Remove(userId);
             Log.InfoFormat("User with id {0} Removed from ClientHandler.", userId);
         }
+
+        public bool HasClientHandler(int userId)
+        {
+            return clientHandlersIndexedByUserId.ContainsKey(userId);
+        }
     }
 }
