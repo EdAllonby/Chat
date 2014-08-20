@@ -19,11 +19,13 @@ namespace Server
         /// </summary>
         /// 
         /// <param name="tcpClient">The connection between the attempting-to-connect client.</param>
-        /// <param name="userRepository">The server's collection of users.</param>
-        /// <param name="entityIdAllocator">An Id allocator for initialising a potentially new <see cref="User"/>.</param>
+        /// <param name="serviceRegistry">Holds services to initialise client</param>
         /// <returns></returns>
-        public static LoginResponse InitialiseNewClient(TcpClient tcpClient, UserRepository userRepository, EntityIdAllocatorFactory entityIdAllocator)
+        public static LoginResponse InitialiseNewClient(TcpClient tcpClient, IServiceRegistry serviceRegistry)
         {
+            UserRepository userRepository = serviceRegistry.GetService<RepositoryManager>().UserRepository;
+            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+
             LoginRequest loginRequest = GetLoginRequest(tcpClient);
             User user = userRepository.FindUserByUsername(loginRequest.User.Username);
 
@@ -32,7 +34,7 @@ namespace Server
             if (IsNewUser(user))
             {
                 // new user, give it unique Id and connection status of connected
-                user = CreateUserEntity(loginRequest, userRepository, entityIdAllocator);
+                user = CreateUserEntity(loginRequest, userRepository, entityIdAllocatorFactory);
                 loginResponse = new LoginResponse(user, LoginResult.Success);
 
                 SendLoginResponse(loginResponse, tcpClient);

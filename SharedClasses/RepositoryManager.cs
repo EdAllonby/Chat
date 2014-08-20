@@ -2,7 +2,7 @@
 
 namespace SharedClasses
 {
-    public sealed class RepositoryManager
+    public sealed class RepositoryManager : IService
     {
         private readonly ConversationRepository conversationRepository = new ConversationRepository();
         private readonly ParticipationRepository participationRepository = new ParticipationRepository();

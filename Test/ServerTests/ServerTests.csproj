@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="MessageHandlerTests\AvatarRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\ClientDisconnectionHandlerTest.cs" />
+    <Compile Include="MessageHandlerTests\ContributionRequestHandlerTest.cs" />
+    <Compile Include="MessageHandlerTests\ConversationRequestHandlerTest.cs" />
+    <Compile Include="MessageHandlerTests\MessageHandlerTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

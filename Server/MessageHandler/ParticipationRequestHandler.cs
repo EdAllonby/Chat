@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using log4net;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -12,14 +13,16 @@ namespace Server.MessageHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        public void HandleMessage(IMessage message, IServerMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var participationRequest = (ParticipationRequest) message;
 
-            if (CheckUserCanEnterConversation(participationRequest, context.RepositoryManager.ParticipationRepository))
+            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+            ParticipationRepository participationRepository = serviceRegistry.GetService<RepositoryManager>().ParticipationRepository;
+
+            if (CheckUserCanEnterConversation(participationRequest, participationRepository))
             {
-                AddUserToConversation(participationRequest, context.EntityIdAllocatorFactory,
-                    context.RepositoryManager.ParticipationRepository);
+                AddUserToConversation(participationRequest, entityIdAllocatorFactory, participationRepository);
             }
         }
 
@@ -41,9 +44,7 @@ namespace Server.MessageHandler
             return true;
         }
 
-        private static void AddUserToConversation(ParticipationRequest participationRequest,
-            EntityIdAllocatorFactory entityIdAllocatorFactory,
-            Repository<Participation> participationRepository)
+        private static void AddUserToConversation(ParticipationRequest participationRequest, EntityIdAllocatorFactory entityIdAllocatorFactory, Repository<Participation> participationRepository)
         {
             int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
 

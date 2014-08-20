@@ -79,6 +79,7 @@
     <Compile Include="Domain\IEntity.cs" />
     <Compile Include="Domain\Repository.cs" />
     <Compile Include="EntityChangedEventArgs.cs" />
+    <Compile Include="IServiceRegistry.cs" />
     <Compile Include="Message\AvatarNotification.cs" />
     <Compile Include="Message\AvatarRequest.cs" />
     <Compile Include="Message\ConnectionStatusNotification.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Domain\UserRepository.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="ServiceManager.cs" />
+    <Compile Include="ServiceRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

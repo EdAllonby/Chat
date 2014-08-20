@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using log4net;
+using SharedClasses;
 
 namespace Server
 {
     /// <summary>
     /// Holds the Id generators for entities.
     /// </summary>
-    public class EntityIdAllocatorFactory
+    public class EntityIdAllocatorFactory : IService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (EntityIdAllocatorFactory));
 

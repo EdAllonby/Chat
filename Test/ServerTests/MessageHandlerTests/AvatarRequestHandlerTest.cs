@@ -1,6 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using Server;
 using Server.MessageHandler;
 using ServerTests.Properties;
 using SharedClasses;
@@ -10,49 +9,54 @@ using SharedClasses.Message;
 namespace ServerTests.MessageHandlerTests
 {
     [TestFixture]
-    public class AvatarRequestHandlerTest
+    public class AvatarRequestHandlerTest : MessageHandlerTestFixture
     {
+        [SetUp]
+        public override void BeforeEachTest()
+        {
+            base.BeforeEachTest();
+
+            avatarRequest = new AvatarRequest(UserId, Resources.SmallImage);
+            userToUpdate = new User("user", UserId, new ConnectionStatus(UserId, ConnectionStatus.Status.Connected));
+
+            UserRepository userRepository = ServiceRegistry.GetService<RepositoryManager>().UserRepository;
+            userRepository.AddEntity(userToUpdate);
+        }
+
         private const int UserId = 1;
 
+        private readonly AvatarRequestHandler avatarRequestHandler = new AvatarRequestHandler();
         private AvatarRequest avatarRequest;
         private User userToUpdate;
-        private RepositoryManager repositoryManager;
-        private IServerMessageContext serverMessageContext;
-        private AvatarRequestHandler avatarRequestHandler;
 
         private UserRepository UserRepository
         {
-            get { return repositoryManager.UserRepository; }
-        }
-
-        [SetUp]
-        public void BeforeEachTest()
-        {
-            avatarRequest = new AvatarRequest(UserId, Resources.SmallImage);
-            userToUpdate = new User("user", UserId, new ConnectionStatus(UserId, ConnectionStatus.Status.Connected));
-            repositoryManager = new RepositoryManager();
-            repositoryManager.UserRepository.AddEntity(userToUpdate);
-            serverMessageContext = new ServerMessageContext(new ClientManager(), new EntityIdAllocatorFactory(), repositoryManager);
-            avatarRequestHandler = new AvatarRequestHandler();
+            get { return ServiceRegistry.GetService<RepositoryManager>().UserRepository; }
         }
 
         [TestFixture]
-        public class HandleMessage : AvatarRequestHandlerTest
+        public class HandleMessageTest : AvatarRequestHandlerTest
         {
-            [Test]
-            public void UserGetsUpdatedAvatarInUserRepository()
-            {
-                avatarRequestHandler.HandleMessage(avatarRequest, serverMessageContext);
-
-                Assert.IsTrue(UserRepository.FindEntityById(UserId).Avatar.UserAvatar.Size.Equals(Resources.SmallImage.Size));
-            }
-
             [Test]
             public void AvatarGetsAssignedId()
             {
-                avatarRequestHandler.HandleMessage(avatarRequest, serverMessageContext);
+                avatarRequestHandler.HandleMessage(avatarRequest, ServiceRegistry);
 
                 Assert.IsTrue(UserRepository.FindEntityById(UserId).Avatar.Id != 0);
+            }
+
+            [Test]
+            public void ThrowsExceptionWhenNonAvatarRequestIsPassed()
+            {
+                Assert.Throws<InvalidCastException>(() => avatarRequestHandler.HandleMessage(new LoginRequest("login"), ServiceRegistry));
+            }
+
+            [Test]
+            public void UserGetsUpdatedAvatarInUserRepository()
+            {
+                avatarRequestHandler.HandleMessage(avatarRequest, ServiceRegistry);
+
+                Assert.IsTrue(UserRepository.FindEntityById(UserId).Avatar.UserAvatar.Size.Equals(Resources.SmallImage.Size));
             }
 
             [Test]
@@ -61,15 +65,9 @@ namespace ServerTests.MessageHandlerTests
                 bool isUserUpdated = false;
                 UserRepository.EntityUpdated += (sender, eventArgs) => isUserUpdated = true;
 
-                avatarRequestHandler.HandleMessage(avatarRequest, serverMessageContext);
+                avatarRequestHandler.HandleMessage(avatarRequest, ServiceRegistry);
 
                 Assert.IsTrue(isUserUpdated);
-            }
-
-            [Test]
-            public void ThrowsExceptionWhenNonAvatarRequestIsPassed()
-            {
-                Assert.Throws<InvalidCastException>(() => avatarRequestHandler.HandleMessage(new LoginRequest("login"), serverMessageContext));
             }
         }
     }

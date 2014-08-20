@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server
 {
-    internal interface IClientManager
+    internal interface IClientManager : IService
     {
         /// <summary>
         /// Sends an <see cref="IMessage"/> to all clients.

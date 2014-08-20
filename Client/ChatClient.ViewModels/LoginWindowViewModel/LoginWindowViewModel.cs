@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Models.LoginModel;

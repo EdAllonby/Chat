@@ -53,7 +53,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private void OnUserUpdated(object sender, EntityChangedEventArgs<User> e)
         {
-            if ( e.Entity.Id == userId && !e.PreviousEntity.Avatar.Equals(e.Entity.Avatar))
+            if (e.Entity.Id == userId && !e.PreviousEntity.Avatar.Equals(e.Entity.Avatar))
             {
                 UserAvatar = e.Entity.Avatar.UserAvatar;
             }

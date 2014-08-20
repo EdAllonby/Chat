@@ -12,10 +12,10 @@ namespace ChatClient.Views
     public partial class App
     {
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool AllocConsole();
+        private static extern bool AllocConsole();
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool FreeConsole();
+        private static extern bool FreeConsole();
 
         protected override void OnStartup(StartupEventArgs e)
         {
