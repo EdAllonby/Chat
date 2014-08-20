@@ -21,7 +21,6 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
                 repositoryManager.ConversationRepository.EntityAdded += OnConversationChanged;
                 repositoryManager.ConversationRepository.EntityUpdated += OnConversationChanged;
-
             }
         }
 

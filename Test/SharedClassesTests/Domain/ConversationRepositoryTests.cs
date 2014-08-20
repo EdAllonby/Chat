@@ -17,7 +17,6 @@ namespace SharedClassesTests.Domain
             foreach (Conversation conversation in conversations)
             {
                 conversationRepository.AddEntity(conversation);
-
             }
 
             Assert.AreEqual(conversations, conversationRepository.GetAllEntities());

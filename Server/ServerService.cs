@@ -1,10 +1,13 @@
 ﻿using System.ServiceProcess;
 using System.Threading;
+using SharedClasses;
 
 namespace Server
 {
     public partial class ServerService : ServiceBase
     {
+        private Server server;
+
         public ServerService()
         {
             InitializeComponent();
@@ -18,11 +21,26 @@ namespace Server
 
         private void StartServer()
         {
-            var Server = new Server();
+            IServiceRegistry serviceRegistry = RegisterServices();
+            server = new Server(serviceRegistry);
         }
 
         protected override void OnStop()
         {
+            if (server != null)
+            {
+                server.Shutdown();
+            }
+        }
+
+        private IServiceRegistry RegisterServices()
+        {
+            IServiceRegistry serviceRegistry = new ServiceRegistry();
+            serviceRegistry.RegisterService<RepositoryManager>(new RepositoryManager());
+            serviceRegistry.RegisterService<IClientManager>(new ClientManager());
+            serviceRegistry.RegisterService<EntityIdAllocatorFactory>(new EntityIdAllocatorFactory());
+
+            return serviceRegistry;
         }
     }
 }

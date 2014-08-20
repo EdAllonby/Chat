@@ -1,4 +1,5 @@
-﻿using SharedClasses.Domain;
+﻿using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server.MessageHandler
@@ -8,15 +9,18 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ClientDisconnectionHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IServerMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var clientDisconnection = (ClientDisconnection) message;
 
-            context.ClientManager.RemoveClientHandler(clientDisconnection.UserId);
+            UserRepository userRepository = serviceRegistry.GetService<RepositoryManager>().UserRepository;
+            var clientManager = serviceRegistry.GetService<IClientManager>();
+
+            clientManager.RemoveClientHandler(clientDisconnection.UserId);
 
             var connectionStatus = new ConnectionStatus(clientDisconnection.UserId, ConnectionStatus.Status.Disconnected);
 
-            context.RepositoryManager.UserRepository.UpdateUserConnectionStatus(connectionStatus);
+            userRepository.UpdateUserConnectionStatus(connectionStatus);
         }
     }
 }

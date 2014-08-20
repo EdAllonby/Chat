@@ -41,7 +41,7 @@ namespace Server
                 onStartMethod.Invoke(service, new object[] {new string[] {}});
                 Log.Debug("Started");
             }
-            
+
             Log.Debug("Press any key to stop the services and end the process...");
             Console.ReadKey();
             Console.WriteLine();

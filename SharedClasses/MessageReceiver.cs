@@ -32,7 +32,7 @@ namespace SharedClasses
             Contract.Requires(clientUserId > 0);
             Contract.Requires(tcpClient != null);
 
-            using (var networkStream = tcpClient.GetStream())
+            using (NetworkStream networkStream = tcpClient.GetStream())
             {
                 try
                 {

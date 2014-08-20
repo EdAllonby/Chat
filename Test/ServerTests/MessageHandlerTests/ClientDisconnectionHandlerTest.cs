@@ -9,26 +9,18 @@ using SharedClasses.Message;
 namespace ServerTests.MessageHandlerTests
 {
     [TestFixture]
-    public class ClientDisconnectionHandlerTest
+    public class ClientDisconnectionHandlerTest : MessageHandlerTestFixture
     {
-        private const int UserId = 1;
-        private ClientDisconnection clientDisconnection;
-        private ClientDisconnectionHandler clientDisconnectionHandler;
-        private IServerMessageContext serverMessageContext;
-        private User userToDisconnect;
-
         [SetUp]
-        public void BeforeEachTest()
+        public override void BeforeEachTest()
         {
-            clientDisconnection = new ClientDisconnection(UserId);
-            clientDisconnectionHandler = new ClientDisconnectionHandler();
-            userToDisconnect = new User("user", UserId, new ConnectionStatus(UserId, ConnectionStatus.Status.Connected));
-            ClientManager clientManager = new ClientManager();
-            RepositoryManager repositoryManager = new RepositoryManager();
-            repositoryManager.UserRepository.AddEntity(userToDisconnect);
-            clientManager.AddClientHandler(1, new ClientHandler());
-            serverMessageContext = new ServerMessageContext(clientManager, new EntityIdAllocatorFactory(), repositoryManager);
+            base.BeforeEachTest();
+
+            clientDisconnection = new ClientDisconnection(ConnectedUserId);
         }
+
+        private ClientDisconnection clientDisconnection;
+        private readonly ClientDisconnectionHandler clientDisconnectionHandler = new ClientDisconnectionHandler();
 
         [TestFixture]
         public class HandleMessageTest : ClientDisconnectionHandlerTest
@@ -36,30 +28,30 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ClientGetsRemovesFromClientHandler()
             {
-                clientDisconnectionHandler.HandleMessage(clientDisconnection, serverMessageContext);
-                Assert.IsFalse(serverMessageContext.ClientManager.HasClientHandler(UserId));
-            }
-
-            [Test]
-            public void UserGetsSetToDisconnectedInUserRepository()
-            {
-                clientDisconnectionHandler.HandleMessage(clientDisconnection, serverMessageContext);
-                Assert.IsTrue(serverMessageContext.RepositoryManager.UserRepository.FindEntityById(UserId).ConnectionStatus.UserConnectionStatus.Equals(ConnectionStatus.Status.Disconnected));
+                clientDisconnectionHandler.HandleMessage(clientDisconnection, ServiceRegistry);
+                Assert.IsFalse(ServiceRegistry.GetService<IClientManager>().HasClientHandler(ConnectedUserId));
             }
 
             [Test]
             public void RepositoryUpdatesUser()
             {
                 bool isUserUpdated = false;
-                serverMessageContext.RepositoryManager.UserRepository.EntityUpdated += (sender, eventArgs) => isUserUpdated = true;
-                clientDisconnectionHandler.HandleMessage(clientDisconnection, serverMessageContext);
+                ServiceRegistry.GetService<RepositoryManager>().UserRepository.EntityUpdated += (sender, eventArgs) => isUserUpdated = true;
+                clientDisconnectionHandler.HandleMessage(clientDisconnection, ServiceRegistry);
                 Assert.IsTrue(isUserUpdated);
             }
 
             [Test]
             public void ThrowsExceptionWhenNotGivenClientDisconnection()
             {
-                Assert.Throws<InvalidCastException>(() => clientDisconnectionHandler.HandleMessage(new LoginRequest("user"), serverMessageContext));
+                Assert.Throws<InvalidCastException>(() => clientDisconnectionHandler.HandleMessage(new LoginRequest("user"), ServiceRegistry));
+            }
+
+            [Test]
+            public void UserGetsSetToDisconnectedInUserRepository()
+            {
+                clientDisconnectionHandler.HandleMessage(clientDisconnection, ServiceRegistry);
+                Assert.IsTrue(ServiceRegistry.GetService<RepositoryManager>().UserRepository.FindEntityById(ConnectedUserId).ConnectionStatus.UserConnectionStatus.Equals(ConnectionStatus.Status.Disconnected));
             }
         }
     }

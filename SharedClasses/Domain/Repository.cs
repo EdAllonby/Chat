@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using log4net;
 using SharedClasses.Message;
 
@@ -18,7 +17,7 @@ namespace SharedClasses.Domain
 
         public event EventHandler<EntityChangedEventArgs<T>> EntityUpdated;
 
-        public event EventHandler<EntityChangedEventArgs<T>> EntityRemoved; 
+        public event EventHandler<EntityChangedEventArgs<T>> EntityRemoved;
 
         /// <summary>
         /// Adds an <see cref="IEntity"/> to the repository.
@@ -58,7 +57,7 @@ namespace SharedClasses.Domain
 
         private void OnEntityAdded(T entity)
         {
-            EntityChangedEventArgs<T> entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, NotificationType.Create);
+            var entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, NotificationType.Create);
 
             EventHandler<EntityChangedEventArgs<T>> entityChangedCopy = EntityAdded;
 
@@ -70,7 +69,7 @@ namespace SharedClasses.Domain
 
         protected void OnEntityUpdated(T entity, T previousEntity)
         {
-            EntityChangedEventArgs<T> entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, previousEntity);
+            var entityChangedEventArgs = new EntityChangedEventArgs<T>(entity, previousEntity);
 
             EventHandler<EntityChangedEventArgs<T>> entityUpdatedCopy = EntityUpdated;
 

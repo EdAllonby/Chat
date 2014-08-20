@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -13,33 +14,22 @@ namespace Server.MessageHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRequestHandler));
 
-        public void HandleMessage(IMessage message, IServerMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
+            var repositoryManager = serviceRegistry.GetService<RepositoryManager>();
+            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+
             var newConversationRequest = (ConversationRequest) message;
 
-            if (CheckConversationIsValid(newConversationRequest, context.RepositoryManager.ParticipationRepository))
+            if (IsConversationValid(newConversationRequest, repositoryManager.ParticipationRepository))
             {
-                CreateConversationEntity(newConversationRequest, context);
+                CreateConversationEntity(newConversationRequest, repositoryManager, entityIdAllocatorFactory);
             }
         }
 
-        private static bool CheckConversationIsValid(ConversationRequest conversationRequest,
-            ParticipationRepository participationRepository)
+        private static void CreateConversationEntity(ConversationRequest conversationRequest, RepositoryManager repositoryManager, EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
-            // Check for no repeating users
-            if (conversationRequest.UserIds.Count != conversationRequest.UserIds.Distinct().Count())
-            {
-                Log.Warn("Cannot make a conversation between two users of same id");
-                return false;
-            }
-
-            return !participationRepository.DoesConversationWithUsersExist(conversationRequest.UserIds);
-        }
-
-        private static void CreateConversationEntity(ConversationRequest conversationRequest,
-            IServerMessageContext context)
-        {
-            int conversationId = context.EntityIdAllocatorFactory.AllocateEntityId<Conversation>();
+            int conversationId = entityIdAllocatorFactory.AllocateEntityId<Conversation>();
 
             var newConversation = new Conversation(conversationId);
 
@@ -47,16 +37,25 @@ namespace Server.MessageHandler
 
             foreach (int userId in conversationRequest.UserIds)
             {
-                int participationId = context.EntityIdAllocatorFactory.AllocateEntityId<Participation>();
+                int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
                 participations.Add(new Participation(participationId, userId, conversationId));
             }
 
-            foreach (Participation participation in participations)
+            participations.ForEach(participation => repositoryManager.ParticipationRepository.AddEntity(participation));
+
+            repositoryManager.ConversationRepository.AddEntity(newConversation);
+        }
+
+        private static bool IsConversationValid(ConversationRequest conversationRequest, ParticipationRepository participationRepository)
+        {
+            // Check for no repeating users
+            if (conversationRequest.UserIds.Count != conversationRequest.UserIds.Distinct().Count())
             {
-                context.RepositoryManager.ParticipationRepository.AddEntity(participation);
+                Log.Warn("Cannot make a conversation between two users of same id.");
+                return false;
             }
 
-            context.RepositoryManager.ConversationRepository.AddEntity(newConversation);
+            return !participationRepository.DoesConversationWithUsersExist(conversationRequest.UserIds);
         }
     }
 }

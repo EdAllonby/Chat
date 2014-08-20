@@ -23,7 +23,7 @@ namespace ChatClient.Views
         private void OnMainWindowClosed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
-            
+
             // Something is stopping the application to close gracefully. Force the application to quit.
             Environment.Exit(0);
         }
