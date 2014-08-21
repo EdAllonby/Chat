@@ -12,7 +12,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     /// </summary>
     public class UserListViewModel : ViewModel
     {
-        private readonly RepositoryManager repositoryManager;
+        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly ParticipationRepository participationRepository;
 
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
 
@@ -22,13 +24,15 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         {
             if (!IsInDesignMode)
             {
-                repositoryManager = ClientService.RepositoryManager;
+                userRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<User>();
+                conversationRepository =  ServiceManager.GetService<RepositoryManager>().GetRepository<Conversation>();
+                participationRepository = (ParticipationRepository) ServiceManager.GetService<RepositoryManager>().GetRepository<Participation>();
 
-                repositoryManager.UserRepository.EntityAdded += OnUserChanged;
-                repositoryManager.UserRepository.EntityUpdated += OnUserChanged;
+                userRepository.EntityAdded += OnUserChanged;
+                userRepository.EntityUpdated += OnUserChanged;
 
-                repositoryManager.ConversationRepository.EntityAdded += OnConversationAdded;
-                repositoryManager.ConversationRepository.EntityUpdated += OnConversationUpdated;
+                conversationRepository.EntityAdded += OnConversationAdded;
+                conversationRepository.EntityUpdated += OnConversationUpdated;
 
                 UpdateConnectedUsers();
             }
@@ -89,7 +93,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private void OnContributionAdded(Contribution contribution)
         {
-            Conversation conversation = repositoryManager.ConversationRepository.FindEntityById(contribution.ConversationId);
+            Conversation conversation = conversationRepository.FindEntityById(contribution.ConversationId);
 
             ConversationWindowManager.CreateConversationWindow(conversation);
         }
@@ -124,7 +128,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         private void UpdateConnectedUsers()
         {
-            IEnumerable<User> users = repositoryManager.UserRepository.GetAllEntities();
+            IEnumerable<User> users = userRepository.GetAllEntities();
             List<User> newUserList = users.Where(user => user.Id != ClientService.ClientUserId).ToList();
 
             List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(user)).ToList();
@@ -136,14 +140,14 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         {
             IsMultiUserConversation = false;
 
-            if (!repositoryManager.ParticipationRepository.DoesConversationWithUsersExist(participantIds))
+            if (!participationRepository.DoesConversationWithUsersExist(participantIds))
             {
                 ClientService.CreateConversation(participantIds);
             }
             else
             {
-                int conversationId = repositoryManager.ParticipationRepository.GetConversationIdByParticipantsId(participantIds);
-                ConversationWindowManager.CreateConversationWindow(repositoryManager.ConversationRepository.FindEntityById(conversationId));
+                int conversationId = participationRepository.GetConversationIdByParticipantsId(participantIds);
+                ConversationWindowManager.CreateConversationWindow(conversationRepository.FindEntityById(conversationId));
             }
         }
     }

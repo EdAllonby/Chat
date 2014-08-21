@@ -8,11 +8,19 @@ namespace Server.MessageHandler
 {
     internal sealed class OnConversationChangedHandler : OnEntityChangedHandler
     {
+        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly ParticipationRepository participationRepository;
+        private readonly IReadOnlyRepository<User> userRepository;
+
         public OnConversationChangedHandler(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
         {
-            RepositoryManager.ConversationRepository.EntityAdded += OnConversationAdded;
-            RepositoryManager.ConversationRepository.EntityUpdated += OnConversationUpdated;
+            conversationRepository = RepositoryManager.GetRepository<Conversation>();
+            participationRepository = (ParticipationRepository) RepositoryManager.GetRepository<Participation>();
+            userRepository = RepositoryManager.GetRepository<User>();
+
+            conversationRepository.EntityAdded += OnConversationAdded;
+            conversationRepository.EntityUpdated += OnConversationUpdated;
         }
 
         private void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
@@ -24,9 +32,7 @@ namespace Server.MessageHandler
         {
             var conversationNotification = new ConversationNotification(conversation, NotificationType.Create);
 
-            IEnumerable<int> userIds =
-                RepositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.Id)
-                    .Select(participation => participation.UserId);
+            IEnumerable<int> userIds = participationRepository.GetParticipationsByConversationId(conversation.Id).Select(participation => participation.UserId);
 
             ClientManager.SendMessageToClients(conversationNotification, userIds);
         }
@@ -43,22 +49,19 @@ namespace Server.MessageHandler
         {
             var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
 
-            List<Participation> participationsByConversationId =
-                RepositoryManager.ParticipationRepository.GetParticipationsByConversationId(contribution.ConversationId);
-            IEnumerable<User> participantUsers =
-                participationsByConversationId.Select(
-                    participant => RepositoryManager.UserRepository.FindEntityById(participant.UserId));
-            IEnumerable<int> connectedUserIds =
-                participantUsers.Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected)
-                    .Select(user => user.Id);
+            List<Participation> participationsByConversationId = participationRepository.GetParticipationsByConversationId(contribution.ConversationId);
+
+            IEnumerable<User> participantUsers = participationsByConversationId.Select(participant => userRepository.FindEntityById(participant.UserId));
+
+            IEnumerable<int> connectedUserIds = participantUsers.Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).Select(user => user.Id);
 
             ClientManager.SendMessageToClients(contributionNotification, connectedUserIds);
         }
 
         public override void StopOnMessageChangedHandling()
         {
-            RepositoryManager.ConversationRepository.EntityAdded -= OnConversationAdded;
-            RepositoryManager.ConversationRepository.EntityUpdated -= OnConversationUpdated;
+            conversationRepository.EntityAdded -= OnConversationAdded;
+            conversationRepository.EntityUpdated -= OnConversationUpdated;
         }
     }
 }

@@ -13,9 +13,9 @@ namespace ServerTests.MessageHandlerTests
         private readonly ConversationRequestHandler conversationRequestHandler = new ConversationRequestHandler();
         private const int UserIdToConverseWith = 2;
 
-        private ConversationRepository ConversationRepository
+        private IReadOnlyRepository<Conversation> ConversationRepository
         {
-            get { return ServiceRegistry.GetService<RepositoryManager>().ConversationRepository; }
+            get { return ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>(); }
         }
 
         private readonly ConversationRequest conversationRequest = new ConversationRequest(new List<int> {ConnectedUserId, UserIdToConverseWith});

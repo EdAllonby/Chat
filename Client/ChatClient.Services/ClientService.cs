@@ -17,7 +17,7 @@ namespace ChatClient.Services
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
 
-        private readonly RepositoryManager repositoryManager = new RepositoryManager();
+        private readonly RepositoryManager repositoryManager;
 
         private ConnectionHandler connectionHandler;
 
@@ -28,9 +28,11 @@ namespace ChatClient.Services
         /// </summary>
         public int ClientUserId { get; private set; }
 
-        /// <summary>
-        /// Holds the repositories for the Client.
-        /// </summary>
+        public ClientService(RepositoryManager repositoryManager)
+        {
+            this.repositoryManager = repositoryManager;
+        }
+
         public RepositoryManager RepositoryManager
         {
             get { return repositoryManager; }

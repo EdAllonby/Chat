@@ -12,7 +12,7 @@ namespace ChatClient.Services.MessageHandler
         {
             var connectionStatusNotification = (ConnectionStatusNotification) message;
 
-            UserRepository userRepository = context.RepositoryManager.UserRepository;
+            var userRepository = (UserRepository) context.RepositoryManager.GetRepository<User>();
 
             userRepository.UpdateUserConnectionStatus(connectionStatusNotification.ConnectionStatus);
         }

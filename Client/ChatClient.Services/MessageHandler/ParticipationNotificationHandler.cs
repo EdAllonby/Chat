@@ -1,4 +1,5 @@
-﻿using SharedClasses.Message;
+﻿using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
 {
@@ -11,7 +12,8 @@ namespace ChatClient.Services.MessageHandler
         {
             var participationNotification = (ParticipationNotification) message;
 
-            context.RepositoryManager.ParticipationRepository.AddEntity(participationNotification.Participation);
+            IRepository<Participation> participationRepository = (IRepository<Participation>) context.RepositoryManager.GetRepository<Participation>();
+            participationRepository.AddEntity(participationNotification.Participation);
         }
     }
 }

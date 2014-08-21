@@ -16,18 +16,20 @@ namespace Server.MessageHandler
 
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var repositoryManager = serviceRegistry.GetService<RepositoryManager>();
             var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+
+            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            IRepository<Conversation> conversationRepository = (IRepository<Conversation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
             var newConversationRequest = (ConversationRequest) message;
 
-            if (IsConversationValid(newConversationRequest, repositoryManager.ParticipationRepository))
+            if (IsConversationValid(newConversationRequest, participationRepository))
             {
-                CreateConversationEntity(newConversationRequest, repositoryManager, entityIdAllocatorFactory);
+                CreateConversationEntity(newConversationRequest, conversationRepository, participationRepository, entityIdAllocatorFactory);
             }
         }
 
-        private static void CreateConversationEntity(ConversationRequest conversationRequest, RepositoryManager repositoryManager, EntityIdAllocatorFactory entityIdAllocatorFactory)
+        private static void CreateConversationEntity(ConversationRequest conversationRequest, IRepository<Conversation> conversationRepository, IRepository<Participation> participationRepository, EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
             int conversationId = entityIdAllocatorFactory.AllocateEntityId<Conversation>();
 
@@ -41,9 +43,9 @@ namespace Server.MessageHandler
                 participations.Add(new Participation(participationId, userId, conversationId));
             }
 
-            participations.ForEach(participation => repositoryManager.ParticipationRepository.AddEntity(participation));
+            participations.ForEach(participationRepository.AddEntity);
 
-            repositoryManager.ConversationRepository.AddEntity(newConversation);
+            conversationRepository.AddEntity(newConversation);
         }
 
         private static bool IsConversationValid(ConversationRequest conversationRequest, ParticipationRepository participationRepository)

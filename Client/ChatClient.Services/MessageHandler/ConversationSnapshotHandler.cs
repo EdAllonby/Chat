@@ -13,9 +13,11 @@ namespace ChatClient.Services.MessageHandler
         {
             var conversationSnapshot = (ConversationSnapshot) message;
 
+            ConversationRepository conversationRepository = (ConversationRepository) context.RepositoryManager.GetRepository<Conversation>();
+
             foreach (Conversation conversation in conversationSnapshot.Conversations)
             {
-                context.RepositoryManager.ConversationRepository.AddEntity(conversation);
+                conversationRepository.AddEntity(conversation);
             }
 
             OnConversationBootstrapCompleted();

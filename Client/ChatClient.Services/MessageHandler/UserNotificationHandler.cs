@@ -12,7 +12,7 @@ namespace ChatClient.Services.MessageHandler
         {
             var userNotification = (UserNotification) message;
 
-            UserRepository userRepository = context.RepositoryManager.UserRepository;
+            var userRepository = (IRepository<User>) context.RepositoryManager.GetRepository<User>();
 
             switch (userNotification.NotificationType)
             {

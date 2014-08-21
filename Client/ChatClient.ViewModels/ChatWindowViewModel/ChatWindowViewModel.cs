@@ -18,7 +18,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private readonly ContributionMessageFormatter contributionMessageFormatter;
-        private readonly RepositoryManager repositoryManager;
+
+        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly ParticipationRepository participationRepository; 
 
         public EventHandler OpenUserSettingsWindowRequested;
 
@@ -34,14 +37,16 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             if (!IsInDesignMode)
             {
-                contributionMessageFormatter = new ContributionMessageFormatter(ClientService.ClientUserId, ClientService.RepositoryManager.UserRepository);
+                userRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<User>();
+                conversationRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<Conversation>();
+                participationRepository = (ParticipationRepository) ServiceManager.GetService<RepositoryManager>().GetRepository<Participation>();
+                
+                contributionMessageFormatter = new ContributionMessageFormatter(ClientService.ClientUserId, userRepository);
 
-                repositoryManager = ClientService.RepositoryManager;
+                userRepository.EntityAdded += OnUserChanged;
+                userRepository.EntityUpdated += OnUserChanged;
 
-                repositoryManager.UserRepository.EntityAdded += OnUserChanged;
-                repositoryManager.UserRepository.EntityUpdated += OnUserChanged;
-
-                repositoryManager.ConversationRepository.EntityUpdated += OnConversationChanged;
+                conversationRepository.EntityUpdated += OnConversationChanged;
 
                 AddUserCommand = new AddUserToConversationCommand(this);
 
@@ -50,7 +55,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 UpdateConnectedUsersList();
 
-                groupChat.WindowTitle = repositoryManager.UserRepository.FindEntityById(ClientService.ClientUserId).Username;
+                groupChat.WindowTitle = userRepository.FindEntityById(ClientService.ClientUserId).Username;
                 groupChat.Title = GetChatTitle();
             }
         }
@@ -100,9 +105,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private List<User> GetUsers()
         {
-            ParticipationRepository participationRepository = ClientService.RepositoryManager.ParticipationRepository;
-            UserRepository userRepository = ClientService.RepositoryManager.UserRepository;
-
             return participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id)
                 .Select(participation => userRepository.FindEntityById(participation.UserId)).ToList();
         }
@@ -114,9 +116,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             var titleBuilder = new StringBuilder();
             titleBuilder.Append("Chat between ");
 
-            foreach (Participation participant in repositoryManager.ParticipationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id))
+            foreach (Participation participant in participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id))
             {
-                usernames.Add(repositoryManager.UserRepository.FindEntityById(participant.UserId).Username);
+                usernames.Add(userRepository.FindEntityById(participant.UserId).Username);
             }
 
             titleBuilder.Append(TitleBuilder.CreateUserList(usernames));
@@ -126,7 +128,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void UpdateConnectedUsersList()
         {
-            IEnumerable<User> users = repositoryManager.UserRepository.GetAllEntities();
+            IEnumerable<User> users = userRepository.GetAllEntities();
 
             List<User> newUserList = users.Where(user => user.Id != ClientService.ClientUserId)
                 .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).ToList();
@@ -182,7 +184,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private void OnConversationUpdated(IEntity conversation)
         {
             // The model is no longer referencing the same conversation as in the repository, give it the reference again.
-            groupChat.Conversation = repositoryManager.ConversationRepository.FindEntityById(conversation.Id);
+            groupChat.Conversation = conversationRepository.FindEntityById(conversation.Id);
 
             groupChat.Title = GetChatTitle();
         }
@@ -234,8 +236,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             var connectedUser = (ConnectedUserModel) user;
 
-            IEnumerable<Participation> participations = ClientService.RepositoryManager.ParticipationRepository
-                .GetParticipationsByConversationId(groupChat.Conversation.Id);
+            IEnumerable<Participation> participations = participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id);
 
             return participations.All(participation => participation.UserId != connectedUser.UserId);
         }

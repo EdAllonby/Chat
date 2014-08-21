@@ -1,26 +1,23 @@
-﻿using SharedClasses.Domain;
+﻿using System;
+using System.Collections.Generic;
+using SharedClasses.Domain;
 
 namespace SharedClasses
 {
     public sealed class RepositoryManager : IService
     {
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
-        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
-        private readonly UserRepository userRepository = new UserRepository();
+        private readonly IDictionary<Type, IRepository> repositoriesIndexedByEnclosedEntity = new Dictionary<Type, IRepository>();
 
-        public UserRepository UserRepository
+        public void AddRepository<T>(IRepository repository) where T : IEntity
         {
-            get { return userRepository; }
+            repositoriesIndexedByEnclosedEntity.Add(typeof (T), repository);
         }
 
-        public ConversationRepository ConversationRepository
+        public IReadOnlyRepository<T> GetRepository<T>() where T : IEntity
         {
-            get { return conversationRepository; }
-        }
-
-        public ParticipationRepository ParticipationRepository
-        {
-            get { return participationRepository; }
+            IRepository repository;
+            repositoriesIndexedByEnclosedEntity.TryGetValue(typeof (T), out repository);
+            return (IReadOnlyRepository<T>) repository;
         }
     }
 }

@@ -17,11 +17,6 @@ namespace ChatClient.Services
         int ClientUserId { get; }
 
         /// <summary>
-        /// Holds the repositories for the Client.
-        /// </summary>
-        RepositoryManager RepositoryManager { get; }
-
-        /// <summary>
         /// Signifies when the client has finished successfully bootstrapping
         /// </summary>
         event EventHandler BootstrapCompleted;

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using ChatClient.Services;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace ChatClient.Views
 {
@@ -31,7 +32,12 @@ namespace ChatClient.Views
 
         private static void RegisterServices()
         {
-            ServiceManager.RegisterService<IClientService>(new ClientService());
+            RepositoryManager repositoryManager = new RepositoryManager();
+            repositoryManager.AddRepository<User>(new UserRepository());
+            repositoryManager.AddRepository<Conversation>(new ConversationRepository());
+            repositoryManager.AddRepository<Participation>(new ParticipationRepository());
+            ServiceManager.RegisterService<RepositoryManager>(repositoryManager);
+            ServiceManager.RegisterService<IClientService>(new ClientService(repositoryManager));
         }
 
         protected override void OnExit(ExitEventArgs e)

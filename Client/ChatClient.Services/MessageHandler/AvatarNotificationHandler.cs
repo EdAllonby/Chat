@@ -12,7 +12,7 @@ namespace ChatClient.Services.MessageHandler
         {
             var avatarNotification = (AvatarNotification) message;
 
-            UserRepository userRepository = context.RepositoryManager.UserRepository;
+            UserRepository userRepository = (UserRepository) context.RepositoryManager.GetRepository<User>();
 
             userRepository.UpdateUserAvatar(avatarNotification.Avatar);
         }

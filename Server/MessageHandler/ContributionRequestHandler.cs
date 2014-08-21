@@ -13,7 +13,8 @@ namespace Server.MessageHandler
         {
             var contributionRequest = (ContributionRequest) message;
 
-            ConversationRepository conversationRepository = serviceRegistry.GetService<RepositoryManager>().ConversationRepository;
+            ConversationRepository conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+
             var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
 
             var newContribution = new Contribution(entityIdAllocatorFactory.AllocateEntityId<Contribution>(), contributionRequest.Contribution);

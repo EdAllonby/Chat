@@ -19,7 +19,12 @@ namespace ServerTests.MessageHandlerTests
 
             var clientManager = new ClientManager();
             var repositoryManager = new RepositoryManager();
-            repositoryManager.UserRepository.AddEntity(userToDisconnect);
+            var userRepository = new UserRepository();
+            userRepository.AddEntity(userToDisconnect);
+            repositoryManager.AddRepository<User>(userRepository);
+            repositoryManager.AddRepository<Conversation>(new ConversationRepository());
+            repositoryManager.AddRepository<Participation>(new ParticipationRepository());
+
             clientManager.AddClientHandler(ConnectedUserId, new ClientHandler());
 
             ServiceRegistry = new ServiceRegistry();
