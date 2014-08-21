@@ -6,11 +6,15 @@ namespace Server.MessageHandler
 {
     internal sealed class OnUserChangedHandler : OnEntityChangedHandler
     {
+        private readonly IReadOnlyRepository<User> userRepository;
+
         public OnUserChangedHandler(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
         {
-            RepositoryManager.UserRepository.EntityAdded += OnUserAdded;
-            RepositoryManager.UserRepository.EntityUpdated += OnUserUpdated;
+            userRepository = serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+
+            userRepository.EntityAdded += OnUserAdded;
+            userRepository.EntityUpdated += OnUserUpdated;
         }
 
         private void OnUserAdded(object sender, EntityChangedEventArgs<User> e)
@@ -48,8 +52,8 @@ namespace Server.MessageHandler
 
         public override void StopOnMessageChangedHandling()
         {
-            RepositoryManager.UserRepository.EntityAdded -= OnUserAdded;
-            RepositoryManager.UserRepository.EntityUpdated -= OnUserUpdated;
+            userRepository.EntityAdded -= OnUserAdded;
+            userRepository.EntityUpdated -= OnUserUpdated;
         }
     }
 }

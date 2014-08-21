@@ -77,6 +77,8 @@
   <ItemGroup>
     <Compile Include="Domain\Avatar.cs" />
     <Compile Include="Domain\IEntity.cs" />
+    <Compile Include="Domain\IReadOnlyRepository.cs" />
+    <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\Repository.cs" />
     <Compile Include="EntityChangedEventArgs.cs" />
     <Compile Include="IServiceRegistry.cs" />

@@ -13,7 +13,8 @@ namespace Server.MessageHandler
         {
             var clientDisconnection = (ClientDisconnection) message;
 
-            UserRepository userRepository = serviceRegistry.GetService<RepositoryManager>().UserRepository;
+            UserRepository userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+
             var clientManager = serviceRegistry.GetService<IClientManager>();
 
             clientManager.RemoveClientHandler(clientDisconnection.UserId);

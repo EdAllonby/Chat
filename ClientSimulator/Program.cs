@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChatClient.Services;
 using ClientSimulator.Properties;
+using SharedClasses;
+using SharedClasses.Domain;
 
 namespace ClientSimulator
 {
@@ -15,14 +17,19 @@ namespace ClientSimulator
     internal static class Program
     {
         private const int TotalClients = 10;
-        private static readonly List<IClientService> Clients = new List<IClientService>();
+        private static readonly List<ClientService> Clients = new List<ClientService>();
         private static bool areRepositoriesValid;
 
         private static void Main()
         {
             for (int i = 0; i < TotalClients; i++)
             {
-                Clients.Add(new ClientService());
+                RepositoryManager repositoryManager = new RepositoryManager();
+                repositoryManager.AddRepository<User>(new UserRepository());
+                repositoryManager.AddRepository<Conversation>(new ConversationRepository());
+                repositoryManager.AddRepository<Participation>(new ParticipationRepository());
+
+                Clients.Add(new ClientService(repositoryManager));
             }
 
             LoginClients();

@@ -1,6 +1,7 @@
 ﻿using System.ServiceProcess;
 using System.Threading;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace Server
 {
@@ -33,10 +34,16 @@ namespace Server
             }
         }
 
-        private IServiceRegistry RegisterServices()
+        private static IServiceRegistry RegisterServices()
         {
             IServiceRegistry serviceRegistry = new ServiceRegistry();
-            serviceRegistry.RegisterService<RepositoryManager>(new RepositoryManager());
+
+            RepositoryManager repositoryManager = new RepositoryManager();
+            repositoryManager.AddRepository<User>(new UserRepository());
+            repositoryManager.AddRepository<Conversation>(new ConversationRepository());
+            repositoryManager.AddRepository<Participation>(new ParticipationRepository());
+
+            serviceRegistry.RegisterService<RepositoryManager>(repositoryManager);
             serviceRegistry.RegisterService<IClientManager>(new ClientManager());
             serviceRegistry.RegisterService<EntityIdAllocatorFactory>(new EntityIdAllocatorFactory());
 

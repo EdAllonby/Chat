@@ -19,8 +19,7 @@ namespace ServerTests.MessageHandlerTests
             avatarRequest = new AvatarRequest(UserId, Resources.SmallImage);
             userToUpdate = new User("user", UserId, new ConnectionStatus(UserId, ConnectionStatus.Status.Connected));
 
-            UserRepository userRepository = ServiceRegistry.GetService<RepositoryManager>().UserRepository;
-            userRepository.AddEntity(userToUpdate);
+            UserRepository.AddEntity(userToUpdate);
         }
 
         private const int UserId = 1;
@@ -29,9 +28,9 @@ namespace ServerTests.MessageHandlerTests
         private AvatarRequest avatarRequest;
         private User userToUpdate;
 
-        private UserRepository UserRepository
+        private IRepository<User> UserRepository
         {
-            get { return ServiceRegistry.GetService<RepositoryManager>().UserRepository; }
+            get { return (IRepository<User>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>(); }
         }
 
         [TestFixture]

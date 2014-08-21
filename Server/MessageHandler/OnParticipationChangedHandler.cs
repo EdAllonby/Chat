@@ -8,17 +8,23 @@ namespace Server.MessageHandler
 {
     internal sealed class OnParticipationChangedHandler : OnEntityChangedHandler
     {
+        private readonly ParticipationRepository participationRepository;
+        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+
         public OnParticipationChangedHandler(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
         {
-            RepositoryManager.ParticipationRepository.EntityAdded += OnParticipationAdded;
+            participationRepository = (ParticipationRepository) RepositoryManager.GetRepository<Participation>();
+            conversationRepository = RepositoryManager.GetRepository<Conversation>();
+
+            participationRepository.EntityAdded += OnParticipationAdded;
         }
 
         private void OnParticipationAdded(object sender, EntityChangedEventArgs<Participation> e)
         {
             Participation participation = e.Entity;
 
-            List<Participation> conversationParticipants = RepositoryManager.ParticipationRepository.GetParticipationsByConversationId(participation.ConversationId);
+            List<Participation> conversationParticipants = participationRepository.GetParticipationsByConversationId(participation.ConversationId);
 
             var participationNotification = new ParticipationNotification(participation, NotificationType.Create);
 
@@ -31,7 +37,7 @@ namespace Server.MessageHandler
             otherParticipants.ForEach(
                 otherParticipant => ClientManager.SendMessageToClient(new ParticipationNotification(otherParticipant, NotificationType.Create), participation.UserId));
 
-            Conversation conversation = RepositoryManager.ConversationRepository.FindEntityById(participation.ConversationId);
+            Conversation conversation = conversationRepository.FindEntityById(participation.ConversationId);
 
             SendConversationNotificationToParticipants(conversation, participation.UserId, otherParticipants);
         }
@@ -50,7 +56,7 @@ namespace Server.MessageHandler
 
         public override void StopOnMessageChangedHandling()
         {
-            RepositoryManager.ParticipationRepository.EntityAdded -= OnParticipationAdded;
+            participationRepository.EntityAdded -= OnParticipationAdded;
         }
     }
 }

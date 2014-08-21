@@ -14,7 +14,7 @@ namespace ClientSimulator
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientRepositoryValidator));
 
-        public static bool ValidateUserRepository(IReadOnlyCollection<IClientService> clients)
+        public static bool ValidateUserRepository(IReadOnlyCollection<ClientService> clients)
         {
             bool areRepositoriesValid = true;
 
@@ -34,7 +34,7 @@ namespace ClientSimulator
 
             Debug.Assert(sum == userIdSum);
 
-            foreach (UserRepository userRepository in clients.Select(client => client.RepositoryManager.UserRepository))
+            foreach (IReadOnlyRepository<User> userRepository in clients.Select(client => client.RepositoryManager.GetRepository<User>()))
             {
                 int userCount = userRepository.GetAllEntities().Count();
 

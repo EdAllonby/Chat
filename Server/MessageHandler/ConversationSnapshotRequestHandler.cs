@@ -14,8 +14,8 @@ namespace Server.MessageHandler
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var conversationSnapshotRequest = (ConversationSnapshotRequest) message;
-            ParticipationRepository participationRepository = serviceRegistry.GetService<RepositoryManager>().ParticipationRepository;
-            ConversationRepository conversationRepository = serviceRegistry.GetService<RepositoryManager>().ConversationRepository;
+            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            IReadOnlyRepository<Conversation> conversationRepository = serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
             var clientManager = serviceRegistry.GetService<IClientManager>();
 
             IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(conversationSnapshotRequest.UserId);

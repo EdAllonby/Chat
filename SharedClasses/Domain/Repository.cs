@@ -7,7 +7,7 @@ using SharedClasses.Message;
 
 namespace SharedClasses.Domain
 {
-    public abstract class Repository<T> where T : IEntity
+    public abstract class Repository<T> : IRepository<T> where T : IEntity
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof (Repository<T>));
 
@@ -53,6 +53,11 @@ namespace SharedClasses.Domain
         public IEnumerable<T> GetAllEntities()
         {
             return new List<T>(entitiesIndexedById.Values);
+        }
+
+        public Type EnclosedEntityType
+        {
+            get { return typeof (T); }
         }
 
         private void OnEntityAdded(T entity)

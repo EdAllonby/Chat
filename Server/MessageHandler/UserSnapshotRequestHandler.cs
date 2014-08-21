@@ -14,7 +14,7 @@ namespace Server.MessageHandler
         {
             var userSnapshotRequest = (UserSnapshotRequest) message;
 
-            UserRepository userRepository = serviceRegistry.GetService<RepositoryManager>().UserRepository;
+            IReadOnlyRepository<User> userRepository = serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
             var clientManager = serviceRegistry.GetService<IClientManager>();
 
             IEnumerable<User> currentUsers = userRepository.GetAllEntities();

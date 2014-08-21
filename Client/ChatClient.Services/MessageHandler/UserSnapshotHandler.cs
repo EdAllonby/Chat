@@ -13,9 +13,11 @@ namespace ChatClient.Services.MessageHandler
         {
             var userSnapshot = (UserSnapshot) message;
 
+            var userRepository = (UserRepository) context.RepositoryManager.GetRepository<User>();
+            
             foreach (User user in userSnapshot.Users)
             {
-                context.RepositoryManager.UserRepository.AddEntity(user);
+                userRepository.AddEntity(user);
             }
 
             OnUserBootstrapCompleted();

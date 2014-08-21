@@ -12,7 +12,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     public sealed class MainWindowViewModel : ViewModel
     {
         private readonly int userId;
-        private readonly UserRepository userRepository;
+        private readonly IReadOnlyRepository<User> userRepository;
         public EventHandler OpenUserSettingsWindowRequested;
         private Image userAvatar = Resources.DefaultUserImage;
 
@@ -20,7 +20,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         {
             if (!IsInDesignMode)
             {
-                userRepository = ClientService.RepositoryManager.UserRepository;
+                userRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<User>();
                 userRepository.EntityUpdated += OnUserUpdated;
                 userId = ClientService.ClientUserId;
             }

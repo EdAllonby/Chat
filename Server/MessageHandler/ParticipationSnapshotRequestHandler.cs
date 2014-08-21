@@ -14,7 +14,7 @@ namespace Server.MessageHandler
         {
             var participationSnapshotRequest = (ParticipationSnapshotRequest) message;
 
-            ParticipationRepository participationRepository = serviceRegistry.GetService<RepositoryManager>().ParticipationRepository;
+            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
             var clientManager = serviceRegistry.GetService<IClientManager>();
 
             var userParticipations = new List<Participation>();

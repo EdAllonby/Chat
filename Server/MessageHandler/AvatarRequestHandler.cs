@@ -13,7 +13,7 @@ namespace Server.MessageHandler
         {
             var avatarRequest = (AvatarRequest) message;
             var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
-            UserRepository userRepository = serviceRegistry.GetService<RepositoryManager>().UserRepository;
+            UserRepository userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
             var avatar = new Avatar(entityIdAllocatorFactory.AllocateEntityId<Avatar>(), avatarRequest.Avatar);
             userRepository.UpdateUserAvatar(avatar);

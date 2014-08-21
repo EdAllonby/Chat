@@ -8,9 +8,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     {
         private readonly Conversation conversation;
         private readonly ParticipationRepository participationRepository;
-        private readonly UserRepository userRepository;
+        private readonly IReadOnlyRepository<User> userRepository;
 
-        public ConversationViewModel(Conversation conversation, UserRepository userRepository, ParticipationRepository participationRepository)
+        public ConversationViewModel(Conversation conversation, IReadOnlyRepository<User> userRepository, ParticipationRepository participationRepository)
         {
             if (!IsInDesignMode)
             {

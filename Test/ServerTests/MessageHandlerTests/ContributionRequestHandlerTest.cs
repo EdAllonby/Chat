@@ -22,9 +22,9 @@ namespace ServerTests.MessageHandlerTests
         private readonly ContributionRequestHandler contributionRequestHandler = new ContributionRequestHandler();
         private const int ConversationId = 1;
 
-        private ConversationRepository ConversationRepository
+        private IRepository<Conversation> ConversationRepository
         {
-            get { return ServiceRegistry.GetService<RepositoryManager>().ConversationRepository; }
+            get { return (IRepository<Conversation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>(); }
         }
 
         [TestFixture]

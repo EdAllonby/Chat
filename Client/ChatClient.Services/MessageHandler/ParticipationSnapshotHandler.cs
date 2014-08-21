@@ -13,9 +13,11 @@ namespace ChatClient.Services.MessageHandler
         {
             var participationSnapshot = (ParticipationSnapshot) message;
 
+            IRepository<Participation> participationRepository = (IRepository<Participation>) context.RepositoryManager.GetRepository<Participation>();
+
             foreach (Participation participation in participationSnapshot.Participations)
             {
-                context.RepositoryManager.ParticipationRepository.AddEntity(participation);
+                participationRepository.AddEntity(participation);
             }
 
             OnParticipationBootstrapCompleted();

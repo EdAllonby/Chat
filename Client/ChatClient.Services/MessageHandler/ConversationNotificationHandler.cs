@@ -12,7 +12,7 @@ namespace ChatClient.Services.MessageHandler
         {
             var conversationNotification = (ConversationNotification) message;
 
-            ConversationRepository conversationRepository = context.RepositoryManager.ConversationRepository;
+            ConversationRepository conversationRepository = (ConversationRepository) context.RepositoryManager.GetRepository<Conversation>();
 
             switch (conversationNotification.NotificationType)
             {
