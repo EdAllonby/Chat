@@ -25,8 +25,6 @@ namespace SharedClasses.Domain
         /// <param name="entity">The <see cref="IEntity"/> to add.</param>
         public void AddEntity(T entity)
         {
-            Contract.Requires(!entity.Equals(null));
-
             entitiesIndexedById.TryAdd(entity.Id, entity);
 
             Log.DebugFormat("Entity with Id {0} added.", entity.Id);

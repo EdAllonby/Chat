@@ -9,7 +9,7 @@ namespace Server
     /// <summary>
     /// Handles message handling for a unique client in the system
     /// </summary>
-    internal sealed class ClientHandler : IDisposable
+    internal sealed class ClientHandler : IClientHandler, IDisposable
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientHandler));
 

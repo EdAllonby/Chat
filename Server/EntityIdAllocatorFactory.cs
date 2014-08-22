@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using log4net;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace Server
 {
@@ -18,7 +19,7 @@ namespace Server
         /// </summary>
         /// <typeparam name="T">The entity which wants a unique Id.</typeparam>
         /// <returns>A unique Id for the entity.</returns>
-        public int AllocateEntityId<T>()
+        public int AllocateEntityId<T>() where T : IEntity
         {
             EntityIdGenerator generator;
 

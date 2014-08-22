@@ -51,6 +51,7 @@
     <Compile Include="ClientManager.cs" />
     <Compile Include="EntityIdAllocatorFactory.cs" />
     <Compile Include="EntityIdGeneratorRegistry.cs" />
+    <Compile Include="IClientHandler.cs" />
     <Compile Include="IClientManager.cs" />
     <Compile Include="IMessageHandler.cs" />
     <Compile Include="MessageHandler\OnEntityChangedHandler.cs" />

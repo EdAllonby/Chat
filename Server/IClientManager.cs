@@ -28,11 +28,11 @@ namespace Server
         void SendMessageToClient(IMessage message, int userId);
 
         /// <summary>
-        /// Add a <see cref="ClientHandler"/>.
+        /// Add an <see cref="IClientHandler"/>.
         /// </summary>
         /// <param name="userId">The client's <see cref="User"/> Id.</param>
-        /// <param name="clientHandler">The <see cref="ClientHandler"/> to add.</param>
-        void AddClientHandler(int userId, ClientHandler clientHandler);
+        /// <param name="clientHandler">The <see cref="IClientHandler"/> to add.</param>
+        void AddClientHandler(int userId, IClientHandler clientHandler);
 
         /// <summary>
         /// Removes a <see cref="ClientHandler"/>.

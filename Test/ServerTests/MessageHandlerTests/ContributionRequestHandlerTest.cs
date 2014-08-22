@@ -14,8 +14,13 @@ namespace ServerTests.MessageHandlerTests
         {
             base.BeforeEachTest();
 
-            contributionRequest = new ContributionRequest(ConversationId, ConnectedUserId, "hello");
+            contributionRequest = new ContributionRequest(ConversationId, DefaultUser.Id, "hello");
             ConversationRepository.AddEntity(new Conversation(ConversationId));
+        }
+
+        public override void HandleMessage(IMessage message)
+        {
+            contributionRequestHandler.HandleMessage(message, ServiceRegistry);
         }
 
         private ContributionRequest contributionRequest;
@@ -28,13 +33,14 @@ namespace ServerTests.MessageHandlerTests
         }
 
         [TestFixture]
-        public class HandleMessage : ContributionRequestHandlerTest
+        public class HandleMessageTest : ContributionRequestHandlerTest
         {
             [Test]
             public void AddsNewContributionToConversation()
             {
-                contributionRequestHandler.HandleMessage(contributionRequest, ServiceRegistry);
-                Contribution lastContributionAdded = ConversationRepository.FindEntityById(contributionRequest.Contribution.ConversationId).LastContribution;
+                HandleMessage(contributionRequest);
+                Conversation contributionConversation = ConversationRepository.FindEntityById(contributionRequest.Contribution.ConversationId);
+                Contribution lastContributionAdded = contributionConversation.LastContribution;
 
                 Assert.IsTrue(lastContributionAdded.Message.Equals(contributionRequest.Contribution.Message));
             }
@@ -42,8 +48,9 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void NewContributionGetsAssignedId()
             {
-                contributionRequestHandler.HandleMessage(contributionRequest, ServiceRegistry);
-                Contribution lastContributionAdded = ConversationRepository.FindEntityById(contributionRequest.Contribution.ConversationId).LastContribution;
+                HandleMessage(contributionRequest);
+                Conversation contributionConversation = ConversationRepository.FindEntityById(contributionRequest.Contribution.ConversationId);
+                Contribution lastContributionAdded = contributionConversation.LastContribution;
 
                 Assert.IsTrue(lastContributionAdded.Id != 0);
             }
@@ -51,7 +58,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowsExceptionWhenNotGivenContributionRequest()
             {
-                Assert.Throws<InvalidCastException>(() => contributionRequestHandler.HandleMessage(new ClientDisconnection(9), ServiceRegistry));
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new ClientDisconnection(9)));
             }
         }
     }

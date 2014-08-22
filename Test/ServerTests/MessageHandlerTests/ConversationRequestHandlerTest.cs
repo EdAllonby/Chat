@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Server.MessageHandler;
 using SharedClasses;
@@ -11,33 +13,94 @@ namespace ServerTests.MessageHandlerTests
     public class ConversationRequestHandlerTest : MessageHandlerTestFixture
     {
         private readonly ConversationRequestHandler conversationRequestHandler = new ConversationRequestHandler();
-        private const int UserIdToConverseWith = 2;
+
+        private List<int> usersInConversation;
 
         private IReadOnlyRepository<Conversation> ConversationRepository
         {
             get { return ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>(); }
         }
 
-        private readonly ConversationRequest conversationRequest = new ConversationRequest(new List<int> {ConnectedUserId, UserIdToConverseWith});
+        private static Conversation GetNewlyAddedConversation(IEnumerable<Conversation> newConversationList, IEnumerable<Conversation> previousConversationList)
+        {
+            return newConversationList.Except(previousConversationList).First();
+        }
+
+        private ConversationRequest conversationRequest;
+
+        public override void BeforeEachTest()
+        {
+            base.BeforeEachTest();
+            usersInConversation = new List<int> {DefaultUser.Id, 3};
+            conversationRequest = new ConversationRequest(usersInConversation);
+        }
+
+        public override void HandleMessage(IMessage message)
+        {
+            conversationRequestHandler.HandleMessage(message, ServiceRegistry);
+        }
+
+        private Conversation HandleMessageAndGetAddedConversation(IMessage message)
+        {
+            IEnumerable<Conversation> previousConversationInRepository = ConversationRepository.GetAllEntities();
+            HandleMessage(message);
+            IEnumerable<Conversation> newConversationsInRepository = ConversationRepository.GetAllEntities();
+
+            return GetNewlyAddedConversation(newConversationsInRepository, previousConversationInRepository);
+        }
 
         [TestFixture]
         public class HandleMessageTest : ConversationRequestHandlerTest
         {
             [Test]
-            public void AddsConversationToRepository()
+            public void AddsNewConversationToRepository()
             {
-                conversationRequestHandler.HandleMessage(conversationRequest, ServiceRegistry);
-                Conversation conversationAdded = ConversationRepository.FindEntityById(1);
+                Conversation newConversation = HandleMessageAndGetAddedConversation(conversationRequest);
 
-                Assert.IsNotNull(conversationAdded);
+                Assert.IsNotNull(newConversation);
             }
 
             [Test]
             public void AssignsNewConversationAnId()
             {
-                conversationRequestHandler.HandleMessage(conversationRequest, ServiceRegistry);
-                Conversation conversationAdded = ConversationRepository.FindEntityById(1);
-                Assert.IsTrue(conversationAdded.Id != 0);
+                Conversation newConversation = HandleMessageAndGetAddedConversation(conversationRequest);
+                
+                Assert.IsTrue(newConversation.Id != 0);
+            }
+
+            [Test]
+            public void ParticipationRepositoryContainsNewConversationToUserMap()
+            {
+                Conversation newConversation = HandleMessageAndGetAddedConversation(conversationRequest);
+                
+                ParticipationRepository participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+                List<Participation> newConversationParticipants = participationRepository.GetParticipationsByConversationId(newConversation.Id);
+
+                List<int> participantUserIds = newConversationParticipants.Select(item => item.UserId).ToList();
+
+                Assert.AreEqual(participantUserIds, usersInConversation);
+            }
+
+            [Test]
+            public void DoesNotProcessConversationRequestIfThereAreDuplicateConversationUserIdsInRequest()
+            {
+                List<int> usersToMakeInConversation = new List<int> {1, 2, 3, 4, 1};
+                ConversationRequest invalidConversationRequest = new ConversationRequest(usersToMakeInConversation);
+                IEnumerable<Conversation> currentConversationsInRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>().GetAllEntities();
+                IEnumerable<Participation> currentParticipationsInRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>().GetAllEntities();
+                var previousParticipationsInRepository = new List<Participation>(currentParticipationsInRepository);
+                var previousConversationsInRepository = new List<Conversation>(currentConversationsInRepository);
+
+                HandleMessage(invalidConversationRequest);
+
+                Assert.AreEqual(previousConversationsInRepository, currentConversationsInRepository);
+                Assert.AreEqual(previousParticipationsInRepository, currentParticipationsInRepository);
+            }
+
+            [Test]
+            public void ThrowExceptionWhenNotGivenConversationRequest()
+            {
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new ParticipationSnapshotRequest(10)));
             }
         }
     }
