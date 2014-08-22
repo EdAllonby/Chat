@@ -16,7 +16,12 @@ namespace ServerTests.MessageHandlerTests
         {
             base.BeforeEachTest();
 
-            clientDisconnection = new ClientDisconnection(ConnectedUserId);
+            clientDisconnection = new ClientDisconnection(DefaultUser.Id);
+        }
+
+        public override void HandleMessage(IMessage message)
+        {
+            clientDisconnectionHandler.HandleMessage(message, ServiceRegistry);
         }
 
         private ClientDisconnection clientDisconnection;
@@ -26,10 +31,10 @@ namespace ServerTests.MessageHandlerTests
         public class HandleMessageTest : ClientDisconnectionHandlerTest
         {
             [Test]
-            public void ClientGetsRemovesFromClientHandler()
+            public void ClientHandlerGetsRemovedFromClientManager()
             {
-                clientDisconnectionHandler.HandleMessage(clientDisconnection, ServiceRegistry);
-                Assert.IsFalse(ServiceRegistry.GetService<IClientManager>().HasClientHandler(ConnectedUserId));
+                HandleMessage(clientDisconnection);
+                Assert.IsFalse(ServiceRegistry.GetService<IClientManager>().HasClientHandler(DefaultUser.Id));
             }
 
             [Test]
@@ -37,21 +42,21 @@ namespace ServerTests.MessageHandlerTests
             {
                 bool isUserUpdated = false;
                 ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>().EntityUpdated += (sender, eventArgs) => isUserUpdated = true;
-                clientDisconnectionHandler.HandleMessage(clientDisconnection, ServiceRegistry);
+                HandleMessage(clientDisconnection);
                 Assert.IsTrue(isUserUpdated);
             }
 
             [Test]
             public void ThrowsExceptionWhenNotGivenClientDisconnection()
             {
-                Assert.Throws<InvalidCastException>(() => clientDisconnectionHandler.HandleMessage(new LoginRequest("user"), ServiceRegistry));
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new LoginRequest("user")));
             }
 
             [Test]
             public void UserGetsSetToDisconnectedInUserRepository()
             {
-                clientDisconnectionHandler.HandleMessage(clientDisconnection, ServiceRegistry);
-                Assert.IsTrue(ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>().FindEntityById(ConnectedUserId).ConnectionStatus.UserConnectionStatus.Equals(ConnectionStatus.Status.Disconnected));
+                HandleMessage(clientDisconnection);
+                Assert.IsTrue(ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>().FindEntityById(DefaultUser.Id).ConnectionStatus.UserConnectionStatus.Equals(ConnectionStatus.Status.Disconnected));
             }
         }
     }

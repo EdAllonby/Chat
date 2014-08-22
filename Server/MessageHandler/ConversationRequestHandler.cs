@@ -31,26 +31,23 @@ namespace Server.MessageHandler
 
         private static void CreateConversationEntity(ConversationRequest conversationRequest, IRepository<Conversation> conversationRepository, IRepository<Participation> participationRepository, EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
-            int conversationId = entityIdAllocatorFactory.AllocateEntityId<Conversation>();
+            var newConversation = new Conversation(entityIdAllocatorFactory.AllocateEntityId<Conversation>());
 
-            var newConversation = new Conversation(conversationId);
-
-            var participations = new List<Participation>();
+            var conversationParticipants = new List<Participation>();
 
             foreach (int userId in conversationRequest.UserIds)
             {
                 int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
-                participations.Add(new Participation(participationId, userId, conversationId));
+                conversationParticipants.Add(new Participation(participationId, userId, newConversation.Id));
             }
 
-            participations.ForEach(participationRepository.AddEntity);
+            conversationParticipants.ForEach(participationRepository.AddEntity);
 
             conversationRepository.AddEntity(newConversation);
         }
 
         private static bool IsConversationValid(ConversationRequest conversationRequest, ParticipationRepository participationRepository)
         {
-            // Check for no repeating users
             if (conversationRequest.UserIds.Count != conversationRequest.UserIds.Distinct().Count())
             {
                 Log.Warn("Cannot make a conversation between two users of same id.");

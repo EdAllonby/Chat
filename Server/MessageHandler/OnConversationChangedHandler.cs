@@ -25,14 +25,9 @@ namespace Server.MessageHandler
 
         private void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
         {
-            OnConversationAdded(e.Entity);
-        }
+            var conversationNotification = new ConversationNotification(e.Entity, NotificationType.Create);
 
-        private void OnConversationAdded(Conversation conversation)
-        {
-            var conversationNotification = new ConversationNotification(conversation, NotificationType.Create);
-
-            IEnumerable<int> userIds = participationRepository.GetParticipationsByConversationId(conversation.Id).Select(participation => participation.UserId);
+            IEnumerable<int> userIds = participationRepository.GetParticipationsByConversationId(e.Entity.Id).Select(participation => participation.UserId);
 
             ClientManager.SendMessageToClients(conversationNotification, userIds);
         }

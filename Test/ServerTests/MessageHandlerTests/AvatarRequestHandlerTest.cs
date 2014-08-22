@@ -22,6 +22,11 @@ namespace ServerTests.MessageHandlerTests
             UserRepository.AddEntity(userToUpdate);
         }
 
+        public override void HandleMessage(IMessage message)
+        {
+            avatarRequestHandler.HandleMessage(message, ServiceRegistry);
+        }
+
         private const int UserId = 1;
 
         private readonly AvatarRequestHandler avatarRequestHandler = new AvatarRequestHandler();
@@ -39,7 +44,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void AvatarGetsAssignedId()
             {
-                avatarRequestHandler.HandleMessage(avatarRequest, ServiceRegistry);
+                HandleMessage(avatarRequest);
 
                 Assert.IsTrue(UserRepository.FindEntityById(UserId).Avatar.Id != 0);
             }
@@ -47,13 +52,13 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowsExceptionWhenNonAvatarRequestIsPassed()
             {
-                Assert.Throws<InvalidCastException>(() => avatarRequestHandler.HandleMessage(new LoginRequest("login"), ServiceRegistry));
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new LoginRequest("login")));
             }
 
             [Test]
             public void UserGetsUpdatedAvatarInUserRepository()
             {
-                avatarRequestHandler.HandleMessage(avatarRequest, ServiceRegistry);
+                HandleMessage(avatarRequest);
 
                 Assert.IsTrue(UserRepository.FindEntityById(UserId).Avatar.UserAvatar.Size.Equals(Resources.SmallImage.Size));
             }
@@ -64,7 +69,7 @@ namespace ServerTests.MessageHandlerTests
                 bool isUserUpdated = false;
                 UserRepository.EntityUpdated += (sender, eventArgs) => isUserUpdated = true;
 
-                avatarRequestHandler.HandleMessage(avatarRequest, ServiceRegistry);
+                HandleMessage(avatarRequest);
 
                 Assert.IsTrue(isUserUpdated);
             }

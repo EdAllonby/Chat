@@ -12,7 +12,7 @@ namespace Server
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientManager));
 
-        private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
+        private readonly Dictionary<int, IClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, IClientHandler>();
 
         /// <summary>
         /// Sends an <see cref="IMessage"/> to all clients.
@@ -20,7 +20,7 @@ namespace Server
         /// <param name="message">The <see cref="IMessage"/> to send to all clients.</param>
         public void SendMessageToClients(IMessage message)
         {
-            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
+            foreach (IClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
             {
                 clientHandler.SendMessage(message);
             }
@@ -54,7 +54,7 @@ namespace Server
         /// </summary>
         /// <param name="userId">The client's <see cref="User"/> Id.</param>
         /// <param name="clientHandler">The <see cref="ClientHandler"/> to add.</param>
-        public void AddClientHandler(int userId, ClientHandler clientHandler)
+        public void AddClientHandler(int userId, IClientHandler clientHandler)
         {
             clientHandlersIndexedByUserId.Add(userId, clientHandler);
         }

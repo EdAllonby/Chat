@@ -54,7 +54,11 @@
     <Compile Include="MessageHandlerTests\ClientDisconnectionHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\ContributionRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\ConversationRequestHandlerTest.cs" />
+    <Compile Include="MessageHandlerTests\ConversationSnapshotRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\MessageHandlerTestFixture.cs" />
+    <Compile Include="MessageHandlerTests\ParticipationSnapshotRequestHandlerTest.cs" />
+    <Compile Include="MessageHandlerTests\UserSnapshotRequestHandlerTest.cs" />
+    <Compile Include="MockClientHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
