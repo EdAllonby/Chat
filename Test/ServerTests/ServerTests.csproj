@@ -56,6 +56,7 @@
     <Compile Include="MessageHandlerTests\ConversationRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\ConversationSnapshotRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\MessageHandlerTestFixture.cs" />
+    <Compile Include="MessageHandlerTests\ParticipationRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\ParticipationSnapshotRequestHandlerTest.cs" />
     <Compile Include="MessageHandlerTests\UserSnapshotRequestHandlerTest.cs" />
     <Compile Include="MockClientHandler.cs" />

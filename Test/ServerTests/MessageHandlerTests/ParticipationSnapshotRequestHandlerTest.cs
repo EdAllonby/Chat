@@ -66,7 +66,7 @@ namespace ServerTests.MessageHandlerTests
 
                 List<int> conversationIds = conversationSnapshot.Participations.Select(participation => participation.ConversationId).ToList();
 
-                Assert.AreEqual(DefaultConversationDefaultUserIsIn, conversationIds.Distinct().First());
+                Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
             }
             
             [Test]
