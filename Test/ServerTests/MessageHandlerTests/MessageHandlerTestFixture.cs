@@ -11,7 +11,7 @@ namespace ServerTests.MessageHandlerTests
     {
         protected User DefaultUser;
 
-        protected int DefaultConversationDefaultUserIsIn;
+        protected int DefaultConversationIdDefaultUserIsIn;
 
         protected MockClientHandler ConnectedUserClientHandler { get; private set; }
 
@@ -47,9 +47,7 @@ namespace ServerTests.MessageHandlerTests
             var repositoryManager = new RepositoryManager();
           
             repositoryManager.AddRepository<User>(new UserRepository());
-
             repositoryManager.AddRepository<Conversation>(new ConversationRepository());
-
             repositoryManager.AddRepository<Participation>(new ParticipationRepository());
 
             ServiceRegistry.RegisterService<RepositoryManager>(repositoryManager);
@@ -70,15 +68,15 @@ namespace ServerTests.MessageHandlerTests
 
             SetUpMultiUserConversation(usersToAddToConversation, repositoryManager, idAllocator);
 
-            DefaultConversationDefaultUserIsIn = participationRepository.GetConversationIdByParticipantsId(usersToAddToConversation);
+            DefaultConversationIdDefaultUserIsIn = participationRepository.GetConversationIdByParticipantsId(usersToAddToConversation);
         }
 
-        public static void SetUpMultiUserConversation(IEnumerable<int> userIds, RepositoryManager repositoryManager, EntityIdAllocatorFactory idAllocator)
+        private void SetUpMultiUserConversation(IEnumerable<int> userIds, RepositoryManager repositoryManager, EntityIdAllocatorFactory idAllocator)
         {
             ConversationRepository conversationRepository = (ConversationRepository)repositoryManager.GetRepository<Conversation>();
             ParticipationRepository participationRepository = (ParticipationRepository)repositoryManager.GetRepository<Participation>();
 
-            Conversation conversation  = new Conversation(idAllocator.AllocateEntityId<Conversation>());
+            Conversation conversation = new Conversation(idAllocator.AllocateEntityId<Conversation>());
             conversationRepository.AddEntity(conversation);
 
             foreach (int userId in userIds)

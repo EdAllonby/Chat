@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
@@ -17,11 +18,11 @@ namespace Server.MessageHandler
         {
             var participationRequest = (ParticipationRequest) message;
 
-            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
             ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
             if (CheckUserCanEnterConversation(participationRequest, participationRepository))
             {
+                var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
                 AddUserToConversation(participationRequest, entityIdAllocatorFactory, participationRepository);
             }
         }
@@ -31,8 +32,9 @@ namespace Server.MessageHandler
         {
             Participation newparticipation = participationRequest.Participation;
 
-            if (participationRepository.GetParticipationsByConversationId(newparticipation.ConversationId)
-                .Any(participation => participation.UserId == newparticipation.UserId))
+            List<Participation> currentParticipantsInConversation = participationRepository.GetParticipationsByConversationId(newparticipation.ConversationId);
+
+            if (currentParticipantsInConversation.Any(participation => participation.UserId == newparticipation.UserId))
             {
                 Log.WarnFormat(
                     "User with id {0} cannot be added to conversation {1}, user already exists in this conversation.",
@@ -44,7 +46,7 @@ namespace Server.MessageHandler
             return true;
         }
 
-        private static void AddUserToConversation(ParticipationRequest participationRequest, EntityIdAllocatorFactory entityIdAllocatorFactory, Repository<Participation> participationRepository)
+        private static void AddUserToConversation(ParticipationRequest participationRequest, EntityIdAllocatorFactory entityIdAllocatorFactory, IRepository<Participation> participationRepository)
         {
             int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
 
