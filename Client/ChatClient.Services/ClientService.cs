@@ -10,8 +10,8 @@ using SharedClasses.Message;
 namespace ChatClient.Services
 {
     /// <summary>
-    /// Handles the logic for <see cref="IMessage" />
-    /// Delegates Server specific communications to the <see cref="connectionHandler" />
+    /// Handles the logic for <see cref="IMessage" />.
+    /// Delegates Server specific communications to the <see cref="connectionHandler" />.
     /// </summary>
     public sealed class ClientService : IClientService
     {
@@ -21,16 +21,26 @@ namespace ChatClient.Services
 
         private ConnectionHandler connectionHandler;
 
+        /// <summary>
+        /// Passes the service the reference to the <see cref="IServiceRegistry"/>.
+        /// </summary>
+        /// <param name="serviceRegistry"></param>
         public ClientService(IServiceRegistry serviceRegistry)
         {
             this.serviceRegistry = serviceRegistry;
         }
 
+        /// <summary>
+        /// This client's Repository Manager.
+        /// </summary>
         public RepositoryManager RepositoryManager
         {
             get { return serviceRegistry.GetService<RepositoryManager>(); }
         }
 
+        /// <summary>
+        /// Gets fired when bootstrapping the repository is complete.
+        /// </summary>
         public event EventHandler BootstrapCompleted;
 
         /// <summary>

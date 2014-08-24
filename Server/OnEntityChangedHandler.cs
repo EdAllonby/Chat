@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace Server
 {
     /// <summary>
-    /// Handles entities that have changed in the <see cref="Repository{T}"/>
+    /// Handles entities that have changed in the <see cref="EntityEntityRepository{T}"/>
     /// </summary>
     internal abstract class OnEntityChangedHandler
     {

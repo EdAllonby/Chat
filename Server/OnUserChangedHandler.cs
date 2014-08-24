@@ -6,7 +6,7 @@ namespace Server
 {
     internal sealed class OnUserChangedHandler : OnEntityChangedHandler
     {
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
 
         public OnUserChangedHandler(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)

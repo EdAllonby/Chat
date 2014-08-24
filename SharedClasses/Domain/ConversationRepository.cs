@@ -5,7 +5,7 @@ namespace SharedClasses.Domain
     /// <summary>
     /// Holds a collection of <see cref="Conversation"/>s with basic CRUD operations.
     /// </summary>
-    public sealed class ConversationRepository : Repository<Conversation>
+    public sealed class ConversationRepository : EntityRepository<Conversation>
     {
         public void UpdateConversation(Conversation conversation)
         {

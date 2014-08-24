@@ -13,7 +13,7 @@ namespace ChatClient.Services.MessageHandler
         {
             var participationNotification = (ParticipationNotification) message;
 
-            var participationRepository = (IRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
             participationRepository.AddEntity(participationNotification.Participation);
         }

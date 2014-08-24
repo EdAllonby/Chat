@@ -15,7 +15,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly Brush receiverBackground = new SolidColorBrush(Color.FromArgb(50, 250, 100, 200));
         private readonly Brush senderBackground = new SolidColorBrush(Color.FromArgb(70, 135, 206, 250));
         private readonly int userId;
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
 
         private DateTime lastMessageSentDate = new DateTime(1999, 01, 01);
         private int lastUserId;
@@ -25,7 +25,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         /// </summary>
         /// <param name="userId">The user Id of the client.</param>
         /// <param name="userRepository">The client's repository holding the known users.</param>
-        public ContributionMessageFormatter(int userId, IReadOnlyRepository<User> userRepository)
+        public ContributionMessageFormatter(int userId, IReadOnlyEntityRepository<User> userRepository)
         {
             this.userId = userId;
             this.userRepository = userRepository;

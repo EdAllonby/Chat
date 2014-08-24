@@ -4,7 +4,7 @@ using SharedClasses.Message;
 namespace SharedClasses
 {
     /// <summary>
-    /// Signifies a entity change in a <see cref="Repository{T}"/>.
+    /// Signifies a entity change in a <see cref="EntityEntityRepository{T}"/>.
     /// </summary>
     /// <typeparam name="T">The entity that has been changed in the repository.</typeparam>
     public sealed class EntityChangedEventArgs<T> where T : IEntity
@@ -24,7 +24,7 @@ namespace SharedClasses
         }
 
         /// <summary>
-        /// Signifies an entity being updated in the <see cref="Repository{T}"/>.
+        /// Signifies an entity being updated in the <see cref="EntityEntityRepository{T}"/>.
         /// </summary>
         /// <param name="entity">The entity being updated.</param>
         /// <param name="previousEntity">The entity state before being updated.</param>

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SharedClasses.Domain
 {
-    public sealed class ParticipationRepository : Repository<Participation>
+    public sealed class ParticipationRepository : EntityRepository<Participation>
     {
         /// <summary>
         /// Checks whether a conversation exists with a group of participants.

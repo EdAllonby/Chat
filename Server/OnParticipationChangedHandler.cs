@@ -8,7 +8,7 @@ namespace Server
 {
     internal sealed class OnParticipationChangedHandler : OnEntityChangedHandler
     {
-        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly IReadOnlyEntityRepository<Conversation> conversationRepository;
         private readonly ParticipationRepository participationRepository;
 
         public OnParticipationChangedHandler(IServiceRegistry serviceRegistry)
