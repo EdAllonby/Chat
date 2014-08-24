@@ -13,7 +13,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     public sealed class MainWindowViewModel : ViewModel
     {
         private readonly int userId;
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
         public EventHandler OpenUserSettingsWindowRequested;
         private Image userAvatar = Resources.DefaultUserImage;
 

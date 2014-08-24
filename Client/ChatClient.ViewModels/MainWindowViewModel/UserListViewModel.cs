@@ -14,9 +14,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     public class UserListViewModel : ViewModel
     {
         private readonly IClientService clientService;
-        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly IReadOnlyEntityRepository<Conversation> conversationRepository;
         private readonly ParticipationRepository participationRepository;
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
 
         private bool isMultiUserConversation;

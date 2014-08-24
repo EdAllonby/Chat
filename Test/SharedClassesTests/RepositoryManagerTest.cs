@@ -13,7 +13,7 @@ namespace SharedClassesTests
             [Test]
             public void CanAddRepository()
             {
-                IRepository userRepository = new UserRepository();
+                IEntityRepository userRepository = new UserRepository();
                 var repositoryManager = new RepositoryManager();
                 repositoryManager.AddRepository<User>(userRepository);
                 Assert.AreEqual(userRepository, repositoryManager.GetRepository<User>());
@@ -26,16 +26,16 @@ namespace SharedClassesTests
             [Test]
             public void ReturnsCorrectRepository()
             {
-                IRepository userRepository = new UserRepository();
-                IRepository conversationRepository = new ConversationRepository();
-                IRepository participationRepository = new ParticipationRepository();
+                IEntityRepository userRepository = new UserRepository();
+                IEntityRepository conversationRepository = new ConversationRepository();
+                IEntityRepository participationRepository = new ParticipationRepository();
 
                 var repositoryManager = new RepositoryManager();
                 repositoryManager.AddRepository<User>(userRepository);
                 repositoryManager.AddRepository<Conversation>(conversationRepository);
                 repositoryManager.AddRepository<Participation>(participationRepository);
 
-                IReadOnlyRepository<Conversation> retrievedConversationRepository = repositoryManager.GetRepository<Conversation>();
+                IReadOnlyEntityRepository<Conversation> retrievedConversationRepository = repositoryManager.GetRepository<Conversation>();
                 Assert.AreEqual(conversationRepository, retrievedConversationRepository);
             }
 

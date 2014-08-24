@@ -6,7 +6,7 @@ namespace SharedClasses.Domain
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
-    public sealed class UserRepository : Repository<User>
+    public sealed class UserRepository : EntityRepository<User>
     {
         /// <summary>
         /// Updates a <see cref="User"/>'s <see cref="ConnectionStatus"/>

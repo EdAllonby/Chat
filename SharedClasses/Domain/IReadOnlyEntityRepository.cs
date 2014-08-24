@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Exposes only the readonly functionality of a Repository.
+    /// Exposes only the readonly functionality of an Entity Repository.
     /// </summary>
     /// <typeparam name="T">The entity type that this readonly repository holds.</typeparam>
-    public interface IReadOnlyRepository<T> where T : IEntity
+    public interface IReadOnlyEntityRepository<T> where T : IEntity
     {
         /// <summary>
         /// Gets raised when an entity in the repository has been added.

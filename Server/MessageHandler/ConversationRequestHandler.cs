@@ -19,7 +19,7 @@ namespace Server.MessageHandler
             var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
 
             var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-            var conversationRepository = (IRepository<Conversation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+            var conversationRepository = (IEntityRepository<Conversation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
             var newConversationRequest = (ConversationRequest) message;
 
@@ -29,7 +29,7 @@ namespace Server.MessageHandler
             }
         }
 
-        private static void CreateConversationEntity(ConversationRequest conversationRequest, IRepository<Conversation> conversationRepository, IRepository<Participation> participationRepository, EntityIdAllocatorFactory entityIdAllocatorFactory)
+        private static void CreateConversationEntity(ConversationRequest conversationRequest, IEntityRepository<Conversation> conversationRepository, IEntityRepository<Participation> participationRepository, EntityIdAllocatorFactory entityIdAllocatorFactory)
         {
             var newConversation = new Conversation(entityIdAllocatorFactory.AllocateEntityId<Conversation>());
 

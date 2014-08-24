@@ -8,9 +8,9 @@ namespace Server
 {
     internal sealed class OnConversationChangedHandler : OnEntityChangedHandler
     {
-        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly IReadOnlyEntityRepository<Conversation> conversationRepository;
         private readonly ParticipationRepository participationRepository;
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
 
         public OnConversationChangedHandler(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)

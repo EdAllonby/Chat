@@ -6,9 +6,9 @@ using SharedClasses.Message;
 
 namespace SharedClasses.Domain
 {
-    public abstract class Repository<T> : IRepository<T> where T : IEntity
+    public abstract class EntityRepository<T> : IEntityRepository<T> where T : IEntity
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof (Repository<T>));
+        protected static readonly ILog Log = LogManager.GetLogger(typeof (EntityRepository<T>));
 
         private readonly ConcurrentDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
 

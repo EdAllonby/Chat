@@ -21,9 +21,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly IClientService clientService;
         private readonly ContributionMessageFormatter contributionMessageFormatter;
 
-        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly IReadOnlyEntityRepository<Conversation> conversationRepository;
         private readonly ParticipationRepository participationRepository;
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
 
         public EventHandler OpenUserSettingsWindowRequested;
 

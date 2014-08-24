@@ -33,9 +33,9 @@ namespace ServerTests.MessageHandlerTests
         private AvatarRequest avatarRequest;
         private User userToUpdate;
 
-        private IRepository<User> UserRepository
+        private IEntityRepository<User> UserRepository
         {
-            get { return (IRepository<User>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>(); }
+            get { return (IEntityRepository<User>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>(); }
         }
 
         [TestFixture]

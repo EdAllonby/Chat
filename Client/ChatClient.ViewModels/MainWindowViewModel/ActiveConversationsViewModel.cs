@@ -7,7 +7,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 {
     public sealed class ActiveConversationsViewModel : ViewModel
     {
-        private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly IReadOnlyEntityRepository<Conversation> conversationRepository;
 
         private IList<ConversationViewModel> activeConversations = new List<ConversationViewModel>();
 

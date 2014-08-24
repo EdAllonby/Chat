@@ -18,7 +18,7 @@ namespace ClientSimulator
         {
             bool areRepositoriesValid = true;
 
-            Log.Info("Starting User Repository Validator");
+            Log.Info("Starting User EntityRepository Validator");
             Log.Info("===================================");
             int totalClients = clients.Count;
 
@@ -34,7 +34,7 @@ namespace ClientSimulator
 
             Debug.Assert(sum == userIdSum);
 
-            foreach (IReadOnlyRepository<User> userRepository in clients.Select(client => client.RepositoryManager.GetRepository<User>()))
+            foreach (IReadOnlyEntityRepository<User> userRepository in clients.Select(client => client.RepositoryManager.GetRepository<User>()))
             {
                 int userCount = userRepository.GetAllEntities().Count();
 
@@ -42,7 +42,7 @@ namespace ClientSimulator
 
                 if (userCount != totalClients)
                 {
-                    Log.Error("User Repository invalid");
+                    Log.Error("User EntityRepository invalid");
                     areRepositoriesValid = false;
                     break;
                 }

@@ -46,7 +46,7 @@ namespace Server.MessageHandler
             return true;
         }
 
-        private static void AddUserToConversation(ParticipationRequest participationRequest, EntityIdAllocatorFactory entityIdAllocatorFactory, IRepository<Participation> participationRepository)
+        private static void AddUserToConversation(ParticipationRequest participationRequest, EntityIdAllocatorFactory entityIdAllocatorFactory, IEntityRepository<Participation> participationRepository)
         {
             int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
 

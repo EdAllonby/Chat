@@ -9,7 +9,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
     {
         private readonly Conversation conversation;
         private readonly ParticipationRepository participationRepository;
-        private readonly IReadOnlyRepository<User> userRepository;
+        private readonly IReadOnlyEntityRepository<User> userRepository;
 
         public ConversationViewModel(Conversation conversation, IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
