@@ -3,17 +3,27 @@ using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using GongSolutions.Wpf.DragDrop;
+using SharedClasses;
 
 namespace ChatClient.ViewModels.UserSettingsViewModel
 {
     public sealed class UserSettingsViewModel : ViewModel, IDropTarget
     {
+        private readonly IClientService clientService;
+
         private Image avatar = Resources.DefaultDropImage;
 
         private bool isImageChangedSinceLastApply;
+
+        public UserSettingsViewModel(IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
+        {
+            clientService = serviceRegistry.GetService<IClientService>();
+        }
 
         public Image Avatar
         {
@@ -75,7 +85,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
         {
             if (isImageChangedSinceLastApply)
             {
-                ClientService.SendAvatarRequest(Avatar);
+                clientService.SendAvatarRequest(Avatar);
                 isImageChangedSinceLastApply = false;
             }
         }
@@ -84,7 +94,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
         {
             if (isImageChangedSinceLastApply)
             {
-                ClientService.SendAvatarRequest(Avatar);
+                clientService.SendAvatarRequest(Avatar);
             }
 
             OnCloseUserSettingsRequest();

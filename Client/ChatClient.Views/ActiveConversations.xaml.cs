@@ -1,14 +1,17 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using ChatClient.ViewModels.MainWindowViewModel;
+using SharedClasses;
 
 namespace ChatClient.Views
 {
     public partial class ActiveConversations
     {
-        public ActiveConversations()
+        public ActiveConversations(IServiceRegistry serviceRegistry)
         {
+            var activeConversationsViewModel = new ActiveConversationsViewModel(serviceRegistry);
             InitializeComponent();
+            DataContext = activeConversationsViewModel;
         }
 
         /// <summary>

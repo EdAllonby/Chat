@@ -11,17 +11,17 @@ namespace ServerTests.MessageHandlerTests
     [TestFixture]
     public class ConversationSnapshotRequestHandlerTest : MessageHandlerTestFixture
     {
-        private readonly ConversationSnapshotRequestHandler conversationSnapshotRequestHandler =
-            new ConversationSnapshotRequestHandler();
-
-        private ConversationSnapshotRequest conversationSnapshotRequest;
-
         public override void BeforeEachTest()
         {
             base.BeforeEachTest();
 
             conversationSnapshotRequest = new ConversationSnapshotRequest(DefaultUser.Id);
         }
+
+        private readonly ConversationSnapshotRequestHandler conversationSnapshotRequestHandler =
+            new ConversationSnapshotRequestHandler();
+
+        private ConversationSnapshotRequest conversationSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
@@ -32,14 +32,19 @@ namespace ServerTests.MessageHandlerTests
         public class HandleMessageTest : ConversationSnapshotRequestHandlerTest
         {
             [Test]
-            public void SendsAMessage()
+            public void ConversationSnapshotSentContainsAllConversationsUserIsIn()
             {
-                bool isMessageSent = false;
-                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => isMessageSent = true;
+                IMessage message = null;
+
+                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => message = eventArgs.Message;
 
                 HandleMessage(conversationSnapshotRequest);
 
-                Assert.IsTrue(isMessageSent);
+                var conversationSnapshot = (ConversationSnapshot) message;
+
+                List<int> conversationIds = conversationSnapshot.Conversations.Select(conversation => conversation.Id).ToList();
+
+                Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
             }
 
             [Test]
@@ -55,25 +60,20 @@ namespace ServerTests.MessageHandlerTests
             }
 
             [Test]
-            public void ConversationSnapshotSentContainsAllConversationsUserIsIn()
+            public void SendsAMessage()
             {
-                IMessage message = null;
-
-                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => message = eventArgs.Message;
+                bool isMessageSent = false;
+                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => isMessageSent = true;
 
                 HandleMessage(conversationSnapshotRequest);
 
-                ConversationSnapshot conversationSnapshot = (ConversationSnapshot) message;
-
-                List<int> conversationIds = conversationSnapshot.Conversations.Select(conversation => conversation.Id).ToList();
-
-                Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
+                Assert.IsTrue(isMessageSent);
             }
 
             [Test]
             public void ThrowsExceptionWhenMessageIsNotConversationSnapshotRequest()
             {
-                ParticipationSnapshotRequest participationSnapshotRequest = new ParticipationSnapshotRequest(DefaultUser.Id);
+                var participationSnapshotRequest = new ParticipationSnapshotRequest(DefaultUser.Id);
                 Assert.Throws<InvalidCastException>(() => HandleMessage(participationSnapshotRequest));
             }
         }

@@ -4,7 +4,7 @@ using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
-namespace Server.MessageHandler
+namespace Server
 {
     internal sealed class OnConversationChangedHandler : OnEntityChangedHandler
     {

@@ -4,12 +4,12 @@ using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
-namespace Server.MessageHandler
+namespace Server
 {
     internal sealed class OnParticipationChangedHandler : OnEntityChangedHandler
     {
-        private readonly ParticipationRepository participationRepository;
         private readonly IReadOnlyRepository<Conversation> conversationRepository;
+        private readonly ParticipationRepository participationRepository;
 
         public OnParticipationChangedHandler(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)

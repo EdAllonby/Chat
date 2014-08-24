@@ -18,7 +18,7 @@ namespace Server.MessageHandler
         {
             var participationRequest = (ParticipationRequest) message;
 
-            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
             if (CheckUserCanEnterConversation(participationRequest, participationRepository))
             {

@@ -18,8 +18,8 @@ namespace Server.MessageHandler
         {
             var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
 
-            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-            IRepository<Conversation> conversationRepository = (IRepository<Conversation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var conversationRepository = (IRepository<Conversation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
             var newConversationRequest = (ConversationRequest) message;
 

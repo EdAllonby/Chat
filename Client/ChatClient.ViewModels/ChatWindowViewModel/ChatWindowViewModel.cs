@@ -7,6 +7,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using ChatClient.Models.ChatModel;
 using ChatClient.Models.ChatWindowViewModel;
+using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
@@ -17,31 +18,30 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
     public sealed class ChatWindowViewModel : ViewModel, IDisposable
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
+        private readonly IClientService clientService;
         private readonly ContributionMessageFormatter contributionMessageFormatter;
 
-        private readonly IReadOnlyRepository<User> userRepository;
         private readonly IReadOnlyRepository<Conversation> conversationRepository;
-        private readonly ParticipationRepository participationRepository; 
+        private readonly ParticipationRepository participationRepository;
+        private readonly IReadOnlyRepository<User> userRepository;
 
         public EventHandler OpenUserSettingsWindowRequested;
 
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
         private GroupChatModel groupChat = new GroupChatModel();
 
-        public ChatWindowViewModel()
-        {
-            // Default constructor used for WPF design time view.
-        }
-
-        public ChatWindowViewModel(Conversation conversation)
+        public ChatWindowViewModel(Conversation conversation, IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
         {
             if (!IsInDesignMode)
             {
-                userRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<User>();
-                conversationRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<Conversation>();
-                participationRepository = (ParticipationRepository) ServiceManager.GetService<RepositoryManager>().GetRepository<Participation>();
-                
-                contributionMessageFormatter = new ContributionMessageFormatter(ClientService.ClientUserId, userRepository);
+                userRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+                conversationRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+                participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+
+                clientService = ServiceRegistry.GetService<IClientService>();
+
+                contributionMessageFormatter = new ContributionMessageFormatter(clientService.ClientUserId, userRepository);
 
                 userRepository.EntityAdded += OnUserChanged;
                 userRepository.EntityUpdated += OnUserChanged;
@@ -55,7 +55,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
                 UpdateConnectedUsersList();
 
-                groupChat.WindowTitle = userRepository.FindEntityById(ClientService.ClientUserId).Username;
+                groupChat.WindowTitle = userRepository.FindEntityById(clientService.ClientUserId).Username;
                 groupChat.Title = GetChatTitle();
             }
         }
@@ -130,7 +130,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         {
             IEnumerable<User> users = userRepository.GetAllEntities();
 
-            List<User> newUserList = users.Where(user => user.Id != ClientService.ClientUserId)
+            List<User> newUserList = users.Where(user => user.Id != clientService.ClientUserId)
                 .Where(user => user.ConnectionStatus.UserConnectionStatus == ConnectionStatus.Status.Connected).ToList();
 
             List<ConnectedUserModel> otherUsers = newUserList.Select(user => new ConnectedUserModel(user)).ToList();
@@ -154,7 +154,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
                     GroupChat.Messages = messages;
                 });
 
-                if (groupChat.Conversation.LastContribution.ContributorUserId != ClientService.ClientUserId)
+                if (groupChat.Conversation.LastContribution.ContributorUserId != clientService.ClientUserId)
                 {
                     audioPlayer.Play(Resources.Chat_Notification_Sound);
                 }
@@ -228,7 +228,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
             if (selectedUser != null)
             {
-                ClientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.Id);
+                clientService.AddUserToConversation(selectedUser.UserId, GroupChat.Conversation.Id);
             }
         }
 
@@ -248,7 +248,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void NewConversationContributionRequest()
         {
-            ClientService.SendContribution(groupChat.Conversation.Id, groupChat.MessageToAddToConversation);
+            clientService.SendContribution(groupChat.Conversation.Id, groupChat.MessageToAddToConversation);
 
             groupChat.MessageToAddToConversation = string.Empty;
         }

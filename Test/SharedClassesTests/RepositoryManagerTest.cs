@@ -14,7 +14,7 @@ namespace SharedClassesTests
             public void CanAddRepository()
             {
                 IRepository userRepository = new UserRepository();
-                RepositoryManager repositoryManager = new RepositoryManager();
+                var repositoryManager = new RepositoryManager();
                 repositoryManager.AddRepository<User>(userRepository);
                 Assert.AreEqual(userRepository, repositoryManager.GetRepository<User>());
             }
@@ -30,7 +30,7 @@ namespace SharedClassesTests
                 IRepository conversationRepository = new ConversationRepository();
                 IRepository participationRepository = new ParticipationRepository();
 
-                RepositoryManager repositoryManager = new RepositoryManager();
+                var repositoryManager = new RepositoryManager();
                 repositoryManager.AddRepository<User>(userRepository);
                 repositoryManager.AddRepository<Conversation>(conversationRepository);
                 repositoryManager.AddRepository<Participation>(participationRepository);
@@ -42,7 +42,7 @@ namespace SharedClassesTests
             [Test]
             public void ReturnsNullIfNoRepositoryIsFound()
             {
-                RepositoryManager repositoryManager = new RepositoryManager();
+                var repositoryManager = new RepositoryManager();
                 Assert.IsNull(repositoryManager.GetRepository<Participation>());
             }
         }

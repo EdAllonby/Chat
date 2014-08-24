@@ -81,6 +81,7 @@
     <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\Repository.cs" />
     <Compile Include="EntityChangedEventArgs.cs" />
+    <Compile Include="IMessageHandler.cs" />
     <Compile Include="IServiceRegistry.cs" />
     <Compile Include="Message\AvatarNotification.cs" />
     <Compile Include="Message\AvatarRequest.cs" />
@@ -152,7 +153,6 @@
     <Compile Include="Serialiser\MessageSerialiser\UserSnapshotSerialiser.cs" />
     <Compile Include="Domain\UserRepository.cs" />
     <Compile Include="IService.cs" />
-    <Compile Include="ServiceManager.cs" />
     <Compile Include="ServiceRegistry.cs" />
   </ItemGroup>
   <ItemGroup>

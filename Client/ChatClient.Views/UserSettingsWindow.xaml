@@ -1,14 +1,14 @@
 ﻿<Window x:Class="ChatClient.Views.UserSettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         xmlns:userSettingsViewModel="clr-namespace:ChatClient.ViewModels.UserSettingsViewModel;assembly=ChatClient.ViewModels"
-        Title="User Settings" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" >
-    <Window.DataContext>
-        <userSettingsViewModel:UserSettingsViewModel/>
-    </Window.DataContext>
+        Title="User Settings" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" 
+        d:DataContext="{d:DesignInstance userSettingsViewModel:UserSettingsViewModel}">
     <Window.Resources>
         <converter:BitmapToBitmapSourceConverter x:Key="BitmapConverter" />
     </Window.Resources>
@@ -36,3 +36,5 @@
         </StackPanel>
     </Grid>
 </Window>
+
+    

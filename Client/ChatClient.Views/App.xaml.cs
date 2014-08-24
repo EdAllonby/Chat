@@ -25,19 +25,28 @@ namespace ChatClient.Views
 #endif
             Thread.CurrentThread.Name = "Main Thread";
 
-            RegisterServices();
+            IServiceRegistry serviceRegistry = CreateLoadedServiceRegistry();
 
             base.OnStartup(e);
+
+            var loginWindow = new LoginWindow(serviceRegistry);
+            loginWindow.Show();
         }
 
-        private static void RegisterServices()
+        private static IServiceRegistry CreateLoadedServiceRegistry()
         {
-            RepositoryManager repositoryManager = new RepositoryManager();
+            IServiceRegistry serviceRegistry = new ServiceRegistry();
+
+            var repositoryManager = new RepositoryManager();
+
             repositoryManager.AddRepository<User>(new UserRepository());
             repositoryManager.AddRepository<Conversation>(new ConversationRepository());
             repositoryManager.AddRepository<Participation>(new ParticipationRepository());
-            ServiceManager.RegisterService<RepositoryManager>(repositoryManager);
-            ServiceManager.RegisterService<IClientService>(new ClientService(repositoryManager));
+
+            serviceRegistry.RegisterService<RepositoryManager>(repositoryManager);
+            serviceRegistry.RegisterService<IClientService>(new ClientService(serviceRegistry));
+
+            return serviceRegistry;
         }
 
         protected override void OnExit(ExitEventArgs e)

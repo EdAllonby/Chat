@@ -24,12 +24,14 @@ namespace ClientSimulator
         {
             for (int i = 0; i < TotalClients; i++)
             {
-                RepositoryManager repositoryManager = new RepositoryManager();
+                var serviceRegistry = new ServiceRegistry();
+                var repositoryManager = new RepositoryManager();
                 repositoryManager.AddRepository<User>(new UserRepository());
                 repositoryManager.AddRepository<Conversation>(new ConversationRepository());
                 repositoryManager.AddRepository<Participation>(new ParticipationRepository());
-
-                Clients.Add(new ClientService(repositoryManager));
+                serviceRegistry.RegisterService<RepositoryManager>(repositoryManager);
+                var client = new ClientService(serviceRegistry);
+                Clients.Add(client);
             }
 
             LoginClients();

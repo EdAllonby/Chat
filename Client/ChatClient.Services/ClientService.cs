@@ -17,9 +17,19 @@ namespace ChatClient.Services
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
 
-        private readonly RepositoryManager repositoryManager;
+        private readonly IServiceRegistry serviceRegistry;
 
         private ConnectionHandler connectionHandler;
+
+        public ClientService(IServiceRegistry serviceRegistry)
+        {
+            this.serviceRegistry = serviceRegistry;
+        }
+
+        public RepositoryManager RepositoryManager
+        {
+            get { return serviceRegistry.GetService<RepositoryManager>(); }
+        }
 
         public event EventHandler BootstrapCompleted;
 
@@ -27,16 +37,6 @@ namespace ChatClient.Services
         /// This Client's unique User Id.
         /// </summary>
         public int ClientUserId { get; private set; }
-
-        public ClientService(RepositoryManager repositoryManager)
-        {
-            this.repositoryManager = repositoryManager;
-        }
-
-        public RepositoryManager RepositoryManager
-        {
-            get { return repositoryManager; }
-        }
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
@@ -111,12 +111,9 @@ namespace ChatClient.Services
 
             try
             {
-                IClientMessageHandler handler =
-                    MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                IMessageHandler handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                IClientMessageContext context = new ClientMessageContext(repositoryManager);
-
-                handler.HandleMessage(message, context);
+                handler.HandleMessage(message, serviceRegistry);
             }
             catch (KeyNotFoundException keyNotFoundException)
             {

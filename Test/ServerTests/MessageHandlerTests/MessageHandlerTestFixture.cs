@@ -9,9 +9,8 @@ namespace ServerTests.MessageHandlerTests
 {
     public abstract class MessageHandlerTestFixture
     {
-        protected User DefaultUser;
-
         protected int DefaultConversationIdDefaultUserIsIn;
+        protected User DefaultUser;
 
         protected MockClientHandler ConnectedUserClientHandler { get; private set; }
 
@@ -22,16 +21,15 @@ namespace ServerTests.MessageHandlerTests
         {
             ServiceRegistry = new ServiceRegistry();
 
-            EntityIdAllocatorFactory entityIdAllocatorFactory = new EntityIdAllocatorFactory();
+            var entityIdAllocatorFactory = new EntityIdAllocatorFactory();
 
-            int userId= entityIdAllocatorFactory.AllocateEntityId<User>();
+            int userId = entityIdAllocatorFactory.AllocateEntityId<User>();
             DefaultUser = new User("user", userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
 
             ServiceRegistry.RegisterService<EntityIdAllocatorFactory>(entityIdAllocatorFactory);
 
             PopulateClientManager();
             PopulateRepositoryManager(entityIdAllocatorFactory);
-
         }
 
         private void PopulateClientManager()
@@ -45,7 +43,7 @@ namespace ServerTests.MessageHandlerTests
         private void PopulateRepositoryManager(EntityIdAllocatorFactory idAllocator)
         {
             var repositoryManager = new RepositoryManager();
-          
+
             repositoryManager.AddRepository<User>(new UserRepository());
             repositoryManager.AddRepository<Conversation>(new ConversationRepository());
             repositoryManager.AddRepository<Participation>(new ParticipationRepository());
@@ -55,14 +53,14 @@ namespace ServerTests.MessageHandlerTests
             int userId2 = idAllocator.AllocateEntityId<User>();
             int userId3 = idAllocator.AllocateEntityId<User>();
 
-            List<int> usersToAddToConversation = new List<int> {DefaultUser.Id, userId2, userId3};
+            var usersToAddToConversation = new List<int> {DefaultUser.Id, userId2, userId3};
 
-            UserRepository userRepository = (UserRepository)repositoryManager.GetRepository<User>();
-            ParticipationRepository participationRepository = (ParticipationRepository)repositoryManager.GetRepository<Participation>();
+            var userRepository = (UserRepository) repositoryManager.GetRepository<User>();
+            var participationRepository = (ParticipationRepository) repositoryManager.GetRepository<Participation>();
 
             foreach (int userId in usersToAddToConversation)
             {
-                User user = new User("user" + userId, userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
+                var user = new User("user" + userId, userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
                 userRepository.AddEntity(user);
             }
 
@@ -73,19 +71,17 @@ namespace ServerTests.MessageHandlerTests
 
         private void SetUpMultiUserConversation(IEnumerable<int> userIds, RepositoryManager repositoryManager, EntityIdAllocatorFactory idAllocator)
         {
-            ConversationRepository conversationRepository = (ConversationRepository)repositoryManager.GetRepository<Conversation>();
-            ParticipationRepository participationRepository = (ParticipationRepository)repositoryManager.GetRepository<Participation>();
+            var conversationRepository = (ConversationRepository) repositoryManager.GetRepository<Conversation>();
+            var participationRepository = (ParticipationRepository) repositoryManager.GetRepository<Participation>();
 
-            Conversation conversation = new Conversation(idAllocator.AllocateEntityId<Conversation>());
+            var conversation = new Conversation(idAllocator.AllocateEntityId<Conversation>());
             conversationRepository.AddEntity(conversation);
 
             foreach (int userId in userIds)
             {
-                Participation participation = new Participation(idAllocator.AllocateEntityId<Participation>(), userId, conversation.Id);
+                var participation = new Participation(idAllocator.AllocateEntityId<Participation>(), userId, conversation.Id);
                 participationRepository.AddEntity(participation);
             }
-
-
         }
 
         public abstract void HandleMessage(IMessage message);

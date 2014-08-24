@@ -1,5 +1,6 @@
 ﻿using System;
 using ChatClient.ViewModels.UserSettingsViewModel;
+using SharedClasses;
 
 namespace ChatClient.Views
 {
@@ -8,11 +9,13 @@ namespace ChatClient.Views
     /// </summary>
     public partial class UserSettingsWindow
     {
-        public UserSettingsWindow()
+        public UserSettingsWindow(IServiceRegistry serviceRegistry)
         {
-            InitializeComponent();
-            var userSettingsViewModel = (UserSettingsViewModel) DataContext;
+            var userSettingsViewModel = new UserSettingsViewModel(serviceRegistry);
             userSettingsViewModel.CloseUserSettingsWindowRequest += OnCloseUserSettingsWindowRequest;
+
+            InitializeComponent();
+            DataContext = userSettingsViewModel;
         }
 
         private void OnCloseUserSettingsWindowRequest(object sender, EventArgs e)

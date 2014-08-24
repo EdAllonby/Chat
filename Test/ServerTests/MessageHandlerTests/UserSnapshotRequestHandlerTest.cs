@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using Server.MessageHandler;
 using SharedClasses;
@@ -12,6 +11,12 @@ namespace ServerTests.MessageHandlerTests
     [TestFixture]
     public class UserSnapshotRequestHandlerTest : MessageHandlerTestFixture
     {
+        public override void BeforeEachTest()
+        {
+            base.BeforeEachTest();
+            userSnapshotRequest = new UserSnapshotRequest(DefaultUser.Id);
+        }
+
         private readonly UserSnapshotRequestHandler userSnapshotRequestHandler = new UserSnapshotRequestHandler();
 
         private UserSnapshotRequest userSnapshotRequest;
@@ -19,12 +24,6 @@ namespace ServerTests.MessageHandlerTests
         public override void HandleMessage(IMessage message)
         {
             userSnapshotRequestHandler.HandleMessage(message, ServiceRegistry);
-        }
-
-        public override void BeforeEachTest()
-        {
-            base.BeforeEachTest();
-            userSnapshotRequest = new UserSnapshotRequest(DefaultUser.Id);
         }
 
         [TestFixture]
@@ -55,6 +54,13 @@ namespace ServerTests.MessageHandlerTests
             }
 
             [Test]
+            public void ThrowsExceptionWhenMessageIsNotUserSnapshotRequest()
+            {
+                var participationSnapshotRequest = new ConversationSnapshotRequest(DefaultUser.Id);
+                Assert.Throws<InvalidCastException>(() => HandleMessage(participationSnapshotRequest));
+            }
+
+            [Test]
             public void UserSnapshotSentContainsAllUsers()
             {
                 IMessage message = null;
@@ -63,18 +69,11 @@ namespace ServerTests.MessageHandlerTests
 
                 HandleMessage(userSnapshotRequest);
 
-                UserSnapshot userSnapshot = (UserSnapshot) message;
+                var userSnapshot = (UserSnapshot) message;
 
                 IEnumerable<User> allUsers = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>().GetAllEntities();
 
                 Assert.AreEqual(userSnapshot.Users, allUsers);
-            }
-
-            [Test]
-            public void ThrowsExceptionWhenMessageIsNotUserSnapshotRequest()
-            {
-                ConversationSnapshotRequest participationSnapshotRequest = new ConversationSnapshotRequest(DefaultUser.Id);
-                Assert.Throws<InvalidCastException>(() => HandleMessage(participationSnapshotRequest));
             }
         }
     }

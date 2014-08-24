@@ -2,7 +2,7 @@
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
-namespace Server.MessageHandler
+namespace Server
 {
     internal sealed class OnUserChangedHandler : OnEntityChangedHandler
     {

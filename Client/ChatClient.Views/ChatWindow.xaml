@@ -2,15 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:viewModel="clr-namespace:ChatClient.ViewModels.ChatWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:extendedControls="clr-namespace:ChatClient.Views.ExtendedControls"
         Title="{Binding GroupChat.WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen"
         Closing="WindowClosing"
-        FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}">
-
-    <Window.DataContext>
-        <viewModel:ChatWindowViewModel/>
-    </Window.DataContext>
+        FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}"
+        d:DataContext="{d:DesignInstance viewModel:ChatWindowViewModel}">
     
     <Window.InputBindings>
         <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenUserSettings}" />

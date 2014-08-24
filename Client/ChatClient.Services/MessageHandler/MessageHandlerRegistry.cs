@@ -12,8 +12,8 @@ namespace ChatClient.Services.MessageHandler
         /// <summary>
         /// A dictionary of <see cref="IClientMessageHandler"/> implementations indexed by their relevant <see cref="MessageIdentifier"/> to be used by the Client.
         /// </summary>
-        public static readonly IReadOnlyDictionary<MessageIdentifier, IClientMessageHandler>
-            MessageHandlersIndexedByMessageIdentifier = new Dictionary<MessageIdentifier, IClientMessageHandler>
+        public static readonly IReadOnlyDictionary<MessageIdentifier, IMessageHandler>
+            MessageHandlersIndexedByMessageIdentifier = new Dictionary<MessageIdentifier, IMessageHandler>
             {
                 {MessageIdentifier.ContributionNotification, new ContributionNotificationHandler()},
                 {MessageIdentifier.UserNotification, new UserNotificationHandler()},
