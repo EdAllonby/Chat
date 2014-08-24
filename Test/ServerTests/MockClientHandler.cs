@@ -10,8 +10,6 @@ namespace ServerTests
     {
         public event EventHandler<MessageEventArgs> MessageReceived;
 
-        public event EventHandler<MessageEventArgs> MessageSent;
-
         public LoginResponse InitialiseClient(TcpClient tcpClient, IServiceRegistry serviceRegistry)
         {
             return null;
@@ -21,6 +19,8 @@ namespace ServerTests
         {
             OnMessageSent(message);
         }
+
+        public event EventHandler<MessageEventArgs> MessageSent;
 
         private void OnMessageSent(IMessage message)
         {

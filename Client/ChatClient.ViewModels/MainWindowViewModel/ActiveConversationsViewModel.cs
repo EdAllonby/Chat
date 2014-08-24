@@ -7,19 +7,16 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 {
     public sealed class ActiveConversationsViewModel : ViewModel
     {
-        private readonly IReadOnlyRepository<User> userRepository;
         private readonly IReadOnlyRepository<Conversation> conversationRepository;
-        private readonly ParticipationRepository participationRepository; 
 
         private IList<ConversationViewModel> activeConversations = new List<ConversationViewModel>();
 
-        public ActiveConversationsViewModel()
+        public ActiveConversationsViewModel(IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
         {
             if (!IsInDesignMode)
             {
-                userRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<User>();
-                conversationRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<Conversation>();
-                participationRepository = (ParticipationRepository) ServiceManager.GetService<RepositoryManager>().GetRepository<Participation>();
+                conversationRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
                 UpdateActiveConversations();
 
@@ -50,7 +47,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public void GetConversationWindow(int conversationId)
         {
-            ConversationWindowManager.CreateConversationWindow(conversationRepository.FindEntityById(conversationId));
+            ConversationWindowManager.CreateConversationWindow(ServiceRegistry, conversationRepository.FindEntityById(conversationId));
         }
 
         private void UpdateActiveConversations()
@@ -58,7 +55,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             IEnumerable<Conversation> conversations = conversationRepository.GetAllEntities();
 
             List<ConversationViewModel> updatedConversations = conversations.Select(conversation =>
-                new ConversationViewModel(conversation, userRepository, participationRepository)).ToList();
+                new ConversationViewModel(conversation, ServiceRegistry)).ToList();
 
             ActiveConversations = updatedConversations;
         }

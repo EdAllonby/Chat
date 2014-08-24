@@ -38,7 +38,7 @@ namespace Server
         {
             IServiceRegistry serviceRegistry = new ServiceRegistry();
 
-            RepositoryManager repositoryManager = new RepositoryManager();
+            var repositoryManager = new RepositoryManager();
             repositoryManager.AddRepository<User>(new UserRepository());
             repositoryManager.AddRepository<Conversation>(new ConversationRepository());
             repositoryManager.AddRepository<Participation>(new ParticipationRepository());

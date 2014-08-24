@@ -1,12 +1,11 @@
-﻿using SharedClasses;
-using SharedClasses.Message;
+﻿using SharedClasses.Message;
 
-namespace Server
+namespace SharedClasses
 {
     /// <summary>
     ///     Defines an object that is to be used for handling incoming <see cref="IMessage" />s.
     /// </summary>
-    internal interface IMessageHandler
+    public interface IMessageHandler
     {
         /// <summary>
         /// Handles the incoming <see cref="IMessage" />.

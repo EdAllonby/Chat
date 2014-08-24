@@ -53,11 +53,10 @@
     <Compile Include="EntityIdGeneratorRegistry.cs" />
     <Compile Include="IClientHandler.cs" />
     <Compile Include="IClientManager.cs" />
-    <Compile Include="IMessageHandler.cs" />
-    <Compile Include="MessageHandler\OnEntityChangedHandler.cs" />
-    <Compile Include="MessageHandler\OnConversationChangedHandler.cs" />
-    <Compile Include="MessageHandler\OnParticipationChangedHandler.cs" />
-    <Compile Include="MessageHandler\OnUserChangedHandler.cs" />
+    <Compile Include="OnEntityChangedHandler.cs" />
+    <Compile Include="OnConversationChangedHandler.cs" />
+    <Compile Include="OnParticipationChangedHandler.cs" />
+    <Compile Include="OnUserChangedHandler.cs" />
     <Compile Include="MessageHandler\AvatarRequestHandler.cs" />
     <Compile Include="MessageHandler\ClientDisconnectionHandler.cs" />
     <Compile Include="MessageHandler\MessageHandlerRegistry.cs" />

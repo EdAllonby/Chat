@@ -1,13 +1,15 @@
 ﻿<Window x:Class="ChatClient.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter="clr-namespace:ChatClient.Views.Converter"
-        Title="Chat Program" Height="600" Width="350" RenderOptions.BitmapScalingMode="Fant" Closed="OnMainWindowClosed">
-    <Window.DataContext>
-        <mainWindowViewModel:MainWindowViewModel />
-    </Window.DataContext>
+        Title="Chat Program" Height="600" Width="350" RenderOptions.BitmapScalingMode="Fant" Closed="OnMainWindowClosed"
+        d:DataContext="{d:DesignInstance mainWindowViewModel:MainWindowViewModel}">
+    
     <Window.Resources>
         <converter:BitmapToBitmapSourceConverter x:Key="BitmapToBitmapSourceConverter" />
     </Window.Resources>
@@ -49,13 +51,10 @@
                    FontSize="32" />
         </StackPanel>
 
-        <TabControl Grid.Row="2" Background="Transparent">
-            <TabItem Header="Connected Users">
-                <views:UserListWindow />
-            </TabItem>
-            <TabItem Header="Active Conversations">
-                <views:ActiveConversations />
-            </TabItem>
+        <TabControl Name="Tabs" Grid.Row="2" Background="Transparent">
+            <TabItem Header="Connected Users" d:DataContext="{d:DesignInstance views:UserListWindow}" />
+
+            <TabItem Header="Active Conversations" d:DataContext="{d:DesignInstance views:ActiveConversations}"/>
         </TabControl>
 
     </Grid>

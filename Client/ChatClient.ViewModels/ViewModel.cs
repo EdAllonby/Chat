@@ -2,28 +2,27 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using ChatClient.Services;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
 
 namespace ChatClient.ViewModels
 {
-    public class ViewModel : INotifyPropertyChanged
+    public abstract class ViewModel : INotifyPropertyChanged
     {
-        private readonly IClientService clientService;
+        private readonly IServiceRegistry serviceRegistry;
         private bool? isInDesignMode;
 
-        protected ViewModel()
+        protected ViewModel(IServiceRegistry serviceRegistry)
         {
             if (!IsInDesignMode)
             {
-                clientService = ServiceManager.GetService<IClientService>();
+                this.serviceRegistry = serviceRegistry;
             }
         }
 
-        protected IClientService ClientService
+        protected IServiceRegistry ServiceRegistry
         {
-            get { return clientService; }
+            get { return serviceRegistry; }
         }
 
         /// <summary>

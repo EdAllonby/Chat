@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using log4net;
+using SharedClasses;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels
@@ -20,13 +21,14 @@ namespace ChatClient.ViewModels
         /// <summary>
         /// Creates a new chat window if the current chat window is closed.
         /// </summary>
+        /// <param name="serviceRegistry">Holds the services for the client.</param>
         /// <param name="conversation">The conversation id of the chat window.</param>
-        internal static void CreateConversationWindow(Conversation conversation)
+        internal static void CreateConversationWindow(IServiceRegistry serviceRegistry, Conversation conversation)
         {
             // Check if conversation window already exists
             if (GetWindowStatus(conversation.Id) == WindowStatus.Closed)
             {
-                Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation)));
+                Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation, serviceRegistry)));
 
                 SetWindowStatus(conversation.Id, WindowStatus.Open);
                 Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.Id);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using log4net;
 using SharedClasses.Message;
 
@@ -12,6 +11,11 @@ namespace SharedClasses.Domain
         protected static readonly ILog Log = LogManager.GetLogger(typeof (Repository<T>));
 
         private readonly ConcurrentDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
+
+        public Type EnclosedEntityType
+        {
+            get { return typeof (T); }
+        }
 
         public event EventHandler<EntityChangedEventArgs<T>> EntityAdded;
 
@@ -51,11 +55,6 @@ namespace SharedClasses.Domain
         public IEnumerable<T> GetAllEntities()
         {
             return new List<T>(entitiesIndexedById.Values);
-        }
-
-        public Type EnclosedEntityType
-        {
-            get { return typeof (T); }
         }
 
         private void OnEntityAdded(T entity)

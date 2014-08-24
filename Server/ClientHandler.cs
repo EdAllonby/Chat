@@ -15,11 +15,6 @@ namespace Server
 
         private ConnectionHandler connectionHandler;
 
-        public void Dispose()
-        {
-            connectionHandler.Dispose();
-        }
-
         /// <summary>
         /// Fires when a message has been sent from the client.
         /// </summary>
@@ -49,6 +44,20 @@ namespace Server
         }
 
         /// <summary>
+        /// Send an <see cref="IMessage"/> to the client.
+        /// </summary>
+        /// <param name="message">The <see cref="IMessage"/> to send to the client.</param>
+        public void SendMessage(IMessage message)
+        {
+            connectionHandler.SendMessage(message);
+        }
+
+        public void Dispose()
+        {
+            connectionHandler.Dispose();
+        }
+
+        /// <summary>
         /// Creates a new <see cref="ConnectionHandler"/> to connect the client and the server.
         /// </summary>
         /// <param name="userId">The user id to link this connection handler with.</param>
@@ -57,15 +66,6 @@ namespace Server
         {
             connectionHandler = new ConnectionHandler(userId, tcpClient);
             connectionHandler.MessageReceived += OnMessageReceived;
-        }
-
-        /// <summary>
-        /// Send an <see cref="IMessage"/> to the client.
-        /// </summary>
-        /// <param name="message">The <see cref="IMessage"/> to send to the client.</param>
-        public void SendMessage(IMessage message)
-        {
-            connectionHandler.SendMessage(message);
         }
 
         private void OnMessageReceived(object sender, MessageEventArgs e)

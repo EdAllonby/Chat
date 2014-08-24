@@ -3,6 +3,7 @@ using System.Windows.Input;
 using ChatClient.ViewModels;
 using ChatClient.ViewModels.ChatWindowViewModel;
 using ChatClient.ViewModels.MainWindowViewModel;
+using SharedClasses;
 
 namespace ChatClient.Views
 {
@@ -11,16 +12,21 @@ namespace ChatClient.Views
     /// </summary>
     public partial class UserListWindow
     {
-        public UserListWindow()
+        private readonly IServiceRegistry serviceRegistry;
+
+        public UserListWindow(IServiceRegistry serviceRegistry)
         {
+            this.serviceRegistry = serviceRegistry;
+            var userListViewModel = new UserListViewModel(serviceRegistry);
             InitializeComponent();
+            DataContext = userListViewModel;
 
             ConversationWindowManager.OpenChatWindowRequest += OnOpenChatWindowRequest;
         }
 
-        private static void OnOpenChatWindowRequest(object sender, ChatWindowViewModel viewModel)
+        private void OnOpenChatWindowRequest(object sender, ChatWindowViewModel viewModel)
         {
-            var view = new ChatWindow(viewModel);
+            var view = new ChatWindow(serviceRegistry, viewModel);
             view.Show();
         }
 

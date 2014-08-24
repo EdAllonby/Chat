@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
+using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
 using SharedClasses;
@@ -16,13 +17,15 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         public EventHandler OpenUserSettingsWindowRequested;
         private Image userAvatar = Resources.DefaultUserImage;
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
         {
             if (!IsInDesignMode)
             {
-                userRepository = ServiceManager.GetService<RepositoryManager>().GetRepository<User>();
+                userRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+                userId = ServiceRegistry.GetService<IClientService>().ClientUserId;
+
                 userRepository.EntityUpdated += OnUserUpdated;
-                userId = ClientService.ClientUserId;
             }
         }
 

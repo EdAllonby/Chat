@@ -77,15 +77,13 @@ namespace Server
 
             try
             {
-                IMessageHandler handler =
-                    MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                IMessageHandler handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
                 handler.HandleMessage(message, serviceRegistry);
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
-                Log.Error("Server is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
-                    keyNotFoundException);
+                Log.Error("Server is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
             }
         }
     }

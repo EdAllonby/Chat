@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using SharedClasses;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.MainWindowViewModel
@@ -10,13 +11,14 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         private readonly ParticipationRepository participationRepository;
         private readonly IReadOnlyRepository<User> userRepository;
 
-        public ConversationViewModel(Conversation conversation, IReadOnlyRepository<User> userRepository, ParticipationRepository participationRepository)
+        public ConversationViewModel(Conversation conversation, IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
         {
             if (!IsInDesignMode)
             {
                 this.conversation = conversation;
-                this.userRepository = userRepository;
-                this.participationRepository = participationRepository;
+                userRepository = userRepository;
+                participationRepository = participationRepository;
             }
         }
 

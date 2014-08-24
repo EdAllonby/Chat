@@ -13,6 +13,17 @@ namespace ServerTests.MessageHandlerTests
     [TestFixture]
     public class ParticipationRequestHandlerTest : MessageHandlerTestFixture
     {
+        public override void BeforeEachTest()
+        {
+            base.BeforeEachTest();
+            participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+
+            int newUserId = ServiceRegistry.GetService<EntityIdAllocatorFactory>().AllocateEntityId<User>();
+            newParticipant = new User("new User", newUserId, new ConnectionStatus(newUserId, ConnectionStatus.Status.Connected));
+            var userRepository = (UserRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+            userRepository.AddEntity(newParticipant);
+        }
+
         private readonly ParticipationRequestHandler participationRequestHandler = new ParticipationRequestHandler();
         private ParticipationRepository participationRepository;
         private User newParticipant;
@@ -22,26 +33,24 @@ namespace ServerTests.MessageHandlerTests
             participationRequestHandler.HandleMessage(message, ServiceRegistry);
         }
 
-        public override void BeforeEachTest()
-        {
-            base.BeforeEachTest();
-            participationRepository = (ParticipationRepository)ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-
-            int newUserId = ServiceRegistry.GetService<EntityIdAllocatorFactory>().AllocateEntityId<User>();
-            newParticipant = new User("new User", newUserId, new ConnectionStatus(newUserId, ConnectionStatus.Status.Connected));
-            UserRepository userRepository = (UserRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
-            userRepository.AddEntity(newParticipant);
-        }
-
         [TestFixture]
         public class HandleMessageTest : ParticipationRequestHandlerTest
         {
             [Test]
+            public void AddsParticipationToRepositoryIfParticipantIsValid()
+            {
+                var participationRequest = new ParticipationRequest(new Participation(newParticipant.Id, DefaultConversationIdDefaultUserIsIn));
+                HandleMessage(participationRequest);
+                List<Participation> newParticipationsLinkedWithConversation = participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn);
+                Assert.IsTrue(newParticipationsLinkedWithConversation.Contains(participationRequest.Participation));
+            }
+
+            [Test]
             public void DoNothingIfNewParticipantIsAlreadyInConversation()
             {
-                List<Participation> previousParticipationsLinkedWithConversation = new List<Participation>(participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn));
+                var previousParticipationsLinkedWithConversation = new List<Participation>(participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn));
                 Participation duplicateParticipation = previousParticipationsLinkedWithConversation.First();
-                ParticipationRequest participationRequest = new ParticipationRequest(duplicateParticipation);
+                var participationRequest = new ParticipationRequest(duplicateParticipation);
                 HandleMessage(participationRequest);
 
                 List<Participation> newParticipationsLinkedWithConversation = participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn);
@@ -50,20 +59,11 @@ namespace ServerTests.MessageHandlerTests
             }
 
             [Test]
-            public void AddsParticipationToRepositoryIfParticipantIsValid()
-            {
-                ParticipationRequest participationRequest = new ParticipationRequest(new Participation(newParticipant.Id, DefaultConversationIdDefaultUserIsIn));
-                HandleMessage(participationRequest);
-                var newParticipationsLinkedWithConversation = participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn);
-                Assert.IsTrue(newParticipationsLinkedWithConversation.Contains(participationRequest.Participation));
-            }
-
-            [Test]
             public void NewParticipationGetsAssignedId()
             {
-                ParticipationRequest participationRequest = new ParticipationRequest(new Participation(newParticipant.Id, DefaultConversationIdDefaultUserIsIn));
+                var participationRequest = new ParticipationRequest(new Participation(newParticipant.Id, DefaultConversationIdDefaultUserIsIn));
                 HandleMessage(participationRequest);
-                var newParticipationsLinkedWithConversation = participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn);
+                List<Participation> newParticipationsLinkedWithConversation = participationRepository.GetParticipationsByConversationId(DefaultConversationIdDefaultUserIsIn);
                 Assert.IsTrue(newParticipationsLinkedWithConversation.All(participation => participation.Id > 0));
             }
 

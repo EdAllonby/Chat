@@ -39,10 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientLogOnParser.cs" />
-    <Compile Include="IClientMessageContext.cs" />
-    <Compile Include="IClientMessageHandler.cs" />
     <Compile Include="LoginDetails.cs" />
-    <Compile Include="ClientMessageContext.cs" />
     <Compile Include="MessageHandler\AvatarNotificationHandler.cs" />
     <Compile Include="MessageHandler\ConnectionStatusNotificationHandler.cs" />
     <Compile Include="MessageHandler\ContributionNotificationHandler.cs" />

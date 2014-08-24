@@ -1,7 +1,7 @@
 ﻿using SharedClasses;
 using SharedClasses.Domain;
 
-namespace Server.MessageHandler
+namespace Server
 {
     /// <summary>
     /// Handles entities that have changed in the <see cref="Repository{T}"/>

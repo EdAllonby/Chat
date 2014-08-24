@@ -6,6 +6,7 @@ using ChatClient.Models.LoginModel;
 using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using log4net;
+using SharedClasses;
 using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.LoginWindowViewModel
@@ -14,6 +15,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
 
+        private readonly IClientService clientService;
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
         public EventHandler OpenMainWindowRequested;
 
@@ -21,11 +23,14 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private LoginModel loginModel = new LoginModel();
 
-        public LoginWindowViewModel()
+        public LoginWindowViewModel(IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
         {
             if (!IsInDesignMode)
             {
-                ClientService.BootstrapCompleted += OnClientBootstrapCompleted;
+                clientService = serviceRegistry.GetService<IClientService>();
+
+                clientService.BootstrapCompleted += OnClientBootstrapCompleted;
                 var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
 
                 commandLineArgs.RemoveAt(0);
@@ -57,7 +62,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void AttemptLogin(LoginDetails loginDetails)
         {
-            LoginResult result = ClientService.LogOn(loginDetails);
+            LoginResult result = clientService.LogOn(loginDetails);
 
             switch (result)
             {

@@ -11,16 +11,16 @@ namespace ServerTests.MessageHandlerTests
     [TestFixture]
     public class ParticipationSnapshotRequestHandlerTest : MessageHandlerTestFixture
     {
-        private readonly ParticipationSnapshotRequestHandler participationSnapshotRequestHandler = new ParticipationSnapshotRequestHandler();
-
-        private ParticipationSnapshotRequest participationSnapshotRequest;
-
         public override void BeforeEachTest()
         {
             base.BeforeEachTest();
 
             participationSnapshotRequest = new ParticipationSnapshotRequest(DefaultUser.Id);
         }
+
+        private readonly ParticipationSnapshotRequestHandler participationSnapshotRequestHandler = new ParticipationSnapshotRequestHandler();
+
+        private ParticipationSnapshotRequest participationSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
@@ -30,6 +30,38 @@ namespace ServerTests.MessageHandlerTests
         [TestFixture]
         public class HandleMessageTest : ParticipationSnapshotRequestHandlerTest
         {
+            [Test]
+            public void ParticipationSnapshotIsForCorrectUser()
+            {
+                IMessage message = null;
+
+                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => message = eventArgs.Message;
+
+                HandleMessage(participationSnapshotRequest);
+
+                var conversationSnapshot = (ParticipationSnapshot) message;
+
+                int userId = conversationSnapshot.Participations.Select(participation => participation.UserId).First();
+
+                Assert.AreEqual(DefaultUser.Id, userId);
+            }
+
+            [Test]
+            public void ParticipationSnapshotSentContainsAllConversationsUserIsIn()
+            {
+                IMessage message = null;
+
+                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => message = eventArgs.Message;
+
+                HandleMessage(participationSnapshotRequest);
+
+                var conversationSnapshot = (ParticipationSnapshot) message;
+
+                List<int> conversationIds = conversationSnapshot.Participations.Select(participation => participation.ConversationId).ToList();
+
+                Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
+            }
+
             [Test]
             public void SendsAMessage()
             {
@@ -51,38 +83,6 @@ namespace ServerTests.MessageHandlerTests
                 HandleMessage(participationSnapshotRequest);
 
                 Assert.IsTrue(message.MessageIdentifier == MessageIdentifier.ParticipationSnapshot);
-            }
-
-            [Test]
-            public void ParticipationSnapshotSentContainsAllConversationsUserIsIn()
-            {
-                IMessage message = null;
-
-                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => message = eventArgs.Message;
-
-                HandleMessage(participationSnapshotRequest);
-
-                ParticipationSnapshot conversationSnapshot = (ParticipationSnapshot) message;
-
-                List<int> conversationIds = conversationSnapshot.Participations.Select(participation => participation.ConversationId).ToList();
-
-                Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
-            }
-            
-            [Test]
-            public void ParticipationSnapshotIsForCorrectUser()
-            {
-                IMessage message = null;
-
-                ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => message = eventArgs.Message;
-
-                HandleMessage(participationSnapshotRequest);
-
-                ParticipationSnapshot conversationSnapshot = (ParticipationSnapshot)message;
-
-                int userId = conversationSnapshot.Participations.Select(participation => participation.UserId).First();
-
-                Assert.AreEqual(DefaultUser.Id, userId);
             }
 
             [Test]

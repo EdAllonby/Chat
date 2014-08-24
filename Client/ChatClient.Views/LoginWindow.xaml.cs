@@ -4,24 +4,29 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ChatClient.ViewModels.LoginWindowViewModel;
 using log4net;
+using SharedClasses;
 
 namespace ChatClient.Views
 {
     public partial class LoginWindow
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindow));
+        private readonly IServiceRegistry serviceRegistry;
 
-        public LoginWindow()
+        public LoginWindow(IServiceRegistry serviceRegistry)
         {
-            InitializeComponent();
+            this.serviceRegistry = serviceRegistry;
 
-            var viewModel = (LoginWindowViewModel) DataContext;
+            var viewModel = new LoginWindowViewModel(serviceRegistry);
             viewModel.OpenMainWindowRequested += OnOpenMainWindowRequested;
+
+            InitializeComponent();
+            DataContext = viewModel;
         }
 
         private void OnOpenMainWindowRequested(object sender, EventArgs e)
         {
-            var view = new MainWindow();
+            var view = new MainWindow(serviceRegistry);
             Close();
             view.Show();
         }

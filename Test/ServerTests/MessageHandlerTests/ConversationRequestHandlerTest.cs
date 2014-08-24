@@ -12,6 +12,13 @@ namespace ServerTests.MessageHandlerTests
     [TestFixture]
     public class ConversationRequestHandlerTest : MessageHandlerTestFixture
     {
+        public override void BeforeEachTest()
+        {
+            base.BeforeEachTest();
+            usersInConversation = new List<int> {DefaultUser.Id, 3};
+            conversationRequest = new ConversationRequest(usersInConversation);
+        }
+
         private readonly ConversationRequestHandler conversationRequestHandler = new ConversationRequestHandler();
 
         private List<int> usersInConversation;
@@ -27,13 +34,6 @@ namespace ServerTests.MessageHandlerTests
         }
 
         private ConversationRequest conversationRequest;
-
-        public override void BeforeEachTest()
-        {
-            base.BeforeEachTest();
-            usersInConversation = new List<int> {DefaultUser.Id, 3};
-            conversationRequest = new ConversationRequest(usersInConversation);
-        }
 
         public override void HandleMessage(IMessage message)
         {
@@ -64,28 +64,15 @@ namespace ServerTests.MessageHandlerTests
             public void AssignsNewConversationAnId()
             {
                 Conversation newConversation = HandleMessageAndGetAddedConversation(conversationRequest);
-                
+
                 Assert.IsTrue(newConversation.Id != 0);
-            }
-
-            [Test]
-            public void ParticipationRepositoryContainsNewConversationToUserMap()
-            {
-                Conversation newConversation = HandleMessageAndGetAddedConversation(conversationRequest);
-                
-                ParticipationRepository participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-                List<Participation> newConversationParticipants = participationRepository.GetParticipationsByConversationId(newConversation.Id);
-
-                List<int> participantUserIds = newConversationParticipants.Select(item => item.UserId).ToList();
-
-                Assert.AreEqual(participantUserIds, usersInConversation);
             }
 
             [Test]
             public void DoesNotProcessConversationRequestIfThereAreDuplicateConversationUserIdsInRequest()
             {
-                List<int> usersToMakeInConversation = new List<int> {1, 2, 3, 4, 1};
-                ConversationRequest invalidConversationRequest = new ConversationRequest(usersToMakeInConversation);
+                var usersToMakeInConversation = new List<int> {1, 2, 3, 4, 1};
+                var invalidConversationRequest = new ConversationRequest(usersToMakeInConversation);
                 IEnumerable<Conversation> currentConversationsInRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>().GetAllEntities();
                 IEnumerable<Participation> currentParticipationsInRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>().GetAllEntities();
                 var previousParticipationsInRepository = new List<Participation>(currentParticipationsInRepository);
@@ -95,6 +82,19 @@ namespace ServerTests.MessageHandlerTests
 
                 Assert.AreEqual(previousConversationsInRepository, currentConversationsInRepository);
                 Assert.AreEqual(previousParticipationsInRepository, currentParticipationsInRepository);
+            }
+
+            [Test]
+            public void ParticipationRepositoryContainsNewConversationToUserMap()
+            {
+                Conversation newConversation = HandleMessageAndGetAddedConversation(conversationRequest);
+
+                var participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+                List<Participation> newConversationParticipants = participationRepository.GetParticipationsByConversationId(newConversation.Id);
+
+                List<int> participantUserIds = newConversationParticipants.Select(item => item.UserId).ToList();
+
+                Assert.AreEqual(participantUserIds, usersInConversation);
             }
 
             [Test]
