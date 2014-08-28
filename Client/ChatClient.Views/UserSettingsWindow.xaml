@@ -8,6 +8,8 @@
         xmlns:userSettingsViewModel="clr-namespace:ChatClient.ViewModels.UserSettingsViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter1="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
         Title="User Settings" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" 
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
         d:DataContext="{d:DesignInstance userSettingsViewModel:UserSettingsViewModel}">
     <Window.Resources>
         <converter1:BitmapToBitmapSourceConverter x:Key="BitmapConverter" />
