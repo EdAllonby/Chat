@@ -12,6 +12,8 @@
         AllowsTransparency="True"
         Background="Transparent" MouseDown="MoveWindow"
         FocusManager.FocusedElement="{Binding ElementName=UsernameTextBox}"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
         d:DataContext="{d:DesignInstance viewModel:LoginWindowViewModel}">
 
     <Border Margin="20" BorderBrush="#FF000000" CornerRadius="8,8,20,20">

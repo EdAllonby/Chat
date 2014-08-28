@@ -9,6 +9,8 @@
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         Title="{Binding GroupChat.WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
         Closing="WindowClosing"
         FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}"
         d:DataContext="{d:DesignInstance viewModel:ChatWindowViewModel}" RenderOptions.BitmapScalingMode="Fant" >
