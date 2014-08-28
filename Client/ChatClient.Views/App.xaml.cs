@@ -23,7 +23,7 @@ namespace ChatClient.Views
 
             IServiceRegistry serviceRegistry = CreateLoadedServiceRegistry();
 
-            Thread.Sleep(1000);
+            
             Log.Debug("Logging in debug mode.");
 
             base.OnStartup(e);
