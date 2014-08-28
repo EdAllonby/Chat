@@ -3,7 +3,6 @@ using System.Linq;
 using NUnit.Framework;
 using Server;
 using SharedClasses.Domain;
-using SharedClasses.Message;
 
 namespace SharedClassesTests.Domain
 {
@@ -43,27 +42,13 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
-        public void AddContributionFromContributionRequestTest()
+        public void AddTextContributionToConversationTest()
         {
             const string Message = "Hello";
             const int ConversationID = 5;
 
-            var contribution = new Contribution(1, new Contribution(1, Message, ConversationID));
-            var contributionRequest = new ContributionNotification(contribution, NotificationType.Create);
+            IContribution contribution = new TextContribution(1, new TextContribution(1, Message, ConversationID));
 
-            var conversation = new Conversation(ConversationID);
-
-            conversation.AddContribution(contributionRequest);
-
-            Assert.Contains(contribution, conversation.GetAllContributions().ToList());
-        }
-
-        [Test]
-        public void AddContributionTest()
-        {
-            const int ConversationID = 5;
-
-            var contribution = new Contribution(1, new Contribution(1, "Hello", ConversationID));
             var conversation = new Conversation(ConversationID);
 
             conversation.AddContribution(contribution);
@@ -121,9 +106,9 @@ namespace SharedClassesTests.Domain
         public void GetAllContributionsTest()
         {
             const int ConversationID = 5;
-            var contribution1 = new Contribution(1, new Contribution(1, "Hello", ConversationID));
-            var contribution2 = new Contribution(2, new Contribution(1, "Hi...", ConversationID));
-            var contribution3 = new Contribution(3, new Contribution(1, "Hello??", ConversationID));
+            var contribution1 = new TextContribution(1, new TextContribution(1, "Hello", ConversationID));
+            var contribution2 = new TextContribution(2, new TextContribution(1, "Hi...", ConversationID));
+            var contribution3 = new TextContribution(3, new TextContribution(1, "Hello??", ConversationID));
 
             var conversation = new Conversation(ConversationID);
 
@@ -131,7 +116,7 @@ namespace SharedClassesTests.Domain
             conversation.AddContribution(contribution2);
             conversation.AddContribution(contribution3);
 
-            var contributionList = new List<Contribution>
+            var contributionList = new List<TextContribution>
             {
                 contribution1,
                 contribution2,

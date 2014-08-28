@@ -68,7 +68,7 @@ namespace Server
             return loginRequest;
         }
 
-        private static User CreateUserEntity(LoginRequest clientLogin, EntityRepository<User> userRepository, EntityIdAllocatorFactory entityIdAllocator)
+        private static User CreateUserEntity(LoginRequest clientLogin, IEntityRepository<User> userRepository, EntityIdAllocatorFactory entityIdAllocator)
         {
             var newUser = new User(clientLogin.User.Username, entityIdAllocator.AllocateEntityId<User>(), new ConnectionStatus(clientLogin.User.Id, ConnectionStatus.Status.Connected));
 

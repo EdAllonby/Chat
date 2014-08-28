@@ -13,10 +13,7 @@ namespace SharedClasses.Domain
         Type EnclosedEntityType { get; }
     }
 
-    /// <summary>
-    /// Generic repository that holds an entity type.
-    /// </summary>
-    /// <typeparam name="T">The entity type that the repository holds.</typeparam>
+
     public interface IEntityRepository<T> : IReadOnlyEntityRepository<T>, IEntityRepository where T : IEntity
     {
         /// <summary>
@@ -24,5 +21,11 @@ namespace SharedClasses.Domain
         /// </summary>
         /// <param name="entity">The <see cref="IEntity"/> to add.</param>
         void AddEntity(T entity);
+
+        /// <summary>
+        /// Updates an entity in the repository.
+        /// </summary>
+        /// <param name="entity">The entity to update. Uses its Id as the comparer.</param>
+        void UpdateEntity(T entity);
     }
 }

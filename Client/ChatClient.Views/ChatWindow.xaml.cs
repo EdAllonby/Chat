@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using ChatClient.ViewModels.ChatWindowViewModel;
 using SharedClasses;
@@ -42,6 +44,12 @@ namespace ChatClient.Views
         private void OnMessageTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             MessageTextBox.ScrollToEnd();
+        }
+
+        private void FileShowTextBox_PreviewDragEnter(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.All;
+            e.Handled = true;
         }
     }
 }

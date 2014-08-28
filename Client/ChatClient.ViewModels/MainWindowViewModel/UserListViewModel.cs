@@ -93,7 +93,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        private void OnContributionAdded(Contribution contribution)
+        private void OnContributionAdded(IContribution contribution)
         {
             Conversation conversation = conversationRepository.FindEntityById(contribution.ConversationId);
 

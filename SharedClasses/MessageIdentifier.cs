@@ -1,7 +1,9 @@
-﻿namespace SharedClasses
+﻿using SharedClasses.Message;
+
+namespace SharedClasses
 {
     /// <summary>
-    /// Gives definitions for the numbers, avoiding the introduction of Magic Numbers
+    /// Gives definitions for the types of <see cref="IMessage"/>, avoiding the introduction of magic numbers.
     /// </summary>
     public enum MessageIdentifier
     {

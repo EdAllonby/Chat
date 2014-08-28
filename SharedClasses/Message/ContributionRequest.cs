@@ -10,15 +10,15 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class ContributionRequest : IMessage
     {
-        public ContributionRequest(int conversationId, int senderId, string message)
+        public ContributionRequest(IContribution contribution)
         {
-            Contract.Requires(senderId > 0);
-            Contract.Requires(conversationId > 0);
+            Contract.Requires(contribution.ContributorUserId > 0);
+            Contract.Requires(contribution.ConversationId > 0);
 
-            Contribution = new Contribution(senderId, message, conversationId);
+            Contribution = contribution;
         }
 
-        public Contribution Contribution { get; private set; }
+        public IContribution Contribution { get; private set; }
 
         public MessageIdentifier MessageIdentifier
         {

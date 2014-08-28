@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -10,12 +11,14 @@ using ChatClient.Models.ChatWindowViewModel;
 using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
 using ChatClient.ViewModels.Properties;
+using ChatClient.ViewModels.UserSettingsViewModel;
+using GongSolutions.Wpf.DragDrop;
 using SharedClasses;
 using SharedClasses.Domain;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
-    public sealed class ChatWindowViewModel : ViewModel, IDisposable
+    public sealed class ChatWindowViewModel : ViewModel, IDropTarget, IDisposable
     {
         private readonly IAudioPlayer audioPlayer = new AudioPlayer();
         private readonly IClientService clientService;
@@ -143,7 +146,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             GetMessages();
         }
 
-        private void OnContributionAdded(Contribution contribution)
+        private void OnContributionAdded(IContribution contribution)
         {
             if (contribution.ConversationId == groupChat.Conversation.Id)
             {
@@ -168,11 +171,11 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private void GetMessages()
         {
-            IEnumerable<Contribution> contributions = groupChat.Conversation.GetAllContributions();
+            IEnumerable<IContribution> contributions = groupChat.Conversation.GetAllContributions();
 
             FlowDocument messages = GroupChat.Messages;
 
-            foreach (Contribution contribution in contributions)
+            foreach (IContribution contribution in contributions)
             {
                 Paragraph formattedContribution = contributionMessageFormatter.FormatContribution(contribution);
                 messages.Blocks.Add(formattedContribution);
@@ -249,10 +252,30 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private void NewConversationContributionRequest()
         {
             clientService.SendContribution(groupChat.Conversation.Id, groupChat.MessageToAddToConversation);
-
             groupChat.MessageToAddToConversation = string.Empty;
         }
 
         #endregion
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            int x = 2;
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            string filename = ((DataObject)dropInfo.Data).GetFileDropList()[0];
+
+            Image image;
+            if (ImageUtilities.TryLoadImageFromFile(filename, out image))
+            {
+                clientService.SendContribution(groupChat.Conversation.Id, image);
+
+                groupChat.MessageToAddToConversation = string.Empty;
+
+                // Force buttons to enable
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
     }
 }

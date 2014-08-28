@@ -7,7 +7,7 @@ using SharedClasses.Message;
 namespace SharedClasses.Serialiser.EntitySerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise the <see cref="Contribution" /> Domain object.
+    /// Used to serialise and deserialise an <see cref="IContribution" /> Domain object.
     /// Both <see cref="ContributionRequest" /> and <see cref="ContributionNotification" /> use this class to do its the main serialisation work.
     /// </summary>
     internal sealed class ContributionSerialiser
@@ -16,7 +16,7 @@ namespace SharedClasses.Serialiser.EntitySerialiser
 
         private readonly ISerialisationType serialiser = new BinarySerialiser();
 
-        public void Serialise(NetworkStream networkStream, Contribution contribution)
+        public void Serialise(NetworkStream networkStream, IContribution contribution)
         {
             Contract.Requires(contribution != null);
             Contract.Requires(networkStream != null);
@@ -25,11 +25,11 @@ namespace SharedClasses.Serialiser.EntitySerialiser
             Log.Debug("Contribution serialised and sent to network stream");
         }
 
-        public Contribution Deserialise(NetworkStream networkStream)
+        public IContribution Deserialise(NetworkStream networkStream)
         {
             Contract.Requires(networkStream != null);
 
-            var contribution = (Contribution) serialiser.Deserialise(networkStream);
+            var contribution = (IContribution) serialiser.Deserialise(networkStream);
             Log.Debug("Network stream has received data and deserialised to a Contribution object");
             return contribution;
         }

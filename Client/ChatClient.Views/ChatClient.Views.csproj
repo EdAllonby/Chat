@@ -80,7 +80,7 @@
     <Compile Include="ActiveConversations.xaml.cs">
       <DependentUpon>ActiveConversations.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converter\BitmapToBitmapSourceConverter.cs" />
+    <Compile Include="ConsoleManager.cs" />
     <Compile Include="ExtendedControls\BindableRichTextBox.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -153,6 +153,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="log4netDebug.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="log4netRelease.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

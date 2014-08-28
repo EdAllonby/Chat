@@ -11,7 +11,7 @@ namespace SharedClassesTests.Domain
         {
             const string Message = "Hello";
 
-            var finalContribution = new Contribution(1, new Contribution(1, Message, 1));
+            var finalContribution = new TextContribution(1, new TextContribution(1, Message, 1));
             Assert.AreEqual(finalContribution.Message, Message);
         }
 
@@ -20,8 +20,8 @@ namespace SharedClassesTests.Domain
         {
             const string Message = "Hello";
 
-            var contribution = new Contribution(1, new Contribution(1, Message, 1));
-            var contribution2 = new Contribution(1, new Contribution(1, Message, 1));
+            var contribution = new TextContribution(1, new TextContribution(1, Message, 1));
+            var contribution2 = new TextContribution(1, new TextContribution(1, Message, 1));
 
             Assert.AreEqual(contribution, contribution2);
             Assert.IsTrue(contribution.Equals(contribution2 as object));
@@ -32,8 +32,8 @@ namespace SharedClassesTests.Domain
         {
             const string Message = "Hello";
 
-            var contribution = new Contribution(1, new Contribution(1, Message, 1));
-            var contribution2 = new Contribution(1, new Contribution(1, Message, 1));
+            var contribution = new TextContribution(1, new TextContribution(1, Message, 1));
+            var contribution2 = new TextContribution(1, new TextContribution(1, Message, 1));
 
             Assert.AreEqual(contribution.GetHashCode(), contribution2.GetHashCode());
         }
@@ -43,9 +43,9 @@ namespace SharedClassesTests.Domain
         {
             const string Message = "Hello";
 
-            var contribution = new Contribution(1, new Contribution(1, Message, 1));
+            var contribution = new TextContribution(1, new TextContribution(1, Message, 1));
 
-            Contribution contribution2 = contribution;
+            TextContribution contribution2 = contribution;
 
             Assert.IsTrue(contribution.Equals(contribution2));
             Assert.IsTrue(contribution.Equals(contribution2 as object));
@@ -63,7 +63,7 @@ namespace SharedClassesTests.Domain
             const string Message = "Hello";
             const int ContributorUserId = 2;
 
-            var contribution = new Contribution(ContributorUserId, Message, 1);
+            var contribution = new TextContribution(ContributorUserId, Message, 1);
 
             Assert.AreEqual(contribution.ContributorUserId, ContributorUserId);
         }
@@ -73,15 +73,15 @@ namespace SharedClassesTests.Domain
         {
             const string Message = "Hello";
 
-            var finalContribution = new Contribution(1, new Contribution(1, Message, 1));
-            Assert.IsNotNull(finalContribution.MessageTimeStamp);
+            var finalContribution = new TextContribution(1, new TextContribution(1, Message, 1));
+            Assert.IsNotNull(finalContribution.ContributionTimeStamp);
         }
 
         [Test]
         public void IncompleteContributionTest()
         {
             const string Message = "Hello";
-            var contribution = new Contribution(1, Message, 1);
+            var contribution = new TextContribution(1, Message, 1);
             Assert.AreEqual(contribution.Message, Message);
         }
     }

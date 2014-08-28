@@ -4,13 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:converter="clr-namespace:ChatClient.Views.Converter"
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         xmlns:userSettingsViewModel="clr-namespace:ChatClient.ViewModels.UserSettingsViewModel;assembly=ChatClient.ViewModels"
+        xmlns:converter1="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
         Title="User Settings" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" 
         d:DataContext="{d:DesignInstance userSettingsViewModel:UserSettingsViewModel}">
     <Window.Resources>
-        <converter:BitmapToBitmapSourceConverter x:Key="BitmapConverter" />
+        <converter1:BitmapToBitmapSourceConverter x:Key="BitmapConverter" />
     </Window.Resources>
 
     <Grid>

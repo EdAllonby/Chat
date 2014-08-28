@@ -5,7 +5,7 @@
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
-        xmlns:converter="clr-namespace:ChatClient.Views.Converter"
+        xmlns:converter="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
         Background="Transparent" RenderOptions.BitmapScalingMode="Fant" 
         d:DataContext="{d:DesignInstance mainWindowViewModel:UserListViewModel}">
 

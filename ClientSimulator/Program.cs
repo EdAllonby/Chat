@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChatClient.Services;
 using ClientSimulator.Properties;
+using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
 
@@ -16,12 +17,15 @@ namespace ClientSimulator
     /// </summary>
     internal static class Program
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
+
         private const int TotalClients = 10;
         private static readonly List<ClientService> Clients = new List<ClientService>();
         private static bool areRepositoriesValid;
 
         private static void Main()
         {
+            Log.Debug("Start");
             for (int i = 0; i < TotalClients; i++)
             {
                 var serviceRegistry = new ServiceRegistry();

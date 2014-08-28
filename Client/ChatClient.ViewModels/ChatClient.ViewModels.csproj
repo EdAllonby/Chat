@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatWindowViewModel\ContributionMessageFormatter.cs" />
+    <Compile Include="Converter\BitmapToBitmapSourceConverter.cs" />
     <Compile Include="FileStreamExtensions.cs" />
     <Compile Include="MainWindowViewModel\ActiveConversationsViewModel.cs" />
     <Compile Include="AudioPlayer.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="MainWindowViewModel\ConnectedUserViewModel.cs" />
     <Compile Include="MainWindowViewModel\ConversationViewModel.cs" />
     <Compile Include="MainWindowViewModel\MainWindowViewModel.cs" />
+    <Compile Include="UserSettingsViewModel\ImageUtilities.cs" />
     <Compile Include="UserSettingsViewModel\UserSettingsViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
