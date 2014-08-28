@@ -23,8 +23,7 @@ namespace Server
         {
             EntityIdGenerator generator;
 
-            bool isEntityGeneratorFound = entityIdGeneratorRegistry
-                .EntityIDGeneratorsIndexedByEntityType.TryGetValue(typeof (T), out generator);
+            bool isEntityGeneratorFound = entityIdGeneratorRegistry.EntityIDGeneratorsIndexedByEntityType.TryGetValue(typeof (T), out generator);
 
             if (!isEntityGeneratorFound)
             {
