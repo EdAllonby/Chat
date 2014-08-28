@@ -25,6 +25,12 @@ namespace ChatClient.ViewModels.MainWindowViewModel
                 userRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
                 userId = ServiceRegistry.GetService<IClientService>().ClientUserId;
 
+                User user = userRepository.FindEntityById(userId);
+                if (user.Avatar.UserAvatar != null)
+                {
+                    UserAvatar = user.Avatar.UserAvatar;
+                }
+
                 userRepository.EntityUpdated += OnUserUpdated;
             }
         }
