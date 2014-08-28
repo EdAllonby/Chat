@@ -58,7 +58,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             string filename = ((DataObject) dropInfo.Data).GetFileDropList()[0];
 
             Image image;
-            if (TryLoadImageFromFile(filename, out image))
+            if (ImageUtilities.TryLoadImageFromFile(filename, out image))
             {
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
                 dropInfo.Effects = DragDropEffects.Move;
@@ -70,7 +70,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             string filename = ((DataObject) dropInfo.Data).GetFileDropList()[0];
 
             Image image;
-            if (TryLoadImageFromFile(filename, out image))
+            if (ImageUtilities.TryLoadImageFromFile(filename, out image))
             {
                 Avatar = image;
 
@@ -105,23 +105,6 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             return isImageChangedSinceLastApply;
         }
 
-        private static bool TryLoadImageFromFile(string filename, out Image image)
-        {
-            image = null;
-
-            using (FileStream fileStream = File.OpenRead(filename))
-            {
-                if (fileStream.IsJpegImage() || fileStream.IsPngImage())
-                {
-                    var bitmap = new Bitmap(fileStream);
-                    var scaledBitmap = new Bitmap(bitmap, 300, 300);
-                    image = scaledBitmap;
-                    return true;
-                }
-
-                return false;
-            }
-        }
 
         private void OnCloseUserSettingsRequest()
         {

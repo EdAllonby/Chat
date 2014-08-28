@@ -31,7 +31,7 @@ namespace ChatClient.Services
         }
 
         /// <summary>
-        /// This client's Repository Manager.
+        /// This client's EntityRepository Manager.
         /// </summary>
         public RepositoryManager RepositoryManager
         {
@@ -103,7 +103,18 @@ namespace ChatClient.Services
         /// <param name="message">The content of the message.</param>
         public void SendContribution(int conversationId, string message)
         {
-            connectionHandler.SendMessage(new ContributionRequest(conversationId, ClientUserId, message));
+            connectionHandler.SendMessage(new ContributionRequest(new TextContribution(ClientUserId, message, conversationId)));
+        }
+
+        /// <summary>
+        /// Sends an image <see cref="ContributionRequest"/> message to the server.
+        /// </summary>
+        /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>
+        /// <param name="image">The image to add to a conversation</param>
+        public void SendContribution(int conversationId, Image image)
+        {
+            connectionHandler.SendMessage(new ContributionRequest(new ImageContribution(ClientUserId, image, conversationId)));
+
         }
 
         /// <summary>

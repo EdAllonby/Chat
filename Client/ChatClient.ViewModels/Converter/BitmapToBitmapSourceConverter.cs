@@ -6,13 +6,20 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Point = System.Drawing.Point;
 
-namespace ChatClient.Views.Converter
+namespace ChatClient.ViewModels.Converter
 {
     public class BitmapToBitmapSourceConverter : IValueConverter
     {
+        public ImageSource Convert(Bitmap bitmap)
+        {
+            return (ImageSource)Convert(bitmap, null, null, null);
+        }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             BitmapSource bitmapSource = null;

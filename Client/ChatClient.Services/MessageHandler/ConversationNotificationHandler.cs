@@ -22,7 +22,7 @@ namespace ChatClient.Services.MessageHandler
                     break;
 
                 case NotificationType.Update:
-                    conversationRepository.UpdateConversation(conversationNotification.Conversation);
+                    conversationRepository.UpdateEntity(conversationNotification.Conversation);
                     break;
             }
         }

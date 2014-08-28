@@ -40,7 +40,7 @@ namespace Server
             }
         }
 
-        private void OnContributionAdded(Contribution contribution)
+        private void OnContributionAdded(IContribution contribution)
         {
             var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
 

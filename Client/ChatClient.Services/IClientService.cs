@@ -48,10 +48,17 @@ namespace ChatClient.Services
         void SendAvatarRequest(Image avatar);
 
         /// <summary>
-        /// Sends a <see cref="ContributionRequest"/> message to the server.
+        /// Sends a text <see cref="ContributionRequest"/> message to the server.
         /// </summary>
-        /// <param name="conversationId">The ID of the conversation the Client wants to send the message to.</param>
+        /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
         void SendContribution(int conversationId, string message);
+
+        /// <summary>
+        /// Sends an image <see cref="ContributionRequest"/> message to the server.
+        /// </summary>
+        /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>
+        /// <param name="image">The image to add to a conversation</param>
+        void SendContribution(int conversationId, Image image);
     }
 }

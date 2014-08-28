@@ -25,15 +25,6 @@ using log4net.Config;
 
 [assembly: Guid("7d478802-1c2a-4ede-9dda-e5290e3a2b80")]
 
-// Set the project to watch the log4net.config file and reload of the config changes when needed.
-#if DEBUG
-
-[assembly: XmlConfigurator(ConfigFile = "log4netDebug.config", Watch = true)]
-#else
-
-[assembly: XmlConfigurator(ConfigFile = "log4netRelease.config", Watch = true)]
-#endif
-
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version

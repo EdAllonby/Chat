@@ -1,7 +1,7 @@
-﻿using System.Runtime.InteropServices;
-using System.Threading;
+﻿using System.Threading;
 using System.Windows;
 using ChatClient.Services;
+using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
 
@@ -12,20 +12,19 @@ namespace ChatClient.Views
     /// </summary>
     public partial class App
     {
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool FreeConsole();
+        private static readonly ILog Log = LogManager.GetLogger(typeof (App));
 
         protected override void OnStartup(StartupEventArgs e)
         {
 #if DEBUG
-            AllocConsole();
+            ConsoleManager.Show();
 #endif
             Thread.CurrentThread.Name = "Main Thread";
 
             IServiceRegistry serviceRegistry = CreateLoadedServiceRegistry();
+
+            Thread.Sleep(1000);
+            Log.Debug("Logging in debug mode.");
 
             base.OnStartup(e);
 
@@ -52,7 +51,7 @@ namespace ChatClient.Views
         protected override void OnExit(ExitEventArgs e)
         {
 #if DEBUG
-            FreeConsole();
+            ConsoleManager.Hide();
 #endif
             base.OnExit(e);
         }

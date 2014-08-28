@@ -9,12 +9,12 @@ using SharedClasses.Message;
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Holds a collection of <see cref="Contribution"/>s that are linked by a Conversation
+    /// Holds a collection of <see cref="TextContribution"/>s that are linked by a Conversation
     /// </summary>
     [Serializable]
     public sealed class Conversation : IEntity, IEquatable<Conversation>
     {
-        private readonly Dictionary<int, Contribution> contributionsIndexedByContributionId = new Dictionary<int, Contribution>();
+        private readonly Dictionary<int, IContribution> contributionsIndexedByContributionId = new Dictionary<int, IContribution>();
 
         private readonly int id;
 
@@ -29,7 +29,7 @@ namespace SharedClasses.Domain
             this.id = id;
         }
 
-        public Contribution LastContribution
+        public IContribution LastContribution
         {
             get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
         }
@@ -42,6 +42,22 @@ namespace SharedClasses.Domain
             get { return id; }
         }
 
+        /// <summary>
+        /// Creates a reduced size Conversation only containing Ids associated with it.
+        /// </summary>
+        /// <returns>A lightweight Conversation.</returns>
+        public Conversation CreateLightweightCopy()
+        {
+            Conversation conversation = new Conversation(Id);
+
+            foreach (int contributionId in contributionsIndexedByContributionId.Keys)
+            {
+                conversation.contributionsIndexedByContributionId.Add(contributionId, null);
+            }
+
+            return conversation;
+        }
+
         public bool Equals(Conversation other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -50,35 +66,24 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Adds a <see cref="Contribution"/> entity to the dictionary indexed by ids.
+        /// Adds an <see cref="IContribution"/> entity to this conversation. 
+        /// The contribution's conversation Id must match this conversation's Id.
         /// </summary>
-        public void AddContribution(Contribution newContribution)
+        public void AddContribution(IContribution newContribution)
         {
             Contract.Requires(newContribution != null);
             Contract.Requires(newContribution.ConversationId == Id);
 
-            contributionsIndexedByContributionId[newContribution.Id] = newContribution;
+            contributionsIndexedByContributionId.Add(newContribution.Id, newContribution);
         }
 
         /// <summary>
-        /// Adds a <see cref="Contribution"/> from an incoming <see cref="ContributionNotification"/>.
-        /// The <see cref="ContributionNotification"/> must have an ID otherwise it is not following the protocol.
-        /// </summary>
-        /// <param name="contributionNotification">The contribution to add to the conversation packaged in a <see cref="ContributionNotification"/>.</param>
-        public void AddContribution(ContributionNotification contributionNotification)
-        {
-            Contract.Requires(contributionNotification != null);
-
-            contributionsIndexedByContributionId[contributionNotification.Contribution.Id] = contributionNotification.Contribution;
-        }
-
-        /// <summary>
-        /// Returns a list of <see cref="Contribution"/>s which are held in this <see cref="Conversation"/> entity.
+        /// Returns a list of <see cref="TextContribution"/>s which are held in this <see cref="Conversation"/> entity.
         /// </summary>
         /// <returns>A collection of all contributions associated with the conversation.</returns>
-        public IEnumerable<Contribution> GetAllContributions()
+        public IEnumerable<IContribution> GetAllContributions()
         {
-            return new List<Contribution>(contributionsIndexedByContributionId.Values);
+            return new List<IContribution>(contributionsIndexedByContributionId.Values);
         }
 
         public override bool Equals(object obj)
@@ -91,20 +96,6 @@ namespace SharedClasses.Domain
         public override int GetHashCode()
         {
             return id;
-        }
-
-        public static Conversation DeepClone(Conversation conversation)
-        {
-            Contract.Requires(conversation != null);
-
-            using (var memoryStream = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(memoryStream, conversation);
-                memoryStream.Position = 0;
-
-                return (Conversation) formatter.Deserialize(memoryStream);
-            }
         }
     }
 }

@@ -4,21 +4,21 @@ using System.Diagnostics.Contracts;
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// A fundamental domain entity object needed to model a contribution to a conversation.
+    /// A fundamental domain entity object needed to model a text contribution to a conversation.
     /// </summary>
     [Serializable]
-    public sealed class Contribution : IEntity, IEquatable<Contribution>
+    public sealed class TextContribution : IContribution
     {
         private readonly int contributorUserId;
         private readonly int conversationId;
         private readonly int id;
         private readonly string message;
-        private readonly DateTime messageTimeStamp;
+        private readonly DateTime contributionTimeStamp;
 
         /// <summary>
-        /// Create a contribution that will later get assigned an Id.
+        /// Create a text contribution that will later get assigned an Id.
         /// </summary>
-        public Contribution(int contributorUserId, string message, int conversationId)
+        public TextContribution(int contributorUserId, string message, int conversationId)
         {
             Contract.Requires(contributorUserId > 0);
             Contract.Requires(conversationId > 0);
@@ -29,22 +29,22 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Creates a complete contribution entity
+        /// Creates a complete text contribution entity.
         /// </summary>
         /// <param name="id">The unique Id of the contribution entity.</param>
-        /// <param name="incompleteContribution">The extra details of the <see cref="Contribution"/>.</param>
-        public Contribution(int id, Contribution incompleteContribution)
+        /// <param name="incompleteContribution">The extra details of the <see cref="TextContribution"/>.</param>
+        public TextContribution(int id, TextContribution incompleteContribution)
             : this(incompleteContribution.ContributorUserId, incompleteContribution.Message, incompleteContribution.ConversationId)
         {
             Contract.Requires(id > 0);
             Contract.Requires(incompleteContribution != null);
 
             this.id = id;
-            messageTimeStamp = DateTime.Now;
+            contributionTimeStamp = DateTime.Now;
         }
 
         /// <summary>
-        /// The Conversation ID this Contribution belongs to.
+        /// The Conversation Id this Contribution belongs to.
         /// </summary>
         public int ConversationId
         {
@@ -70,9 +70,14 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The time the server received the message.
         /// </summary>
-        public DateTime MessageTimeStamp
+        public DateTime ContributionTimeStamp
         {
-            get { return messageTimeStamp; }
+            get { return contributionTimeStamp; }
+        }
+
+        public ContributionType ContributionType
+        {
+            get { return ContributionType.Text; }
         }
 
         /// <summary>
@@ -83,7 +88,7 @@ namespace SharedClasses.Domain
             get { return id; }
         }
 
-        public bool Equals(Contribution other)
+        public bool Equals(TextContribution other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -102,7 +107,7 @@ namespace SharedClasses.Domain
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
 
-            return obj is Contribution && Equals((Contribution) obj);
+            return obj is TextContribution && Equals((TextContribution) obj);
         }
 
         public override int GetHashCode()

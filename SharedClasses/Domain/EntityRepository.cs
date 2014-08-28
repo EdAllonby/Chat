@@ -37,6 +37,21 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
+        /// Generic repository that holds an entity type.
+        /// </summary>
+        /// <typeparam name="T">The entity type that the repository holds.</typeparam>
+        public void UpdateEntity(T entity)
+        {
+            T previousEntity = entitiesIndexedById[entity.Id];
+            
+            entitiesIndexedById[entity.Id] = entity;
+
+            Log.DebugFormat("Entity with Id {0} has been updated in {1} repository.", entity.Id, EnclosedEntityType.Name);
+
+            OnEntityUpdated(entity, previousEntity);
+        }
+
+        /// <summary>
         /// Retrieves an <see cref="IEntity"/> entity from the repository.
         /// </summary>
         /// <param name="entityId">The <see cref="IEntity"/> entity Id to find.</param>

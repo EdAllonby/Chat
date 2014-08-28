@@ -1,4 +1,7 @@
-﻿using SharedClasses;
+﻿using System;
+using System.Drawing;
+using System.Net.Mime;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -17,9 +20,21 @@ namespace Server.MessageHandler
 
             var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
 
-            var newContribution = new Contribution(entityIdAllocatorFactory.AllocateEntityId<Contribution>(), contributionRequest.Contribution);
+            IContribution newContribution;
 
-            conversationRepository.AddContributionToConversation(newContribution);
+            IContribution contribution = contributionRequest.Contribution;
+
+            switch (contribution.ContributionType)
+            {
+                case ContributionType.Text:
+                    newContribution = new TextContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (TextContribution) contribution);
+                    conversationRepository.AddContributionToConversation(newContribution);
+                    break;
+                case ContributionType.Image:
+                    newContribution = new ImageContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (ImageContribution) contribution);
+                    conversationRepository.AddContributionToConversation(newContribution);
+                    break;
+            }
         }
     }
 }

@@ -21,11 +21,8 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             Log.Debug("Waiting for a contribution request message to deserialise");
-            Contribution contribution = contributionSerialiser.Deserialise(networkStream);
-            var contributionRequest = new ContributionRequest(
-                contribution.ConversationId,
-                contribution.ContributorUserId,
-                contribution.Message);
+            IContribution contribution = contributionSerialiser.Deserialise(networkStream);
+            var contributionRequest = new ContributionRequest(contribution);
 
             Log.Info("Contribution request message deserialised");
 

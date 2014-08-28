@@ -14,7 +14,7 @@ namespace ServerTests.MessageHandlerTests
         {
             base.BeforeEachTest();
 
-            contributionRequest = new ContributionRequest(ConversationId, DefaultUser.Id, "hello");
+            contributionRequest = new ContributionRequest(new TextContribution(DefaultUser.Id, "hello", ConversationId));
             ConversationRepository.AddEntity(new Conversation(ConversationId));
         }
 
@@ -40,9 +40,9 @@ namespace ServerTests.MessageHandlerTests
             {
                 HandleMessage(contributionRequest);
                 Conversation contributionConversation = ConversationRepository.FindEntityById(contributionRequest.Contribution.ConversationId);
-                Contribution lastContributionAdded = contributionConversation.LastContribution;
+                IContribution lastContributionAdded = contributionConversation.LastContribution;
 
-                Assert.IsTrue(lastContributionAdded.Message.Equals(contributionRequest.Contribution.Message));
+                Assert.IsTrue(lastContributionAdded.ContributorUserId.Equals(contributionRequest.Contribution.ContributorUserId));
             }
 
             [Test]
@@ -50,7 +50,7 @@ namespace ServerTests.MessageHandlerTests
             {
                 HandleMessage(contributionRequest);
                 Conversation contributionConversation = ConversationRepository.FindEntityById(contributionRequest.Contribution.ConversationId);
-                Contribution lastContributionAdded = contributionConversation.LastContribution;
+                IContribution lastContributionAdded = contributionConversation.LastContribution;
 
                 Assert.IsTrue(lastContributionAdded.Id != 0);
             }

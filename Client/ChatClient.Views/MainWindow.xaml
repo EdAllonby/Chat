@@ -6,7 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
-        xmlns:converter="clr-namespace:ChatClient.Views.Converter"
+        xmlns:converter="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
         Title="Chat Program" Height="600" Width="350" RenderOptions.BitmapScalingMode="Fant" Closed="OnMainWindowClosed"
         d:DataContext="{d:DesignInstance mainWindowViewModel:MainWindowViewModel}">
     

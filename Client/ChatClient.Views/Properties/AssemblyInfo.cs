@@ -5,6 +5,7 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+using log4net.Config;
 
 [assembly: AssemblyTitle("ChatClient.Views")]
 [assembly: AssemblyDescription("")]
@@ -30,6 +31,14 @@ using System.Windows;
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
+// Set the project to watch the log4net.config file and reload of the config changes when needed.
+#if DEBUG
+
+[assembly: XmlConfigurator(ConfigFile = "log4netDebug.config", Watch = true)]
+#else
+
+[assembly: XmlConfigurator(ConfigFile = "log4netRelease.config", Watch = true)]
+#endif
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
