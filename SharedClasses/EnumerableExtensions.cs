@@ -10,9 +10,9 @@ namespace SharedClasses
         /// Checks if two lists contain the same items in any order.
         /// </summary>
         /// <typeparam name="T">Type of element in the collection.</typeparam>
-        /// <param name="first">The first list of random ordered items.</param>
-        /// <param name="second">The second list of random ordered items.</param>
-        /// <returns>Boolean result of if lists are the same.</returns>
+        /// <param name="first">The first list of unordered items.</param>
+        /// <param name="second">The second list of unordered items.</param>
+        /// <returns>Boolean result of if lists contain same elements.</returns>
         public static bool HasSameElementsAs<T>(this IEnumerable<T> first, IEnumerable<T> second)
         {
             Contract.Requires(first != null);
