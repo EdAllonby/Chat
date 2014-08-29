@@ -1,4 +1,7 @@
-﻿namespace Server
+﻿using System;
+using System.Threading;
+
+namespace Server
 {
     /// <summary>
     /// Used to create a unique Id number for an entity.
@@ -8,12 +11,12 @@
         private int nextId;
 
         /// <summary>
-        /// Creates a unique Id number for an entity.
+        /// Creates a thread-safe unique Id number for an entity.
         /// </summary>
-        /// <returns>A unique Id number</returns>
+        /// <returns>A unique Id number.</returns>
         public int GenerateNextAvailableId()
         {
-            return ++nextId;
+            return Interlocked.Increment(ref nextId);
         }
     }
 }
