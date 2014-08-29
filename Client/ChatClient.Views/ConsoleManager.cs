@@ -6,6 +6,10 @@ using System.Security;
 
 namespace ChatClient.Views
 {
+    /// <summary>
+    /// Manages a console window in a windows application.
+    /// Can be used to explicitly open and close a console when project is not set to Output Type: Console Application
+    /// </summary>
     [SuppressUnmanagedCodeSecurity]
     public static class ConsoleManager
     {
@@ -23,23 +27,16 @@ namespace ChatClient.Views
         [DllImport(Kernel32DllName)]
         private static extern int GetConsoleOutputCP();
 
-        public static bool HasConsole
-        {
-            get { return GetConsoleWindow() != IntPtr.Zero; }
-        }
-
         /// <summary>
         /// Creates a new console instance if the process is not attached to a console already.
         /// </summary>
         public static void Show()
         {
-            //#if DEBUG
             if (!HasConsole)
             {
                 AllocConsole();
                 InvalidateOutAndError();
             }
-            //#endif
         }
 
         /// <summary>
@@ -47,13 +44,11 @@ namespace ChatClient.Views
         /// </summary>
         public static void Hide()
         {
-            //#if DEBUG
             if (HasConsole)
             {
                 SetOutAndErrorNull();
                 FreeConsole();
             }
-            //#endif
         }
 
         public static void Toggle()
@@ -68,31 +63,36 @@ namespace ChatClient.Views
             }
         }
 
-        static void InvalidateOutAndError()
+        private static bool HasConsole
+        {
+            get { return GetConsoleWindow() != IntPtr.Zero; }
+        }
+
+        private static void InvalidateOutAndError()
         {
             Type type = typeof(System.Console);
 
-            System.Reflection.FieldInfo _out = type.GetField("_out",
+            System.Reflection.FieldInfo consoleOut = type.GetField("_out",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
-            System.Reflection.FieldInfo error = type.GetField("_error",
+            System.Reflection.FieldInfo consoleError = type.GetField("_error",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
-            System.Reflection.MethodInfo initializeStdOutError = type.GetMethod("InitializeStdOutError",
+            System.Reflection.MethodInfo consoleInitializeStdOutError = type.GetMethod("InitializeStdOutError",
                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
-            Debug.Assert(_out != null);
-            Debug.Assert(error != null);
+            Debug.Assert(consoleOut != null);
+            Debug.Assert(consoleError != null);
 
-            Debug.Assert(initializeStdOutError != null);
+            Debug.Assert(consoleInitializeStdOutError != null);
 
-            _out.SetValue(null, null);
-            error.SetValue(null, null);
+            consoleOut.SetValue(null, null);
+            consoleError.SetValue(null, null);
 
-            initializeStdOutError.Invoke(null, new object[] { true });
+            consoleInitializeStdOutError.Invoke(null, new object[] { true });
         }
 
-        static void SetOutAndErrorNull()
+        private static void SetOutAndErrorNull()
         {
             Console.SetOut(TextWriter.Null);
             Console.SetError(TextWriter.Null);

@@ -1,4 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using ChatClient.Services;
 using log4net;
@@ -16,20 +19,35 @@ namespace ChatClient.Views
 
         protected override void OnStartup(StartupEventArgs e)
         {
+
 #if DEBUG
+            // Console must be started before configuring log4net.
             ConsoleManager.Show();
+            SetupLogging("log4netDebug.config");
+#else
+            SetupLogging("log4netRelease.config");
 #endif
             Thread.CurrentThread.Name = "Main Thread";
 
             IServiceRegistry serviceRegistry = CreateLoadedServiceRegistry();
-
             
-            Log.Debug("Logging in debug mode.");
-
-            base.OnStartup(e);
-
             var loginWindow = new LoginWindow(serviceRegistry);
             loginWindow.Show();
+
+            base.OnStartup(e);
+        }
+
+        private static void SetupLogging(string logConfigName)
+        {
+            string assemblyPath = System.Reflection.Assembly.GetAssembly(typeof(App)).Location;
+            string assemblyDirectory = Path.GetDirectoryName(assemblyPath);
+
+            if (assemblyDirectory != null)
+            {
+                var uri = new Uri(Path.Combine(assemblyDirectory, logConfigName));
+
+                log4net.Config.XmlConfigurator.Configure(uri);
+            }
         }
 
         private static IServiceRegistry CreateLoadedServiceRegistry()
