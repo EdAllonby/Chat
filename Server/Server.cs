@@ -22,6 +22,8 @@ namespace Server
 
         private readonly IServiceRegistry serviceRegistry;
 
+        private bool isServerRunning;
+
         public Server(IServiceRegistry serviceRegistry)
         {
             this.serviceRegistry = serviceRegistry;
@@ -29,16 +31,21 @@ namespace Server
             onUserChangedHandler = new OnUserChangedHandler(serviceRegistry);
             onConversationChangedHandler = new OnConversationChangedHandler(serviceRegistry);
             onParticipationChangedHandler = new OnParticipationChangedHandler(serviceRegistry);
-
+           
+            isServerRunning = true;
             Log.Info("Server instance started");
+            
             ListenForNewClients();
         }
 
         public void Shutdown()
         {
+            Log.Debug("Starting server shutdown.");
+            isServerRunning = false;
             onUserChangedHandler.StopOnMessageChangedHandling();
             onConversationChangedHandler.StopOnMessageChangedHandling();
             onParticipationChangedHandler.StopOnMessageChangedHandling();
+            Log.Debug("Server shutdown process finished.");
         }
 
         private void ListenForNewClients()
@@ -47,7 +54,7 @@ namespace Server
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");
 
-            while (true)
+            while (isServerRunning)
             {
                 TcpClient client = clientListener.AcceptTcpClient();
 

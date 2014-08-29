@@ -10,7 +10,7 @@ namespace SharedClasses.Domain
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof (EntityRepository<T>));
 
-        private readonly ConcurrentDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
+        private readonly IDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
 
         public Type EnclosedEntityType
         {
@@ -29,7 +29,7 @@ namespace SharedClasses.Domain
         /// <param name="entity">The <see cref="IEntity"/> to add.</param>
         public void AddEntity(T entity)
         {
-            entitiesIndexedById.TryAdd(entity.Id, entity);
+            entitiesIndexedById.Add(entity.Id, entity);
 
             Log.DebugFormat("Entity with Id {0} added.", entity.Id);
 

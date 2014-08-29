@@ -18,8 +18,6 @@ namespace ServerTests.MessageHandlerTests
 
             avatarRequest = new AvatarRequest(UserId, Resources.SmallImage);
             userToUpdate = new User("user", UserId, new ConnectionStatus(UserId, ConnectionStatus.Status.Connected));
-
-            UserRepository.AddEntity(userToUpdate);
         }
 
         public override void HandleMessage(IMessage message)
