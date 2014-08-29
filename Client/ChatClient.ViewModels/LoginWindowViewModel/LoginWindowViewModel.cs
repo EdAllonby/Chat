@@ -17,8 +17,9 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private readonly IClientService clientService;
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
+        
+        public EventHandler<LoginErrorEventArgs> LoginErrored; 
         public EventHandler OpenMainWindowRequested;
-
         private bool canOpenWindow;
 
         private LoginModel loginModel = new LoginModel();
@@ -72,11 +73,11 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                     break;
 
                 case LoginResult.AlreadyConnected:
-                    MessageBox.Show(string.Format("User already connected with username: {0}", LoginModel.Username), "Login Denied");
+                    LoginErrored(this, new LoginErrorEventArgs(result, string.Format("User already connected with username: {0}", LoginModel.Username)));
                     break;
 
                 case LoginResult.ServerNotFound:
-                    MessageBox.Show("Could not find server, check connection settings.");
+                    LoginErrored(this, new LoginErrorEventArgs(result, "Could not find server, check connection settings."));
                     break;
             }
         }

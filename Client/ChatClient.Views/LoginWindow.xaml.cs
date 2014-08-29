@@ -19,9 +19,15 @@ namespace ChatClient.Views
 
             var viewModel = new LoginWindowViewModel(serviceRegistry);
             viewModel.OpenMainWindowRequested += OnOpenMainWindowRequested;
+            viewModel.LoginErrored += OnLoginErrored;
             DataContext = viewModel;
 
             InitializeComponent();
+        }
+
+        private static void OnLoginErrored(object sender, LoginErrorEventArgs e)
+        {
+            MessageBox.Show(e.ErrorDescription, e.Result.ToString());
         }
 
         private void OnOpenMainWindowRequested(object sender, EventArgs e)

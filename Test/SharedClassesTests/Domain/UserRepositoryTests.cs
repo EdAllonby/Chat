@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using NUnit.Framework;
 using SharedClasses.Domain;
 
@@ -31,11 +31,8 @@ namespace SharedClassesTests.Domain
             var userRepository = new UserRepository();
 
             userRepository.AddEntity(user);
-            userRepository.AddEntity(user);
 
-            var users = new List<User> {user};
-
-            Assert.AreEqual(users, userRepository.GetAllEntities());
+            Assert.Throws<ArgumentException>(() => userRepository.AddEntity(user));
         }
 
         [Test]

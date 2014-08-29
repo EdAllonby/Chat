@@ -48,6 +48,7 @@
     <Compile Include="ChatWindowViewModel\ContributionMessageFormatter.cs" />
     <Compile Include="Converter\BitmapToBitmapSourceConverter.cs" />
     <Compile Include="FileStreamExtensions.cs" />
+    <Compile Include="LoginWindowViewModel\LoginErrorEventArgs.cs" />
     <Compile Include="MainWindowViewModel\ActiveConversationsViewModel.cs" />
     <Compile Include="AudioPlayer.cs" />
     <Compile Include="ChatWindowViewModel\ChatWindowViewModel.cs" />

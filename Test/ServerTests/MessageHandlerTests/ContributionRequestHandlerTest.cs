@@ -15,7 +15,6 @@ namespace ServerTests.MessageHandlerTests
             base.BeforeEachTest();
 
             contributionRequest = new ContributionRequest(new TextContribution(DefaultUser.Id, "hello", ConversationId));
-            ConversationRepository.AddEntity(new Conversation(ConversationId));
         }
 
         public override void HandleMessage(IMessage message)
