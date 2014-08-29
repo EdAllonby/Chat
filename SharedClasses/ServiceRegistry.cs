@@ -36,6 +36,7 @@ namespace SharedClasses
         public void RegisterService<T>(IService service) where T : IService
         {
             services.Add(typeof (T), service);
+            Log.DebugFormat("Service [{0}] added to service registry", typeof(T).FullName);
         }
     }
 }
