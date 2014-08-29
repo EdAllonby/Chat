@@ -1,4 +1,5 @@
-﻿using SharedClasses.Domain;
+﻿using System;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace SharedClasses
@@ -7,7 +8,7 @@ namespace SharedClasses
     /// Signifies a entity change in a <see cref="EntityRepository{T}"/>.
     /// </summary>
     /// <typeparam name="T">The entity that has been changed in the repository.</typeparam>
-    public sealed class EntityChangedEventArgs<T> where T : IEntity
+    public sealed class EntityChangedEventArgs<T> : EventArgs where T : IEntity
     {
         /// <summary>
         /// Signifies either an entity creation or entity deletion. When an entity is deleted, <see cref="PreviousEntity"/> is set to the current entity.
