@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Windows;
 using ChatClient.ViewModels.UserSettingsViewModel;
+using Microsoft.Win32;
 using SharedClasses;
 
 namespace ChatClient.Views
@@ -21,6 +23,19 @@ namespace ChatClient.Views
         private void OnCloseUserSettingsWindowRequest(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void OnBrowseImageButtonClick(object sender, RoutedEventArgs e)
+        {
+            var fileDialog = new OpenFileDialog {Filter = "Image Files (*.bmp, *.png, *.jpg)|*.bmp;*.png;*.jpg"};
+
+            fileDialog.ShowDialog();
+
+            string fileLocation = fileDialog.FileName;
+
+            var viewModel = (UserSettingsViewModel) DataContext;
+
+            viewModel.ApplyAvatarToPreviewBox(fileLocation);
         }
     }
 }

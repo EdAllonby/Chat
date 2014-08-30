@@ -16,6 +16,9 @@ namespace SharedClasses
             Message = message;
         }
 
+        /// <summary>
+        /// The message being carried.
+        /// </summary>
         public IMessage Message { get; private set; }
     }
 }
