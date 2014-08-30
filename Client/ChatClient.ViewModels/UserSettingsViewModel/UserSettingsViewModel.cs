@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Services;
@@ -65,12 +64,26 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             }
         }
 
+        /// <summary>
+        /// Handles when something is dropped onto the avatar preview box.
+        /// </summary>
+        /// <param name="dropInfo">The information of the drop.</param>
         public void Drop(IDropInfo dropInfo)
         {
-            string filename = ((DataObject) dropInfo.Data).GetFileDropList()[0];
+            string imageLocation = ((DataObject) dropInfo.Data).GetFileDropList()[0];
 
+            ApplyAvatarToPreviewBox(imageLocation);
+        }
+
+        /// <summary>
+        /// Set the avatar preview box to recently selected image.
+        /// File location doesn't need to be an image, checks are made in this method.
+        /// </summary>
+        /// <param name="imageLocation">The location of the image in the file system.</param>
+        public void ApplyAvatarToPreviewBox(string imageLocation)
+        {
             Image image;
-            if (ImageUtilities.TryLoadImageFromFile(filename, out image))
+            if (ImageUtilities.TryLoadImageFromFile(imageLocation, out image))
             {
                 Avatar = image;
 
@@ -104,7 +117,6 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
         {
             return isImageChangedSinceLastApply;
         }
-
 
         private void OnCloseUserSettingsRequest()
         {
