@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using ChatClient.ViewModels.ChatWindowViewModel;
+using ChatClient.ViewModels.UserSettingsViewModel;
+using Microsoft.Win32;
 using SharedClasses;
 
 namespace ChatClient.Views
@@ -50,6 +52,19 @@ namespace ChatClient.Views
         {
             e.Effects = DragDropEffects.All;
             e.Handled = true;
+        }
+
+        private void OnBrowseImageButtonClick(object sender, RoutedEventArgs e)
+        {
+            var fileDialog = new OpenFileDialog { Filter = "Image Files (*.bmp, *.png, *.jpg)|*.bmp;*.png;*.jpg" };
+
+            fileDialog.ShowDialog();
+
+            string fileLocation = fileDialog.FileName;
+
+            var viewModel = (ChatWindowViewModel)DataContext;
+
+            viewModel.SendImageContribution(fileLocation);
         }
     }
 }
