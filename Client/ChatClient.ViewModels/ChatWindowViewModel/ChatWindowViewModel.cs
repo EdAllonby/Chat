@@ -259,15 +259,28 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         public void DragOver(IDropInfo dropInfo)
         {
-            int x = 2;
         }
 
+        /// <summary>
+        /// Handles when something is dropped onto the text entry box.
+        /// </summary>
+        /// <param name="dropInfo">The information of the drop.</param>
         public void Drop(IDropInfo dropInfo)
         {
-            string filename = ((DataObject)dropInfo.Data).GetFileDropList()[0];
+            string imageLocation = ((DataObject)dropInfo.Data).GetFileDropList()[0];
 
+            SendImageContribution(imageLocation);
+        }
+
+        /// <summary>
+        /// Tries to send an <see cref="ImageContribution"/> to the conversation.
+        /// <see cref="imageLocation"/> doesn't need to be a location of an image, checks are made in this method to ensure only images get sent.
+        /// </summary>
+        /// <param name="imageLocation">The location of the image in the file system.</param>
+        public void SendImageContribution(string imageLocation)
+        {
             Image image;
-            if (ImageUtilities.TryLoadImageFromFile(filename, out image))
+            if (ImageUtilities.TryLoadImageFromFile(imageLocation, out image))
             {
                 clientService.SendContribution(groupChat.Conversation.Id, image);
 
