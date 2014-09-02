@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -15,6 +14,7 @@ using ChatClient.ViewModels.UserSettingsViewModel;
 using GongSolutions.Wpf.DragDrop;
 using SharedClasses;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
@@ -24,14 +24,13 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly IClientService clientService;
         private readonly ContributionMessageFormatter contributionMessageFormatter;
 
-        private readonly IReadOnlyEntityRepository<Conversation> conversationRepository;
         private readonly ParticipationRepository participationRepository;
         private readonly IReadOnlyEntityRepository<User> userRepository;
 
         public EventHandler OpenUserSettingsWindowRequested;
 
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
-        private GroupChatModel groupChat = new GroupChatModel();
+        private GroupChatModel groupChat;
 
         public ChatWindowViewModel(Conversation conversation, IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
@@ -39,17 +38,21 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             if (!IsInDesignMode)
             {
                 userRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
-                conversationRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
                 participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
                 clientService = ServiceRegistry.GetService<IClientService>();
+
+                Participation participation = participationRepository.GetParticipationByUserIdandConversationId(clientService.ClientUserId, conversation.Id);
+                groupChat = new GroupChatModel(participation);
 
                 contributionMessageFormatter = new ContributionMessageFormatter(clientService.ClientUserId, userRepository);
 
                 userRepository.EntityAdded += OnUserChanged;
                 userRepository.EntityUpdated += OnUserChanged;
 
-                conversationRepository.EntityUpdated += OnConversationChanged;
+                ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>().EntityUpdated += OnConversationUpdated;
+
+                participationRepository.EntityUpdated += OnParticipationUpdated;
 
                 AddUserCommand = new AddUserToConversationCommand(this);
 
@@ -63,12 +66,27 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
+        private void OnParticipationUpdated(object sender, EntityChangedEventArgs<Participation> e)
+        {
+            IEnumerable<string> listOfUsersTyping =
+                from participant in participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id)
+                where participant.UserTyping.IsUserTyping
+                select userRepository.FindEntityById(participant.UserId).Username;
+
+            string usersTyping = ChatWindowStringBuilder.CreateUsersTypingMessage(listOfUsersTyping.ToList());
+            GroupChat.UsersTyping = usersTyping;
+        }
+
         public GroupChatModel GroupChat
         {
             get { return groupChat; }
             set
             {
-                if (Equals(value, groupChat)) return;
+                if (Equals(value, groupChat))
+                {
+                    return;
+                }
+
                 groupChat = value;
                 OnPropertyChanged();
             }
@@ -89,12 +107,17 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
+        public void SendUserTypingRequest(bool isTyping)
+        {
+           clientService.SendUserTypingRequest(groupChat.Participation.Id, isTyping);
+        }
+
         public void Dispose()
         {
             audioPlayer.Dispose();
         }
 
-        private void OnConversationChanged(object sender, EntityChangedEventArgs<Conversation> e)
+        private void OnConversationUpdated(object sender, EntityChangedEventArgs<Conversation> e)
         {
             if (!e.Entity.LastContribution.Equals(e.PreviousEntity.LastContribution))
             {
@@ -114,19 +137,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private string GetChatTitle()
         {
-            var usernames = new List<string>();
+            IEnumerable<string> usernames = participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id)
+                .Select(participant => userRepository.FindEntityById(participant.UserId).Username);
 
-            var titleBuilder = new StringBuilder();
-            titleBuilder.Append("Chat between ");
-
-            foreach (Participation participant in participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id))
-            {
-                usernames.Add(userRepository.FindEntityById(participant.UserId).Username);
-            }
-
-            titleBuilder.Append(TitleBuilder.CreateUserList(usernames));
-
-            return titleBuilder.ToString();
+            return ChatWindowStringBuilder.CreateUserListTitle(usernames.ToList());
         }
 
         private void UpdateConnectedUsersList()
@@ -184,16 +198,14 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.Messages = messages;
         }
 
-        private void OnConversationUpdated(IEntity conversation)
+        private void OnConversationUpdated(Conversation conversation)
         {
-            // The model is no longer referencing the same conversation as in the repository, give it the reference again.
-            groupChat.Conversation = conversationRepository.FindEntityById(conversation.Id);
-
+            groupChat.Conversation = conversation;
             groupChat.Title = GetChatTitle();
         }
 
         #region Commands
-
+        
         public ICommand SendMessage
         {
             get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }

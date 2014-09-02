@@ -109,10 +109,10 @@ namespace SharedClassesTests.Domain
 
             var participantIds = new List<int> {participation1.UserId, participation2.UserId};
 
-            int actualConversationId = participationRepository.GetConversationIdByParticipantsId(participantIds);
+            int actualConversationId = participationRepository.GetConversationIdByUserIds(participantIds);
 
             Assert.AreEqual(conversationId, actualConversationId);
-            Assert.AreEqual(0, participationRepository.GetConversationIdByParticipantsId(new List<int> {1, 2, 3}));
+            Assert.AreEqual(0, participationRepository.GetConversationIdByUserIds(new List<int> {1, 2, 3}));
         }
 
         [Test]

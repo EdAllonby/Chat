@@ -33,7 +33,9 @@ namespace SharedClasses.Serialiser
                 {MessageIdentifier.LoginResponse, new LoginResponseSerialiser()},
                 {MessageIdentifier.AvatarRequest, new AvatarRequestSerialiser()},
                 {MessageIdentifier.AvatarNotification, new AvatarNotificationSerialiser()},
-                {MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationSerialiser()}
+                {MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationSerialiser()},
+                {MessageIdentifier.UserTypingRequest, new UserTypingRequestSerialiser()},
+                {MessageIdentifier.UserTypingNotification, new UserTypingNotificationSerialiser()}
             };
 
         /// <summary>
@@ -59,7 +61,9 @@ namespace SharedClasses.Serialiser
                 {typeof (LoginResponse), new LoginResponseSerialiser()},
                 {typeof (AvatarRequest), new AvatarRequestSerialiser()},
                 {typeof (AvatarNotification), new AvatarNotificationSerialiser()},
-                {typeof (ConnectionStatusNotification), new ConnectionStatusNotificationSerialiser()}
+                {typeof (ConnectionStatusNotification), new ConnectionStatusNotificationSerialiser()},
+                {typeof (UserTypingRequest), new UserTypingRequestSerialiser()},
+                {typeof (UserTypingNotification), new UserTypingNotificationSerialiser()}
             };
     }
 }

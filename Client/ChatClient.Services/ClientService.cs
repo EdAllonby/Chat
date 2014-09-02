@@ -114,7 +114,6 @@ namespace ChatClient.Services
         public void SendContribution(int conversationId, Image image)
         {
             connectionHandler.SendMessage(new ContributionRequest(new ImageContribution(ClientUserId, image, conversationId)));
-
         }
 
         /// <summary>
@@ -124,6 +123,16 @@ namespace ChatClient.Services
         public void SendAvatarRequest(Image avatar)
         {
             connectionHandler.SendMessage(new AvatarRequest(ClientUserId, avatar));
+        }
+
+        /// <summary>
+        /// Sends a <see cref="UserTypingRequest"/> message to the server to change the status of a current user's state of typing.
+        /// </summary>
+        /// <param name="participationId">The participation Id that holds reference to the user and conversation.</param>
+        /// <param name="isTyping">Whether the user has started or finished typing.</param>
+        public void SendUserTypingRequest(int participationId, bool isTyping)
+        {
+            connectionHandler.SendMessage(new UserTypingRequest(new UserTyping(isTyping, participationId)));
         }
 
         private void OnNewMessageReceived(object sender, MessageEventArgs e)
@@ -138,8 +147,7 @@ namespace ChatClient.Services
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
-                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
-                    keyNotFoundException);
+                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
             }
         }
 

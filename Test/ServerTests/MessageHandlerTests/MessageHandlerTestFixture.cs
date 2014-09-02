@@ -66,7 +66,7 @@ namespace ServerTests.MessageHandlerTests
 
             SetUpMultiUserConversation(usersToAddToConversation, repositoryManager, idAllocator);
 
-            DefaultConversationIdDefaultUserIsIn = participationRepository.GetConversationIdByParticipantsId(usersToAddToConversation);
+            DefaultConversationIdDefaultUserIsIn = participationRepository.GetConversationIdByUserIds(usersToAddToConversation);
         }
 
         private void SetUpMultiUserConversation(IEnumerable<int> userIds, RepositoryManager repositoryManager, EntityIdAllocatorFactory idAllocator)

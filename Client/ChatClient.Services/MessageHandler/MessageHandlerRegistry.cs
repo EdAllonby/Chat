@@ -23,7 +23,8 @@ namespace ChatClient.Services.MessageHandler
                 {MessageIdentifier.AvatarNotification, new AvatarNotificationHandler()},
                 {MessageIdentifier.UserSnapshot, new UserSnapshotHandler()},
                 {MessageIdentifier.ConversationSnapshot, new ConversationSnapshotHandler()},
-                {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotHandler()}
+                {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotHandler()},
+                {MessageIdentifier.UserTypingNotification, new UserTypingNotificationHandler()}
             };
     }
 }

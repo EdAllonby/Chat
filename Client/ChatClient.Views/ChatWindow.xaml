@@ -9,8 +9,6 @@
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
         Title="{Binding GroupChat.WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen"
-        TextOptions.TextFormattingMode="Display"
-        TextOptions.TextRenderingMode="ClearType"
         Closing="WindowClosing"
         FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}"
         d:DataContext="{d:DesignInstance viewModel:ChatWindowViewModel}" RenderOptions.BitmapScalingMode="Fant" >
@@ -24,6 +22,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="120" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -63,7 +62,7 @@
             </Grid.RowDefinitions>
 
             <extendedControls:BindableRichTextBox x:Name="MessageTextBox" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                 Margin="10" IsReadOnly="True"
+                                 Margin="10,0,10,0" IsReadOnly="True"
                                  TextChanged="OnMessageTextBoxTextChanged"
                                  Grid.Column="0"
                                  Background="AliceBlue"
@@ -71,7 +70,10 @@
                                  Document="{Binding GroupChat.Messages, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
-        <Grid Grid.Row="3" AllowDrop="True">
+        <Canvas Grid.Row="3" Margin="10,0,10,0" Height="20">
+            <Label FontSize="10" FontStyle="Italic"  Foreground="DimGray" Content="{Binding GroupChat.UsersTyping}"/>
+        </Canvas>
+        <Grid Grid.Row="4" AllowDrop="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -80,7 +82,7 @@
                 <ColumnDefinition Width="70" />
             </Grid.ColumnDefinitions>
 
-                <TextBox Name="ChatTextBox"
+                <TextBox Name="ChatTextBox" TextChanged="OnTextChanged"
                      AllowDrop="True"
                      PreviewDragEnter="FileShowTextBox_PreviewDragEnter" 
                      PreviewDragOver="FileShowTextBox_PreviewDragEnter" 
@@ -93,7 +95,7 @@
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
                      SpellCheck.IsEnabled="True" Language="EN-UK"
-                     Margin="10" TextWrapping="Wrap">
+                     Margin="10,0,10,10" TextWrapping="Wrap">
                     <TextBox.InputBindings>
                         <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
                     </TextBox.InputBindings>

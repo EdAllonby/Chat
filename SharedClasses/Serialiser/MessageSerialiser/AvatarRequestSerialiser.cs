@@ -15,7 +15,6 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         protected override void Serialise(NetworkStream networkStream, AvatarRequest avatarRequest)
         {
             avatarSerialiser.Serialise(networkStream, avatarRequest.Avatar);
-            Log.InfoFormat("{0} message serialised.", avatarRequest.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)

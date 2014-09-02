@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SharedClasses.Domain
 {
@@ -41,6 +43,7 @@ namespace SharedClasses.Domain
             Contract.Requires(id > 0);
 
             this.id = id;
+            UserTyping = new UserTyping(false, id);
         }
 
         public int UserId
@@ -52,6 +55,8 @@ namespace SharedClasses.Domain
         {
             get { return conversationId; }
         }
+
+        public UserTyping UserTyping { get; set; }
 
         public int Id
         {
@@ -68,8 +73,14 @@ namespace SharedClasses.Domain
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
 
             return obj.GetType() == GetType() && Equals((Participation) obj);
         }
@@ -78,7 +89,19 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (conversationId*397) ^ userId;
+                return (conversationId * 397) ^ userId;
+            }
+        }
+
+        public static Participation DeepClone(Participation participation)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(memoryStream, participation);
+                memoryStream.Position = 0;
+
+                return (Participation) formatter.Deserialize(memoryStream);
             }
         }
     }

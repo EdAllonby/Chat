@@ -14,7 +14,13 @@ namespace ChatClient.Models.ChatModel
         private FlowDocument messages = new FlowDocument();
         private string title;
         private List<User> users;
+        private string usersTyping;
         private string windowTitle;
+
+        public GroupChatModel(Participation participation)
+        {
+            Participation = participation;
+        }
 
         public string WindowTitle
         {
@@ -27,20 +33,27 @@ namespace ChatClient.Models.ChatModel
             }
         }
 
+        public string UsersTyping
+        {
+            get { return usersTyping; }
+            set
+            {
+                usersTyping = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Conversation Conversation
         {
             get { return conversation; }
             set
             {
-                // Because sometimes the reference breaks between Conversation updates, check with a reference equals for this property.
-                if (ReferenceEquals(value, conversation))
-                {
-                    return;
-                }
                 conversation = value;
                 OnPropertyChanged();
             }
         }
+
+        public Participation Participation { get; private set; }
 
         public FlowDocument Messages
         {

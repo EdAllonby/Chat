@@ -1,4 +1,6 @@
-﻿using SharedClasses;
+﻿using System.Collections.Generic;
+using System.Linq;
+using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 
@@ -22,6 +24,35 @@ namespace Server.MessageHandler
             var connectionStatus = new ConnectionStatus(clientDisconnection.UserId, ConnectionStatus.Status.Disconnected);
 
             userRepository.UpdateUserConnectionStatus(connectionStatus);
+
+            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            SendUserTypingNotification(clientDisconnection.UserId, clientManager, participationRepository);
+        }
+
+        /// <summary>
+        /// If a user unexpectedly disconnects whilst sending a message, clients will be unaware and continue seeing the user as typing a message.
+        /// This procedure will go through conversations a client is in and forcefully tell other clients that the user has stopped typing.
+        /// </summary>
+        /// <remarks>
+        /// This could have be done in the Client when a client senses that a user's <see cref="ConnectionStatus"/> has been modified.
+        /// But I'd rather have it as a rule here where a client can use their same <see cref="UserTypingNotification"/> logic.
+        /// </remarks>
+        /// <param name="userId">The user that disconnected.</param>
+        /// <param name="clientManager">Holds the connected clients.</param>
+        /// <param name="participationRepository">Holds the participations.</param>
+        private static void SendUserTypingNotification(int userId, IClientManager clientManager, ParticipationRepository participationRepository)
+        {
+            IEnumerable<int> conversationIdsUserIsIn = participationRepository.GetAllConversationIdsByUserId(userId);
+
+            foreach (int conversationId in conversationIdsUserIsIn)
+            {
+                Participation participation = participationRepository.GetParticipationByUserIdandConversationId(userId, conversationId);
+                UserTyping userTyping = new UserTyping(false, participation.Id);
+                UserTypingNotification userTypingNotification =  new UserTypingNotification(userTyping, NotificationType.Create);
+                var participationsForConversation = participationRepository.GetParticipationsByConversationId(conversationId);
+                List<int> userIdsInConversation = participationsForConversation.Select(x=>x.UserId).ToList();
+                clientManager.SendMessageToClients(userTypingNotification, userIdsInConversation);
+            }
         }
     }
 }

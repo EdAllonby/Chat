@@ -13,7 +13,6 @@ namespace SharedClasses.Domain
     {
         private readonly int id;
         private readonly string username;
-        private Avatar avatar;
 
         /// <summary>
         /// Creates an incomplete user entity.
@@ -23,7 +22,7 @@ namespace SharedClasses.Domain
             Contract.Requires(username != null);
 
             this.username = username;
-            avatar = new Avatar();
+            Avatar = new Avatar();
         }
 
         /// <summary>
@@ -53,11 +52,7 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The user's current Avatar
         /// </summary>
-        public Avatar Avatar
-        {
-            get { return avatar; }
-            set { avatar = value; }
-        }
+        public Avatar Avatar { get; set; }
 
         /// <summary>
         /// The current status of the User.

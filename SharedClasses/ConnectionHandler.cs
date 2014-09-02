@@ -24,9 +24,9 @@ namespace SharedClasses
         private readonly TcpClient tcpClient;
 
         /// <summary>
-        /// Initialises the object so it can begin to send and recieve <see cref="IMessage"/>s through <see cref="tcpClient"/>.
+        /// Initialises the object so it can begin to send and receive <see cref="IMessage"/>s through <see cref="tcpClient"/>.
         /// </summary>
-        /// <param name="clientUserId">The client </param>
+        /// <param name="clientUserId">A unique value that identifies the client.</param>
         /// <param name="tcpClient"></param>
         public ConnectionHandler(int clientUserId, TcpClient tcpClient)
         {

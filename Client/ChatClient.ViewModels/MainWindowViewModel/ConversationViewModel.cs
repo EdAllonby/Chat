@@ -17,8 +17,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             if (!IsInDesignMode)
             {
                 this.conversation = conversation;
-                userRepository = userRepository;
-                participationRepository = participationRepository;
+                RepositoryManager repositoryManager = serviceRegistry.GetService<RepositoryManager>();
+                userRepository = repositoryManager.GetRepository<User>();
+                participationRepository = (ParticipationRepository) repositoryManager.GetRepository<Participation>();
             }
         }
 
@@ -43,7 +44,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
                 usernames.Add(userRepository.FindEntityById(participant.UserId).Username);
             }
 
-            titleBuilder.Append(TitleBuilder.CreateUserList(usernames));
+            titleBuilder.Append(ChatWindowStringBuilder.CreateUserListTitle(usernames));
 
             return titleBuilder.ToString();
         }
