@@ -5,9 +5,9 @@ using SharedClasses.Message;
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// Generic Serialiser which serialises a type which inherits <see cref="IMessage" /> down the networkStream
+    /// Generic Serialiser which serialises a type which inherits <see cref="IMessage" /> down the networkStream.
     /// </summary>
-    /// <typeparam name="T"><see cref="IMessage" /> object which is any message that can be used in this protocol</typeparam>
+    /// <typeparam name="T"><see cref="IMessage" /> object which is any message that can be used in this protocol.</typeparam>
     public abstract class Serialiser<T> : ISerialiser where T : IMessage
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof (Serialiser<T>));
@@ -20,8 +20,9 @@ namespace SharedClasses.Serialiser
         public void Serialise(NetworkStream networkStream, IMessage message)
         {
             MessageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
-            Log.InfoFormat("Serialising an {0} across the network stream.", message.MessageIdentifier);
+            Log.DebugFormat("Serialising {0} across the network stream.", message.MessageIdentifier);
             Serialise(networkStream, (T) message);
+            Log.InfoFormat("Finished Serialising {0} across the network stream.", message.MessageIdentifier);
         }
 
         /// <summary>

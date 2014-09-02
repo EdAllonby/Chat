@@ -53,6 +53,7 @@
     <Compile Include="EntityIdGeneratorRegistry.cs" />
     <Compile Include="IClientHandler.cs" />
     <Compile Include="IClientManager.cs" />
+    <Compile Include="MessageHandler\UserTypingRequestHandler.cs" />
     <Compile Include="OnEntityChangedHandler.cs" />
     <Compile Include="OnConversationChangedHandler.cs" />
     <Compile Include="OnParticipationChangedHandler.cs" />

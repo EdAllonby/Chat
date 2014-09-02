@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using ChatClient.ViewModels.ChatWindowViewModel;
-using ChatClient.ViewModels.UserSettingsViewModel;
 using Microsoft.Win32;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace ChatClient.Views
 {
@@ -16,15 +15,19 @@ namespace ChatClient.Views
     public partial class ChatWindow
     {
         private readonly IServiceRegistry serviceRegistry;
+        private readonly ChatWindowViewModel viewModel;
+        private bool hadText;
 
-        public ChatWindow(IServiceRegistry serviceRegistry, ChatWindowViewModel viewModel)
+        public ChatWindow(IServiceRegistry serviceRegistry, Conversation conversation)
         {
             this.serviceRegistry = serviceRegistry;
-            viewModel.OpenUserSettingsWindowRequested += OnOpenUserSettingsWindowRequested;
+            ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(conversation, serviceRegistry);
+            viewModel = chatWindowViewModel;
+            chatWindowViewModel.OpenUserSettingsWindowRequested += OnOpenUserSettingsWindowRequested;
             InitializeComponent();
-            DataContext = viewModel;
+            DataContext = chatWindowViewModel;
 
-            viewModel.InitialiseChat();
+            chatWindowViewModel.InitialiseChat();
         }
 
         private void OnOpenUserSettingsWindowRequested(object sender, EventArgs e)
@@ -36,7 +39,6 @@ namespace ChatClient.Views
         private void WindowClosing(object sender, CancelEventArgs e)
         {
             // Cannot directly bind a command to a closing event, so need to call the command in code behind.
-            var viewModel = DataContext as ChatWindowViewModel;
             if (viewModel != null)
             {
                 viewModel.Closing.Execute(null);
@@ -62,9 +64,27 @@ namespace ChatClient.Views
 
             string fileLocation = fileDialog.FileName;
 
-            var viewModel = (ChatWindowViewModel)DataContext;
-
             viewModel.SendImageContribution(fileLocation);
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!hadText)
+            {
+                if (!string.IsNullOrEmpty(ChatTextBox.Text))
+                {
+                    hadText = true;
+                    viewModel.SendUserTypingRequest(true);
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(ChatTextBox.Text))
+                {
+                    hadText = false;
+                    viewModel.SendUserTypingRequest(false);
+                }
+            }
         }
     }
 }

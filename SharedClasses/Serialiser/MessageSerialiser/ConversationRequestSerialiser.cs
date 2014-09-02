@@ -14,9 +14,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 
         protected override void Serialise(NetworkStream networkStream, ConversationRequest message)
         {
-            Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             serialiser.Serialise(networkStream, message);
-            Log.InfoFormat("{0} message serialised", message.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)

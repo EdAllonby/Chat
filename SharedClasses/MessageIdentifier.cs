@@ -26,6 +26,8 @@ namespace SharedClasses
         ConversationNotification,
         AvatarRequest,
         AvatarNotification,
-        ConnectionStatusNotification
+        ConnectionStatusNotification,
+        UserTypingRequest,
+        UserTypingNotification
     }
 }

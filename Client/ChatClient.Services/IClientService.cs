@@ -48,6 +48,13 @@ namespace ChatClient.Services
         void SendAvatarRequest(Image avatar);
 
         /// <summary>
+        /// Sends a <see cref="UserTypingRequest"/> message to the server to change the status of a current user's state of typing.
+        /// </summary>
+        /// <param name="participationId">The participation Id that holds reference to the user and conversation.</param>
+        /// <param name="isTyping">Whether the user has started or finished typing.</param>
+        void SendUserTypingRequest(int participationId, bool isTyping);
+
+        /// <summary>
         /// Sends a text <see cref="ContributionRequest"/> message to the server.
         /// </summary>
         /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>

@@ -18,6 +18,15 @@ namespace Server
             conversationRepository = RepositoryManager.GetRepository<Conversation>();
 
             participationRepository.EntityAdded += OnParticipationAdded;
+            participationRepository.EntityUpdated += OnParticipationChanged;
+        }
+
+        private void OnParticipationChanged(object sender, EntityChangedEventArgs<Participation> e)
+        {
+            if (!e.Entity.UserTyping.Equals(e.PreviousEntity.UserTyping))
+            {
+                OnUserTypingChanged(e.Entity);
+            }
         }
 
         private void OnParticipationAdded(object sender, EntityChangedEventArgs<Participation> e)
@@ -40,6 +49,17 @@ namespace Server
             Conversation conversation = conversationRepository.FindEntityById(participation.ConversationId);
 
             SendConversationNotificationToParticipants(conversation, participation.UserId, otherParticipants);
+        }
+        
+        private void OnUserTypingChanged(Participation participation)
+        {
+            List<Participation> participationsForConversation = participationRepository.GetParticipationsByConversationId(participation.ConversationId);
+
+            List<int> usersInConversation = participationsForConversation.Select(x => x.UserId).ToList();
+
+            UserTypingNotification userTypingNotification = new UserTypingNotification(participation.UserTyping, NotificationType.Update);
+
+            ClientManager.SendMessageToClients(userTypingNotification, usersInConversation);
         }
 
         private void SendConversationNotificationToParticipants(Conversation conversation, int newParticipantUserId, IEnumerable<Participation> otherParticipants)

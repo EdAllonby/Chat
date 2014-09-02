@@ -16,7 +16,7 @@ namespace ChatClient.ViewModels
 
         private static readonly Dictionary<int, WindowStatus> ConversationWindowStatusesIndexedByConversationId = new Dictionary<int, WindowStatus>();
 
-        public static EventHandler<ChatWindowViewModel.ChatWindowViewModel> OpenChatWindowRequest;
+        public static EventHandler<Conversation> OpenChatWindowRequest;
 
         /// <summary>
         /// Creates a new chat window if the current chat window is closed.
@@ -28,7 +28,7 @@ namespace ChatClient.ViewModels
             // Check if conversation window already exists
             if (GetWindowStatus(conversation.Id) == WindowStatus.Closed)
             {
-                Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(new ChatWindowViewModel.ChatWindowViewModel(conversation, serviceRegistry)));
+                Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(conversation));
 
                 SetWindowStatus(conversation.Id, WindowStatus.Open);
                 Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.Id);
@@ -66,12 +66,12 @@ namespace ChatClient.ViewModels
             return isFound ? windowStatus : WindowStatus.Closed;
         }
 
-        private static void OnOpenChatWindowRequest(ChatWindowViewModel.ChatWindowViewModel chatWindowViewModel)
+        private static void OnOpenChatWindowRequest(Conversation conversation)
         {
-            EventHandler<ChatWindowViewModel.ChatWindowViewModel> openChatWindowRequestCopy = OpenChatWindowRequest;
+            EventHandler<Conversation> openChatWindowRequestCopy = OpenChatWindowRequest;
             if (openChatWindowRequestCopy != null)
             {
-                openChatWindowRequestCopy(null, chatWindowViewModel);
+                openChatWindowRequestCopy(null, conversation);
             }
         }
     }

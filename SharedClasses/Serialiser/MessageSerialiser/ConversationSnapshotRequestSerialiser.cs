@@ -13,7 +13,6 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         protected override void Serialise(NetworkStream networkStream, ConversationSnapshotRequest message)
         {
             serialiser.Serialise(networkStream, message);
-            Log.InfoFormat("{0} serialised and sent to network stream", message.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)

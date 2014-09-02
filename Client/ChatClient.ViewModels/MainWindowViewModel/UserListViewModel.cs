@@ -138,17 +138,17 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             ConnectedUsers = otherUsers;
         }
 
-        private void NewConversation(List<int> participantIds)
+        private void NewConversation(List<int> userIds)
         {
             IsMultiUserConversation = false;
 
-            if (!participationRepository.DoesConversationWithUsersExist(participantIds))
+            if (!participationRepository.DoesConversationWithUsersExist(userIds))
             {
-                clientService.CreateConversation(participantIds);
+                clientService.CreateConversation(userIds);
             }
             else
             {
-                int conversationId = participationRepository.GetConversationIdByParticipantsId(participantIds);
+                int conversationId = participationRepository.GetConversationIdByUserIds(userIds);
                 ConversationWindowManager.CreateConversationWindow(ServiceRegistry, conversationRepository.FindEntityById(conversationId));
             }
         }

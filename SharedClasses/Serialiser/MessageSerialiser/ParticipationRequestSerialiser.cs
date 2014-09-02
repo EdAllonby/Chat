@@ -10,9 +10,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 
         protected override void Serialise(NetworkStream networkStream, ParticipationRequest message)
         {
-            Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
             participationSerialiser.Serialise(networkStream, message.Participation);
-            Log.InfoFormat("{0} message serialised", message.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)

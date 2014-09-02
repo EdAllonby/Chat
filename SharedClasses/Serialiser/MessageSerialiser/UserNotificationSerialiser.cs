@@ -17,7 +17,6 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         {
             notificationTypeSerialiser.Serialise(networkStream, message.NotificationType);
             userSerialiser.Serialise(networkStream, message.User);
-            Log.InfoFormat("{0} serialised and sent to network stream", message);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)

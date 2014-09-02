@@ -1,9 +1,9 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using ChatClient.ViewModels;
-using ChatClient.ViewModels.ChatWindowViewModel;
 using ChatClient.ViewModels.MainWindowViewModel;
 using SharedClasses;
+using SharedClasses.Domain;
 
 namespace ChatClient.Views
 {
@@ -24,9 +24,9 @@ namespace ChatClient.Views
             ConversationWindowManager.OpenChatWindowRequest += OnOpenChatWindowRequest;
         }
 
-        private void OnOpenChatWindowRequest(object sender, ChatWindowViewModel viewModel)
+        private void OnOpenChatWindowRequest(object sender, Conversation conversation)
         {
-            var view = new ChatWindow(serviceRegistry, viewModel);
+            var view = new ChatWindow(serviceRegistry, conversation);
             view.Show();
         }
 

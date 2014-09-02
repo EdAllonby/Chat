@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using SharedClasses.Message;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Holds a collection of <see cref="TextContribution"/>s that are linked by a Conversation
+    /// A conversation holds <see cref="IContribution"/>s that are linked to it.
     /// </summary>
     [Serializable]
     public sealed class Conversation : IEntity, IEquatable<Conversation>
@@ -29,9 +26,15 @@ namespace SharedClasses.Domain
             this.id = id;
         }
 
+        /// <summary>
+        /// The most recent contribution added.
+        /// </summary>
         public IContribution LastContribution
         {
-            get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
+            get
+            {
+                return contributionsIndexedByContributionId.Values.LastOrDefault();
+            }
         }
 
         /// <summary>

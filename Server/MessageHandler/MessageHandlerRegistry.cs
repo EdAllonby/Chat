@@ -22,7 +22,8 @@ namespace Server.MessageHandler
                 {MessageIdentifier.ClientDisconnection, new ClientDisconnectionHandler()},
                 {MessageIdentifier.ParticipationRequest, new ParticipationRequestHandler()},
                 {MessageIdentifier.ConversationRequest, new ConversationRequestHandler()},
-                {MessageIdentifier.AvatarRequest, new AvatarRequestHandler()}
+                {MessageIdentifier.AvatarRequest, new AvatarRequestHandler()},
+                {MessageIdentifier.UserTypingRequest, new UserTypingRequestHandler()}
             };
     }
 }
