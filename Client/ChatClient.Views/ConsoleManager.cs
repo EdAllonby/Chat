@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -14,6 +15,11 @@ namespace ChatClient.Views
     public static class ConsoleManager
     {
         private const string Kernel32DllName = "kernel32.dll";
+
+        private static bool HasConsole
+        {
+            get { return GetConsoleWindow() != IntPtr.Zero; }
+        }
 
         [DllImport(Kernel32DllName)]
         private static extern bool AllocConsole();
@@ -63,23 +69,18 @@ namespace ChatClient.Views
             }
         }
 
-        private static bool HasConsole
-        {
-            get { return GetConsoleWindow() != IntPtr.Zero; }
-        }
-
         private static void InvalidateOutAndError()
         {
-            Type type = typeof(System.Console);
+            Type type = typeof (Console);
 
-            System.Reflection.FieldInfo consoleOut = type.GetField("_out",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            FieldInfo consoleOut = type.GetField("_out",
+                BindingFlags.Static | BindingFlags.NonPublic);
 
-            System.Reflection.FieldInfo consoleError = type.GetField("_error",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            FieldInfo consoleError = type.GetField("_error",
+                BindingFlags.Static | BindingFlags.NonPublic);
 
-            System.Reflection.MethodInfo consoleInitializeStdOutError = type.GetMethod("InitializeStdOutError",
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            MethodInfo consoleInitializeStdOutError = type.GetMethod("InitializeStdOutError",
+                BindingFlags.Static | BindingFlags.NonPublic);
 
             Debug.Assert(consoleOut != null);
             Debug.Assert(consoleError != null);
@@ -89,7 +90,7 @@ namespace ChatClient.Views
             consoleOut.SetValue(null, null);
             consoleError.SetValue(null, null);
 
-            consoleInitializeStdOutError.Invoke(null, new object[] { true });
+            consoleInitializeStdOutError.Invoke(null, new object[] {true});
         }
 
         private static void SetOutAndErrorNull()

@@ -17,8 +17,8 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private readonly IClientService clientService;
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
-        
-        public EventHandler<LoginErrorEventArgs> LoginErrored; 
+
+        public EventHandler<LoginErrorEventArgs> LoginErrored;
         public EventHandler OpenMainWindowRequested;
         private bool canOpenWindow;
 

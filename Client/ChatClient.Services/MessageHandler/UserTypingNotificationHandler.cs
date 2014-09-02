@@ -8,7 +8,7 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            UserTypingNotification userTypingNotification = (UserTypingNotification) message;
+            var userTypingNotification = (UserTypingNotification) message;
 
             var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 

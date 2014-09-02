@@ -50,14 +50,14 @@ namespace Server
 
             SendConversationNotificationToParticipants(conversation, participation.UserId, otherParticipants);
         }
-        
+
         private void OnUserTypingChanged(Participation participation)
         {
             List<Participation> participationsForConversation = participationRepository.GetParticipationsByConversationId(participation.ConversationId);
 
             List<int> usersInConversation = participationsForConversation.Select(x => x.UserId).ToList();
 
-            UserTypingNotification userTypingNotification = new UserTypingNotification(participation.UserTyping, NotificationType.Update);
+            var userTypingNotification = new UserTypingNotification(participation.UserTyping, NotificationType.Update);
 
             ClientManager.SendMessageToClients(userTypingNotification, usersInConversation);
         }

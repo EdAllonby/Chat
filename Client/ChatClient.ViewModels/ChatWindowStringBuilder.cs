@@ -12,7 +12,7 @@ namespace ChatClient.ViewModels
             {
                 return string.Empty;
             }
-            
+
             var titleBuilder = new StringBuilder();
 
             titleBuilder.Append("Chat between ");

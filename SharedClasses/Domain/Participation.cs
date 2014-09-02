@@ -89,7 +89,7 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (conversationId * 397) ^ userId;
+                return (conversationId*397) ^ userId;
             }
         }
 

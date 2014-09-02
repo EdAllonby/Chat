@@ -9,11 +9,11 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class TextContribution : IContribution
     {
+        private readonly DateTime contributionTimeStamp;
         private readonly int contributorUserId;
         private readonly int conversationId;
         private readonly int id;
         private readonly string message;
-        private readonly DateTime contributionTimeStamp;
 
         /// <summary>
         /// Create a text contribution that will later get assigned an Id.
@@ -44,6 +44,14 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
+        /// The contribution message.
+        /// </summary>
+        public string Message
+        {
+            get { return message; }
+        }
+
+        /// <summary>
         /// The Conversation Id this Contribution belongs to.
         /// </summary>
         public int ConversationId
@@ -57,14 +65,6 @@ namespace SharedClasses.Domain
         public int ContributorUserId
         {
             get { return contributorUserId; }
-        }
-
-        /// <summary>
-        /// The contribution message.
-        /// </summary>
-        public string Message
-        {
-            get { return message; }
         }
 
         /// <summary>

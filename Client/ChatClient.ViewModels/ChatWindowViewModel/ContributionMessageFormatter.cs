@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using ChatClient.ViewModels.Converter;
 using SharedClasses.Domain;
 using Brush = System.Windows.Media.Brush;
@@ -51,7 +50,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             Run user = FormatUser(contribution);
 
             // Here will decide whether the contribution is text or image
-            TextContribution textContribution = contribution as TextContribution;
+            var textContribution = contribution as TextContribution;
 
             Run message = null;
 
@@ -144,7 +143,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private InlineUIContainer FormatMessageBody(ImageContribution contribution)
         {
-            Image image = new Image {Source = bitmapConverter.Convert((Bitmap) contribution.Image)};
+            var image = new Image {Source = bitmapConverter.Convert((Bitmap) contribution.Image)};
             return new InlineUIContainer(image);
         }
 

@@ -4,7 +4,6 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
-using log4net.Config;
 
 [assembly: AssemblyTitle("ChatClient.Services")]
 [assembly: AssemblyDescription("")]

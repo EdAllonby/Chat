@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Net.Mime;
-using SharedClasses;
+﻿using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 

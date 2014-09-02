@@ -14,7 +14,6 @@ using ChatClient.ViewModels.UserSettingsViewModel;
 using GongSolutions.Wpf.DragDrop;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
@@ -66,17 +65,6 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        private void OnParticipationUpdated(object sender, EntityChangedEventArgs<Participation> e)
-        {
-            IEnumerable<string> listOfUsersTyping =
-                from participant in participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id)
-                where participant.UserTyping.IsUserTyping
-                select userRepository.FindEntityById(participant.UserId).Username;
-
-            string usersTyping = ChatWindowStringBuilder.CreateUsersTypingMessage(listOfUsersTyping.ToList());
-            GroupChat.UsersTyping = usersTyping;
-        }
-
         public GroupChatModel GroupChat
         {
             get { return groupChat; }
@@ -107,14 +95,40 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             }
         }
 
-        public void SendUserTypingRequest(bool isTyping)
-        {
-           clientService.SendUserTypingRequest(groupChat.Participation.Id, isTyping);
-        }
-
         public void Dispose()
         {
             audioPlayer.Dispose();
+        }
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+        }
+
+        /// <summary>
+        /// Handles when something is dropped onto the text entry box.
+        /// </summary>
+        /// <param name="dropInfo">The information of the drop.</param>
+        public void Drop(IDropInfo dropInfo)
+        {
+            string imageLocation = ((DataObject) dropInfo.Data).GetFileDropList()[0];
+
+            SendImageContribution(imageLocation);
+        }
+
+        private void OnParticipationUpdated(object sender, EntityChangedEventArgs<Participation> e)
+        {
+            IEnumerable<string> listOfUsersTyping =
+                from participant in participationRepository.GetParticipationsByConversationId(groupChat.Conversation.Id)
+                where participant.UserTyping.IsUserTyping
+                select userRepository.FindEntityById(participant.UserId).Username;
+
+            string usersTyping = ChatWindowStringBuilder.CreateUsersTypingMessage(listOfUsersTyping.ToList());
+            GroupChat.UsersTyping = usersTyping;
+        }
+
+        public void SendUserTypingRequest(bool isTyping)
+        {
+            clientService.SendUserTypingRequest(groupChat.Participation.Id, isTyping);
         }
 
         private void OnConversationUpdated(object sender, EntityChangedEventArgs<Conversation> e)
@@ -204,8 +218,27 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             groupChat.Title = GetChatTitle();
         }
 
+        /// <summary>
+        /// Tries to send an <see cref="ImageContribution"/> to the conversation.
+        /// <see cref="imageLocation"/> doesn't need to be a location of an image, checks are made in this method to ensure only images get sent.
+        /// </summary>
+        /// <param name="imageLocation">The location of the image in the file system.</param>
+        public void SendImageContribution(string imageLocation)
+        {
+            Image image;
+            if (ImageUtilities.TryLoadImageFromFile(imageLocation, out image))
+            {
+                clientService.SendContribution(groupChat.Conversation.Id, image);
+
+                groupChat.MessageToAddToConversation = string.Empty;
+
+                // Force buttons to enable
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
         #region Commands
-        
+
         public ICommand SendMessage
         {
             get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
@@ -268,39 +301,5 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         }
 
         #endregion
-
-        public void DragOver(IDropInfo dropInfo)
-        {
-        }
-
-        /// <summary>
-        /// Handles when something is dropped onto the text entry box.
-        /// </summary>
-        /// <param name="dropInfo">The information of the drop.</param>
-        public void Drop(IDropInfo dropInfo)
-        {
-            string imageLocation = ((DataObject)dropInfo.Data).GetFileDropList()[0];
-
-            SendImageContribution(imageLocation);
-        }
-
-        /// <summary>
-        /// Tries to send an <see cref="ImageContribution"/> to the conversation.
-        /// <see cref="imageLocation"/> doesn't need to be a location of an image, checks are made in this method to ensure only images get sent.
-        /// </summary>
-        /// <param name="imageLocation">The location of the image in the file system.</param>
-        public void SendImageContribution(string imageLocation)
-        {
-            Image image;
-            if (ImageUtilities.TryLoadImageFromFile(imageLocation, out image))
-            {
-                clientService.SendContribution(groupChat.Conversation.Id, image);
-
-                groupChat.MessageToAddToConversation = string.Empty;
-
-                // Force buttons to enable
-                CommandManager.InvalidateRequerySuggested();
-            }
-        }
     }
 }

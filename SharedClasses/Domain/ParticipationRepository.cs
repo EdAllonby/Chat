@@ -44,8 +44,8 @@ namespace SharedClasses.Domain
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
             return from participation in GetAllEntities()
-                   where participation.UserId.Equals(userId)
-                   select participation.ConversationId;
+                where participation.UserId.Equals(userId)
+                select participation.ConversationId;
         }
 
         /// <summary>
