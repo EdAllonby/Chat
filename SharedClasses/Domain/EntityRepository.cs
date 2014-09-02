@@ -43,7 +43,7 @@ namespace SharedClasses.Domain
         public void UpdateEntity(T entity)
         {
             T previousEntity = entitiesIndexedById[entity.Id];
-            
+
             entitiesIndexedById[entity.Id] = entity;
 
             Log.DebugFormat("Entity with Id {0} has been updated in {1} repository.", entity.Id, EnclosedEntityType.Name);

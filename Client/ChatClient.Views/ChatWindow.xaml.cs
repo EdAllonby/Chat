@@ -21,7 +21,7 @@ namespace ChatClient.Views
         public ChatWindow(IServiceRegistry serviceRegistry, Conversation conversation)
         {
             this.serviceRegistry = serviceRegistry;
-            ChatWindowViewModel chatWindowViewModel = new ChatWindowViewModel(conversation, serviceRegistry);
+            var chatWindowViewModel = new ChatWindowViewModel(conversation, serviceRegistry);
             viewModel = chatWindowViewModel;
             chatWindowViewModel.OpenUserSettingsWindowRequested += OnOpenUserSettingsWindowRequested;
             InitializeComponent();
@@ -58,7 +58,7 @@ namespace ChatClient.Views
 
         private void OnBrowseImageButtonClick(object sender, RoutedEventArgs e)
         {
-            var fileDialog = new OpenFileDialog { Filter = "Image Files (*.bmp, *.png, *.jpg)|*.bmp;*.png;*.jpg" };
+            var fileDialog = new OpenFileDialog {Filter = "Image Files (*.bmp, *.png, *.jpg)|*.bmp;*.png;*.jpg"};
 
             fileDialog.ShowDialog();
 

@@ -47,7 +47,7 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (isUserTyping.GetHashCode() * 397) ^ participationId;
+                return (isUserTyping.GetHashCode()*397) ^ participationId;
             }
         }
 

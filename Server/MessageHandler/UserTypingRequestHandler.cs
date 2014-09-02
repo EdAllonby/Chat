@@ -13,9 +13,9 @@ namespace Server.MessageHandler
         /// <param name="serviceRegistry">Contains all services for the server.</param>
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            UserTypingRequest userTypingRequest = (UserTypingRequest) message;
+            var userTypingRequest = (UserTypingRequest) message;
 
-            var participationRepository = (IEntityRepository<Participation>)serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
             Participation participation = participationRepository.FindEntityById(userTypingRequest.UserTyping.ParticipationId);
 

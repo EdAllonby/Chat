@@ -14,7 +14,7 @@ namespace SharedClasses.Domain
             /// The current status of the user is not known, indicating an error.
             /// </summary>
             Unknown = 0,
-            
+
             /// <summary>
             /// The user is currently connected and is able to send to and receive messages from the server.
             /// </summary>

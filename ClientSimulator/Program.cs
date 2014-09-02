@@ -17,9 +17,8 @@ namespace ClientSimulator
     /// </summary>
     internal static class Program
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
-
         private const int TotalClients = 10;
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
         private static readonly List<ClientService> Clients = new List<ClientService>();
         private static bool areRepositoriesValid;
 

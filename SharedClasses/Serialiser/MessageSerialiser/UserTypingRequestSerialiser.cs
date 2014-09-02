@@ -6,8 +6,8 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 {
     public sealed class UserTypingRequestSerialiser : Serialiser<UserTypingRequest>
     {
-        UserTypingSerialiser userTypingSerialiser = new UserTypingSerialiser();
-        
+        private readonly UserTypingSerialiser userTypingSerialiser = new UserTypingSerialiser();
+
 
         protected override void Serialise(NetworkStream networkStream, UserTypingRequest message)
         {

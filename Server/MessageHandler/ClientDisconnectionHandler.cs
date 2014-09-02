@@ -25,7 +25,7 @@ namespace Server.MessageHandler
 
             userRepository.UpdateUserConnectionStatus(connectionStatus);
 
-            ParticipationRepository participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
             SendUserTypingNotification(clientDisconnection.UserId, clientManager, participationRepository);
         }
 
@@ -47,10 +47,10 @@ namespace Server.MessageHandler
             foreach (int conversationId in conversationIdsUserIsIn)
             {
                 Participation participation = participationRepository.GetParticipationByUserIdandConversationId(userId, conversationId);
-                UserTyping userTyping = new UserTyping(false, participation.Id);
-                UserTypingNotification userTypingNotification =  new UserTypingNotification(userTyping, NotificationType.Create);
-                var participationsForConversation = participationRepository.GetParticipationsByConversationId(conversationId);
-                List<int> userIdsInConversation = participationsForConversation.Select(x=>x.UserId).ToList();
+                var userTyping = new UserTyping(false, participation.Id);
+                var userTypingNotification = new UserTypingNotification(userTyping, NotificationType.Create);
+                List<Participation> participationsForConversation = participationRepository.GetParticipationsByConversationId(conversationId);
+                List<int> userIdsInConversation = participationsForConversation.Select(x => x.UserId).ToList();
                 clientManager.SendMessageToClients(userTypingNotification, userIdsInConversation);
             }
         }

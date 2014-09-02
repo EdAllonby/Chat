@@ -31,10 +31,7 @@ namespace SharedClasses.Domain
         /// </summary>
         public IContribution LastContribution
         {
-            get
-            {
-                return contributionsIndexedByContributionId.Values.LastOrDefault();
-            }
+            get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
         }
 
         /// <summary>
@@ -45,13 +42,20 @@ namespace SharedClasses.Domain
             get { return id; }
         }
 
+        public bool Equals(Conversation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return id == other.id;
+        }
+
         /// <summary>
         /// Creates a reduced size Conversation only containing Ids associated with it.
         /// </summary>
         /// <returns>A lightweight Conversation.</returns>
         public Conversation CreateLightweightCopy()
         {
-            Conversation conversation = new Conversation(Id);
+            var conversation = new Conversation(Id);
 
             foreach (int contributionId in contributionsIndexedByContributionId.Keys)
             {
@@ -59,13 +63,6 @@ namespace SharedClasses.Domain
             }
 
             return conversation;
-        }
-
-        public bool Equals(Conversation other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return id == other.id;
         }
 
         /// <summary>

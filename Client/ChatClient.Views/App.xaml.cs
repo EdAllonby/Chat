@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using ChatClient.Services;
 using log4net;
+using log4net.Config;
 using SharedClasses;
 using SharedClasses.Domain;
 
@@ -19,7 +20,6 @@ namespace ChatClient.Views
 
         protected override void OnStartup(StartupEventArgs e)
         {
-
 #if DEBUG
             // Console must be started before configuring log4net.
             ConsoleManager.Show();
@@ -30,7 +30,7 @@ namespace ChatClient.Views
             Thread.CurrentThread.Name = "Main Thread";
 
             IServiceRegistry serviceRegistry = CreateLoadedServiceRegistry();
-            
+
             var loginWindow = new LoginWindow(serviceRegistry);
             loginWindow.Show();
 
@@ -39,14 +39,14 @@ namespace ChatClient.Views
 
         private static void SetupLogging(string logConfigName)
         {
-            string assemblyPath = System.Reflection.Assembly.GetAssembly(typeof(App)).Location;
+            string assemblyPath = Assembly.GetAssembly(typeof (App)).Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyPath);
 
             if (assemblyDirectory != null)
             {
                 var uri = new Uri(Path.Combine(assemblyDirectory, logConfigName));
 
-                log4net.Config.XmlConfigurator.Configure(uri);
+                XmlConfigurator.Configure(uri);
             }
         }
 

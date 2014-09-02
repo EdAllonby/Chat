@@ -31,10 +31,10 @@ namespace Server
             onUserChangedHandler = new OnUserChangedHandler(serviceRegistry);
             onConversationChangedHandler = new OnConversationChangedHandler(serviceRegistry);
             onParticipationChangedHandler = new OnParticipationChangedHandler(serviceRegistry);
-           
+
             isServerRunning = true;
             Log.Info("Server instance started");
-            
+
             ListenForNewClients();
         }
 

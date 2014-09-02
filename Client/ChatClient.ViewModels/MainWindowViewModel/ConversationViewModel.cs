@@ -17,7 +17,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             if (!IsInDesignMode)
             {
                 this.conversation = conversation;
-                RepositoryManager repositoryManager = serviceRegistry.GetService<RepositoryManager>();
+                var repositoryManager = serviceRegistry.GetService<RepositoryManager>();
                 userRepository = repositoryManager.GetRepository<User>();
                 participationRepository = (ParticipationRepository) repositoryManager.GetRepository<Participation>();
             }

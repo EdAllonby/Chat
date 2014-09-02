@@ -10,11 +10,11 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class ImageContribution : IContribution
     {
-        private readonly int id;
+        private readonly DateTime contributionTimeStamp;
         private readonly int contributorUserId;
         private readonly int conversationId;
+        private readonly int id;
         private readonly Image image;
-        private readonly DateTime contributionTimeStamp;
 
         public ImageContribution(int contributorUserId, Image image, int conversationId)
         {
@@ -41,6 +41,11 @@ namespace SharedClasses.Domain
             contributionTimeStamp = DateTime.Now;
         }
 
+        public Image Image
+        {
+            get { return image; }
+        }
+
         public int Id
         {
             get { return id; }
@@ -54,11 +59,6 @@ namespace SharedClasses.Domain
         public int ContributorUserId
         {
             get { return contributorUserId; }
-        }
-
-        public Image Image
-        {
-            get { return image; }
         }
 
         public DateTime ContributionTimeStamp

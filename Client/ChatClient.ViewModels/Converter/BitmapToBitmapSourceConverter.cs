@@ -15,11 +15,6 @@ namespace ChatClient.ViewModels.Converter
 {
     public class BitmapToBitmapSourceConverter : IValueConverter
     {
-        public ImageSource Convert(Bitmap bitmap)
-        {
-            return (ImageSource)Convert(bitmap, null, null, null);
-        }
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             BitmapSource bitmapSource = null;
@@ -71,6 +66,11 @@ namespace ChatClient.ViewModels.Converter
             }
 
             return null;
+        }
+
+        public ImageSource Convert(Bitmap bitmap)
+        {
+            return (ImageSource) Convert(bitmap, null, null, null);
         }
     }
 }
