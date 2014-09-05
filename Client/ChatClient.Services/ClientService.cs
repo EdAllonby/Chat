@@ -16,18 +16,20 @@ namespace ChatClient.Services
     public sealed class ClientService : IClientService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
-
         private readonly IServiceRegistry serviceRegistry;
-
+        private readonly MessageThroughputLimiter<UserTypingRequest> userTypingThroughputLimiter;
         private ConnectionHandler connectionHandler;
 
         /// <summary>
         /// Passes the service the reference to the <see cref="IServiceRegistry"/>.
         /// </summary>
-        /// <param name="serviceRegistry"></param>
+        /// <param name="serviceRegistry">Contains a housing for client services.</param>
         public ClientService(IServiceRegistry serviceRegistry)
         {
             this.serviceRegistry = serviceRegistry;
+            const int MinimumMillisecondsAllowedBetweenUserTypingMessages = 1000;
+            userTypingThroughputLimiter = new MessageThroughputLimiter<UserTypingRequest>(MinimumMillisecondsAllowedBetweenUserTypingMessages);
+            userTypingThroughputLimiter.DeferredSendLastMessage += userTypingThroughputLimiter_DeferredSendLastMessage;
         }
 
         /// <summary>
@@ -132,7 +134,12 @@ namespace ChatClient.Services
         /// <param name="isTyping">Whether the user has started or finished typing.</param>
         public void SendUserTypingRequest(int participationId, bool isTyping)
         {
-            connectionHandler.SendMessage(new UserTypingRequest(new UserTyping(isTyping, participationId)));
+            userTypingThroughputLimiter.QueueMessageRequest(new UserTypingRequest(new UserTyping(isTyping, participationId)));
+        }
+
+        private void userTypingThroughputLimiter_DeferredSendLastMessage(object sender, UserTypingRequest e)
+        {
+            connectionHandler.SendMessage(e);
         }
 
         private void OnNewMessageReceived(object sender, MessageEventArgs e)

@@ -51,6 +51,7 @@
     <Compile Include="MessageHandler\UserNotificationHandler.cs" />
     <Compile Include="MessageHandler\UserSnapshotHandler.cs" />
     <Compile Include="MessageHandler\UserTypingNotificationHandler.cs" />
+    <Compile Include="MessageThroughputLimiter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClientService.cs" />
     <Compile Include="IClientService.cs" />
