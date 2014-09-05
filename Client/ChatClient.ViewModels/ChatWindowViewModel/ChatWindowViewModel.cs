@@ -14,6 +14,7 @@ using ChatClient.ViewModels.UserSettingsViewModel;
 using GongSolutions.Wpf.DragDrop;
 using SharedClasses;
 using SharedClasses.Domain;
+using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
