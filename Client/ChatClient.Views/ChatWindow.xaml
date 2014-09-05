@@ -7,10 +7,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:extendedControls="clr-namespace:ChatClient.Views.ExtendedControls"
         xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="{Binding GroupChat.WindowTitle}" Height="500" Width="350"
         WindowStartupLocation="CenterScreen"
         Closing="WindowClosing"
-        FocusManager.FocusedElement="{Binding ElementName=ChatTextBox}"
+        FocusManager.FocusedElement="{Binding ElementName=MessageTextBox}"
         d:DataContext="{d:DesignInstance viewModel:ChatWindowViewModel}" RenderOptions.BitmapScalingMode="Fant" >
     
     <Window.InputBindings>
@@ -82,7 +83,7 @@
                 <ColumnDefinition Width="70" />
             </Grid.ColumnDefinitions>
 
-                <TextBox Name="ChatTextBox" TextChanged="OnTextChanged"
+                <xctk:WatermarkTextBox Watermark="Type a message..." Name="ChatTextBox" TextChanged="OnTextChanged"
                      AllowDrop="True"
                      PreviewDragEnter="FileShowTextBox_PreviewDragEnter" 
                      PreviewDragOver="FileShowTextBox_PreviewDragEnter" 
@@ -95,11 +96,11 @@
                      VerticalContentAlignment="Stretch"
                      Width="Auto"
                      SpellCheck.IsEnabled="True" Language="EN-UK"
-                     Margin="10,0,10,10" TextWrapping="Wrap">
+                     Margin="10,0,10,10" TextWrapping="Wrap" x:FieldModifier="private">
                     <TextBox.InputBindings>
                         <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
                     </TextBox.InputBindings>
-                </TextBox>
+                </xctk:WatermarkTextBox>
 
             <Button Height="20" Width="20"
                 Style="{StaticResource LessRoundButtonStyle}"

@@ -5,13 +5,13 @@
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:viewModel="clr-namespace:ChatClient.ViewModels.LoginWindowViewModel;assembly=ChatClient.ViewModels"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         ResizeMode="NoResize"
         Title="Login Screen" Height="250" Width="390"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent" MouseDown="MoveWindow"
-        FocusManager.FocusedElement="{Binding ElementName=UsernameTextBox}"
         TextOptions.TextFormattingMode="Display"
         TextOptions.TextRenderingMode="ClearType"
         d:DataContext="{d:DesignInstance viewModel:LoginWindowViewModel}">
@@ -69,33 +69,31 @@
                 </Button>
             </Grid>
 
-            <TextBox BorderBrush="#e74c3c" BorderThickness="1" Name="UsernameTextBox" Grid.Row="1" CaretBrush="#e74c3c"
+            <xctk:WatermarkTextBox Watermark="Username" BorderBrush="#e74c3c" BorderThickness="1" Name="UsernameTextBox" Grid.Row="1" CaretBrush="#e74c3c"
                      Validation.ErrorTemplate="{x:Null}"
                      Text="{Binding LoginModel.Username, UpdateSourceTrigger= PropertyChanged, ValidatesOnDataErrors=True}"
                      Foreground="#e74c3c"
                      TextAlignment="Left"
-                     GotFocus="RemoveTextOnFocus" LostFocus="AddTextOnLostFocus"
-                      VerticalContentAlignment="Center" HorizontalAlignment="Stretch"
+                     VerticalContentAlignment="Center" HorizontalAlignment="Stretch"
                      Height="30" MaxLines="1" FontSize="14" Margin="30,0,30,0"
                      FontFamily="Yu Gothic Light">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Login}" 
                             CommandParameter="{Binding Path=Text, RelativeSource={RelativeSource AncestorType={x:Type TextBox}}}" />
                 </TextBox.InputBindings>
-            </TextBox>
+            </xctk:WatermarkTextBox>
 
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBox BorderBrush="#e74c3c" BorderThickness="1"  Name="IPAddressTextBox" Grid.Column="0"
+                <xctk:WatermarkTextBox Watermark="IP Address" BorderBrush="#e74c3c" BorderThickness="1" Grid.Column="0"
                          Validation.ErrorTemplate="{x:Null}"
                          Text="{Binding LoginModel.IPAddress, UpdateSourceTrigger= PropertyChanged, ValidatesOnDataErrors=True}"
                          CaretBrush="#e74c3c"
                          HorizontalAlignment="Stretch"
                          TextAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center"
-                         GotFocus="RemoveTextOnFocus" LostFocus="AddTextOnLostFocus"
                          MaxLines="1"
                          Height="30" Margin="30,0,30,0"
                          FontSize="14"
@@ -104,13 +102,13 @@
                         <KeyBinding Key="Enter" Command="{Binding Login}" 
                             CommandParameter="{Binding Path=Text, RelativeSource={RelativeSource AncestorType={x:Type TextBox}}}" />
                     </TextBox.InputBindings>
-                </TextBox>
-                <TextBox BorderBrush="#e74c3c" BorderThickness="1" Name="PortTextBox" Grid.Column="1" Text="{Binding LoginModel.Port, UpdateSourceTrigger= PropertyChanged, ValidatesOnDataErrors=True}"
+                </xctk:WatermarkTextBox>
+                
+                <xctk:WatermarkTextBox Watermark="Port" BorderBrush="#e74c3c" BorderThickness="1" Grid.Column="1" Text="{Binding LoginModel.Port, UpdateSourceTrigger= PropertyChanged, ValidatesOnDataErrors=True}"
                          CaretBrush="#e74c3c"
                          Validation.ErrorTemplate="{x:Null}"
                          HorizontalAlignment="Stretch"
                          TextAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center"
-                         GotFocus="RemoveTextOnFocus" LostFocus="AddTextOnLostFocus"
                          MaxLines="1"
                          Height="30" Margin="30,0,30,0"
                          FontSize="14"
@@ -119,7 +117,7 @@
                         <KeyBinding Key="Enter" Command="{Binding Login}" 
                             CommandParameter="{Binding Path=Text, RelativeSource={RelativeSource AncestorType={x:Type TextBox}}}" />
                     </TextBox.InputBindings>
-                </TextBox>
+                </xctk:WatermarkTextBox>
             </Grid>
             <Button Grid.Row="3" Grid.Column="0" Content="LOGIN"
                     Style="{StaticResource HalfRoundButtonStyle}"
