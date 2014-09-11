@@ -6,7 +6,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
-        Background="Transparent" RenderOptions.BitmapScalingMode="Fant" 
         TextOptions.TextFormattingMode="Display"
         TextOptions.TextRenderingMode="ClearType"
         d:DataContext="{d:DesignInstance mainWindowViewModel:UserListViewModel}">
