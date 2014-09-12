@@ -48,11 +48,12 @@
 
         <xctk:WatermarkTextBox Watermark="Search connected users..." Margin="10,5,10,5" Grid.Row="1"
                                Text="{Binding UserFilter, UpdateSourceTrigger= PropertyChanged, ValidatesOnDataErrors=True}" />
-        
-        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" BorderBrush="#e74c3c"
-                    ItemsSource="{Binding ConnectedUsers, UpdateSourceTrigger=Default}"
-                    Foreground="#64645a" Margin="10,5"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <ListBox Grid.Row="2" Grid.Column="0" FontFamily="Yu Gothic Light" BorderBrush="#e74c3c" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ItemsSource="{Binding ConnectedUsers, UpdateSourceTrigger=Default}"
+                 Foreground="#64645a" Margin="10,5"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
            
             <ListBox.Background>
                 <ImageBrush ImageSource="Resources/halftone.png"/>
@@ -60,7 +61,7 @@
             
             <ListBox.ItemTemplate> 
                 <DataTemplate>
-                    <StackPanel Width="250" Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection" Orientation="Horizontal"> 
+                    <StackPanel Tag="{Binding UserId}" MouseLeftButtonDown="OnNewUserSelection" Orientation="Horizontal"> 
                         <CheckBox 
                             Visibility="{Binding MultiUserSelectionMode,
                             Converter={StaticResource TrueToVisibleConverter}}"
@@ -73,7 +74,7 @@
                             </Border.Background>
                         </Border>
                         
-                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" Width="300"  TextAlignment="Left" Padding="3" />
+                        <TextBlock Text="{Binding Username}"  FontSize="16" Height="30" TextAlignment="Left" Padding="3" />
             
                     </StackPanel>
            
