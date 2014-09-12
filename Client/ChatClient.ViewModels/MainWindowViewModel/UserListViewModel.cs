@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using ChatClient.Services;
 using ChatClient.ViewModels.Commands;
@@ -18,8 +20,8 @@ namespace ChatClient.ViewModels.MainWindowViewModel
         private readonly ParticipationRepository participationRepository;
         private readonly IReadOnlyEntityRepository<User> userRepository;
         private IList<ConnectedUserViewModel> connectedUsers = new List<ConnectedUserViewModel>();
-
         private bool isMultiUserConversation;
+        private string userFilter = string.Empty;
 
         public UserListViewModel(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
@@ -75,6 +77,17 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
+        public string UserFilter
+        {
+            get { return userFilter; }
+            set
+            {
+                userFilter = value;
+                OnPropertyChanged();
+                UpdateConnectedUsers();
+            }
+        }
+
         public ICommand StartMultiUserConversation
         {
             get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
@@ -127,15 +140,32 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             UpdateConnectedUsers();
         }
 
-
         private void UpdateConnectedUsers()
         {
-            IEnumerable<User> users = userRepository.GetAllEntities();
-            List<User> newUserList = users.Where(user => user.Id != clientService.ClientUserId).ToList();
+            IEnumerable<User> allUsers = userRepository.GetAllEntities();
+            IEnumerable<User> otherUsers = allUsers.Where(user => user.Id != clientService.ClientUserId);
+            IEnumerable<User> filteredOtherUsers = otherUsers.Where(CanPresentUser);
+            IEnumerable<ConnectedUserViewModel> otherConnectedUsers = filteredOtherUsers.Select(user => new ConnectedUserViewModel(ServiceRegistry, user));
 
-            List<ConnectedUserViewModel> otherUsers = newUserList.Select(user => new ConnectedUserViewModel(ServiceRegistry, user)).ToList();
+            ConnectedUsers = otherConnectedUsers.ToList();
+        }
 
-            ConnectedUsers = otherUsers;
+        private bool CanPresentUser(User unfilteredUsers)
+        {
+            string[] individualWordFilters = Regex.Split(UserFilter, @"\s");
+            string[] usernameWords = Regex.Split(unfilteredUsers.Username, @"\s");
+
+            foreach (string individualWordFilter in individualWordFilters)
+            {
+                bool isWordFilterValid = usernameWords.Any(usernameWord => usernameWord.StartsWith(individualWordFilter, StringComparison.InvariantCultureIgnoreCase));
+
+                if (!isWordFilterValid)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void NewConversation(List<int> userIds)
