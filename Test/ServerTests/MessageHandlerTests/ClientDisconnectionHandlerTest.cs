@@ -56,7 +56,9 @@ namespace ServerTests.MessageHandlerTests
             public void UserGetsSetToDisconnectedInUserRepository()
             {
                 HandleMessage(clientDisconnection);
-                Assert.IsTrue(ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>().FindEntityById(DefaultUser.Id).ConnectionStatus.UserConnectionStatus.Equals(ConnectionStatus.Status.Disconnected));
+                IReadOnlyEntityRepository<User> userRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+                User defaultUser = userRepository.FindEntityById(DefaultUser.Id);
+                Assert.IsTrue(defaultUser.ConnectionStatus.UserConnectionStatus.Equals(ConnectionStatus.Status.Disconnected));
             }
         }
     }
