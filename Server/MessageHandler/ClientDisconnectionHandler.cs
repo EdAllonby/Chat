@@ -25,8 +25,7 @@ namespace Server.MessageHandler
 
             userRepository.UpdateUserConnectionStatus(connectionStatus);
 
-            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-            SendUserTypingNotification(clientDisconnection.UserId, clientManager, participationRepository);
+            SendUserTypingNotification(clientDisconnection.UserId, clientManager, serviceRegistry.GetService<RepositoryManager>());
         }
 
         /// <summary>
@@ -39,9 +38,12 @@ namespace Server.MessageHandler
         /// </remarks>
         /// <param name="userId">The user that disconnected.</param>
         /// <param name="clientManager">Holds the connected clients.</param>
-        /// <param name="participationRepository">Holds the participations.</param>
-        private static void SendUserTypingNotification(int userId, IClientManager clientManager, ParticipationRepository participationRepository)
+        /// <param name="repositoryManager">Holds the repositories in the system.</param>
+        private static void SendUserTypingNotification(int userId, IClientManager clientManager, RepositoryManager repositoryManager)
         {
+            ParticipationRepository participationRepository = (ParticipationRepository) repositoryManager.GetRepository<Participation>();
+            UserRepository userRepository = (UserRepository) repositoryManager.GetRepository<User>();
+
             IEnumerable<int> conversationIdsUserIsIn = participationRepository.GetAllConversationIdsByUserId(userId);
 
             foreach (int conversationId in conversationIdsUserIsIn)
@@ -50,8 +52,18 @@ namespace Server.MessageHandler
                 var userTyping = new UserTyping(false, participation.Id);
                 var userTypingNotification = new UserTypingNotification(userTyping, NotificationType.Create);
                 List<Participation> participationsForConversation = participationRepository.GetParticipationsByConversationId(conversationId);
+
                 List<int> userIdsInConversation = participationsForConversation.Select(x => x.UserId).ToList();
-                clientManager.SendMessageToClients(userTypingNotification, userIdsInConversation);
+
+                foreach (int userIdInConversation in userIdsInConversation)
+                {
+                    User user = userRepository.FindEntityById(userIdInConversation);
+
+                    if (user.ConnectionStatus.UserConnectionStatus != ConnectionStatus.Status.Disconnected)
+                    {
+                        clientManager.SendMessageToClient(userTypingNotification, userIdInConversation);
+                    }
+                }
             }
         }
     }

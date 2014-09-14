@@ -28,15 +28,30 @@ namespace ServerTests.MessageHandlerTests
 
             ServiceRegistry.RegisterService<EntityIdAllocatorFactory>(entityIdAllocatorFactory);
 
-            PopulateClientManager();
             PopulateRepositoryManager(entityIdAllocatorFactory);
+            PopulateClientManager();
         }
 
         private void PopulateClientManager()
         {
+            IReadOnlyEntityRepository<User> userRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+
             var clientManager = new ClientManager();
-            ConnectedUserClientHandler = new MockClientHandler();
-            clientManager.AddClientHandler(DefaultUser.Id, ConnectedUserClientHandler);
+
+            foreach (User user in userRepository.GetAllEntities())
+            {
+                if (user.Id == DefaultUser.Id)
+                {
+                    ConnectedUserClientHandler = new MockClientHandler();
+
+                    clientManager.AddClientHandler(user.Id, ConnectedUserClientHandler);
+                }
+                else
+                {
+                    clientManager.AddClientHandler(user.Id, new MockClientHandler());                  
+                }
+            }
+            
             ServiceRegistry.RegisterService<IClientManager>(clientManager);
         }
 
