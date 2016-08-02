@@ -16,7 +16,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             var participationRequest = new ParticipationRequest(participationSerialiser.Deserialise(networkStream));
-            Log.InfoFormat("{0} message deserialised", participationRequest.MessageIdentifier);
+            Log.InfoFormat($"{participationRequest.MessageIdentifier} message deserialised");
             return participationRequest;
         }
     }

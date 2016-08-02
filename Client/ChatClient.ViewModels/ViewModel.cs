@@ -9,21 +9,17 @@ namespace ChatClient.ViewModels
 {
     public abstract class ViewModel : INotifyPropertyChanged
     {
-        private readonly IServiceRegistry serviceRegistry;
         private bool? isInDesignMode;
 
         protected ViewModel(IServiceRegistry serviceRegistry)
         {
             if (!IsInDesignMode)
             {
-                this.serviceRegistry = serviceRegistry;
+                ServiceRegistry = serviceRegistry;
             }
         }
 
-        protected IServiceRegistry ServiceRegistry
-        {
-            get { return serviceRegistry; }
-        }
+        protected IServiceRegistry ServiceRegistry { get; }
 
         /// <summary>
         /// Gets a value indicating whether the control is in design mode (running in Blend or Visual Studio).
@@ -40,7 +36,7 @@ isInDesignMode = DesignerProperties.IsInDesignTool;
 #else
                     DependencyProperty prop = DesignerProperties.IsInDesignModeProperty;
                     isInDesignMode =
-                        (bool) DependencyPropertyDescriptor.FromProperty(prop, typeof (FrameworkElement)).Metadata.DefaultValue;
+                        (bool) DependencyPropertyDescriptor.FromProperty(prop, typeof(FrameworkElement)).Metadata.DefaultValue;
 
                     if (!isInDesignMode.Value)
                     {

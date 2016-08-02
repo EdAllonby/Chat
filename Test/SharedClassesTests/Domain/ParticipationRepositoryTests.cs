@@ -9,21 +9,11 @@ namespace SharedClassesTests.Domain
     public class ParticipationRepositoryTests
     {
         [Test]
-        public void AddParticipationTest()
-        {
-            var participationRepository = new ParticipationRepository();
-
-            var participation = new Participation(1, 1, 1);
-            participationRepository.AddEntity(participation);
-            Assert.AreEqual(participation, participationRepository.GetAllEntities().First());
-        }
-
-        [Test]
         public void AddParticipationsTest()
         {
             var participationRepository = new ParticipationRepository();
 
-            int conversationId = 1;
+            var conversationId = 1;
             IList<Participation> participations = new List<Participation>
             {
                 new Participation(1, 1, conversationId),
@@ -39,13 +29,23 @@ namespace SharedClassesTests.Domain
         }
 
         [Test]
+        public void AddParticipationTest()
+        {
+            var participationRepository = new ParticipationRepository();
+
+            var participation = new Participation(1, 1, 1);
+            participationRepository.AddEntity(participation);
+            Assert.AreEqual(participation, participationRepository.GetAllEntities().First());
+        }
+
+        [Test]
         public void DoesConversationWithUsersExistTest()
         {
             var participationRepository = new ParticipationRepository();
             var participation = new Participation(1, 1, 1);
             participationRepository.AddEntity(participation);
 
-            Assert.True(participationRepository.DoesConversationWithUsersExist(new List<int> {participation.UserId}));
+            Assert.True(participationRepository.DoesConversationWithUsersExist(new List<int> { participation.UserId }));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace SharedClassesTests.Domain
         {
             var participationRepository = new ParticipationRepository();
 
-            int userId = 3;
+            var userId = 3;
 
             var participation1 = new Participation(1, userId, 1);
             var participation2 = new Participation(2, userId, 2);
@@ -80,7 +80,7 @@ namespace SharedClassesTests.Domain
         {
             var participationRepository = new ParticipationRepository();
 
-            int conversationId = 1;
+            var conversationId = 1;
             IList<Participation> participations = new List<Participation>
             {
                 new Participation(1, 1, conversationId),
@@ -100,19 +100,19 @@ namespace SharedClassesTests.Domain
         public void GetConversationIdByParticipantsIdTest()
         {
             var participationRepository = new ParticipationRepository();
-            int conversationId = 10;
+            var conversationId = 10;
             var participation1 = new Participation(1, 1, conversationId);
             var participation2 = new Participation(2, 2, conversationId);
 
             participationRepository.AddEntity(participation1);
             participationRepository.AddEntity(participation2);
 
-            var participantIds = new List<int> {participation1.UserId, participation2.UserId};
+            var participantIds = new List<int> { participation1.UserId, participation2.UserId };
 
             int actualConversationId = participationRepository.GetConversationIdByUserIds(participantIds);
 
             Assert.AreEqual(conversationId, actualConversationId);
-            Assert.AreEqual(0, participationRepository.GetConversationIdByUserIds(new List<int> {1, 2, 3}));
+            Assert.AreEqual(0, participationRepository.GetConversationIdByUserIds(new List<int> { 1, 2, 3 }));
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace SharedClassesTests.Domain
             participationRepository.AddEntity(participation1);
             participationRepository.AddEntity(participation2);
 
-            var expectedParticipations = new List<Participation> {participation1, participation2};
+            var expectedParticipations = new List<Participation> { participation1, participation2 };
 
             IEnumerable<Participation> actualParticipations =
                 participationRepository.GetParticipationsByConversationId(conversationId);

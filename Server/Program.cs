@@ -8,7 +8,7 @@ namespace Server
 {
     internal static class Program
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
 
         /// <summary>
         /// The main entry point for the application.
@@ -33,12 +33,12 @@ namespace Server
         {
             Log.Debug("Services running in interactive mode.");
 
-            MethodInfo onStartMethod = typeof (ServiceBase).GetMethod("OnStart",
+            MethodInfo onStartMethod = typeof(ServiceBase).GetMethod("OnStart",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (ServiceBase service in servicesToRun)
             {
-                Log.DebugFormat("Starting {0}...", service.ServiceName);
-                onStartMethod.Invoke(service, new object[] {new string[] {}});
+                Log.DebugFormat($"Starting {service.ServiceName}...");
+                onStartMethod.Invoke(service, new object[] { new string[] { } });
                 Log.Debug("Started");
             }
 
@@ -46,11 +46,11 @@ namespace Server
             Console.ReadKey();
             Console.WriteLine();
 
-            MethodInfo onStopMethod = typeof (ServiceBase).GetMethod("OnStop",
+            MethodInfo onStopMethod = typeof(ServiceBase).GetMethod("OnStop",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (ServiceBase service in servicesToRun)
             {
-                Log.DebugFormat("Stopping {0}...", service.ServiceName);
+                Log.DebugFormat($"Stopping {service.ServiceName}...");
                 onStopMethod.Invoke(service, null);
                 Log.Info("Server Stopped");
             }

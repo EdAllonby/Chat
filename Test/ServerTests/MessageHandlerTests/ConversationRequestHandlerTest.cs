@@ -15,7 +15,7 @@ namespace ServerTests.MessageHandlerTests
         public override void BeforeEachTest()
         {
             base.BeforeEachTest();
-            usersInConversation = new List<int> {DefaultUser.Id, 3};
+            usersInConversation = new List<int> { DefaultUser.Id, 3 };
             conversationRequest = new ConversationRequest(usersInConversation);
         }
 
@@ -71,7 +71,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void DoesNotProcessConversationRequestIfThereAreDuplicateConversationUserIdsInRequest()
             {
-                var usersToMakeInConversation = new List<int> {1, 2, 3, 4, 1};
+                var usersToMakeInConversation = new List<int> { 1, 2, 3, 4, 1 };
                 var invalidConversationRequest = new ConversationRequest(usersToMakeInConversation);
                 IEnumerable<Conversation> currentConversationsInRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>().GetAllEntities();
                 IEnumerable<Participation> currentParticipationsInRepository = ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>().GetAllEntities();

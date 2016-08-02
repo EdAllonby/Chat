@@ -10,8 +10,8 @@ namespace ChatClient.Models.ChatModel
     public class GroupChatModel : INotifyPropertyChanged
     {
         private Conversation conversation;
-        private string messageToAddToConversation;
         private FlowDocument messages = new FlowDocument();
+        private string messageToAddToConversation;
         private string title;
         private List<User> users;
         private string usersTyping;

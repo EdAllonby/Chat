@@ -27,26 +27,17 @@ namespace SharedClasses.Domain
             Disconnected
         }
 
-        private readonly Status userConnectionStatus;
-        private readonly int userId;
-
         public ConnectionStatus(int userId, Status userConnectionStatus)
         {
-            this.userId = userId;
-            this.userConnectionStatus = userConnectionStatus;
+            UserId = userId;
+            UserConnectionStatus = userConnectionStatus;
         }
 
-        public int UserId
-        {
-            get { return userId; }
-        }
+        public int UserId { get; }
 
         /// <summary>
         /// The current status of the user.
         /// </summary>
-        public Status UserConnectionStatus
-        {
-            get { return userConnectionStatus; }
-        }
+        public Status UserConnectionStatus { get; }
     }
 }

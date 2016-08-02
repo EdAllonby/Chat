@@ -7,13 +7,13 @@
         xmlns:views="clr-namespace:ChatClient.Views"
         xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
         xmlns:converter="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
-        Title="Chat Program" Height="600" Width="350" 
+        Title="Chat Program" Height="600" Width="350"
         RenderOptions.BitmapScalingMode="Fant"
         Closed="OnMainWindowClosed"
         TextOptions.TextFormattingMode="Display"
         TextOptions.TextRenderingMode="ClearType"
         d:DataContext="{d:DesignInstance mainWindowViewModel:MainWindowViewModel}">
-    
+
     <Window.Resources>
         <converter:BitmapToBitmapSourceConverter x:Key="BitmapToBitmapSourceConverter" />
     </Window.Resources>
@@ -26,7 +26,7 @@
             <ImageBrush ImageSource="Resources/halftone.png" />
         </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -35,17 +35,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=MainGrid, Path=ActualWidth}">
+        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top"
+              Width="{Binding ElementName=MainGrid, Path=ActualWidth}">
             <MenuItem Header="_Edit">
-                <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}" InputGestureText="Ctrl+,"/>
+                <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}" InputGestureText="Ctrl+," />
             </MenuItem>
         </Menu>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Border BorderBrush="LimeGreen" BorderThickness="3" CornerRadius="5" Height="50" Width="50">
-                <Border.Background >
-                    <ImageBrush ImageSource="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
-                                Stretch="UniformToFill"/>
+                <Border.Background>
+                    <ImageBrush
+                        ImageSource="{Binding UserAvatar, Converter={StaticResource BitmapToBitmapSourceConverter}}"
+                        Stretch="UniformToFill" />
                 </Border.Background>
             </Border>
             <Label FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
@@ -58,7 +60,7 @@
         <TabControl Name="Tabs" Grid.Row="2" Background="Transparent">
             <TabItem Header="Connected Users" d:DataContext="{d:DesignInstance views:UserListWindow}" />
 
-            <TabItem Header="Active Conversations" d:DataContext="{d:DesignInstance views:ActiveConversations}"/>
+            <TabItem Header="Active Conversations" d:DataContext="{d:DesignInstance views:ActiveConversations}" />
         </TabControl>
 
     </Grid>

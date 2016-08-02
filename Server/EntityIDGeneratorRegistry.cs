@@ -5,7 +5,7 @@ using SharedClasses.Domain;
 namespace Server
 {
     /// <summary>
-    /// Holds the <see cref="EntityIdGenerator"/>s for each entity type that needs one.
+    /// Holds the <see cref="EntityIdGenerator" />s for each entity type that needs one.
     /// </summary>
     internal sealed class EntityIdGeneratorRegistry
     {
@@ -15,11 +15,11 @@ namespace Server
         public readonly IReadOnlyDictionary<Type, EntityIdGenerator> EntityIDGeneratorsIndexedByEntityType =
             new Dictionary<Type, EntityIdGenerator>
             {
-                {typeof (User), new EntityIdGenerator()},
-                {typeof (Conversation), new EntityIdGenerator()},
-                {typeof (IContribution), new EntityIdGenerator()},
-                {typeof (Participation), new EntityIdGenerator()},
-                {typeof (Avatar), new EntityIdGenerator()}
+                { typeof(User), new EntityIdGenerator() },
+                { typeof(Conversation), new EntityIdGenerator() },
+                { typeof(IContribution), new EntityIdGenerator() },
+                { typeof(Participation), new EntityIdGenerator() },
+                { typeof(Avatar), new EntityIdGenerator() }
             };
     }
 }

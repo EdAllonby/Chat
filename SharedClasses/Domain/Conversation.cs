@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// A conversation holds <see cref="IContribution"/>s that are linked to it.
+    /// A conversation holds <see cref="IContribution" />s that are linked to it.
     /// </summary>
     [Serializable]
     public sealed class Conversation : IEntity, IEquatable<Conversation>
     {
         private readonly Dictionary<int, IContribution> contributionsIndexedByContributionId = new Dictionary<int, IContribution>();
-
-        private readonly int id;
 
         /// <summary>
         /// Creates a conversation entity with conversation Id.
@@ -21,9 +18,7 @@ namespace SharedClasses.Domain
         /// <param name="id">The Id to assign to the conversation.</param>
         public Conversation(int id)
         {
-            Contract.Requires(id > 0);
-
-            this.id = id;
+            Id = id;
         }
 
         /// <summary>
@@ -37,16 +32,13 @@ namespace SharedClasses.Domain
         /// <summary>
         /// Conversation is a domain entity class and gets a unique Id.
         /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id { get; }
 
         public bool Equals(Conversation other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return id == other.id;
+            return Id == other.Id;
         }
 
         /// <summary>
@@ -66,19 +58,16 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Adds an <see cref="IContribution"/> entity to this conversation. 
+        /// Adds an <see cref="IContribution" /> entity to this conversation.
         /// The contribution's conversation Id must match this conversation's Id.
         /// </summary>
         public void AddContribution(IContribution newContribution)
         {
-            Contract.Requires(newContribution != null);
-            Contract.Requires(newContribution.ConversationId == Id);
-
             contributionsIndexedByContributionId.Add(newContribution.Id, newContribution);
         }
 
         /// <summary>
-        /// Returns a list of <see cref="TextContribution"/>s which are held in this <see cref="Conversation"/> entity.
+        /// Returns a list of <see cref="TextContribution" />s which are held in this <see cref="Conversation" /> entity.
         /// </summary>
         /// <returns>A collection of all contributions associated with the conversation.</returns>
         public IEnumerable<IContribution> GetAllContributions()
@@ -95,7 +84,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return id;
+            return Id;
         }
     }
 }

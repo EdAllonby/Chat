@@ -3,7 +3,7 @@
 namespace SharedClasses
 {
     /// <summary>
-    ///     Defines an object that is to be used for handling incoming <see cref="IMessage" />s.
+    /// Defines an object that is to be used for handling incoming <see cref="IMessage" />s.
     /// </summary>
     public interface IMessageHandler
     {

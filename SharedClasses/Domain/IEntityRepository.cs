@@ -8,7 +8,7 @@ namespace SharedClasses.Domain
     public interface IEntityRepository
     {
         /// <summary>
-        /// Gets the <see cref="IEntity"/> type that is held in the repository.
+        /// Gets the <see cref="IEntity" /> type that is held in the repository.
         /// </summary>
         Type EnclosedEntityType { get; }
     }
@@ -17,9 +17,9 @@ namespace SharedClasses.Domain
     public interface IEntityRepository<T> : IReadOnlyEntityRepository<T>, IEntityRepository where T : IEntity
     {
         /// <summary>
-        /// Adds an <see cref="IEntity"/> to the repository.
+        /// Adds an <see cref="IEntity" /> to the repository.
         /// </summary>
-        /// <param name="entity">The <see cref="IEntity"/> to add.</param>
+        /// <param name="entity">The <see cref="IEntity" /> to add.</param>
         void AddEntity(T entity);
 
         /// <summary>

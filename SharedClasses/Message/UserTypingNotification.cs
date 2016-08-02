@@ -6,24 +6,15 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class UserTypingNotification : IMessage
     {
-        private readonly NotificationType notificationType;
-        private readonly UserTyping userTyping;
-
         public UserTypingNotification(UserTyping userTyping, NotificationType notificationType)
         {
-            this.userTyping = userTyping;
-            this.notificationType = notificationType;
+            UserTyping = userTyping;
+            NotificationType = notificationType;
         }
 
-        public UserTyping UserTyping
-        {
-            get { return userTyping; }
-        }
+        public UserTyping UserTyping { get; }
 
-        public NotificationType NotificationType
-        {
-            get { return notificationType; }
-        }
+        public NotificationType NotificationType { get; }
 
         public MessageIdentifier MessageIdentifier
         {

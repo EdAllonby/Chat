@@ -14,7 +14,6 @@ using ChatClient.ViewModels.UserSettingsViewModel;
 using GongSolutions.Wpf.DragDrop;
 using SharedClasses;
 using SharedClasses.Domain;
-using SharedClasses.Message;
 
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
@@ -27,10 +26,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private readonly ParticipationRepository participationRepository;
         private readonly IReadOnlyEntityRepository<User> userRepository;
 
-        public EventHandler OpenUserSettingsWindowRequested;
-
         private List<ConnectedUserModel> connectedUsers = new List<ConnectedUserModel>();
         private GroupChatModel groupChat;
+
+        public EventHandler OpenUserSettingsWindowRequested;
 
         public ChatWindowViewModel(Conversation conversation, IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
@@ -220,8 +219,9 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         }
 
         /// <summary>
-        /// Tries to send an <see cref="ImageContribution"/> to the conversation.
-        /// <see cref="imageLocation"/> doesn't need to be a location of an image, checks are made in this method to ensure only images get sent.
+        /// Tries to send an <see cref="ImageContribution" /> to the conversation.
+        /// <see cref="imageLocation" /> doesn't need to be a location of an image, checks are made in this method to ensure only
+        /// images get sent.
         /// </summary>
         /// <param name="imageLocation">The location of the image in the file system.</param>
         public void SendImageContribution(string imageLocation)
@@ -292,7 +292,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private bool CanSendConversationContributionRequest()
         {
-            return !String.IsNullOrEmpty(groupChat.MessageToAddToConversation);
+            return !string.IsNullOrEmpty(groupChat.MessageToAddToConversation);
         }
 
         private void NewConversationContributionRequest()

@@ -20,7 +20,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             var loginResponse = (LoginResponse) serialiser.Deserialise(networkStream);
-            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginResponse.MessageIdentifier);
+            Log.InfoFormat($"Network stream has received data and deserialised to a {loginResponse.MessageIdentifier} object");
             return loginResponse;
         }
     }

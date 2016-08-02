@@ -13,16 +13,16 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 {
     public class LoginWindowViewModel : ViewModel
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(LoginWindowViewModel));
 
         private readonly IClientService clientService;
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
-
-        public EventHandler<LoginErrorEventArgs> LoginErrored;
-        public EventHandler OpenMainWindowRequested;
         private bool canOpenWindow;
 
+        public EventHandler<LoginErrorEventArgs> LoginErrored;
+
         private LoginModel loginModel = new LoginModel();
+        public EventHandler OpenMainWindowRequested;
 
         public LoginWindowViewModel(IServiceRegistry serviceRegistry)
             : base(serviceRegistry)
@@ -73,7 +73,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
                     break;
 
                 case LoginResult.AlreadyConnected:
-                    LoginErrored(this, new LoginErrorEventArgs(result, string.Format("User already connected with username: {0}", LoginModel.Username)));
+                    LoginErrored(this, new LoginErrorEventArgs(result, $"User already connected with username: {LoginModel.Username}"));
                     break;
 
                 case LoginResult.ServerNotFound:
@@ -135,7 +135,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private bool CanLogin()
         {
-            return (String.IsNullOrWhiteSpace(LoginModel.Error));
+            return string.IsNullOrWhiteSpace(LoginModel.Error);
         }
 
         #endregion

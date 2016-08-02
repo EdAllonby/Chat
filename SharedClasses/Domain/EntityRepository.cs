@@ -8,13 +8,13 @@ namespace SharedClasses.Domain
 {
     public abstract class EntityRepository<T> : IEntityRepository<T> where T : IEntity
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof (EntityRepository<T>));
+        protected static readonly ILog Log = LogManager.GetLogger(typeof(EntityRepository<T>));
 
         private readonly IDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
 
         public Type EnclosedEntityType
         {
-            get { return typeof (T); }
+            get { return typeof(T); }
         }
 
         public event EventHandler<EntityChangedEventArgs<T>> EntityAdded;
@@ -24,14 +24,14 @@ namespace SharedClasses.Domain
         public event EventHandler<EntityChangedEventArgs<T>> EntityRemoved;
 
         /// <summary>
-        /// Adds an <see cref="IEntity"/> to the repository.
+        /// Adds an <see cref="IEntity" /> to the repository.
         /// </summary>
-        /// <param name="entity">The <see cref="IEntity"/> to add.</param>
+        /// <param name="entity">The <see cref="IEntity" /> to add.</param>
         public void AddEntity(T entity)
         {
             entitiesIndexedById.Add(entity.Id, entity);
 
-            Log.DebugFormat("Entity with Id {0} added.", entity.Id);
+            Log.DebugFormat($"Entity with Id {entity.Id} added.");
 
             OnEntityAdded(entity);
         }
@@ -46,16 +46,16 @@ namespace SharedClasses.Domain
 
             entitiesIndexedById[entity.Id] = entity;
 
-            Log.DebugFormat("Entity with Id {0} has been updated in {1} repository.", entity.Id, EnclosedEntityType.Name);
+            Log.DebugFormat($"Entity with Id {entity.Id} has been updated in {EnclosedEntityType.Name} repository.");
 
             OnEntityUpdated(entity, previousEntity);
         }
 
         /// <summary>
-        /// Retrieves an <see cref="IEntity"/> entity from the repository.
+        /// Retrieves an <see cref="IEntity" /> entity from the repository.
         /// </summary>
-        /// <param name="entityId">The <see cref="IEntity"/> entity Id to find.</param>
-        /// <returns>The <see cref="IEntity"/> which matches the ID. If no <see cref="IEntity"/> is found, return null.</returns>
+        /// <param name="entityId">The <see cref="IEntity" /> entity Id to find.</param>
+        /// <returns>The <see cref="IEntity" /> which matches the ID. If no <see cref="IEntity" /> is found, return null.</returns>
         public T FindEntityById(int entityId)
         {
             T entity;
@@ -64,9 +64,9 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// Retrieves all <see cref="IEntity"/>s from the repository.
+        /// Retrieves all <see cref="IEntity" />s from the repository.
         /// </summary>
-        /// <returns>A collection of all <see cref="IEntity"/>s in the repository.</returns>
+        /// <returns>A collection of all <see cref="IEntity" />s in the repository.</returns>
         public IEnumerable<T> GetAllEntities()
         {
             return new List<T>(entitiesIndexedById.Values);

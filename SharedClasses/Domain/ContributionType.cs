@@ -1,7 +1,7 @@
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Defines what type the <see cref="IContribution"/> is.
+    /// Defines what type the <see cref="IContribution" /> is.
     /// </summary>
     public enum ContributionType
     {

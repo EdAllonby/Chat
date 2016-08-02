@@ -18,7 +18,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             var conversationSnapshotRequest = (ConversationSnapshotRequest) serialiser.Deserialise(networkStream);
-            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", conversationSnapshotRequest.MessageIdentifier);
+            Log.InfoFormat($"Network stream has received data and deserialised to a {conversationSnapshotRequest.MessageIdentifier} object");
             return conversationSnapshotRequest;
         }
     }

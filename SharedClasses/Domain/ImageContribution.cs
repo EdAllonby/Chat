@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 
 namespace SharedClasses.Domain
@@ -10,61 +9,34 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class ImageContribution : IContribution
     {
-        private readonly DateTime contributionTimeStamp;
-        private readonly int contributorUserId;
-        private readonly int conversationId;
-        private readonly int id;
-        private readonly Image image;
-
         public ImageContribution(int contributorUserId, Image image, int conversationId)
         {
-            Contract.Requires(contributorUserId > 0);
-            Contract.Requires(conversationId > 0);
-
-            this.contributorUserId = contributorUserId;
-            this.image = image;
-            this.conversationId = conversationId;
+            ContributorUserId = contributorUserId;
+            Image = image;
+            ConversationId = conversationId;
         }
 
         /// <summary>
         /// Creates a complete text contribution entity.
         /// </summary>
         /// <param name="id">The unique Id of the contribution entity.</param>
-        /// <param name="incompleteContribution">The extra details of the <see cref="TextContribution"/>.</param>
+        /// <param name="incompleteContribution">The extra details of the <see cref="TextContribution" />.</param>
         public ImageContribution(int id, ImageContribution incompleteContribution)
             : this(incompleteContribution.ContributorUserId, incompleteContribution.Image, incompleteContribution.ConversationId)
         {
-            Contract.Requires(id > 0);
-            Contract.Requires(incompleteContribution != null);
-
-            this.id = id;
-            contributionTimeStamp = DateTime.Now;
+            Id = id;
+            ContributionTimeStamp = DateTime.Now;
         }
 
-        public Image Image
-        {
-            get { return image; }
-        }
+        public Image Image { get; }
 
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id { get; }
 
-        public int ConversationId
-        {
-            get { return conversationId; }
-        }
+        public int ConversationId { get; }
 
-        public int ContributorUserId
-        {
-            get { return contributorUserId; }
-        }
+        public int ContributorUserId { get; }
 
-        public DateTime ContributionTimeStamp
-        {
-            get { return contributionTimeStamp; }
-        }
+        public DateTime ContributionTimeStamp { get; }
 
         public ContributionType ContributionType
         {

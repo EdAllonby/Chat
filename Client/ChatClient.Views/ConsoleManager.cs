@@ -46,7 +46,8 @@ namespace ChatClient.Views
         }
 
         /// <summary>
-        /// If the process has a console attached to it, it will be detached and no longer visible. Writing to the System.Console is still possible, but no output will be shown.
+        /// If the process has a console attached to it, it will be detached and no longer visible. Writing to the System.Console
+        /// is still possible, but no output will be shown.
         /// </summary>
         public static void Hide()
         {
@@ -71,7 +72,7 @@ namespace ChatClient.Views
 
         private static void InvalidateOutAndError()
         {
-            Type type = typeof (Console);
+            Type type = typeof(Console);
 
             FieldInfo consoleOut = type.GetField("_out",
                 BindingFlags.Static | BindingFlags.NonPublic);
@@ -90,7 +91,7 @@ namespace ChatClient.Views
             consoleOut.SetValue(null, null);
             consoleError.SetValue(null, null);
 
-            consoleInitializeStdOutError.Invoke(null, new object[] {true});
+            consoleInitializeStdOutError.Invoke(null, new object[] { true });
         }
 
         private static void SetOutAndErrorNull()

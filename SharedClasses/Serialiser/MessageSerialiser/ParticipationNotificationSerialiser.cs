@@ -21,7 +21,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
 
             var participationNotification = new ParticipationNotification(participationSerialiser.Deserialise(networkStream), notificationType);
 
-            Log.InfoFormat("{0} message deserialised", participationNotification.MessageIdentifier);
+            Log.InfoFormat($"{participationNotification.MessageIdentifier} message deserialised");
             return participationNotification;
         }
     }

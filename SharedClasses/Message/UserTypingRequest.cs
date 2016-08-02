@@ -6,17 +6,12 @@ namespace SharedClasses.Message
     [Serializable]
     public sealed class UserTypingRequest : IMessage
     {
-        private readonly UserTyping userTyping;
-
         public UserTypingRequest(UserTyping userTyping)
         {
-            this.userTyping = userTyping;
+            UserTyping = userTyping;
         }
 
-        public UserTyping UserTyping
-        {
-            get { return userTyping; }
-        }
+        public UserTyping UserTyping { get; }
 
         public MessageIdentifier MessageIdentifier
         {

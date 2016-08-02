@@ -5,13 +5,14 @@ using SharedClasses.Message;
 namespace SharedClasses
 {
     /// <summary>
-    /// Signifies a entity change in a <see cref="EntityRepository{T}"/>.
+    /// Signifies a entity change in a <see cref="EntityRepository{T}" />.
     /// </summary>
     /// <typeparam name="T">The entity that has been changed in the repository.</typeparam>
     public sealed class EntityChangedEventArgs<T> : EventArgs where T : IEntity
     {
         /// <summary>
-        /// Signifies either an entity creation or entity deletion. When an entity is deleted, <see cref="PreviousEntity"/> is set to the current entity.
+        /// Signifies either an entity creation or entity deletion. When an entity is deleted, <see cref="PreviousEntity" /> is set
+        /// to the current entity.
         /// </summary>
         /// <param name="entity">The entity that is created or deleted.</param>
         /// <param name="notificationType">What is happening to the entity in the repository.</param>
@@ -25,7 +26,7 @@ namespace SharedClasses
         }
 
         /// <summary>
-        /// Signifies an entity being updated in the <see cref="EntityRepository{T}"/>.
+        /// Signifies an entity being updated in the <see cref="EntityRepository{T}" />.
         /// </summary>
         /// <param name="entity">The entity being updated.</param>
         /// <param name="previousEntity">The entity state before being updated.</param>

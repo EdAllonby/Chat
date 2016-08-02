@@ -20,7 +20,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
             NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
             var connectionStatusNotification = new ConnectionStatusNotification(connectionStatusSerialiser.Deserialise(networkStream), notificationType);
 
-            Log.InfoFormat("{0} message deserialised.", connectionStatusNotification.MessageIdentifier);
+            Log.InfoFormat($"{connectionStatusNotification.MessageIdentifier} message deserialised.");
 
             return connectionStatusNotification;
         }

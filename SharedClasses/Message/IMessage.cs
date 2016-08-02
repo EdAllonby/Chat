@@ -10,7 +10,8 @@ namespace SharedClasses.Message
     public interface IMessage
     {
         /// <summary>
-        /// The identifier associated with the particular IMessage. Identifiers are found in <see cref="SharedClasses.MessageIdentifier"/>
+        /// The identifier associated with the particular IMessage. Identifiers are found in
+        /// <see cref="SharedClasses.MessageIdentifier" />
         /// </summary>
         MessageIdentifier MessageIdentifier { get; }
     }

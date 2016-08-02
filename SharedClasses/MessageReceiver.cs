@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net.Sockets;
 using log4net;
@@ -14,24 +13,21 @@ namespace SharedClasses
     /// </summary>
     public sealed class MessageReceiver
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (MessageReceiver));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MessageReceiver));
 
         /// <summary>
-        /// Fires a <see cref="MessageEventArgs"/> encapsulating an <see cref="IMessage"/> when a new message is received.
+        /// Fires a <see cref="MessageEventArgs" /> encapsulating an <see cref="IMessage" /> when a new message is received.
         /// </summary>
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
-        /// Listens for incoming messages on the <see cref="NetworkStream"/>.
-        /// Fires a <see cref="MessageReceived"/> event when a new <see cref="IMessage"/> has been received.
+        /// Listens for incoming messages on the <see cref="NetworkStream" />.
+        /// Fires a <see cref="MessageReceived" /> event when a new <see cref="IMessage" /> has been received.
         /// </summary>
         /// <param name="clientUserId">The Id of the user the NetworkStream is linked to.</param>
         /// <param name="tcpClient">The stream between the Client and the Server.</param>
         public void ReceiveMessages(int clientUserId, TcpClient tcpClient)
         {
-            Contract.Requires(clientUserId > 0);
-            Contract.Requires(tcpClient != null);
-
             using (NetworkStream networkStream = tcpClient.GetStream())
             {
                 try

@@ -15,7 +15,7 @@ namespace ChatClient.Services
     /// </summary>
     internal sealed class ServerLoginHandler
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ServerLoginHandler));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ServerLoginHandler));
 
         private readonly ConversationSnapshotHandler conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
         private readonly ParticipationSnapshotHandler participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
@@ -42,7 +42,7 @@ namespace ChatClient.Services
         public event EventHandler BootstrapCompleted;
 
         /// <summary>
-        /// Handles connecting a client to the server, and creates a <see cref="ConnectionHandler"/> on success.
+        /// Handles connecting a client to the server, and creates a <see cref="ConnectionHandler" /> on success.
         /// </summary>
         /// <param name="loginDetails">The connection details of the trying-to-connect user.</param>
         /// <param name="connectionHandler">An initialised connection handler on login success.</param>

@@ -5,7 +5,7 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="AvatarNotification"/> the Client received.
+    /// Handles a <see cref="AvatarNotification" /> the Client received.
     /// </summary>
     internal sealed class AvatarNotificationHandler : IMessageHandler
     {

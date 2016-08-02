@@ -48,10 +48,10 @@ namespace ServerTests.MessageHandlerTests
                 }
                 else
                 {
-                    clientManager.AddClientHandler(user.Id, new MockClientHandler());                  
+                    clientManager.AddClientHandler(user.Id, new MockClientHandler());
                 }
             }
-            
+
             ServiceRegistry.RegisterService<IClientManager>(clientManager);
         }
 
@@ -68,7 +68,7 @@ namespace ServerTests.MessageHandlerTests
             int userId2 = idAllocator.AllocateEntityId<User>();
             int userId3 = idAllocator.AllocateEntityId<User>();
 
-            var usersToAddToConversation = new List<int> {DefaultUser.Id, userId2, userId3};
+            var usersToAddToConversation = new List<int> { DefaultUser.Id, userId2, userId3 };
 
             var userRepository = (UserRepository) repositoryManager.GetRepository<User>();
             var participationRepository = (ParticipationRepository) repositoryManager.GetRepository<Participation>();

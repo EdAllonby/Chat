@@ -15,17 +15,19 @@ namespace ChatClient.Models.Properties
     /// Indicates that the value of the marked element could be <c>null</c> sometimes,
     /// so the check for <c>null</c> is necessary before its usage
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [CanBeNull] public object Test() { return null; }
     /// public void UseTest() {
     ///   var p = Test();
     ///   var s = p.ToString(); // Warning: Possible 'System.NullReferenceException'
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     [AttributeUsage(
         AttributeTargets.Method | AttributeTargets.Parameter |
         AttributeTargets.Property | AttributeTargets.Delegate |
-        AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+        AttributeTargets.Field)]
     public sealed class CanBeNullAttribute : Attribute
     {
     }
@@ -33,15 +35,17 @@ namespace ChatClient.Models.Properties
     /// <summary>
     /// Indicates that the value of the marked element could never be <c>null</c>
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [NotNull] public object Foo() {
     ///   return null; // Warning: Possible 'null' assignment
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     [AttributeUsage(
         AttributeTargets.Method | AttributeTargets.Parameter |
         AttributeTargets.Property | AttributeTargets.Delegate |
-        AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+        AttributeTargets.Field)]
     public sealed class NotNullAttribute : Attribute
     {
     }
@@ -49,18 +53,19 @@ namespace ChatClient.Models.Properties
     /// <summary>
     /// Indicates that the marked method builds string by format pattern and (optional) arguments.
     /// Parameter, which contains format string, should be given in constructor. The format string
-    /// should be in <see cref="string.Format(IFormatProvider,string,object[])"/>-like form
+    /// should be in <see cref="string.Format(IFormatProvider,string,object[])" />-like form
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [StringFormatMethod("message")]
     /// public void ShowError(string message, params object[] args) { /* do something */ }
     /// public void Foo() {
     ///   ShowError("Failed: {0}"); // Warning: Non-existing argument in format string
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     [AttributeUsage(
-        AttributeTargets.Constructor | AttributeTargets.Method,
-        AllowMultiple = false, Inherited = true)]
+        AttributeTargets.Constructor | AttributeTargets.Method)]
     public sealed class StringFormatMethodAttribute : Attribute
     {
         /// <param name="formatParameterName">
@@ -77,56 +82,77 @@ namespace ChatClient.Models.Properties
     /// <summary>
     /// Indicates that the function argument should be string literal and match one
     /// of the parameters of the caller function. For example, ReSharper annotates
-    /// the parameter of <see cref="System.ArgumentNullException"/>
+    /// the parameter of <see cref="System.ArgumentNullException" />
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// public void Foo(string param) {
     ///   if (param == null)
     ///     throw new ArgumentNullException("par"); // Warning: Cannot resolve symbol
     /// }
-    /// </code></example>
-    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class InvokerParameterNameAttribute : Attribute
     {
     }
 
     /// <summary>
     /// Indicates that the method is contained in a type that implements
-    /// <see cref="System.ComponentModel.INotifyPropertyChanged"/> interface
+    /// <see cref="System.ComponentModel.INotifyPropertyChanged" /> interface
     /// and this method is used to notify that some property value changed
     /// </summary>
     /// <remarks>
     /// The method should be non-static and conform to one of the supported signatures:
     /// <list>
-    /// <item><c>NotifyChanged(string)</c></item>
-    /// <item><c>NotifyChanged(params string[])</c></item>
-    /// <item><c>NotifyChanged{T}(Expression{Func{T}})</c></item>
-    /// <item><c>NotifyChanged{T,U}(Expression{Func{T,U}})</c></item>
-    /// <item><c>SetProperty{T}(ref T, T, string)</c></item>
+    /// <item>
+    /// <c>NotifyChanged(string)</c>
+    /// </item>
+    /// <item>
+    /// <c>NotifyChanged(params string[])</c>
+    /// </item>
+    /// <item>
+    /// <c>NotifyChanged{T}(Expression{Func{T}})</c>
+    /// </item>
+    /// <item>
+    /// <c>NotifyChanged{T,U}(Expression{Func{T,U}})</c>
+    /// </item>
+    /// <item>
+    /// <c>SetProperty{T}(ref T, T, string)</c>
+    /// </item>
     /// </list>
     /// </remarks>
-    /// <example><code>
-    /// public class Foo : INotifyPropertyChanged {
-    ///   public event PropertyChangedEventHandler PropertyChanged;
-    ///   [NotifyPropertyChangedInvocator]
-    ///   protected virtual void NotifyChanged(string propertyName) { ... }
-    ///
-    ///   private string _name;
-    ///   public string Name {
-    ///     get { return _name; }
-    ///     set { _name = value; NotifyChanged("LastName"); /* Warning */ }
-    ///   }
-    /// }
-    /// </code>
+    /// <example>
+    /// <code>
+    ///  public class Foo : INotifyPropertyChanged {
+    ///    public event PropertyChangedEventHandler PropertyChanged;
+    ///    [NotifyPropertyChangedInvocator]
+    ///    protected virtual void NotifyChanged(string propertyName) { ... }
+    /// 
+    ///    private string _name;
+    ///    public string Name {
+    ///      get { return _name; }
+    ///      set { _name = value; NotifyChanged("LastName"); /* Warning */ }
+    ///    }
+    ///  }
+    ///  </code>
     /// Examples of generated notifications:
     /// <list>
-    /// <item><c>NotifyChanged("Property")</c></item>
-    /// <item><c>NotifyChanged(() =&gt; Property)</c></item>
-    /// <item><c>NotifyChanged((VM x) =&gt; x.Property)</c></item>
-    /// <item><c>SetProperty(ref myField, value, "Property")</c></item>
+    /// <item>
+    /// <c>NotifyChanged("Property")</c>
+    /// </item>
+    /// <item>
+    /// <c>NotifyChanged(() =&gt; Property)</c>
+    /// </item>
+    /// <item>
+    /// <c>NotifyChanged((VM x) =&gt; x.Property)</c>
+    /// </item>
+    /// <item>
+    /// <c>SetProperty(ref myField, value, "Property")</c>
+    /// </item>
     /// </list>
     /// </example>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method)]
     public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
     {
         public NotifyPropertyChangedInvocatorAttribute()
@@ -153,37 +179,49 @@ namespace ChatClient.Models.Properties
     /// <item>Output   ::= [ParameterName: Value]* {halt|stop|void|nothing|Value}</item>
     /// <item>Value    ::= true | false | null | notnull | canbenull</item>
     /// </list>
-    /// If method has single input parameter, it's name could be omitted.<br/>
+    /// If method has single input parameter, it's name could be omitted.<br />
     /// Using <c>halt</c> (or <c>void</c>/<c>nothing</c>, which is the same)
-    /// for method output means that the methos doesn't return normally.<br/>
-    /// <c>canbenull</c> annotation is only applicable for output parameters.<br/>
+    /// for method output means that the methos doesn't return normally.<br />
+    /// <c>canbenull</c> annotation is only applicable for output parameters.<br />
     /// You can use multiple <c>[ContractAnnotation]</c> for each FDT row,
-    /// or use single attribute with rows separated by semicolon.<br/>
+    /// or use single attribute with rows separated by semicolon.<br />
     /// </syntax>
-    /// <examples><list>
-    /// <item><code>
+    /// <examples>
+    /// <list>
+    /// <item>
+    /// <code>
     /// [ContractAnnotation("=> halt")]
     /// public void TerminationMethod()
-    /// </code></item>
-    /// <item><code>
+    /// </code>
+    /// </item>
+    /// <item>
+    /// <code>
     /// [ContractAnnotation("halt &lt;= condition: false")]
     /// public void Assert(bool condition, string text) // regular assertion method
-    /// </code></item>
-    /// <item><code>
+    /// </code>
+    /// </item>
+    /// <item>
+    /// <code>
     /// [ContractAnnotation("s:null => true")]
     /// public bool IsNullOrEmpty(string s) // string.IsNullOrEmpty()
-    /// </code></item>
-    /// <item><code>
+    /// </code>
+    /// </item>
+    /// <item>
+    /// <code>
     /// // A method that returns null if the parameter is null, and not null if the parameter is not null
     /// [ContractAnnotation("null => null; notnull => notnull")]
     /// public object Transform(object data) 
-    /// </code></item>
-    /// <item><code>
+    /// </code>
+    /// </item>
+    /// <item>
+    /// <code>
     /// [ContractAnnotation("s:null=>false; =>true,result:notnull; =>false, result:null")]
     /// public bool TryParse(string s, out Person result)
-    /// </code></item>
-    /// </list></examples>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    /// </code>
+    /// </item>
+    /// </list>
+    /// </examples>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public sealed class ContractAnnotationAttribute : Attribute
     {
         public ContractAnnotationAttribute([NotNull] string contract)
@@ -204,13 +242,15 @@ namespace ChatClient.Models.Properties
     /// <summary>
     /// Indicates that marked element should be localized or not
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [LocalizationRequiredAttribute(true)]
     /// public class Foo {
     ///   private string str = "my string"; // Warning: Localizable string
     /// }
-    /// </code></example>
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.All)]
     public sealed class LocalizationRequiredAttribute : Attribute
     {
         public LocalizationRequiredAttribute() : this(true)
@@ -231,7 +271,8 @@ namespace ChatClient.Models.Properties
     /// should be used instead. However, using '==' or '!=' for comparison
     /// with <c>null</c> is always permitted.
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [CannotApplyEqualityOperator]
     /// class NoEquality { }
     /// class UsesNoEquality {
@@ -243,10 +284,11 @@ namespace ChatClient.Models.Properties
     ///     }
     ///   }
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     [AttributeUsage(
         AttributeTargets.Interface | AttributeTargets.Class |
-        AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
+        AttributeTargets.Struct)]
     public sealed class CannotApplyEqualityOperatorAttribute : Attribute
     {
     }
@@ -255,14 +297,16 @@ namespace ChatClient.Models.Properties
     /// When applied to a target attribute, specifies a requirement for any type marked
     /// with the target attribute to implement or inherit specific type or types.
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [BaseTypeRequired(typeof(IComponent)] // Specify requirement
     /// public class ComponentAttribute : Attribute { }
     /// [Component] // ComponentAttribute requires implementing IComponent interface
     /// public class MyComponent : IComponent { }
-    /// </code></example>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    [BaseTypeRequired(typeof (Attribute))]
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [BaseTypeRequired(typeof(Attribute))]
     public sealed class BaseTypeRequiredAttribute : Attribute
     {
         public BaseTypeRequiredAttribute([NotNull] Type baseType)
@@ -279,7 +323,7 @@ namespace ChatClient.Models.Properties
     /// (e.g. via reflection, in external library), so this symbol
     /// will not be marked as unused (as well as by other usage inspections)
     /// </summary>
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.All)]
     public sealed class UsedImplicitlyAttribute : Attribute
     {
         public UsedImplicitlyAttribute()
@@ -313,7 +357,7 @@ namespace ChatClient.Models.Properties
     /// to not mark symbols marked with such attributes as unused
     /// (as well as by other usage inspections)
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class)]
     public sealed class MeansImplicitUseAttribute : Attribute
     {
         public MeansImplicitUseAttribute()
@@ -363,13 +407,13 @@ namespace ChatClient.Models.Properties
         InstantiatedWithFixedConstructorSignature = 4,
 
         /// <summary>Indicates implicit instantiation of a type</summary>
-        InstantiatedNoFixedConstructorSignature = 8,
+        InstantiatedNoFixedConstructorSignature = 8
     }
 
     /// <summary>
     /// Specify what is considered used implicitly
-    /// when marked with <see cref="MeansImplicitUseAttribute"/>
-    /// or <see cref="UsedImplicitlyAttribute"/>
+    /// when marked with <see cref="MeansImplicitUseAttribute" />
+    /// or <see cref="UsedImplicitlyAttribute" />
     /// </summary>
     [Flags]
     public enum ImplicitUseTargetFlags
@@ -411,7 +455,7 @@ namespace ChatClient.Models.Properties
     /// If the parameter is an enumerable, indicates that it is enumerated
     /// while the method is executed
     /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Parameter)]
     public sealed class InstantHandleAttribute : Attribute
     {
     }
@@ -420,14 +464,16 @@ namespace ChatClient.Models.Properties
     /// Indicates that a method does not make any observable state changes.
     /// The same as <c>System.Diagnostics.Contracts.PureAttribute</c>
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [Pure] private int Multiply(int x, int y) { return x * y; }
     /// public void Foo() {
     ///   const int a = 2, b = 2;
     ///   Multiply(a, b); // Waring: Return value of pure method is not used
     /// }
-    /// </code></example>
-    [AttributeUsage(AttributeTargets.Method, Inherited = true)]
+    /// </code>
+    /// </example>
+    [AttributeUsage(AttributeTargets.Method)]
     public sealed class PureAttribute : Attribute
     {
     }
@@ -550,7 +596,7 @@ namespace ChatClient.Models.Properties
     /// ASP.NET MVC attribute. If applied to a parameter, indicates that
     /// the parameter is an MVC controller. If applied to a method,
     /// the MVC controller name is calculated implicitly from the context.
-    /// Use this attribute for custom wrappers similar to 
+    /// Use this attribute for custom wrappers similar to
     /// <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String, String)</c>
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
@@ -612,7 +658,7 @@ namespace ChatClient.Models.Properties
 
     /// <summary>
     /// ASP.NET MVC attribute. Indicates that a parameter is an MVC display template.
-    /// Use this attribute for custom wrappers similar to 
+    /// Use this attribute for custom wrappers similar to
     /// <c>System.Web.Mvc.Html.DisplayExtensions.DisplayForModel(HtmlHelper, String)</c>
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
@@ -655,13 +701,15 @@ namespace ChatClient.Models.Properties
     /// ASP.NET MVC attribute. When applied to a parameter of an attribute,
     /// indicates that this parameter is an MVC action name
     /// </summary>
-    /// <example><code>
+    /// <example>
+    /// <code>
     /// [ActionName("Foo")]
     /// public ActionResult Login(string returnUrl) {
     ///   ViewBag.ReturnUrl = Url.Action("Foo"); // OK
     ///   return RedirectToAction("Bar"); // Error: Cannot resolve action
     /// }
-    /// </code></example>
+    /// </code>
+    /// </example>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
     public sealed class AspMvcActionSelectorAttribute : Attribute
     {
@@ -669,7 +717,7 @@ namespace ChatClient.Models.Properties
 
     [AttributeUsage(
         AttributeTargets.Parameter | AttributeTargets.Property |
-        AttributeTargets.Field, Inherited = true)]
+        AttributeTargets.Field)]
     public sealed class HtmlElementAttributesAttribute : Attribute
     {
         public HtmlElementAttributesAttribute()
@@ -687,7 +735,7 @@ namespace ChatClient.Models.Properties
 
     [AttributeUsage(
         AttributeTargets.Parameter | AttributeTargets.Field |
-        AttributeTargets.Property, Inherited = true)]
+        AttributeTargets.Property)]
     public sealed class HtmlAttributeValueAttribute : Attribute
     {
         public HtmlAttributeValueAttribute([NotNull] string name)
@@ -703,10 +751,10 @@ namespace ChatClient.Models.Properties
 
     /// <summary>
     /// Razor attribute. Indicates that a parameter or a method is a Razor section.
-    /// Use this attribute for custom wrappers similar to 
+    /// Use this attribute for custom wrappers similar to
     /// <c>System.Web.WebPages.WebPageBase.RenderSection(String)</c>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
     public sealed class RazorSectionAttribute : Attribute
     {
     }

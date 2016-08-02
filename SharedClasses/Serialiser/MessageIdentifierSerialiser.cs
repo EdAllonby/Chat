@@ -1,37 +1,33 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Net.Sockets;
 using log4net;
 
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// Defines  what message gets what identifier, and used to serialise and deserialise Message Identifiers to their related Type.
+    /// Defines  what message gets what identifier, and used to serialise and deserialise Message Identifiers to their related
+    /// Type.
     /// </summary>
     public static class MessageIdentifierSerialiser
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MessageIdentifierSerialiser));
 
         public static void Serialise(NetworkStream stream, MessageIdentifier messageIdentifier)
         {
-            Contract.Requires(stream != null);
-
-            stream.Write(BitConverter.GetBytes((int) messageIdentifier), 0, 4);
-            Log.DebugFormat("Sent Message Identifier: {0} to stream.", messageIdentifier);
+            stream.Write(BitConverter.GetBytes((int)messageIdentifier), 0, 4);
+            Log.DebugFormat($"Sent Message Identifier: {messageIdentifier} to stream.");
         }
 
         public static MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
         {
-            Contract.Requires(stream != null);
-
             var messageTypeBuffer = new byte[4];
 
             stream.Read(messageTypeBuffer, 0, 4);
 
             int messageIdentifierNumber = BitConverter.ToInt32(messageTypeBuffer, 0);
-            var messageIdentifier = (MessageIdentifier) messageIdentifierNumber;
+            var messageIdentifier = (MessageIdentifier)messageIdentifierNumber;
 
-            Log.DebugFormat("Message Identifier {0} received from stream.", messageIdentifier);
+            Log.DebugFormat($"Message Identifier {messageIdentifier} received from stream.");
 
             return messageIdentifier;
         }

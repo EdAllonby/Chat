@@ -9,12 +9,12 @@ using SharedClasses.Message;
 namespace Server
 {
     /// <summary>
-    /// Handles the logic for incoming <see cref="IMessage"/> passed from ConnectionHandler.
+    /// Handles the logic for incoming <see cref="IMessage" /> passed from ConnectionHandler.
     /// </summary>
     internal sealed class Server
     {
         private const int PortNumber = 5004;
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
 
         private readonly OnEntityChangedHandler onConversationChangedHandler;
         private readonly OnEntityChangedHandler onParticipationChangedHandler;

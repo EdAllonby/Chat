@@ -16,20 +16,20 @@ namespace SharedClasses.Serialiser
         /// <returns>The serialiser used to serialise and deserialise the message.</returns>
         public static Serialiser<T> GetSerialiser<T>() where T : IMessage
         {
-            return SerialiserRegistry.SerialisersByMessageType[typeof (T)] as Serialiser<T>;
+            return SerialiserRegistry.SerialisersByMessageType[typeof(T)] as Serialiser<T>;
         }
 
         /// <summary>
         /// Returns the correct serialiser for the <see cref="IMessage" /> object identifier
         /// defined in the <see cref="MessageIdentifierSerialiser" /> class.
         /// </summary>
-        /// <param name="identifier">The unique name of the <see cref="IMessage"/>.</param>
-        /// <returns>The serialiser to get for the <see cref="IMessage"/>.</returns>
+        /// <param name="identifier">The unique name of the <see cref="IMessage" />.</param>
+        /// <returns>The serialiser to get for the <see cref="IMessage" />.</returns>
         public static ISerialiser GetSerialiser(MessageIdentifier identifier)
         {
             if (identifier == MessageIdentifier.UnrecognisedMessage)
             {
-                throw new ArgumentException(String.Format("A serialiser does not exist for message type {0}.", identifier));
+                throw new ArgumentException($"A serialiser does not exist for message type {identifier}.");
             }
 
             return SerialiserRegistry.SerialisersByMessageIdentifier[identifier];

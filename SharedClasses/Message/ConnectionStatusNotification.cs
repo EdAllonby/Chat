@@ -4,24 +4,15 @@ namespace SharedClasses.Message
 {
     public sealed class ConnectionStatusNotification : IMessage
     {
-        private readonly ConnectionStatus connectionStatus;
-        private readonly NotificationType notificationType;
-
         public ConnectionStatusNotification(ConnectionStatus connectionStatus, NotificationType notificationType)
         {
-            this.connectionStatus = connectionStatus;
-            this.notificationType = notificationType;
+            ConnectionStatus = connectionStatus;
+            NotificationType = notificationType;
         }
 
-        public ConnectionStatus ConnectionStatus
-        {
-            get { return connectionStatus; }
-        }
+        public ConnectionStatus ConnectionStatus { get; }
 
-        public NotificationType NotificationType
-        {
-            get { return notificationType; }
-        }
+        public NotificationType NotificationType { get; }
 
         public MessageIdentifier MessageIdentifier
         {

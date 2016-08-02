@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// An image linked with a <see cref="User"/> used as an avatar.
+    /// An image linked with a <see cref="User" /> used as an avatar.
     /// </summary>
     [Serializable]
     public sealed class Avatar : IEntity, IEquatable<Avatar>
     {
-        private readonly int id;
-        private readonly Image userAvatar;
-        private readonly int userId;
-
         /// <summary>
         /// Create a null Avatar object.
         /// </summary>
@@ -23,33 +18,21 @@ namespace SharedClasses.Domain
 
         public Avatar(int userId, Image userAvatar)
         {
-            Contract.Requires(userId > 0);
-            Contract.Requires(userAvatar != null);
-
-            this.userId = userId;
-            this.userAvatar = userAvatar;
+            UserId = userId;
+            UserAvatar = userAvatar;
         }
 
         public Avatar(int id, Avatar incompleteAvatar)
             : this(incompleteAvatar.UserId, incompleteAvatar.UserAvatar)
         {
-            Contract.Requires(incompleteAvatar != null);
-            Contract.Requires(id > 0);
-            Contract.Requires(incompleteAvatar.UserId > 0);
-            Contract.Requires(incompleteAvatar.UserAvatar != null);
-
-            this.id = id;
+            Id = id;
         }
 
-        public int UserId
-        {
-            get { return userId; }
-        }
+        public int UserId { get; }
 
-        public Image UserAvatar
-        {
-            get { return userAvatar; }
-        }
+        public Image UserAvatar { get; }
+
+        public int Id { get; }
 
         #region IEquality implementation
 
@@ -57,7 +40,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return id == other.id;
+            return Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -69,14 +52,9 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return id;
+            return Id;
         }
 
         #endregion
-
-        public int Id
-        {
-            get { return id; }
-        }
     }
 }

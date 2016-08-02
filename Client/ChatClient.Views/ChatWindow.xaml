@@ -12,32 +12,34 @@
         WindowStartupLocation="CenterScreen"
         Closing="WindowClosing"
         FocusManager.FocusedElement="{Binding ElementName=MessageTextBox}"
-        d:DataContext="{d:DesignInstance viewModel:ChatWindowViewModel}" RenderOptions.BitmapScalingMode="Fant" >
-    
+        d:DataContext="{d:DesignInstance viewModel:ChatWindowViewModel}" RenderOptions.BitmapScalingMode="Fant">
+
     <Window.InputBindings>
         <KeyBinding Key="OemComma" Modifiers="Control" Command="{Binding OpenUserSettings}" />
     </Window.InputBindings>
 
     <Grid Name="MainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="120" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="{Binding ElementName=MainGrid,Path=ActualWidth}">
-                <MenuItem Header="_Edit">
-                    <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}" InputGestureText="Ctrl+,"/>
-                </MenuItem>
-            <MenuItem Header="_Add User" DisplayMemberPath="Username"  ItemsSource="{Binding Path=ConnectedUsers}">
+        <Menu Grid.Row="0" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top"
+              Width="{Binding ElementName=MainGrid,Path=ActualWidth}">
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_User Settings..." Command="{Binding OpenUserSettings}" InputGestureText="Ctrl+," />
+            </MenuItem>
+            <MenuItem Header="_Add User" DisplayMemberPath="Username" ItemsSource="{Binding Path=ConnectedUsers}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}">
-                        <Setter Property="Command" Value="{Binding DataContext.AddUserCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=1}}" />
+                        <Setter Property="Command"
+                                Value="{Binding DataContext.AddUserCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=1}}" />
                         <Setter Property="CommandParameter" Value="{Binding}" />
                     </Style>
                 </MenuItem.ItemContainerStyle>
@@ -46,14 +48,15 @@
 
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            
+
             <Canvas Width="50" Margin="10,0,0,0" Height="76" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
                     HorizontalAlignment="Left">
                 <Path Data="{StaticResource PeopleIcon}"
                       Stretch="Fill" Stroke="Black" StrokeThickness="1" Width="50" Height="38" Canvas.Top="18.5"
                       Fill="#e74c3c" />
             </Canvas>
-            <Label Content="{Binding GroupChat.Title, FallbackValue='Chat participant names go here'}" VerticalContentAlignment="Center"
+            <Label Content="{Binding GroupChat.Title, FallbackValue='Chat participant names go here'}"
+                   VerticalContentAlignment="Center"
                    FontFamily="Myriad Pro" FontSize="12" />
         </StackPanel>
 
@@ -62,17 +65,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <extendedControls:BindableRichTextBox x:Name="MessageTextBox" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                 Margin="10,0,10,0" IsReadOnly="True"
-                                 TextChanged="OnMessageTextBoxTextChanged"
-                                 Grid.Column="0"
-                                 Background="AliceBlue"
-                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                 Document="{Binding GroupChat.Messages, UpdateSourceTrigger=PropertyChanged}" />
+            <extendedControls:BindableRichTextBox x:Name="MessageTextBox"
+                                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                  Margin="10,0,10,0" IsReadOnly="True"
+                                                  TextChanged="OnMessageTextBoxTextChanged"
+                                                  Grid.Column="0"
+                                                  Background="AliceBlue"
+                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                  Document="{Binding GroupChat.Messages, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <Canvas Grid.Row="3" Margin="10,0,10,0" Height="20">
-            <Label FontSize="10" FontStyle="Italic"  Foreground="DimGray" Content="{Binding GroupChat.UsersTyping}"/>
+            <Label FontSize="10" FontStyle="Italic" Foreground="DimGray" Content="{Binding GroupChat.UsersTyping}" />
         </Canvas>
         <Grid Grid.Row="4" AllowDrop="True">
             <Grid.RowDefinitions>
@@ -83,39 +87,41 @@
                 <ColumnDefinition Width="70" />
             </Grid.ColumnDefinitions>
 
-                <xctk:WatermarkTextBox Watermark="Type a message..." Name="ChatTextBox" TextChanged="OnTextChanged"
-                     AllowDrop="True"
-                     PreviewDragEnter="FileShowTextBox_PreviewDragEnter" 
-                     PreviewDragOver="FileShowTextBox_PreviewDragEnter" 
-                     dragDrop:DragDrop.IsDragSource="False"
-                     dragDrop:DragDrop.IsDropTarget="True"
-                     dragDrop:DragDrop.DropHandler="{Binding}"
-                     Text="{Binding GroupChat.MessageToAddToConversation,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
-                     DockPanel.Dock="Left"
-                     VerticalAlignment="Stretch"
-                     VerticalContentAlignment="Stretch"
-                     Width="Auto"
-                     SpellCheck.IsEnabled="True" Language="EN-UK"
-                     Margin="10,0,10,10" TextWrapping="Wrap" x:FieldModifier="private">
-                    <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
-                    </TextBox.InputBindings>
-                </xctk:WatermarkTextBox>
+            <xctk:WatermarkTextBox Watermark="Type a message..." Name="ChatTextBox" TextChanged="OnTextChanged"
+                                   AllowDrop="True"
+                                   PreviewDragEnter="FileShowTextBox_PreviewDragEnter"
+                                   PreviewDragOver="FileShowTextBox_PreviewDragEnter"
+                                   dragDrop:DragDrop.IsDragSource="False"
+                                   dragDrop:DragDrop.IsDropTarget="True"
+                                   dragDrop:DragDrop.DropHandler="{Binding}"
+                                   Text="{Binding GroupChat.MessageToAddToConversation,  Mode=TwoWay, UpdateSourceTrigger= PropertyChanged}"
+                                   DockPanel.Dock="Left"
+                                   VerticalAlignment="Stretch"
+                                   VerticalContentAlignment="Stretch"
+                                   Width="Auto"
+                                   SpellCheck.IsEnabled="True" Language="EN-UK"
+                                   Margin="10,0,10,10" TextWrapping="Wrap" x:FieldModifier="private">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding SendMessage, UpdateSourceTrigger= PropertyChanged}" Key="Enter" />
+                </TextBox.InputBindings>
+            </xctk:WatermarkTextBox>
 
             <Button Height="20" Width="20"
-                Style="{StaticResource LessRoundButtonStyle}"
-                HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,10" Grid.Column="1" Click="OnBrowseImageButtonClick">
+                    Style="{StaticResource LessRoundButtonStyle}"
+                    HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,10" Grid.Column="1"
+                    Click="OnBrowseImageButtonClick">
                 <Grid>
                     <Path Data="{StaticResource CameraIcon}"
-                     Width="14" Height="15" Stretch="Uniform" UseLayoutRounding="False" Fill="Black" />
+                          Width="14" Height="15" Stretch="Uniform" UseLayoutRounding="False" Fill="Black" />
                 </Grid>
             </Button>
 
             <Button Height="20" Width="40"
-                Style="{StaticResource LessRoundButtonStyle}"
-                Content="Send" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,10" Grid.Column="1"
-                Command="{Binding SendMessage}"
-                FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="10"/>
+                    Style="{StaticResource LessRoundButtonStyle}"
+                    Content="Send" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,5,10"
+                    Grid.Column="1"
+                    Command="{Binding SendMessage}"
+                    FontFamily="/ChatClient;component/Resources/#Roboto Thin" FontSize="10" />
         </Grid>
     </Grid>
 

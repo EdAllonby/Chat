@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Server;
 using SharedClasses.Domain;
 
@@ -40,13 +39,12 @@ namespace SharedClassesTests.Domain
 
             User user = null;
 
-            for (int i = 0; i < totalUsers; i++)
+            for (var i = 0; i < totalUsers; i++)
             {
                 int userId = entityGenerator.AllocateEntityId<User>();
                 user = new User("User", userId, new ConnectionStatus(userId, ConnectionStatus.Status.Connected));
             }
 
-            Contract.Assert(user != null, "user != null");
             Assert.AreEqual(user.Id, totalUsers + baseId);
         }
 

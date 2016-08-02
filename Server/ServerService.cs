@@ -16,7 +16,7 @@ namespace Server
 
         protected override void OnStart(string[] args)
         {
-            var serverThread = new Thread(StartServer) {Name = "Server Thread"};
+            var serverThread = new Thread(StartServer) { Name = "Server Thread" };
             serverThread.Start();
         }
 

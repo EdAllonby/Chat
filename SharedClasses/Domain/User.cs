@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -11,17 +10,12 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class User : IEntity, IEquatable<User>
     {
-        private readonly int id;
-        private readonly string username;
-
         /// <summary>
         /// Creates an incomplete user entity.
         /// </summary>
         public User(string username)
         {
-            Contract.Requires(username != null);
-
-            this.username = username;
+            Username = username;
             Avatar = new Avatar();
         }
 
@@ -34,20 +28,14 @@ namespace SharedClasses.Domain
         public User(string username, int id, ConnectionStatus status)
             : this(username)
         {
-            Contract.Requires(username != null);
-            Contract.Requires(id > 0);
-
-            this.id = id;
+            Id = id;
             ConnectionStatus = status;
         }
 
         /// <summary>
         /// The name of the User.
         /// </summary>
-        public string Username
-        {
-            get { return username; }
-        }
+        public string Username { get; }
 
         /// <summary>
         /// The user's current Avatar
@@ -62,20 +50,15 @@ namespace SharedClasses.Domain
         /// <summary>
         /// A Unique number used to identify the User.
         /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id { get; }
 
         /// <summary>
-        /// Deep clone a <see cref="User"/> entity.
+        /// Deep clone a <see cref="User" /> entity.
         /// </summary>
         /// <param name="user">The user to deep clone.</param>
         /// <returns>The deep cloned user object.</returns>
         public static User DeepClone(User user)
         {
-            Contract.Requires(user != null);
-
             using (var memoryStream = new MemoryStream())
             {
                 var formatter = new BinaryFormatter();
@@ -100,7 +83,7 @@ namespace SharedClasses.Domain
                 return true;
             }
 
-            return id == other.id;
+            return Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -112,7 +95,7 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return id;
+            return Id;
         }
 
         #endregion

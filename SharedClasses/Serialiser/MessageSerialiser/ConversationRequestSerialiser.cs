@@ -20,7 +20,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             var conversation = (ConversationRequest) serialiser.Deserialise(networkStream);
-            Log.InfoFormat("{0} message deserialised", conversation.MessageIdentifier);
+            Log.InfoFormat($"{conversation.MessageIdentifier} message deserialised");
 
             return conversation;
         }

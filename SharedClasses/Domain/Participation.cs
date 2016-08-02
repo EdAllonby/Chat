@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -11,10 +10,6 @@ namespace SharedClasses.Domain
     [Serializable]
     public class Participation : IEntity, IEquatable<Participation>
     {
-        private readonly int conversationId;
-        private readonly int id;
-        private readonly int userId;
-
         /// <summary>
         /// Create an incomplete Participation entity without an Id.
         /// </summary>
@@ -22,11 +17,8 @@ namespace SharedClasses.Domain
         /// <param name="conversationId">The identity of the conversation that the user wants to link to.</param>
         public Participation(int userId, int conversationId)
         {
-            Contract.Requires(userId > 0);
-            Contract.Requires(conversationId > 0);
-
-            this.userId = userId;
-            this.conversationId = conversationId;
+            UserId = userId;
+            ConversationId = conversationId;
         }
 
         /// <summary>
@@ -38,37 +30,24 @@ namespace SharedClasses.Domain
         public Participation(int id, int userId, int conversationId)
             : this(userId, conversationId)
         {
-            Contract.Requires(conversationId > 0);
-            Contract.Requires(userId > 0);
-            Contract.Requires(id > 0);
-
-            this.id = id;
+            Id = id;
             UserTyping = new UserTyping(false, id);
         }
 
-        public int UserId
-        {
-            get { return userId; }
-        }
+        public int UserId { get; }
 
-        public int ConversationId
-        {
-            get { return conversationId; }
-        }
+        public int ConversationId { get; }
 
         public UserTyping UserTyping { get; set; }
 
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id { get; }
 
         public bool Equals(Participation other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return conversationId == other.conversationId && userId == other.userId;
+            return ConversationId == other.ConversationId && UserId == other.UserId;
         }
 
         public override bool Equals(object obj)
@@ -89,7 +68,7 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (conversationId*397) ^ userId;
+                return (ConversationId*397) ^ UserId;
             }
         }
 

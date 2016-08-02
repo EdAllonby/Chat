@@ -24,7 +24,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
             NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
             var avatarNotification = new AvatarNotification(avatarSerialiser.Deserialise(networkStream), notificationType);
 
-            Log.InfoFormat("{0} message deserialised.", avatarNotification.MessageIdentifier);
+            Log.InfoFormat($"{avatarNotification.MessageIdentifier} message deserialised.");
 
             return avatarNotification;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Net.Sockets;
 using System.Threading;
 using log4net;
@@ -9,13 +8,13 @@ using SharedClasses.Serialiser;
 namespace SharedClasses
 {
     /// <summary>
-    /// This is in charge of abstracting away the TcpClient work for sending and receiving <see cref="IMessage"/>s.
-    /// This class has no logic other than to send and receive messages to and from a <see cref="NetworkStream"/>.
-    /// This class is identified by the <see cref="clientUserId"/>.
+    /// This is in charge of abstracting away the TcpClient work for sending and receiving <see cref="IMessage" />s.
+    /// This class has no logic other than to send and receive messages to and from a <see cref="NetworkStream" />.
+    /// This class is identified by the <see cref="clientUserId" />.
     /// </summary>
     public sealed class ConnectionHandler : IDisposable
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ConnectionHandler));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConnectionHandler));
         private static int totalListenerThreads;
 
         private readonly int clientUserId;
@@ -24,7 +23,7 @@ namespace SharedClasses
         private readonly TcpClient tcpClient;
 
         /// <summary>
-        /// Initialises the object so it can begin to send and receive <see cref="IMessage"/>s through <see cref="tcpClient"/>.
+        /// Initialises the object so it can begin to send and receive <see cref="IMessage" />s through <see cref="tcpClient" />.
         /// </summary>
         /// <param name="clientUserId">A unique value that identifies the client.</param>
         /// <param name="tcpClient"></param>
@@ -47,18 +46,16 @@ namespace SharedClasses
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         /// <summary>
-        /// Sends an <see cref="IMessage"/> across the <see cref="ConnectionHandler"/>'s <see cref="NetworkStream"/>.
+        /// Sends an <see cref="IMessage" /> across the <see cref="ConnectionHandler" />'s <see cref="NetworkStream" />.
         /// </summary>
         /// <param name="message">The message to send across the socket connection defined for this object.</param>
         public void SendMessage(IMessage message)
         {
-            Contract.Requires(message != null);
-
             lock (messageSenderLock)
             {
                 ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
                 messageSerialiser.Serialise(tcpClient.GetStream(), message);
-                Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
+                Log.DebugFormat($"Sent message with identifier {message.MessageIdentifier} to user with id {clientUserId}");
             }
         }
 
@@ -66,7 +63,7 @@ namespace SharedClasses
         {
             var messageListenerThread = new Thread(() => messageReceiver.ReceiveMessages(clientUserId, tcpClient))
             {
-                Name = "ReceiveMessageThread" + (totalListenerThreads++)
+                Name = "ReceiveMessageThread" + totalListenerThreads++
             };
 
             messageListenerThread.Start();

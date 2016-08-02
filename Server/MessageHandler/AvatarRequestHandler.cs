@@ -5,7 +5,7 @@ using SharedClasses.Message;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="AvatarRequest"/> the Client received.
+    /// Handles a <see cref="AvatarRequest" /> the Client received.
     /// </summary>
     internal sealed class AvatarRequestHandler : IMessageHandler
     {

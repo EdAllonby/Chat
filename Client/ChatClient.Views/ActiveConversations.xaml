@@ -36,21 +36,23 @@
                    Foreground="#64645a" FontSize="20" Margin="10,0,0,0" />
 
         <ListBox Grid.Row="1" Grid.Column="0" FontFamily="Yu Gothic Light" BorderBrush="#e74c3c"
-                    ItemsSource="{Binding ActiveConversations, UpdateSourceTrigger=Default}"
-                    Foreground="#64645a" Margin="10,5"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                 ItemsSource="{Binding ActiveConversations, UpdateSourceTrigger=Default}"
+                 Foreground="#64645a" Margin="10,5"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListBox.Background>
-                <ImageBrush ImageSource="Resources/halftone.png"/>
+                <ImageBrush ImageSource="Resources/halftone.png" />
             </ListBox.Background>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Tag="{Binding ConversationId}" MouseLeftButtonDown="OnNewConversationSelection" Orientation="Horizontal">
+                    <StackPanel Tag="{Binding ConversationId}" MouseLeftButtonDown="OnNewConversationSelection"
+                                Orientation="Horizontal">
                         <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
-                            HorizontalAlignment="Left">
+                                HorizontalAlignment="Left">
                             <Path Data="{StaticResource ChatIcon}"
-                            Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
+                                  Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
                         </Canvas>
-                        <TextBlock Text="{Binding ConversationParticipants}"  FontSize="16" Height="30" TextAlignment="Left" Padding="3" />
+                        <TextBlock Text="{Binding ConversationParticipants}" FontSize="16" Height="30"
+                                   TextAlignment="Left" Padding="3" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

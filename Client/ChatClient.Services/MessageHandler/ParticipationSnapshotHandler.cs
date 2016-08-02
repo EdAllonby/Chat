@@ -6,7 +6,7 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="ParticipationSnapshot"/> the Client received.
+    /// Handles a <see cref="ParticipationSnapshot" /> the Client received.
     /// </summary>
     internal sealed class ParticipationSnapshotHandler : IMessageHandler
     {

@@ -4,7 +4,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// An implementation of <see cref="ISerialisationType"/> to serialise data over a <see cref="NetworkStream"/> in binary format.
+    /// An implementation of <see cref="ISerialisationType" /> to serialise data over a <see cref="NetworkStream" /> in binary
+    /// format.
     /// </summary>
     internal sealed class BinarySerialiser : ISerialisationType
     {

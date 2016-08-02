@@ -30,7 +30,7 @@ namespace SharedClassesTests.Domain
 
             Conversation conversation = null;
 
-            for (int i = 0; i < totalUsers; i++)
+            for (var i = 0; i < totalUsers; i++)
             {
                 conversation = new Conversation(entityGenerator.AllocateEntityId<User>());
             }

@@ -27,7 +27,7 @@ namespace ChatClient.Views
 
         private void OnBrowseImageButtonClick(object sender, RoutedEventArgs e)
         {
-            var fileDialog = new OpenFileDialog {Filter = "Image Files (*.bmp, *.png, *.jpg)|*.bmp;*.png;*.jpg"};
+            var fileDialog = new OpenFileDialog { Filter = "Image Files (*.bmp, *.png, *.jpg)|*.bmp;*.png;*.jpg" };
 
             fileDialog.ShowDialog();
 

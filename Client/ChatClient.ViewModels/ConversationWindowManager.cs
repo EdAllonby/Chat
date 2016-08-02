@@ -8,11 +8,12 @@ using SharedClasses.Domain;
 namespace ChatClient.ViewModels
 {
     /// <summary>
-    /// Holds the active conversation windows for the user. Can request to create a new conversation window, or change the status of a window.
+    /// Holds the active conversation windows for the user. Can request to create a new conversation window, or change the
+    /// status of a window.
     /// </summary>
     public static class ConversationWindowManager
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationWindowManager));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConversationWindowManager));
 
         private static readonly Dictionary<int, WindowStatus> ConversationWindowStatusesIndexedByConversationId = new Dictionary<int, WindowStatus>();
 
@@ -31,7 +32,7 @@ namespace ChatClient.ViewModels
                 Application.Current.Dispatcher.Invoke(() => OnOpenChatWindowRequest(conversation));
 
                 SetWindowStatus(conversation.Id, WindowStatus.Open);
-                Log.DebugFormat("Window with conversation Id {0} has been created.", conversation.Id);
+                Log.DebugFormat($"Window with conversation Id {conversation.Id} has been created.");
             }
         }
 

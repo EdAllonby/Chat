@@ -8,11 +8,11 @@ using SharedClasses.Message;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="ConversationRequest"/> the Server received.
+    /// Handles a <see cref="ConversationRequest" /> the Server received.
     /// </summary>
     internal sealed class ConversationRequestHandler : IMessageHandler
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ConversationRequestHandler));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConversationRequestHandler));
 
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {

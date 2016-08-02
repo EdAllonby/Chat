@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Message
 {
     /// <summary>
-    /// Packages a <see cref="User"/> for the Client to send to the Server
+    /// Packages a <see cref="User" /> for the Client to send to the Server
     /// </summary>
     [Serializable]
     public sealed class LoginResponse : IMessage
@@ -26,7 +26,7 @@ namespace SharedClasses.Message
         public LoginResult LoginResult { get; private set; }
 
         /// <summary>
-        /// The <see cref="User"/> object created by the Server.
+        /// The <see cref="User" /> object created by the Server.
         /// </summary>
         public User User { get; private set; }
 

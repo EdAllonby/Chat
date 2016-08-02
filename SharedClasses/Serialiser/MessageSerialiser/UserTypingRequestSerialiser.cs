@@ -17,7 +17,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         public override IMessage Deserialise(NetworkStream networkStream)
         {
             var userTypingRequest = new UserTypingRequest(userTypingSerialiser.Deserialise(networkStream));
-            Log.InfoFormat("{0} message deserialised", userTypingRequest.MessageIdentifier);
+            Log.InfoFormat($"{userTypingRequest.MessageIdentifier} message deserialised");
             return userTypingRequest;
         }
     }

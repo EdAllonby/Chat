@@ -6,7 +6,7 @@ using SharedClasses.Message;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="UserSnapshotRequest"/> the Server received.
+    /// Handles a <see cref="UserSnapshotRequest" /> the Server received.
     /// </summary>
     internal sealed class UserSnapshotRequestHandler : IMessageHandler
     {

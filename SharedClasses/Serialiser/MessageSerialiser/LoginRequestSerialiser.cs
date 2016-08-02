@@ -22,7 +22,7 @@ namespace SharedClasses.Serialiser.MessageSerialiser
         {
             User user = userSerialiser.Deserialise(networkStream);
             var loginRequest = new LoginRequest(user.Username);
-            Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginRequest.MessageIdentifier);
+            Log.InfoFormat($"Network stream has received data and deserialised to a {loginRequest.MessageIdentifier} object");
             return loginRequest;
         }
     }

@@ -12,7 +12,7 @@ namespace SharedClassesTests.Domain
         {
             var conversationRepository = new ConversationRepository();
 
-            var conversations = new List<Conversation> {new Conversation(1), new Conversation(2)};
+            var conversations = new List<Conversation> { new Conversation(1), new Conversation(2) };
 
             foreach (Conversation conversation in conversations)
             {

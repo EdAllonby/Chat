@@ -11,7 +11,7 @@
         Success,
 
         /// <summary>
-        /// The client cannot login because it is already connected with the same credentials. 
+        /// The client cannot login because it is already connected with the same credentials.
         /// </summary>
         AlreadyConnected,
 

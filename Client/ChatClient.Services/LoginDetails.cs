@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
 namespace ChatClient.Services
 {
@@ -8,39 +7,26 @@ namespace ChatClient.Services
     /// </summary>
     public class LoginDetails
     {
-        private readonly IPAddress address;
-        private readonly int port;
-        private readonly String username;
-
         public LoginDetails(string username, IPAddress address, int port)
         {
-            this.username = username;
-            this.address = address;
-            this.port = port;
+            Username = username;
+            Address = address;
+            Port = port;
         }
 
         /// <summary>
         /// The username used to login
         /// </summary>
-        public string Username
-        {
-            get { return username; }
-        }
+        public string Username { get; }
 
         /// <summary>
         /// The IP targeted Address used to login
         /// </summary>
-        public IPAddress Address
-        {
-            get { return address; }
-        }
+        public IPAddress Address { get; }
 
         /// <summary>
         /// The targeted Port used to login
         /// </summary>
-        public int Port
-        {
-            get { return port; }
-        }
+        public int Port { get; }
     }
 }

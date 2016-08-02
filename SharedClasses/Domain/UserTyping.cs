@@ -8,24 +8,15 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class UserTyping : IEquatable<UserTyping>
     {
-        private readonly bool isUserTyping;
-        private readonly int participationId;
-
         public UserTyping(bool isUserTyping, int participationId)
         {
-            this.isUserTyping = isUserTyping;
-            this.participationId = participationId;
+            IsUserTyping = isUserTyping;
+            ParticipationId = participationId;
         }
 
-        public bool IsUserTyping
-        {
-            get { return isUserTyping; }
-        }
+        public bool IsUserTyping { get; }
 
-        public int ParticipationId
-        {
-            get { return participationId; }
-        }
+        public int ParticipationId { get; }
 
         #region IEquatable<UserTyping> Implementation
 
@@ -33,7 +24,7 @@ namespace SharedClasses.Domain
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return isUserTyping.Equals(other.isUserTyping) && participationId == other.participationId;
+            return IsUserTyping.Equals(other.IsUserTyping) && ParticipationId == other.ParticipationId;
         }
 
         public override bool Equals(object obj)
@@ -47,7 +38,7 @@ namespace SharedClasses.Domain
         {
             unchecked
             {
-                return (isUserTyping.GetHashCode()*397) ^ participationId;
+                return (IsUserTyping.GetHashCode()*397) ^ ParticipationId;
             }
         }
 

@@ -12,12 +12,11 @@ namespace Server
     /// </summary>
     internal static class ClientLoginHandler
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ClientLoginHandler));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ClientLoginHandler));
 
         /// <summary>
-        /// From a <see cref="TcpClient"/> object, attempt to initialise a new <see cref="User"/> <see cref="IEntity"/>.
+        /// From a <see cref="TcpClient" /> object, attempt to initialise a new <see cref="User" /> <see cref="IEntity" />.
         /// </summary>
-        /// 
         /// <param name="tcpClient">The connection between the attempting-to-connect client.</param>
         /// <param name="serviceRegistry">Holds services to initialise client</param>
         /// <returns></returns>
@@ -49,7 +48,7 @@ namespace Server
             }
             else
             {
-                Log.InfoFormat("User with user Id {0} already connected, denying user login.", user.Id);
+                Log.InfoFormat($"User with user Id {user.Id} already connected, denying user login.");
                 loginResponse = new LoginResponse(null, LoginResult.AlreadyConnected);
                 SendLoginResponse(loginResponse, tcpClient);
             }

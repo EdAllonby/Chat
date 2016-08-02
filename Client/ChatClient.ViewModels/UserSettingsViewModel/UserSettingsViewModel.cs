@@ -77,7 +77,7 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
 
         /// <summary>
         /// Set the avatar preview box to recently selected image.
-        /// <see cref="imageLocation"/>  doesn't need to be an image, checks are made in this method.
+        /// <see cref="imageLocation" />  doesn't need to be an image, checks are made in this method.
         /// </summary>
         /// <param name="imageLocation">The location of the image in the file system.</param>
         public void ApplyAvatarToPreviewBox(string imageLocation)

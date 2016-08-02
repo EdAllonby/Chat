@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 
 namespace SharedClasses.Domain
 {
@@ -9,71 +8,47 @@ namespace SharedClasses.Domain
     [Serializable]
     public sealed class TextContribution : IContribution
     {
-        private readonly DateTime contributionTimeStamp;
-        private readonly int contributorUserId;
-        private readonly int conversationId;
-        private readonly int id;
-        private readonly string message;
-
         /// <summary>
         /// Create a text contribution that will later get assigned an Id.
         /// </summary>
         public TextContribution(int contributorUserId, string message, int conversationId)
         {
-            Contract.Requires(contributorUserId > 0);
-            Contract.Requires(conversationId > 0);
-
-            this.contributorUserId = contributorUserId;
-            this.message = message;
-            this.conversationId = conversationId;
+            ContributorUserId = contributorUserId;
+            Message = message;
+            ConversationId = conversationId;
         }
 
         /// <summary>
         /// Creates a complete text contribution entity.
         /// </summary>
         /// <param name="id">The unique Id of the contribution entity.</param>
-        /// <param name="incompleteContribution">The extra details of the <see cref="TextContribution"/>.</param>
+        /// <param name="incompleteContribution">The extra details of the <see cref="TextContribution" />.</param>
         public TextContribution(int id, TextContribution incompleteContribution)
             : this(incompleteContribution.ContributorUserId, incompleteContribution.Message, incompleteContribution.ConversationId)
         {
-            Contract.Requires(id > 0);
-            Contract.Requires(incompleteContribution != null);
-
-            this.id = id;
-            contributionTimeStamp = DateTime.Now;
+            Id = id;
+            ContributionTimeStamp = DateTime.Now;
         }
 
         /// <summary>
         /// The contribution message.
         /// </summary>
-        public string Message
-        {
-            get { return message; }
-        }
+        public string Message { get; }
 
         /// <summary>
         /// The Conversation Id this Contribution belongs to.
         /// </summary>
-        public int ConversationId
-        {
-            get { return conversationId; }
-        }
+        public int ConversationId { get; }
 
         /// <summary>
         /// The User who sent this Contribution message.
         /// </summary>
-        public int ContributorUserId
-        {
-            get { return contributorUserId; }
-        }
+        public int ContributorUserId { get; }
 
         /// <summary>
         /// The time the server received the message.
         /// </summary>
-        public DateTime ContributionTimeStamp
-        {
-            get { return contributionTimeStamp; }
-        }
+        public DateTime ContributionTimeStamp { get; }
 
         public ContributionType ContributionType
         {
@@ -83,10 +58,7 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The Unique ID of this Contribution
         /// </summary>
-        public int Id
-        {
-            get { return id; }
-        }
+        public int Id { get; }
 
         public bool Equals(TextContribution other)
         {

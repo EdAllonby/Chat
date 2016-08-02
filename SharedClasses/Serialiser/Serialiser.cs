@@ -10,7 +10,7 @@ namespace SharedClasses.Serialiser
     /// <typeparam name="T"><see cref="IMessage" /> object which is any message that can be used in this protocol.</typeparam>
     public abstract class Serialiser<T> : ISerialiser where T : IMessage
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof (Serialiser<T>));
+        protected static readonly ILog Log = LogManager.GetLogger(typeof(Serialiser<T>));
 
         /// <summary>
         /// Serialise the <see cref="IMessage" /> down the wire.
@@ -20,9 +20,9 @@ namespace SharedClasses.Serialiser
         public void Serialise(NetworkStream networkStream, IMessage message)
         {
             MessageIdentifierSerialiser.Serialise(networkStream, message.MessageIdentifier);
-            Log.DebugFormat("Serialising {0} across the network stream.", message.MessageIdentifier);
+            Log.DebugFormat($"Serialising {message.MessageIdentifier} across the network stream.");
             Serialise(networkStream, (T) message);
-            Log.InfoFormat("Finished Serialising {0} across the network stream.", message.MessageIdentifier);
+            Log.InfoFormat($"Finished Serialising {message.MessageIdentifier} across the network stream.");
         }
 
         /// <summary>

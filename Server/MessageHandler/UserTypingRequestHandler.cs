@@ -7,9 +7,10 @@ namespace Server.MessageHandler
     public sealed class UserTypingRequestHandler : IMessageHandler
     {
         /// <summary>
-        /// When a <see cref="UserTypingRequest"/> message is sent to the server, the server will notify all users in the conversation of the user typing.
+        /// When a <see cref="UserTypingRequest" /> message is sent to the server, the server will notify all users in the
+        /// conversation of the user typing.
         /// </summary>
-        /// <param name="message">The <see cref="UserTypingRequest"/> message.</param>
+        /// <param name="message">The <see cref="UserTypingRequest" /> message.</param>
         /// <param name="serviceRegistry">Contains all services for the server.</param>
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {

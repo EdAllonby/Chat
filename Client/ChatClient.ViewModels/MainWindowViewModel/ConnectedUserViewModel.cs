@@ -7,7 +7,7 @@ using wpfBrush = System.Windows.Media;
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
     /// <summary>
-    /// Translates the <see cref="User"/> model for the View to use.
+    /// Translates the <see cref="User" /> model for the View to use.
     /// </summary>
     public sealed class ConnectedUserViewModel : ViewModel
     {

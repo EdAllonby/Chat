@@ -9,7 +9,7 @@ namespace ChatClient.ViewModels
         {
             fileStream.Seek(0, SeekOrigin.Begin);
 
-            var jpegHeader = new List<byte> {0xFF, 0xD8};
+            var jpegHeader = new List<byte> { 0xFF, 0xD8 };
 
             var header = new byte[2];
 
@@ -25,7 +25,7 @@ namespace ChatClient.ViewModels
         {
             fileStream.Seek(0, SeekOrigin.Begin);
 
-            var pngHeader = new List<byte> {0x89, 0x50, 0x4E, 0x47};
+            var pngHeader = new List<byte> { 0x89, 0x50, 0x4E, 0x47 };
 
             var header = new byte[4];
 

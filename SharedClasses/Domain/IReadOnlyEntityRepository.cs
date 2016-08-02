@@ -25,16 +25,16 @@ namespace SharedClasses.Domain
         event EventHandler<EntityChangedEventArgs<T>> EntityRemoved;
 
         /// <summary>
-        /// Retrieves an <see cref="IEntity"/> entity from the repository.
+        /// Retrieves an <see cref="IEntity" /> entity from the repository.
         /// </summary>
-        /// <param name="entityId">The <see cref="IEntity"/> entity Id to find.</param>
-        /// <returns>The <see cref="IEntity"/> which matches the ID. If no <see cref="IEntity"/> is found, return null.</returns>
+        /// <param name="entityId">The <see cref="IEntity" /> entity Id to find.</param>
+        /// <returns>The <see cref="IEntity" /> which matches the ID. If no <see cref="IEntity" /> is found, return null.</returns>
         T FindEntityById(int entityId);
 
         /// <summary>
-        /// Retrieves all <see cref="IEntity"/>s from the repository.
+        /// Retrieves all <see cref="IEntity" />s from the repository.
         /// </summary>
-        /// <returns>A collection of all <see cref="IEntity"/>s in the repository.</returns>
+        /// <returns>A collection of all <see cref="IEntity" />s in the repository.</returns>
         IEnumerable<T> GetAllEntities();
     }
 }

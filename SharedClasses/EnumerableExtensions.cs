@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace SharedClasses
@@ -15,9 +14,6 @@ namespace SharedClasses
         /// <returns>Boolean result of if lists contain same elements.</returns>
         public static bool HasSameElementsAs<T>(this IEnumerable<T> first, IEnumerable<T> second)
         {
-            Contract.Requires(first != null);
-            Contract.Requires(second != null);
-
             Dictionary<T, int> firstMap = first.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
             Dictionary<T, int> secondMap = second.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
 

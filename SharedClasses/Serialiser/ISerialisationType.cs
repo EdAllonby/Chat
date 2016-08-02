@@ -3,7 +3,7 @@
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// Serialise and Deserialise an object across a <see cref="NetworkStream"/>.
+    /// Serialise and Deserialise an object across a <see cref="NetworkStream" />.
     /// </summary>
     public interface ISerialisationType
     {

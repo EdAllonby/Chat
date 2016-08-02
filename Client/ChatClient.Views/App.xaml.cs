@@ -16,7 +16,7 @@ namespace ChatClient.Views
     /// </summary>
     public partial class App
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (App));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(App));
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -39,7 +39,7 @@ namespace ChatClient.Views
 
         private static void SetupLogging(string logConfigName)
         {
-            string assemblyPath = Assembly.GetAssembly(typeof (App)).Location;
+            string assemblyPath = Assembly.GetAssembly(typeof(App)).Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyPath);
 
             if (assemblyDirectory != null)

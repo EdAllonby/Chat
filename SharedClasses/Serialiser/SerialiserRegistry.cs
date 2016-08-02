@@ -11,31 +11,32 @@ namespace SharedClasses.Serialiser
     public static class SerialiserRegistry
     {
         /// <summary>
-        /// A readonly version of an ISerialiser by Message Identifier dictionary. No one can alter this dictionary after compiling.
+        /// A readonly version of an ISerialiser by Message Identifier dictionary. No one can alter this dictionary after
+        /// compiling.
         /// </summary>
         public static readonly IReadOnlyDictionary<MessageIdentifier, ISerialiser> SerialisersByMessageIdentifier =
             new Dictionary<MessageIdentifier, ISerialiser>
             {
-                {MessageIdentifier.ContributionRequest, new ContributionRequestSerialiser()},
-                {MessageIdentifier.ContributionNotification, new ContributionNotificationSerialiser()},
-                {MessageIdentifier.LoginRequest, new LoginRequestSerialiser()},
-                {MessageIdentifier.UserNotification, new UserNotificationSerialiser()},
-                {MessageIdentifier.UserSnapshotRequest, new UserSnapshotRequestSerialiser()},
-                {MessageIdentifier.UserSnapshot, new UserSnapshotSerialiser()},
-                {MessageIdentifier.ConversationSnapshotRequest, new ConversationSnapshotRequestSerialiser()},
-                {MessageIdentifier.ConversationSnapshot, new ConversationSnapshotSerialiser()},
-                {MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser()},
-                {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
-                {MessageIdentifier.ConversationRequest, new ConversationRequestSerialiser()},
-                {MessageIdentifier.ConversationNotification, new ConversationNotificationSerialiser()},
-                {MessageIdentifier.ParticipationRequest, new ParticipationRequestSerialiser()},
-                {MessageIdentifier.ParticipationNotification, new ParticipationNotificationSerialiser()},
-                {MessageIdentifier.LoginResponse, new LoginResponseSerialiser()},
-                {MessageIdentifier.AvatarRequest, new AvatarRequestSerialiser()},
-                {MessageIdentifier.AvatarNotification, new AvatarNotificationSerialiser()},
-                {MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationSerialiser()},
-                {MessageIdentifier.UserTypingRequest, new UserTypingRequestSerialiser()},
-                {MessageIdentifier.UserTypingNotification, new UserTypingNotificationSerialiser()}
+                { MessageIdentifier.ContributionRequest, new ContributionRequestSerialiser() },
+                { MessageIdentifier.ContributionNotification, new ContributionNotificationSerialiser() },
+                { MessageIdentifier.LoginRequest, new LoginRequestSerialiser() },
+                { MessageIdentifier.UserNotification, new UserNotificationSerialiser() },
+                { MessageIdentifier.UserSnapshotRequest, new UserSnapshotRequestSerialiser() },
+                { MessageIdentifier.UserSnapshot, new UserSnapshotSerialiser() },
+                { MessageIdentifier.ConversationSnapshotRequest, new ConversationSnapshotRequestSerialiser() },
+                { MessageIdentifier.ConversationSnapshot, new ConversationSnapshotSerialiser() },
+                { MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser() },
+                { MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotSerialiser() },
+                { MessageIdentifier.ConversationRequest, new ConversationRequestSerialiser() },
+                { MessageIdentifier.ConversationNotification, new ConversationNotificationSerialiser() },
+                { MessageIdentifier.ParticipationRequest, new ParticipationRequestSerialiser() },
+                { MessageIdentifier.ParticipationNotification, new ParticipationNotificationSerialiser() },
+                { MessageIdentifier.LoginResponse, new LoginResponseSerialiser() },
+                { MessageIdentifier.AvatarRequest, new AvatarRequestSerialiser() },
+                { MessageIdentifier.AvatarNotification, new AvatarNotificationSerialiser() },
+                { MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationSerialiser() },
+                { MessageIdentifier.UserTypingRequest, new UserTypingRequestSerialiser() },
+                { MessageIdentifier.UserTypingNotification, new UserTypingNotificationSerialiser() }
             };
 
         /// <summary>
@@ -44,26 +45,26 @@ namespace SharedClasses.Serialiser
         public static readonly IReadOnlyDictionary<Type, ISerialiser> SerialisersByMessageType =
             new Dictionary<Type, ISerialiser>
             {
-                {typeof (ContributionRequest), new ContributionRequestSerialiser()},
-                {typeof (ContributionNotification), new ContributionNotificationSerialiser()},
-                {typeof (LoginRequest), new LoginRequestSerialiser()},
-                {typeof (UserNotification), new UserNotificationSerialiser()},
-                {typeof (UserSnapshotRequest), new UserSnapshotRequestSerialiser()},
-                {typeof (UserSnapshot), new UserSnapshotSerialiser()},
-                {typeof (ConversationSnapshotRequest), new ConversationSnapshotRequestSerialiser()},
-                {typeof (ConversationSnapshot), new ConversationSnapshotSerialiser()},
-                {typeof (ParticipationSnapshotRequest), new ParticipationSnapshotRequestSerialiser()},
-                {typeof (ParticipationSnapshot), new ParticipationSnapshotSerialiser()},
-                {typeof (ConversationRequest), new ConversationRequestSerialiser()},
-                {typeof (ConversationNotification), new ConversationNotificationSerialiser()},
-                {typeof (ParticipationRequest), new ParticipationRequestSerialiser()},
-                {typeof (ParticipationNotification), new ParticipationNotificationSerialiser()},
-                {typeof (LoginResponse), new LoginResponseSerialiser()},
-                {typeof (AvatarRequest), new AvatarRequestSerialiser()},
-                {typeof (AvatarNotification), new AvatarNotificationSerialiser()},
-                {typeof (ConnectionStatusNotification), new ConnectionStatusNotificationSerialiser()},
-                {typeof (UserTypingRequest), new UserTypingRequestSerialiser()},
-                {typeof (UserTypingNotification), new UserTypingNotificationSerialiser()}
+                { typeof(ContributionRequest), new ContributionRequestSerialiser() },
+                { typeof(ContributionNotification), new ContributionNotificationSerialiser() },
+                { typeof(LoginRequest), new LoginRequestSerialiser() },
+                { typeof(UserNotification), new UserNotificationSerialiser() },
+                { typeof(UserSnapshotRequest), new UserSnapshotRequestSerialiser() },
+                { typeof(UserSnapshot), new UserSnapshotSerialiser() },
+                { typeof(ConversationSnapshotRequest), new ConversationSnapshotRequestSerialiser() },
+                { typeof(ConversationSnapshot), new ConversationSnapshotSerialiser() },
+                { typeof(ParticipationSnapshotRequest), new ParticipationSnapshotRequestSerialiser() },
+                { typeof(ParticipationSnapshot), new ParticipationSnapshotSerialiser() },
+                { typeof(ConversationRequest), new ConversationRequestSerialiser() },
+                { typeof(ConversationNotification), new ConversationNotificationSerialiser() },
+                { typeof(ParticipationRequest), new ParticipationRequestSerialiser() },
+                { typeof(ParticipationNotification), new ParticipationNotificationSerialiser() },
+                { typeof(LoginResponse), new LoginResponseSerialiser() },
+                { typeof(AvatarRequest), new AvatarRequestSerialiser() },
+                { typeof(AvatarNotification), new AvatarNotificationSerialiser() },
+                { typeof(ConnectionStatusNotification), new ConnectionStatusNotificationSerialiser() },
+                { typeof(UserTypingRequest), new UserTypingRequestSerialiser() },
+                { typeof(UserTypingNotification), new UserTypingNotificationSerialiser() }
             };
     }
 }

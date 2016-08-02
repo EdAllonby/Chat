@@ -64,7 +64,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void UserRepositoryUpdatesUser()
             {
-                bool isUserUpdated = false;
+                var isUserUpdated = false;
                 UserRepository.EntityUpdated += (sender, eventArgs) => isUserUpdated = true;
 
                 HandleMessage(avatarRequest);

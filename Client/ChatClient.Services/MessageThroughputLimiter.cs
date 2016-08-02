@@ -15,7 +15,8 @@ namespace ChatClient.Services
         private T lastMessageSent;
 
         /// <summary>
-        /// Sets the time limit between the number of messages that can be sent and initialises the <see cref="DeferredSendLastMessage" /> invoker.
+        /// Sets the time limit between the number of messages that can be sent and initialises the
+        /// <see cref="DeferredSendLastMessage" /> invoker.
         /// </summary>
         /// <param name="minimumMillisecondsAllowedBetweenMessages">
         /// The minimum time allowed between <see cref="T" /> messages

@@ -10,7 +10,7 @@ namespace Server
     /// </summary>
     public class EntityIdAllocatorFactory : IService
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (EntityIdAllocatorFactory));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(EntityIdAllocatorFactory));
 
         private readonly EntityIdGeneratorRegistry entityIdGeneratorRegistry = new EntityIdGeneratorRegistry();
 
@@ -23,11 +23,11 @@ namespace Server
         {
             EntityIdGenerator generator;
 
-            bool isEntityGeneratorFound = entityIdGeneratorRegistry.EntityIDGeneratorsIndexedByEntityType.TryGetValue(typeof (T), out generator);
+            bool isEntityGeneratorFound = entityIdGeneratorRegistry.EntityIDGeneratorsIndexedByEntityType.TryGetValue(typeof(T), out generator);
 
             if (!isEntityGeneratorFound)
             {
-                Log.ErrorFormat("Entity generator for type {0} does not exist in {1}.", typeof (T), entityIdGeneratorRegistry);
+                Log.ErrorFormat($"Entity generator for type {typeof(T)} does not exist in {entityIdGeneratorRegistry}.");
                 throw new KeyNotFoundException();
             }
 

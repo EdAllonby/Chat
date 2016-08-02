@@ -10,7 +10,7 @@ namespace ChatClient.Views.ControlExtenders
     public class ListBoxExtenders : DependencyObject
     {
         public static readonly DependencyProperty AutoScrollToEndProperty =
-            DependencyProperty.RegisterAttached("AutoScrollToEnd", typeof (bool), typeof (ListBoxExtenders),
+            DependencyProperty.RegisterAttached("AutoScrollToEnd", typeof(bool), typeof(ListBoxExtenders),
                 new UIPropertyMetadata(default(bool), OnAutoScrollToEndChanged));
 
         /// <summary>

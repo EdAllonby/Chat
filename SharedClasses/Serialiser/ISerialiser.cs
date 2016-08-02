@@ -5,7 +5,7 @@ namespace SharedClasses.Serialiser
 {
     /// <summary>
     /// Groups the message serialisers together.
-    /// Each <see cref="ISerialiser" /> can only serialise and deserialise an <see cref="IMessage"/> 
+    /// Each <see cref="ISerialiser" /> can only serialise and deserialise an <see cref="IMessage" />
     /// This was created to allow the <see cref="SerialiserFactory" /> class to pick the correct serialiser
     /// </summary>
     public interface ISerialiser

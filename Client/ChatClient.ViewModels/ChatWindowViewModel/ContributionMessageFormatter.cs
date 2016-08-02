@@ -14,7 +14,8 @@ using Image = System.Windows.Controls.Image;
 namespace ChatClient.ViewModels.ChatWindowViewModel
 {
     /// <summary>
-    /// Holds the logic of formatting a new <see cref="TextContribution"/> message to be displayed by a control that can display FlowDocuments.
+    /// Holds the logic of formatting a new <see cref="TextContribution" /> message to be displayed by a control that can
+    /// display FlowDocuments.
     /// </summary>
     public sealed class ContributionMessageFormatter
     {
@@ -29,7 +30,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         private int lastUserId;
 
         /// <summary>
-        /// Create a new instance of <see cref="ContributionMessageFormatter"/> linked to the user's Id and its user repository.
+        /// Create a new instance of <see cref="ContributionMessageFormatter" /> linked to the user's Id and its user repository.
         /// </summary>
         /// <param name="userId">The user Id of the client.</param>
         /// <param name="userRepository">The client's repository holding the known users.</param>
@@ -40,10 +41,10 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
         }
 
         /// <summary>
-        /// Formats a contribution to be viewable on the screen. To be used with a <see cref="FlowDocument"/>.
+        /// Formats a contribution to be viewable on the screen. To be used with a <see cref="FlowDocument" />.
         /// </summary>
-        /// <param name="contribution">The <see cref="TextContribution"/> to format.</param>
-        /// <returns>A <see cref="Paragraph"/> that is added to a <see cref="FlowDocument"/> to be sent to a view Control.</returns>
+        /// <param name="contribution">The <see cref="TextContribution" /> to format.</param>
+        /// <returns>A <see cref="Paragraph" /> that is added to a <see cref="FlowDocument" /> to be sent to a view Control.</returns>
         public Paragraph FormatContribution(IContribution contribution)
         {
             Paragraph paragraph = FormatParagraph(contribution);
@@ -109,8 +110,8 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             TextAlignment alignment = IsContributor(contribution.ContributorUserId) ? TextAlignment.Right : TextAlignment.Left;
             Brush brush = IsContributor(contribution.ContributorUserId) ? senderBackground : receiverBackground;
 
-            int marginSpacing = 50;
-            int messageSpacing = 2;
+            var marginSpacing = 50;
+            var messageSpacing = 2;
 
             if (!IsSameSenderAsLastContribution(contribution.ContributorUserId))
             {
@@ -124,7 +125,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             {
                 TextAlignment = alignment,
                 Background = brush,
-                Margin = messageMargin,
+                Margin = messageMargin
             };
         }
 
@@ -143,7 +144,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         private InlineUIContainer FormatMessageBody(ImageContribution contribution)
         {
-            var image = new Image {Source = bitmapConverter.Convert((Bitmap) contribution.Image)};
+            var image = new Image { Source = bitmapConverter.Convert((Bitmap) contribution.Image) };
             return new InlineUIContainer(image);
         }
 

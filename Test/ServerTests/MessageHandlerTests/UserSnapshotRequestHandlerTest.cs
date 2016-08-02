@@ -32,7 +32,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void SendsAMessage()
             {
-                bool isMessageSent = false;
+                var isMessageSent = false;
                 ConnectedUserClientHandler.MessageSent += (sender, eventArgs) => isMessageSent = true;
 
                 HandleMessage(userSnapshotRequest);

@@ -11,7 +11,7 @@ using SharedClasses.Domain;
 namespace ChatClient.ViewModels.MainWindowViewModel
 {
     /// <summary>
-    /// Holds the logic for the view. Accesses the Service manager to receive and send messages. 
+    /// Holds the logic for the view. Accesses the Service manager to receive and send messages.
     /// </summary>
     public class UserListViewModel : ViewModel
     {
@@ -115,14 +115,14 @@ namespace ChatClient.ViewModels.MainWindowViewModel
 
         public void StartNewSingleUserConversation(int participant)
         {
-            var participantIds = new List<int> {clientService.ClientUserId, participant};
+            var participantIds = new List<int> { clientService.ClientUserId, participant };
 
             NewConversation(participantIds);
         }
 
         private void StartNewMultiUserConversation()
         {
-            var participantIds = new List<int> {clientService.ClientUserId};
+            var participantIds = new List<int> { clientService.ClientUserId };
 
             participantIds.AddRange(connectedUsers.Where(user => user.IsSelectedForConversation)
                 .Select(connectedUser => connectedUser.UserId));

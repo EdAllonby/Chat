@@ -8,7 +8,7 @@ namespace ChatClient.ViewModels.Commands
     {
         #region Members
 
-        private readonly Func<Boolean> canExecute;
+        private readonly Func<bool> canExecute;
         private readonly Action execute;
 
         #endregion
@@ -20,7 +20,7 @@ namespace ChatClient.ViewModels.Commands
         {
         }
 
-        public RelayCommand(Action execute, Func<Boolean> canExecute)
+        public RelayCommand(Action execute, Func<bool> canExecute)
         {
             if (execute == null)
             {
@@ -53,12 +53,12 @@ namespace ChatClient.ViewModels.Commands
         }
 
         [DebuggerStepThrough]
-        public Boolean CanExecute(Object parameter)
+        public bool CanExecute(object parameter)
         {
             return canExecute == null || canExecute();
         }
 
-        public void Execute(Object parameter)
+        public void Execute(object parameter)
         {
             execute();
         }
