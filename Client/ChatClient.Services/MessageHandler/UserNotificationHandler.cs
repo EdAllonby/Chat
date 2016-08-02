@@ -1,4 +1,5 @@
 ﻿using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -8,18 +9,18 @@ namespace ChatClient.Services.MessageHandler
     /// </summary>
     internal sealed class UserNotificationHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var userNotificationHandler = (UserNotification) message;
-            var userNotificationContext = (UserNotificationContext) context;
+            var userNotification = (UserNotification) message;
 
-            UpdateUserInRepository(userNotificationHandler, userNotificationContext);
-        }
+            var userRepository = (IEntityRepository<User>) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
-        private static void UpdateUserInRepository(UserNotification userNotification,
-            UserNotificationContext userNotificationContext)
-        {
-            userNotificationContext.UserRepository.UpdateUser(userNotification.User);
+            switch (userNotification.NotificationType)
+            {
+                case NotificationType.Create:
+                    userRepository.AddEntity(userNotification.User);
+                    break;
+            }
         }
     }
 }

@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="ChatClient.Views.ActiveConversations"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mainWindowViewModel="clr-namespace:ChatClient.ViewModels.MainWindowViewModel;assembly=ChatClient.ViewModels"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance mainWindowViewModel:ActiveConversationsViewModel}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+        </Grid>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Active Conversations"
+                   FontFamily="/ChatClient.Views;component/Resources/#Roboto Thin"
+                   Foreground="#64645a" FontSize="20" Margin="10,0,0,0" />
+
+        <ListBox Grid.Row="1" Grid.Column="0" FontFamily="Yu Gothic Light" BorderBrush="#e74c3c"
+                    ItemsSource="{Binding ActiveConversations, UpdateSourceTrigger=Default}"
+                    Foreground="#64645a" Margin="10,5"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ListBox.Background>
+                <ImageBrush ImageSource="Resources/halftone.png"/>
+            </ListBox.Background>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Tag="{Binding ConversationId}" MouseLeftButtonDown="OnNewConversationSelection" Orientation="Horizontal">
+                        <Canvas Margin="0,0,10,0" Width="22" Height="22" Clip="F1 M 0,0L 76,0L 76,76L 0,76L 0,0"
+                            HorizontalAlignment="Left">
+                            <Path Data="{StaticResource ChatIcon}"
+                            Stretch="Fill" Width="22" Height="22" Fill="#27ae60" />
+                        </Canvas>
+                        <TextBlock Text="{Binding ConversationParticipants}"  FontSize="16" Height="30" TextAlignment="Left" Padding="3" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

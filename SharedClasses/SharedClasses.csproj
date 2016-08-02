@@ -72,18 +72,35 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Avatar.cs" />
+    <Compile Include="Domain\ContributionType.cs" />
+    <Compile Include="Domain\IContribution.cs" />
+    <Compile Include="Domain\IEntity.cs" />
+    <Compile Include="Domain\ImageContribution.cs" />
+    <Compile Include="Domain\IReadOnlyEntityRepository.cs" />
+    <Compile Include="Domain\IEntityRepository.cs" />
+    <Compile Include="Domain\EntityRepository.cs" />
+    <Compile Include="Domain\UserTyping.cs" />
+    <Compile Include="EntityChangedEventArgs.cs" />
+    <Compile Include="IMessageHandler.cs" />
+    <Compile Include="IServiceRegistry.cs" />
+    <Compile Include="Message\AvatarNotification.cs" />
+    <Compile Include="Message\AvatarRequest.cs" />
+    <Compile Include="Message\ConnectionStatusNotification.cs" />
+    <Compile Include="Message\UserTypingNotification.cs" />
+    <Compile Include="Message\UserTypingRequest.cs" />
+    <Compile Include="Serialiser\BinarySerialiser.cs" />
     <Compile Include="ConnectionHandler.cs" />
-    <Compile Include="ConnectionStatus.cs" />
+    <Compile Include="Domain\ConnectionStatus.cs" />
     <Compile Include="Domain\Conversation.cs" />
     <Compile Include="Domain\ConversationRepository.cs" />
     <Compile Include="Domain\Participation.cs" />
     <Compile Include="Domain\ParticipationRepository.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Domain\User.cs" />
-    <Compile Include="IMessageContext.cs" />
-    <Compile Include="IMessageHandler.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />
     <Compile Include="Message\ClientDisconnection.cs" />
@@ -92,6 +109,16 @@
     <Compile Include="Message\ConversationSnapshot.cs" />
     <Compile Include="Message\ConversationSnapshotRequest.cs" />
     <Compile Include="Message\LoginResult.cs" />
+    <Compile Include="Serialiser\EntitySerialiser\AvatarSerialiser.cs" />
+    <Compile Include="Serialiser\EntitySerialiser\ConnectionStatusSerialiser.cs" />
+    <Compile Include="Serialiser\EntitySerialiser\UserTypingSerialiser.cs" />
+    <Compile Include="Serialiser\ISerialisationType.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\AvatarNotificationSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\AvatarRequestSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\ConnectionStatusNotificationSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\UserTypingNotificationSerialiser.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\UserTypingRequestSerialiser.cs" />
+    <Compile Include="Serialiser\NotificationTypeSerialiser.cs" />
     <Compile Include="Message\ParticipationRequest.cs" />
     <Compile Include="Message\ParticipationSnapshot.cs" />
     <Compile Include="Message\ParticipationSnapshotRequest.cs" />
@@ -100,14 +127,14 @@
     <Compile Include="Serialiser\MessageSerialiser\ContributionNotificationSerialiser.cs" />
     <Compile Include="Message\ContributionRequest.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ContributionRequestSerialiser.cs" />
-    <Compile Include="Domain\Contribution.cs" />
+    <Compile Include="Domain\TextContribution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialiser\EntitySerialiser\ContributionSerialiser.cs" />
     <Compile Include="Message\ParticipationNotification.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ConversationNotificationSerialiser.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ParticipationNotificationSerialiser.cs" />
-    <Compile Include="Message\NewConversationRequest.cs" />
-    <Compile Include="Serialiser\MessageSerialiser\NewConversationRequestSerialiser.cs" />
+    <Compile Include="Message\ConversationRequest.cs" />
+    <Compile Include="Serialiser\MessageSerialiser\ConversationRequestSerialiser.cs" />
     <Compile Include="Serialiser\EntitySerialiser\ConversationSerialiser.cs" />
     <Compile Include="Message\IMessage.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ConversationSnapshotRequestSerialiser.cs" />
@@ -117,9 +144,9 @@
     <Compile Include="Serialiser\MessageSerialiser\LoginRequestSerialiser.cs" />
     <Compile Include="Message\LoginResponse.cs" />
     <Compile Include="Serialiser\MessageSerialiser\LoginResponseSerialiser.cs" />
-    <Compile Include="Serialiser\MessageSerialiser\MessageIdentifierSerialiser.cs" />
+    <Compile Include="Serialiser\MessageIdentifierSerialiser.cs" />
     <Compile Include="MessageIdentifier.cs" />
-    <Compile Include="NotificationType.cs" />
+    <Compile Include="Message\NotificationType.cs" />
     <Compile Include="Serialiser\MessageSerialiser\ParticipationRequestSerialiser.cs" />
     <Compile Include="Serialiser\SerialiserFactory.cs" />
     <Compile Include="Serialiser\SerialiserRegistry.cs" />
@@ -135,7 +162,7 @@
     <Compile Include="Serialiser\MessageSerialiser\UserSnapshotSerialiser.cs" />
     <Compile Include="Domain\UserRepository.cs" />
     <Compile Include="IService.cs" />
-    <Compile Include="ServiceManager.cs" />
+    <Compile Include="ServiceRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

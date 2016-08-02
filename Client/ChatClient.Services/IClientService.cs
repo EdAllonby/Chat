@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using SharedClasses;
 using SharedClasses.Message;
 
@@ -15,9 +17,9 @@ namespace ChatClient.Services
         int ClientUserId { get; }
 
         /// <summary>
-        /// Holds the repositories for the Client.
+        /// Signifies when the client has finished successfully bootstrapping
         /// </summary>
-        RepositoryManager RepositoryManager { get; }
+        event EventHandler BootstrapCompleted;
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
@@ -27,7 +29,7 @@ namespace ChatClient.Services
         LoginResult LogOn(LoginDetails loginDetails);
 
         /// <summary>
-        /// Sends a <see cref="NewConversationRequest"/> message to the server.
+        /// Sends a <see cref="ConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="userIds">The participants that are included in the conversation.</param>
         void CreateConversation(List<int> userIds);
@@ -40,10 +42,30 @@ namespace ChatClient.Services
         void AddUserToConversation(int userId, int conversationId);
 
         /// <summary>
-        /// Sends a <see cref="ContributionRequest"/> message to the server.
+        /// Sends an <see cref="AvatarRequest"/> message to the server to change a user's avatar.
         /// </summary>
-        /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
+        /// <param name="avatar">The new image the user requests to have.</param>
+        void SendAvatarRequest(Image avatar);
+
+        /// <summary>
+        /// Sends a <see cref="UserTypingRequest"/> message to the server to change the status of a current user's state of typing.
+        /// </summary>
+        /// <param name="participationId">The participation Id that holds reference to the user and conversation.</param>
+        /// <param name="isTyping">Whether the user has started or finished typing.</param>
+        void SendUserTypingRequest(int participationId, bool isTyping);
+
+        /// <summary>
+        /// Sends a text <see cref="ContributionRequest"/> message to the server.
+        /// </summary>
+        /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
-        void SendContribution(int conversationID, string message);
+        void SendContribution(int conversationId, string message);
+
+        /// <summary>
+        /// Sends an image <see cref="ContributionRequest"/> message to the server.
+        /// </summary>
+        /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>
+        /// <param name="image">The image to add to a conversation</param>
+        void SendContribution(int conversationId, Image image);
     }
 }

@@ -35,20 +35,23 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientLogOnParser.cs" />
     <Compile Include="LoginDetails.cs" />
-    <Compile Include="MessageHandler\ClientContextRegistry.cs" />
-    <Compile Include="MessageHandler\ContributionNotificationContext.cs" />
+    <Compile Include="MessageHandler\AvatarNotificationHandler.cs" />
+    <Compile Include="MessageHandler\ConnectionStatusNotificationHandler.cs" />
     <Compile Include="MessageHandler\ContributionNotificationHandler.cs" />
-    <Compile Include="MessageHandler\ConversationNotificationContext.cs" />
     <Compile Include="MessageHandler\ConversationNotificationHandler.cs" />
+    <Compile Include="MessageHandler\ConversationSnapshotHandler.cs" />
     <Compile Include="MessageHandler\MessageHandlerRegistry.cs" />
-    <Compile Include="MessageHandler\ParticipationNotificationContext.cs" />
     <Compile Include="MessageHandler\ParticipationNotificationHandler.cs" />
-    <Compile Include="MessageHandler\UserNotificationContext.cs" />
+    <Compile Include="MessageHandler\ParticipationSnapshotHandler.cs" />
     <Compile Include="MessageHandler\UserNotificationHandler.cs" />
+    <Compile Include="MessageHandler\UserSnapshotHandler.cs" />
+    <Compile Include="MessageHandler\UserTypingNotificationHandler.cs" />
+    <Compile Include="MessageThroughputLimiter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClientService.cs" />
     <Compile Include="IClientService.cs" />
@@ -61,12 +64,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="log4netDebug.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="log4netRelease.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

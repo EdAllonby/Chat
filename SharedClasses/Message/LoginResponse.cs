@@ -15,6 +15,11 @@ namespace SharedClasses.Message
             LoginResult = loginResult;
         }
 
+        public LoginResponse(LoginResult loginResult)
+        {
+            LoginResult = loginResult;
+        }
+
         /// <summary>
         /// Whether or not the Client is allowed on to the Server.
         /// </summary>

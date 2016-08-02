@@ -7,9 +7,9 @@ namespace ChatClient.Models.LoginModel
 {
     public class LoginModel : INotifyPropertyChanged, IDataErrorInfo
     {
-        private string ipAddress = "IP Address";
-        private string port = "Port";
-        private string username = "Username";
+        private string ipAddress;
+        private string port;
+        private string username;
 
         public string Username
         {

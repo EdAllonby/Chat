@@ -10,20 +10,17 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class UserSnapshotRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var userSnapshotRequest = (UserSnapshotRequest) message;
-            var userSnapshotRequestContext = (UserSnapshotRequestContext) context;
 
-            SendUserSnapshot(userSnapshotRequest, userSnapshotRequestContext);
-        }
+            IReadOnlyEntityRepository<User> userRepository = serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+            var clientManager = serviceRegistry.GetService<IClientManager>();
 
-        private static void SendUserSnapshot(UserSnapshotRequest userSnapshotRequest,
-            UserSnapshotRequestContext userSnapshotRequestContext)
-        {
-            IEnumerable<User> currentUsers = userSnapshotRequestContext.UserRepository.GetAllUsers();
+            IEnumerable<User> currentUsers = userRepository.GetAllEntities();
             var userSnapshot = new UserSnapshot(currentUsers);
-            userSnapshotRequestContext.ClientHandlersIndexedByUserId[userSnapshotRequest.UserId].SendMessage(userSnapshot);
+
+            clientManager.SendMessageToClient(userSnapshot, userSnapshotRequest.UserId);
         }
     }
 }

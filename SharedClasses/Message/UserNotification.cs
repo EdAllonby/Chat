@@ -4,7 +4,7 @@ using SharedClasses.Domain;
 namespace SharedClasses.Message
 {
     /// <summary>
-    /// Used to show that a new user has logged on
+    /// Notifies that a user entity has changed.
     /// </summary>
     [Serializable]
     public sealed class UserNotification : IMessage
@@ -12,10 +12,10 @@ namespace SharedClasses.Message
         public UserNotification(User user, NotificationType notificationType)
         {
             User = user;
-            Notification = notificationType;
+            NotificationType = notificationType;
         }
 
-        public NotificationType Notification { get; private set; }
+        public NotificationType NotificationType { get; private set; }
 
         public User User { get; private set; }
 

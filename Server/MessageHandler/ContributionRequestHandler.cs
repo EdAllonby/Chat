@@ -9,22 +9,29 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ContributionRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var contributionRequest = (ContributionRequest) message;
-            var contributionRequestContext = (ContributionRequestContext) context;
 
-            CreateContributionEntity(contributionRequest, contributionRequestContext);
-        }
+            var conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
-        private static void CreateContributionEntity(ContributionRequest contributionRequest,
-            ContributionRequestContext contributionRequestContext)
-        {
-            var newContribution = new Contribution(
-                contributionRequestContext.EntityGeneratorFactory.GetEntityID<Contribution>(),
-                contributionRequest.Contribution);
+            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
 
-            contributionRequestContext.ConversationRepository.AddContributionToConversation(newContribution);
+            IContribution newContribution;
+
+            IContribution contribution = contributionRequest.Contribution;
+
+            switch (contribution.ContributionType)
+            {
+                case ContributionType.Text:
+                    newContribution = new TextContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (TextContribution) contribution);
+                    conversationRepository.AddContributionToConversation(newContribution);
+                    break;
+                case ContributionType.Image:
+                    newContribution = new ImageContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (ImageContribution) contribution);
+                    conversationRepository.AddContributionToConversation(newContribution);
+                    break;
+            }
         }
     }
 }

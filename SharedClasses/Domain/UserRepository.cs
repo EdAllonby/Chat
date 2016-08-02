@@ -1,82 +1,54 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Linq;
-using log4net;
 
 namespace SharedClasses.Domain
 {
-    public delegate void UserChangedHandler(User user);
-
     /// <summary>
     /// Holds a collection of <see cref="User"/>s with basic CRUD operations.
     /// </summary>
-    public sealed class UserRepository
+    public sealed class UserRepository : EntityRepository<User>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
-        private readonly Dictionary<int, User> usersIndexedById = new Dictionary<int, User>();
-
-        public event UserChangedHandler UserUpdated = delegate { };
-
         /// <summary>
-        /// Adds or updates a <see cref="User"/> entity to the repository.
+        /// Updates a <see cref="User"/>'s <see cref="ConnectionStatus"/>
         /// </summary>
-        /// <param name="user"><see cref="User"/> entity to add.</param>
-        public void UpdateUser(User user)
+        /// <param name="connectionStatus">The new connection status of the user.</param>
+        public void UpdateUserConnectionStatus(ConnectionStatus connectionStatus)
         {
-            Contract.Requires(user != null);
+            Contract.Requires(connectionStatus != null);
 
-            if (usersIndexedById.ContainsKey(user.UserId))
-            {
-                Log.Debug("User with Id " + user.UserId + " has been updated");
-            }
-            else
-            {
-                Log.Debug("User with Id " + user.UserId + " added to user repository");
-            }
+            User user = FindEntityById(connectionStatus.UserId);
 
-            usersIndexedById[user.UserId] = user;
-            UserUpdated(user);
+            User previousUser = User.DeepClone(user);
+
+            user.ConnectionStatus = connectionStatus;
+
+            OnEntityUpdated(user, previousUser);
         }
 
         /// <summary>
-        /// Adds <see cref="User"/> entities to the repository.
+        /// Updates a <see cref="User"/>'s <see cref="Avatar"/>.
         /// </summary>
-        /// <param name="users">The <see cref="User"/> entities to add to the repository.</param>
-        public void AddUsers(IEnumerable<User> users)
+        /// <param name="avatar">The new avatar to give a user.</param>
+        public void UpdateUserAvatar(Avatar avatar)
         {
-            Contract.Requires(users != null);
+            Contract.Requires(avatar != null);
+            User user = FindEntityById(avatar.UserId);
 
-            IEnumerable<User> usersEnumerable = users as IList<User> ?? users.ToList();
+            User previousUser = User.DeepClone(user);
 
-            foreach (User user in usersEnumerable)
-            {
-                usersIndexedById[user.UserId] = user;
-                Log.Debug("User with Id " + user.UserId + " added to user repository");
-            }
+            user.Avatar = avatar;
+
+            OnEntityUpdated(user, previousUser);
         }
 
         /// <summary>
-        /// Retrieves a <see cref="User"/> entity from the repository.
+        /// Gets a <see cref="User"/> entity by username.
         /// </summary>
-        /// <param name="userId">The <see cref="User"/> entity ID to find.</param>
-        /// <returns>The <see cref="User"/> which matches the ID. If no <see cref="User"/> is found, return null.</returns>
-        public User FindUserByID(int userId)
-        {
-            return usersIndexedById.ContainsKey(userId) ? usersIndexedById[userId] : null;
-        }
-
+        /// <param name="username">The username that is used to find the <see cref="User"/>.</param>
+        /// <returns>The <see cref="User"/> that matches the username.</returns>
         public User FindUserByUsername(string username)
         {
-            return usersIndexedById.Where(user => user.Value.Username == username).Select(user => user.Value).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Retrieves all <see cref="User"/> entities from the repository.
-        /// </summary>
-        /// <returns>A collection of all <see cref="User"/> entities in the repository.</returns>
-        public IEnumerable<User> GetAllUsers()
-        {
-            return usersIndexedById.Values;
+            return GetAllEntities().Where(user => user.Username == username).Select(user => user).FirstOrDefault();
         }
     }
 }

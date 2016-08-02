@@ -1,4 +1,5 @@
 ﻿using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
@@ -8,18 +9,13 @@ namespace ChatClient.Services.MessageHandler
     /// </summary>
     internal sealed class ParticipationNotificationHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var participationNotification = (ParticipationNotification) message;
-            var participationNotificationContext = (ParticipationNotificationContext) context;
 
-            AddParticipationToRepository(participationNotification, participationNotificationContext);
-        }
+            var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
-        private void AddParticipationToRepository(ParticipationNotification participationNotification,
-            ParticipationNotificationContext participationNotificationContext)
-        {
-            participationNotificationContext.ParticipationRepository.AddParticipation(participationNotification.Participation);
+            participationRepository.AddEntity(participationNotification.Participation);
         }
     }
 }

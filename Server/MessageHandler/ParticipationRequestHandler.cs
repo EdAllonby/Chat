@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
@@ -13,15 +14,16 @@ namespace Server.MessageHandler
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var participationRequest = (ParticipationRequest) message;
-            var participationRequestContext = (ParticipationRequestContext) context;
 
-            if (CheckUserCanEnterConversation(participationRequest, participationRequestContext.ParticipationRepository))
+            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+
+            if (CheckUserCanEnterConversation(participationRequest, participationRepository))
             {
-                AddUserToConversation(participationRequest, participationRequestContext.EntityGeneratorFactory,
-                    participationRequestContext.ParticipationRepository);
+                var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+                AddUserToConversation(participationRequest, entityIdAllocatorFactory, participationRepository);
             }
         }
 
@@ -30,8 +32,9 @@ namespace Server.MessageHandler
         {
             Participation newparticipation = participationRequest.Participation;
 
-            if (participationRepository.GetParticipationsByConversationId(newparticipation.ConversationId)
-                .Any(participation => participation.UserId == newparticipation.UserId))
+            List<Participation> currentParticipantsInConversation = participationRepository.GetParticipationsByConversationId(newparticipation.ConversationId);
+
+            if (currentParticipantsInConversation.Any(participation => participation.UserId == newparticipation.UserId))
             {
                 Log.WarnFormat(
                     "User with id {0} cannot be added to conversation {1}, user already exists in this conversation.",
@@ -43,16 +46,14 @@ namespace Server.MessageHandler
             return true;
         }
 
-        private static void AddUserToConversation(ParticipationRequest participationRequest,
-            EntityGeneratorFactory entityGeneratorFactory,
-            ParticipationRepository participationRepository)
+        private static void AddUserToConversation(ParticipationRequest participationRequest, EntityIdAllocatorFactory entityIdAllocatorFactory, IEntityRepository<Participation> participationRepository)
         {
-            int participationId = entityGeneratorFactory.GetEntityID<Participation>();
+            int participationId = entityIdAllocatorFactory.AllocateEntityId<Participation>();
 
             var participation = new Participation(participationId, participationRequest.Participation.UserId,
                 participationRequest.Participation.ConversationId);
 
-            participationRepository.AddParticipation(participation);
+            participationRepository.AddEntity(participation);
         }
     }
 }

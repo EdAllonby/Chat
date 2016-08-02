@@ -11,32 +11,20 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ConversationSnapshotRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var conversationSnapshotRequest = (ConversationSnapshotRequest) message;
-            var conversationSnapshotRequestContext = (ConversationSnapshotRequestContext) context;
+            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            IReadOnlyEntityRepository<Conversation> conversationRepository = serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+            var clientManager = serviceRegistry.GetService<IClientManager>();
 
-            SendConversationSnapshot(conversationSnapshotRequest, conversationSnapshotRequestContext);
-        }
+            IEnumerable<int> conversationIds = participationRepository.GetAllConversationIdsByUserId(conversationSnapshotRequest.UserId);
 
-        private static void SendConversationSnapshot(ConversationSnapshotRequest conversationSnapshotRequest,
-            ConversationSnapshotRequestContext conversationSnapshotRequestContext)
-        {
-            IEnumerable<int> conversationIds =
-                conversationSnapshotRequestContext.ParticipationRepository.GetAllConversationIdsByUserId(
-                    conversationSnapshotRequest.UserId);
-
-            IList<int> conversationEnumerable = conversationIds as IList<int> ?? conversationIds.ToList();
-
-            List<Conversation> conversations =
-                conversationEnumerable.Select(
-                    conversationId =>
-                        conversationSnapshotRequestContext.ConversationRepository.FindConversationById(conversationId)).ToList();
+            List<Conversation> conversations = conversationIds.Select(conversationRepository.FindEntityById).ToList();
 
             var conversationSnapshot = new ConversationSnapshot(conversations);
 
-            conversationSnapshotRequestContext.ClientHandlersIndexedByUserId[conversationSnapshotRequest.UserId].SendMessage(
-                conversationSnapshot);
+            clientManager.SendMessageToClient(conversationSnapshot, conversationSnapshotRequest.UserId);
         }
     }
 }

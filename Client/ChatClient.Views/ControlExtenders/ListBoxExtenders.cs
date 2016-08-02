@@ -39,7 +39,7 @@ namespace ChatClient.Views.ControlExtenders
         /// </summary>
         /// <param name="s">The sender (the ListBox)</param>
         /// <param name="e">Some additional information</param>
-        public static void OnAutoScrollToEndChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
+        private static void OnAutoScrollToEndChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
             var listBox = s as ListBox;
             if (listBox != null)

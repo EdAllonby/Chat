@@ -26,11 +26,16 @@ namespace SharedClasses.Serialiser
                 {MessageIdentifier.ConversationSnapshot, new ConversationSnapshotSerialiser()},
                 {MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestSerialiser()},
                 {MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotSerialiser()},
-                {MessageIdentifier.NewConversationRequest, new NewConversationRequestSerialiser()},
+                {MessageIdentifier.ConversationRequest, new ConversationRequestSerialiser()},
                 {MessageIdentifier.ConversationNotification, new ConversationNotificationSerialiser()},
                 {MessageIdentifier.ParticipationRequest, new ParticipationRequestSerialiser()},
                 {MessageIdentifier.ParticipationNotification, new ParticipationNotificationSerialiser()},
-                {MessageIdentifier.LoginResponse, new LoginResponseSerialiser()}
+                {MessageIdentifier.LoginResponse, new LoginResponseSerialiser()},
+                {MessageIdentifier.AvatarRequest, new AvatarRequestSerialiser()},
+                {MessageIdentifier.AvatarNotification, new AvatarNotificationSerialiser()},
+                {MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationSerialiser()},
+                {MessageIdentifier.UserTypingRequest, new UserTypingRequestSerialiser()},
+                {MessageIdentifier.UserTypingNotification, new UserTypingNotificationSerialiser()}
             };
 
         /// <summary>
@@ -49,11 +54,16 @@ namespace SharedClasses.Serialiser
                 {typeof (ConversationSnapshot), new ConversationSnapshotSerialiser()},
                 {typeof (ParticipationSnapshotRequest), new ParticipationSnapshotRequestSerialiser()},
                 {typeof (ParticipationSnapshot), new ParticipationSnapshotSerialiser()},
-                {typeof (NewConversationRequest), new NewConversationRequestSerialiser()},
+                {typeof (ConversationRequest), new ConversationRequestSerialiser()},
                 {typeof (ConversationNotification), new ConversationNotificationSerialiser()},
                 {typeof (ParticipationRequest), new ParticipationRequestSerialiser()},
                 {typeof (ParticipationNotification), new ParticipationNotificationSerialiser()},
-                {typeof (LoginResponse), new LoginResponseSerialiser()}
+                {typeof (LoginResponse), new LoginResponseSerialiser()},
+                {typeof (AvatarRequest), new AvatarRequestSerialiser()},
+                {typeof (AvatarNotification), new AvatarNotificationSerialiser()},
+                {typeof (ConnectionStatusNotification), new ConnectionStatusNotificationSerialiser()},
+                {typeof (UserTypingRequest), new UserTypingRequestSerialiser()},
+                {typeof (UserTypingNotification), new UserTypingNotificationSerialiser()}
             };
     }
 }

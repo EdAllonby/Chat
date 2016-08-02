@@ -1,124 +1,77 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using log4net;
 
 namespace SharedClasses.Domain
 {
-    public delegate void ParticipationChangedHandler(Participation participation);
-
-    public delegate void ParticipationsChangedHandler(IEnumerable<Participation> participations);
-
-    public sealed class ParticipationRepository
+    public sealed class ParticipationRepository : EntityRepository<Participation>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (UserRepository));
-
-        private readonly Dictionary<int, Participation> participationsIndexedById = new Dictionary<int, Participation>();
-
-        public event ParticipationChangedHandler ParticipationAdded = delegate { };
-        public event ParticipationsChangedHandler ParticipationsAdded = delegate { };
-
-        /// <summary>
-        /// Adds a <see cref="Participation"/> entity to the repository
-        /// </summary>
-        /// <param name="participation">The <see cref="Participation"/> entity to add to the repository. Participation must not be null and must have an id greater than 0.</param>
-        public void AddParticipation(Participation participation)
-        {
-            Contract.Requires(participation != null);
-
-            AddParticipationToRepository(participation);
-
-            ParticipationAdded(participation);
-        }
-
-        /// <summary>
-        /// Adds a group of participations 
-        /// </summary>
-        /// <param name="participationsToAdd"></param>
-        public void AddParticipations(IEnumerable<Participation> participationsToAdd)
-        {
-            Contract.Requires(participationsToAdd != null);
-
-
-            IEnumerable<Participation> participationsEnumerable = participationsToAdd as Participation[] ??
-                                                                  participationsToAdd.ToArray();
-
-            foreach (Participation participation in participationsEnumerable)
-            {
-                AddParticipationToRepository(participation);
-            }
-
-            ParticipationsAdded(participationsEnumerable);
-        }
-
         /// <summary>
         /// Checks whether a conversation exists with a group of participants.
         /// </summary>
-        /// <param name="participantIds">The group of participants to check if a <see cref="Conversation"/> exists for.</param>
+        /// <param name="userIds">The group of participants to check if a <see cref="Conversation"/> exists for.</param>
         /// <returns>Whether or not a <see cref="Conversation"/> exists with the group of participants.</returns>
         [Pure]
-        public bool DoesConversationWithUsersExist(IEnumerable<int> participantIds)
+        public bool DoesConversationWithUsersExist(IEnumerable<int> userIds)
         {
             Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
 
-            return userIdsIndexedByConversationId.Select(conversationKeyValuePair => conversationKeyValuePair
-                .Value.HasSameElementsAs(participantIds))
-                .Any(isConversation => isConversation);
+            return userIdsIndexedByConversationId.Select(ids => ids.Value.HasSameElementsAs(userIds)).Any(isConversation => isConversation);
         }
 
-        public IEnumerable<Participation> GetParticipationsByConversationId(int conversationId)
+        /// <summary>
+        /// Gets all <see cref="Participation"/> objects that match the conversation Id.
+        /// </summary>
+        /// <param name="conversationId">The Id of the conversation all returning <see cref="Participation"/> objects should have.</param>
+        /// <returns>The <see cref="Participation"/> objects that match the conversation id.</returns>
+        public List<Participation> GetParticipationsByConversationId(int conversationId)
         {
-            return
-                participationsIndexedById.Values.Where(participation => participation.ConversationId == conversationId).ToList();
+            return GetAllEntities().Where(participation => participation.ConversationId == conversationId).ToList();
         }
 
         /// <summary>
         /// Returns the <see cref="Conversation"/> Id that exists for the group of participants.
         /// </summary>
-        /// <param name="participantIds">The Ids of the participants.</param>
+        /// <param name="userIds">The Ids of the participants.</param>
         /// <returns>The <see cref="Conversation"/> Id that the participants are in.</returns>
-        public int GetConversationIdByParticipantsId(IEnumerable<int> participantIds)
+        public int GetConversationIdByUserIds(IEnumerable<int> userIds)
         {
             Dictionary<int, List<int>> userIdsIndexedByConversationId = GetUserIdsIndexedByConversationId();
 
-            return userIdsIndexedByConversationId
-                .Where(userIds => userIds.Value.HasSameElementsAs(participantIds))
-                .Select(userIds => userIds.Key)
-                .FirstOrDefault();
+            return userIdsIndexedByConversationId.Where(ids => ids.Value.HasSameElementsAs(userIds)).Select(ids => ids.Key).FirstOrDefault();
         }
 
         public IEnumerable<int> GetAllConversationIdsByUserId(int userId)
         {
-            return from participation in participationsIndexedById.Values
-                where participation.UserId == userId
+            return from participation in GetAllEntities()
+                where participation.UserId.Equals(userId)
                 select participation.ConversationId;
         }
 
         /// <summary>
-        /// Returns all of the <see cref="Participation"/> entities held in the repository.
+        /// Finds the specific Participation object that matches the userId and conversationId.
         /// </summary>
-        /// <returns>The collection of <see cref="Participation"/> held in the repository.</returns>
-        public IEnumerable<Participation> GetAllParticipations()
+        /// <param name="userId">The Id of the user to match.</param>
+        /// <param name="conversationId">The Id of the conversation to match.</param>
+        /// <returns>The <see cref="Participation"/> that matches the user Id and conversation Id.</returns>
+        public Participation GetParticipationByUserIdandConversationId(int userId, int conversationId)
         {
-            return participationsIndexedById.Values;
-        }
+            foreach (Participation possibleParticipation in GetAllEntities())
+            {
+                if (possibleParticipation.UserId.Equals(userId) && possibleParticipation.ConversationId.Equals(conversationId))
+                {
+                    return possibleParticipation;
+                }
+            }
 
-        private void AddParticipationToRepository(Participation participation)
-        {
-            Contract.Requires(participation != null);
-            Contract.Requires(participation.ParticipationId > 0);
-
-            participationsIndexedById.Add(participation.ParticipationId, participation);
-
-            Log.DebugFormat("Participation with User Id {0} and Conversation Id {1} added to user repository",
-                participation.UserId, participation.ConversationId);
+            return null;
         }
 
         private Dictionary<int, List<int>> GetUserIdsIndexedByConversationId()
         {
             var userIdsIndexedByConversationId = new Dictionary<int, List<int>>();
 
-            foreach (Participation participation in participationsIndexedById.Values)
+            foreach (Participation participation in GetAllEntities())
             {
                 if (!userIdsIndexedByConversationId.ContainsKey(participation.ConversationId))
                 {

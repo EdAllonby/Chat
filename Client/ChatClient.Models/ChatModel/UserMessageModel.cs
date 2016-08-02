@@ -3,7 +3,7 @@
 namespace ChatClient.Models.ChatModel
 {
     /// <summary>
-    /// Represents the message information that a <see cref="Contribution"/> has.
+    /// Represents the message information that a <see cref="TextContribution"/> has.
     /// This makes it easier to display useful information without polluting the domain model.
     /// </summary>
     public sealed class UserMessageModel

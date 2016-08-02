@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using SharedClasses.Message;
 using SharedClasses.Serialiser.EntitySerialiser;
 
@@ -11,19 +10,16 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class LoginResponseSerialiser : Serialiser<LoginResponse>
     {
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
+        private readonly ISerialisationType serialiser = new BinarySerialiser();
 
-        protected override void Serialise(LoginResponse message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, LoginResponse message)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.MessageIdentifier, networkStream);
-            binaryFormatter.Serialize(networkStream, message);
-            Log.InfoFormat("{0} serialised and sent to network stream", message.MessageIdentifier);
+            serialiser.Serialise(networkStream, message);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var loginResponse = (LoginResponse) binaryFormatter.Deserialize(networkStream);
+            var loginResponse = (LoginResponse) serialiser.Deserialise(networkStream);
             Log.InfoFormat("Network stream has received data and deserialised to a {0} object", loginResponse.MessageIdentifier);
             return loginResponse;
         }

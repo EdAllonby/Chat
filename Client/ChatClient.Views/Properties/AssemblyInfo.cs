@@ -1,10 +1,9 @@
-﻿using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Windows;
-
-// General Information about an assembly is controlled through the following 
+﻿// General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows;
 
 [assembly: AssemblyTitle("ChatClient.Views")]
 [assembly: AssemblyDescription("")]
@@ -29,7 +28,6 @@ using System.Windows;
 //the line below to match the UICulture setting in the project file.
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
-
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

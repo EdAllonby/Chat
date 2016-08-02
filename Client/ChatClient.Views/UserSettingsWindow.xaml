@@ -1,0 +1,45 @@
+﻿<Window x:Class="ChatClient.Views.UserSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dragDrop="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=GongSolutions.Wpf.DragDrop"
+        xmlns:userSettingsViewModel="clr-namespace:ChatClient.ViewModels.UserSettingsViewModel;assembly=ChatClient.ViewModels"
+        xmlns:converter1="clr-namespace:ChatClient.ViewModels.Converter;assembly=ChatClient.ViewModels"
+        Title="User Settings" Height="300" Width="400" ResizeMode="NoResize" RenderOptions.BitmapScalingMode="Fant" 
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        d:DataContext="{d:DesignInstance userSettingsViewModel:UserSettingsViewModel}">
+    <Window.Resources>
+        <converter1:BitmapToBitmapSourceConverter x:Key="BitmapConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="Change Avatar">
+            <StackPanel Orientation="Vertical" >
+            <Border BorderThickness="1" CornerRadius="10" BorderBrush="#e74c3c" Width="150" Height="150" VerticalAlignment="Center" HorizontalAlignment="Center" AllowDrop="True" Margin="0,20,0,0"
+                    dragDrop:DragDrop.IsDragSource="False"
+                                dragDrop:DragDrop.IsDropTarget="True"
+                                dragDrop:DragDrop.DropHandler="{Binding}">
+                <Border.Background>
+                    <ImageBrush ImageSource="{Binding Path=Avatar, Converter={StaticResource BitmapConverter}}" Stretch="UniformToFill" />
+                </Border.Background>
+            </Border>
+                <Button Content="Browse..." Height="24" Width="74" Margin="0,10,0,0" Click="OnBrowseImageButtonClick" />
+                </StackPanel>
+        </GroupBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="5,5,5,5" Height="24" Width="74" Content="OK" Command="{Binding ApplyAvatarCommandAndClose, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,5,5,5" Height="24" Width="74" Content="Cancel" Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="5,5,20,5" Height="24" Width="74" Content="Apply" Command="{Binding ApplyAvatarCommand, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+    </Grid>
+</Window>
+
+    

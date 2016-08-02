@@ -5,7 +5,19 @@
     /// </summary>
     public enum LoginResult
     {
+        /// <summary>
+        /// The client has successfully logged in to the server.
+        /// </summary>
         Success,
-        AlreadyConnected
+
+        /// <summary>
+        /// The client cannot login because it is already connected with the same credentials. 
+        /// </summary>
+        AlreadyConnected,
+
+        /// <summary>
+        /// The client cannot login because it cannot reach the server to connect to.
+        /// </summary>
+        ServerNotFound
     }
 }

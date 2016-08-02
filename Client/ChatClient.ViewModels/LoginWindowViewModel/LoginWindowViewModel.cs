@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Input;
 using ChatClient.Models.LoginModel;
 using ChatClient.Services;
-using ChatClient.ViewMediator;
 using ChatClient.ViewModels.Commands;
 using log4net;
 using SharedClasses;
@@ -17,27 +15,37 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (LoginWindowViewModel));
 
-        private readonly IClientService clientService = ServiceManager.GetService<IClientService>();
-
+        private readonly IClientService clientService;
         private readonly ClientLogOnParser logOnParser = new ClientLogOnParser();
+
+        public EventHandler<LoginErrorEventArgs> LoginErrored;
+        public EventHandler OpenMainWindowRequested;
+        private bool canOpenWindow;
 
         private LoginModel loginModel = new LoginModel();
 
-        public LoginWindowViewModel()
+        public LoginWindowViewModel(IServiceRegistry serviceRegistry)
+            : base(serviceRegistry)
         {
-            var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
-
-            commandLineArgs.RemoveAt(0);
-
-            if (commandLineArgs.Count != 0)
+            if (!IsInDesignMode)
             {
-                Log.Info("Command line arguments found, attempting to parse");
+                clientService = serviceRegistry.GetService<IClientService>();
 
-                LoginDetails loginDetails;
-                bool result = logOnParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
-                if (result)
+                clientService.BootstrapCompleted += OnClientBootstrapCompleted;
+                var commandLineArgs = new List<string>(Environment.GetCommandLineArgs());
+
+                commandLineArgs.RemoveAt(0);
+
+                if (commandLineArgs.Count != 0)
                 {
-                    AttemptLogin(loginDetails);
+                    Log.Info("Command line arguments found, attempting to parse");
+
+                    LoginDetails loginDetails;
+                    bool result = logOnParser.TryParseCommandLineArguments(Environment.GetCommandLineArgs(), out loginDetails);
+                    if (result)
+                    {
+                        AttemptLogin(loginDetails);
+                    }
                 }
             }
         }
@@ -55,36 +63,46 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         private void AttemptLogin(LoginDetails loginDetails)
         {
-            try
-            {
-                LoginResult result = clientService.LogOn(loginDetails);
+            LoginResult result = clientService.LogOn(loginDetails);
 
-                switch (result)
-                {
-                    case LoginResult.Success:
-                        OpenUserListWindow();
-                        break;
+            switch (result)
+            {
+                case LoginResult.Success:
+                    Log.Debug("Waiting for client bootstrap to complete");
+                    canOpenWindow = true;
+                    break;
 
-                    case LoginResult.AlreadyConnected:
-                        MessageBox.Show(string.Format("User already connected with username: {0}", LoginModel.Username), "Login Denied");
-                        break;
-                }
-            }
-            catch (TimeoutException timeoutException)
-            {
-                Log.Error("Cannot find server", timeoutException);
-                MessageBox.Show("Could not find server, check the IP Address");
-            }
-            catch (SocketException socketException)
-            {
-                Log.Error("Port is incorrect", socketException);
-                MessageBox.Show("Could log in to server, check the port");
+                case LoginResult.AlreadyConnected:
+                    LoginErrored(this, new LoginErrorEventArgs(result, string.Format("User already connected with username: {0}", LoginModel.Username)));
+                    break;
+
+                case LoginResult.ServerNotFound:
+                    LoginErrored(this, new LoginErrorEventArgs(result, "Could not find server, check connection settings."));
+                    break;
             }
         }
 
         private void OpenUserListWindow()
         {
-            Application.Current.Dispatcher.Invoke(() => Mediator.Instance.SendMessage(ViewName.UserListWindow, new UserListViewModel.UserListViewModel()));
+            Application.Current.Dispatcher.Invoke(OnOpenMainWindowRequested);
+        }
+
+        private void OnOpenMainWindowRequested()
+        {
+            EventHandler openMainWindowRequestedCopy = OpenMainWindowRequested;
+
+            if (openMainWindowRequestedCopy != null)
+            {
+                openMainWindowRequestedCopy(this, EventArgs.Empty);
+            }
+        }
+
+        private void OnClientBootstrapCompleted(object sender, EventArgs e)
+        {
+            if (canOpenWindow)
+            {
+                OpenUserListWindow();
+            }
         }
 
         #region Commands

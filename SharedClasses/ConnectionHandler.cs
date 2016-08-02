@@ -19,15 +19,14 @@ namespace SharedClasses
         private static int totalListenerThreads;
 
         private readonly int clientUserId;
-
         private readonly MessageReceiver messageReceiver = new MessageReceiver();
-        private readonly SerialiserFactory serialiserFactory = new SerialiserFactory();
+        private readonly object messageSenderLock = new object();
         private readonly TcpClient tcpClient;
 
         /// <summary>
-        /// Initialises the object so it can begin to send and recieve <see cref="IMessage"/>s through <see cref="tcpClient"/>.
+        /// Initialises the object so it can begin to send and receive <see cref="IMessage"/>s through <see cref="tcpClient"/>.
         /// </summary>
-        /// <param name="clientUserId">The client </param>
+        /// <param name="clientUserId">A unique value that identifies the client.</param>
         /// <param name="tcpClient"></param>
         public ConnectionHandler(int clientUserId, TcpClient tcpClient)
         {
@@ -55,9 +54,12 @@ namespace SharedClasses
         {
             Contract.Requires(message != null);
 
-            ISerialiser messageSerialiser = serialiserFactory.GetSerialiser(message.MessageIdentifier);
-            messageSerialiser.Serialise(message, tcpClient.GetStream());
-            Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
+            lock (messageSenderLock)
+            {
+                ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
+                messageSerialiser.Serialise(tcpClient.GetStream(), message);
+                Log.DebugFormat("Sent message with identifier {0} to user with id {1}", message.MessageIdentifier, clientUserId);
+            }
         }
 
         private void CreateListenerThread()
@@ -72,7 +74,12 @@ namespace SharedClasses
 
         private void OnMessageReceiverMessageReceived(object sender, MessageEventArgs e)
         {
-            MessageReceived(sender, e);
+            EventHandler<MessageEventArgs> messageReceivedCopy = MessageReceived;
+
+            if (messageReceivedCopy != null)
+            {
+                messageReceivedCopy(sender, e);
+            }
         }
     }
 }

@@ -7,15 +7,18 @@ namespace SharedClasses.Message
     [Serializable]
     public class ConversationNotification : IMessage
     {
-        public ConversationNotification(Conversation conversation)
+        public ConversationNotification(Conversation conversation, NotificationType notificationType)
         {
             Contract.Requires(conversation != null);
-            Contract.Requires(conversation.ConversationId > 0);
+            Contract.Requires(conversation.Id > 0);
 
             Conversation = conversation;
+            NotificationType = notificationType;
         }
 
         public Conversation Conversation { get; private set; }
+
+        public NotificationType NotificationType { get; private set; }
 
         public MessageIdentifier MessageIdentifier
         {

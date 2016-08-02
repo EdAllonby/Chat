@@ -10,31 +10,23 @@ namespace Server.MessageHandler
     /// </summary>
     internal sealed class ParticipationSnapshotRequestHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
             var participationSnapshotRequest = (ParticipationSnapshotRequest) message;
-            var participationSnapshotRequestContext = (ParticipationSnapshotRequestContext) context;
 
-            SendParticipationSnapshot(participationSnapshotRequest, participationSnapshotRequestContext);
-        }
+            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var clientManager = serviceRegistry.GetService<IClientManager>();
 
-        private static void SendParticipationSnapshot(ParticipationSnapshotRequest participationSnapshotRequest,
-            ParticipationSnapshotRequestContext participationSnapshotRequestContext)
-        {
             var userParticipations = new List<Participation>();
 
-            foreach (int conversationId in participationSnapshotRequestContext.ParticipationRepository
-                .GetAllConversationIdsByUserId(
-                    participationSnapshotRequest.UserId))
+            foreach (int conversationId in participationRepository.GetAllConversationIdsByUserId(participationSnapshotRequest.UserId))
             {
-                userParticipations.AddRange(participationSnapshotRequestContext.ParticipationRepository
-                    .GetParticipationsByConversationId(conversationId));
+                userParticipations.AddRange(participationRepository.GetParticipationsByConversationId(conversationId));
             }
 
             var participationSnapshot = new ParticipationSnapshot(userParticipations);
 
-            participationSnapshotRequestContext.ClientHandlersIndexedByUserId[participationSnapshotRequest.UserId]
-                .SendMessage(participationSnapshot);
+            clientManager.SendMessageToClient(participationSnapshot, participationSnapshotRequest.UserId);
         }
     }
 }

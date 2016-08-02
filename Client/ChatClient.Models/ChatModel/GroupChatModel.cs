@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Documents;
 using ChatClient.Models.Properties;
 using SharedClasses.Domain;
 
@@ -10,20 +11,15 @@ namespace ChatClient.Models.ChatModel
     {
         private Conversation conversation;
         private string messageToAddToConversation;
+        private FlowDocument messages = new FlowDocument();
         private string title;
-        private List<UserMessageModel> userMessages;
         private List<User> users;
+        private string usersTyping;
         private string windowTitle;
 
-        public List<UserMessageModel> UserMessages
+        public GroupChatModel(Participation participation)
         {
-            get { return userMessages; }
-            set
-            {
-                if (Equals(value, userMessages)) return;
-                userMessages = value;
-                OnPropertyChanged();
-            }
+            Participation = participation;
         }
 
         public string WindowTitle
@@ -37,13 +33,34 @@ namespace ChatClient.Models.ChatModel
             }
         }
 
+        public string UsersTyping
+        {
+            get { return usersTyping; }
+            set
+            {
+                usersTyping = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Conversation Conversation
         {
             get { return conversation; }
             set
             {
-                if (Equals(value, conversation)) return;
                 conversation = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Participation Participation { get; private set; }
+
+        public FlowDocument Messages
+        {
+            get { return messages; }
+            set
+            {
+                messages = value;
                 OnPropertyChanged();
             }
         }

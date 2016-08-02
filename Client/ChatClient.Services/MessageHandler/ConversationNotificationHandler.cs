@@ -9,19 +9,22 @@ namespace ChatClient.Services.MessageHandler
     /// </summary>
     internal sealed class ConversationNotificationHandler : IMessageHandler
     {
-        public void HandleMessage(IMessage message, IMessageContext context)
+        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var contributionNotification = (ConversationNotification) message;
-            var contributionNotificationContext = (ConversationNotificationContext) context;
+            var conversationNotification = (ConversationNotification) message;
 
-            AddConversationToRepository(contributionNotification, contributionNotificationContext);
-        }
+            var conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
-        private void AddConversationToRepository(ConversationNotification conversationNotification,
-            ConversationNotificationContext contributionNotificationContext)
-        {
-            var conversation = new Conversation(conversationNotification.Conversation.ConversationId);
-            contributionNotificationContext.ConversationRepository.AddConversation(conversation);
+            switch (conversationNotification.NotificationType)
+            {
+                case NotificationType.Create:
+                    conversationRepository.AddEntity(conversationNotification.Conversation);
+                    break;
+
+                case NotificationType.Update:
+                    conversationRepository.UpdateEntity(conversationNotification.Conversation);
+                    break;
+            }
         }
     }
 }

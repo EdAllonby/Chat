@@ -1,5 +1,4 @@
-﻿using SharedClasses;
-using SharedClasses.Domain;
+﻿using SharedClasses.Domain;
 
 namespace ChatClient.Models.ChatWindowViewModel
 {
@@ -14,7 +13,7 @@ namespace ChatClient.Models.ChatWindowViewModel
 
         public int UserId
         {
-            get { return user.UserId; }
+            get { return user.Id; }
         }
 
         public string Username

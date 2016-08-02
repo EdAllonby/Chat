@@ -1,38 +1,48 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SharedClasses.Domain
 {
     /// <summary>
-    /// Models a user in the system as an entity class (has identity)
+    /// Models a user in the system as an entity.
     /// </summary>
     [Serializable]
-    public sealed class User : IEquatable<User>
+    public sealed class User : IEntity, IEquatable<User>
     {
-        // User should be immutable, once made it will never change
-        private readonly int userId;
+        private readonly int id;
         private readonly string username;
 
-        public User(string username, int userId, ConnectionStatus status)
+        /// <summary>
+        /// Creates an incomplete user entity.
+        /// </summary>
+        public User(string username)
         {
             Contract.Requires(username != null);
-            Contract.Requires(userId > 0);
 
             this.username = username;
-            this.userId = userId;
+            Avatar = new Avatar();
+        }
+
+        /// <summary>
+        /// Creates a user entity with an Id.
+        /// </summary>
+        /// <param name="username">The name of the user.</param>
+        /// <param name="id">The unique Id of the user.</param>
+        /// <param name="status">The current status of the user.</param>
+        public User(string username, int id, ConnectionStatus status)
+            : this(username)
+        {
+            Contract.Requires(username != null);
+            Contract.Requires(id > 0);
+
+            this.id = id;
             ConnectionStatus = status;
         }
 
         /// <summary>
-        /// Incomplete user
-        /// </summary>
-        public User(string username)
-        {
-            this.username = username;
-        }
-
-        /// <summary>
-        /// The name of the User
+        /// The name of the User.
         /// </summary>
         public string Username
         {
@@ -40,17 +50,43 @@ namespace SharedClasses.Domain
         }
 
         /// <summary>
-        /// The status of the user
+        /// The user's current Avatar
+        /// </summary>
+        public Avatar Avatar { get; set; }
+
+        /// <summary>
+        /// The current status of the User.
         /// </summary>
         public ConnectionStatus ConnectionStatus { get; set; }
 
         /// <summary>
         /// A Unique number used to identify the User.
         /// </summary>
-        public int UserId
+        public int Id
         {
-            get { return userId; }
+            get { return id; }
         }
+
+        /// <summary>
+        /// Deep clone a <see cref="User"/> entity.
+        /// </summary>
+        /// <param name="user">The user to deep clone.</param>
+        /// <returns>The deep cloned user object.</returns>
+        public static User DeepClone(User user)
+        {
+            Contract.Requires(user != null);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(memoryStream, user);
+                memoryStream.Position = 0;
+
+                return (User) formatter.Deserialize(memoryStream);
+            }
+        }
+
+        #region IEquality implementation
 
         public bool Equals(User other)
         {
@@ -64,7 +100,7 @@ namespace SharedClasses.Domain
                 return true;
             }
 
-            return userId == other.userId;
+            return id == other.id;
         }
 
         public override bool Equals(object obj)
@@ -76,7 +112,9 @@ namespace SharedClasses.Domain
 
         public override int GetHashCode()
         {
-            return userId;
+            return id;
         }
+
+        #endregion
     }
 }

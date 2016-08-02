@@ -5,26 +5,28 @@ using SharedClasses.Serialiser.EntitySerialiser;
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="ContributionNotification" /> object
-    /// Uses <see cref="ContributionSerialiser" /> for its underlying serialiser
+    /// Used to serialise and deserialise a <see cref="ContributionNotification" /> object.
+    /// Uses a <see cref="ContributionSerialiser" /> for its underlying serialiser
     /// </summary>
     internal sealed class ContributionNotificationSerialiser : Serialiser<ContributionNotification>
     {
         private readonly ContributionSerialiser contributionSerialiser = new ContributionSerialiser();
+        private readonly NotificationTypeSerialiser notificationTypeSerialiser = new NotificationTypeSerialiser();
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        protected override void Serialise(ContributionNotification contributionNotificationMessage, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, ContributionNotification contributionNotificationMessage)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.ContributionNotification, networkStream);
+            notificationTypeSerialiser.Serialise(networkStream, contributionNotificationMessage.NotificationType);
             contributionSerialiser.Serialise(networkStream, contributionNotificationMessage.Contribution);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var notification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream));
-            Log.InfoFormat("{0} message deserialised", notification.MessageIdentifier);
-            return notification;
+            NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
+            var contributionNotification = new ContributionNotification(contributionSerialiser.Deserialise(networkStream), notificationType);
+
+            Log.InfoFormat("{0} message deserialised.", contributionNotification.MessageIdentifier);
+
+            return contributionNotification;
         }
     }
 }

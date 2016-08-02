@@ -5,28 +5,27 @@ using SharedClasses.Serialiser.EntitySerialiser;
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
     /// <summary>
-    /// Used to serialise and deserialise a <see cref="NewConversationRequest" /> message
+    /// Used to serialise and deserialise a <see cref="ConversationRequest" /> message
     /// Uses <see cref="ConversationSerialiser" /> for its underlying serialiser
     /// </summary>
     internal sealed class ConversationNotificationSerialiser : Serialiser<ConversationNotification>
     {
         private readonly ConversationSerialiser conversationSerialiser = new ConversationSerialiser();
+        private readonly NotificationTypeSerialiser notificationTypeSerialiser = new NotificationTypeSerialiser();
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        protected override void Serialise(ConversationNotification message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, ConversationNotification message)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(MessageIdentifier.ConversationNotification, networkStream);
-
-            Log.DebugFormat("Waiting for {0} message to serialise", message.MessageIdentifier);
+            notificationTypeSerialiser.Serialise(networkStream, message.NotificationType);
             conversationSerialiser.Serialise(networkStream, message.Conversation);
-            Log.InfoFormat("{0} message serialised", message.MessageIdentifier);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var conversation = new ConversationNotification(conversationSerialiser.Deserialise(networkStream));
+            NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
+            var conversation = new ConversationNotification(conversationSerialiser.Deserialise(networkStream), notificationType);
+
             Log.InfoFormat("{0} message deserialised", conversation.MessageIdentifier);
+
             return conversation;
         }
     }

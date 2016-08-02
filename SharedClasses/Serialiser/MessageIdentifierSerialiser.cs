@@ -6,30 +6,33 @@ using log4net;
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// This static class is used define what message gets what identifier,
-    /// and used to serialise and deserialise Message Identifiers to their related Typed
+    /// Defines  what message gets what identifier, and used to serialise and deserialise Message Identifiers to their related Type.
     /// </summary>
-    public sealed class MessageIdentifierSerialiser
+    public static class MessageIdentifierSerialiser
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MessageIdentifierSerialiser));
 
-        public void SerialiseMessageIdentifier(MessageIdentifier messageIdentifier, NetworkStream stream)
+        public static void Serialise(NetworkStream stream, MessageIdentifier messageIdentifier)
         {
             Contract.Requires(stream != null);
 
             stream.Write(BitConverter.GetBytes((int) messageIdentifier), 0, 4);
-            Log.DebugFormat("Sent Message Identifier: {0} to stream", messageIdentifier);
+            Log.DebugFormat("Sent Message Identifier: {0} to stream.", messageIdentifier);
         }
 
-        public MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
+        public static MessageIdentifier DeserialiseMessageIdentifier(NetworkStream stream)
         {
             Contract.Requires(stream != null);
 
             var messageTypeBuffer = new byte[4];
+
             stream.Read(messageTypeBuffer, 0, 4);
+
             int messageIdentifierNumber = BitConverter.ToInt32(messageTypeBuffer, 0);
             var messageIdentifier = (MessageIdentifier) messageIdentifierNumber;
-            Log.DebugFormat("Message Identifier {0} received from client", messageIdentifier);
+
+            Log.DebugFormat("Message Identifier {0} received from stream.", messageIdentifier);
+
             return messageIdentifier;
         }
     }

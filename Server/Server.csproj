@@ -43,27 +43,29 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientHandler.cs" />
-    <Compile Include="EntityGeneratorFactory.cs" />
-    <Compile Include="EntityIDGeneratorRegistry.cs" />
-    <Compile Include="MessageHandler\ClientDisconnectionContext.cs" />
+    <Compile Include="ClientManager.cs" />
+    <Compile Include="EntityIdAllocatorFactory.cs" />
+    <Compile Include="EntityIdGeneratorRegistry.cs" />
+    <Compile Include="IClientHandler.cs" />
+    <Compile Include="IClientManager.cs" />
+    <Compile Include="MessageHandler\UserTypingRequestHandler.cs" />
+    <Compile Include="OnEntityChangedHandler.cs" />
+    <Compile Include="OnConversationChangedHandler.cs" />
+    <Compile Include="OnParticipationChangedHandler.cs" />
+    <Compile Include="OnUserChangedHandler.cs" />
+    <Compile Include="MessageHandler\AvatarRequestHandler.cs" />
     <Compile Include="MessageHandler\ClientDisconnectionHandler.cs" />
-    <Compile Include="MessageHandler\ServerContextRegistry.cs" />
     <Compile Include="MessageHandler\MessageHandlerRegistry.cs" />
-    <Compile Include="MessageHandler\ContributionRequestContext.cs" />
     <Compile Include="MessageHandler\ContributionRequestHandler.cs" />
-    <Compile Include="MessageHandler\ConversationSnapshotRequestContext.cs" />
     <Compile Include="MessageHandler\ConversationSnapshotRequestHandler.cs" />
-    <Compile Include="MessageHandler\NewConversationRequestContext.cs" />
-    <Compile Include="MessageHandler\NewConversationRequestHandler.cs" />
-    <Compile Include="MessageHandler\ParticipationRequestContext.cs" />
+    <Compile Include="MessageHandler\ConversationRequestHandler.cs" />
     <Compile Include="MessageHandler\ParticipationRequestHandler.cs" />
-    <Compile Include="MessageHandler\ParticipationSnapshotRequestContext.cs" />
     <Compile Include="MessageHandler\ParticipationSnapshotRequestHandler.cs" />
-    <Compile Include="MessageHandler\UserSnapshotRequestContext.cs" />
     <Compile Include="MessageHandler\UserSnapshotRequestHandler.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -80,7 +82,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EntityIDGenerator.cs" />
+    <Compile Include="EntityIdGenerator.cs" />
     <Compile Include="ClientLoginHandler.cs" />
   </ItemGroup>
   <ItemGroup>

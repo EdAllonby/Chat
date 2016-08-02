@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using log4net;
 using Server.MessageHandler;
 using SharedClasses;
-using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace Server
@@ -19,23 +16,36 @@ namespace Server
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof (Server));
 
-        private readonly Dictionary<int, ClientHandler> clientHandlersIndexedByUserId = new Dictionary<int, ClientHandler>();
-        private readonly EntityGeneratorFactory entityGeneratorFactory = new EntityGeneratorFactory();
-        private readonly RepositoryManager repositoryManager = new RepositoryManager();
-        private readonly ServerContextRegistry serverContextRegistry;
+        private readonly OnEntityChangedHandler onConversationChangedHandler;
+        private readonly OnEntityChangedHandler onParticipationChangedHandler;
+        private readonly OnEntityChangedHandler onUserChangedHandler;
 
-        public Server()
+        private readonly IServiceRegistry serviceRegistry;
+
+        private bool isServerRunning;
+
+        public Server(IServiceRegistry serviceRegistry)
         {
-            serverContextRegistry = new ServerContextRegistry(repositoryManager, clientHandlersIndexedByUserId, entityGeneratorFactory);
+            this.serviceRegistry = serviceRegistry;
 
-            repositoryManager.UserRepository.UserUpdated += OnUserUpdated;
-            repositoryManager.ConversationRepository.ContributionAdded += OnContributionAdded;
-            repositoryManager.ConversationRepository.ConversationAdded += OnConversationAdded;
-            repositoryManager.ParticipationRepository.ParticipationsAdded += OnParticipationsAdded;
-            repositoryManager.ParticipationRepository.ParticipationAdded += OnParticipationAdded;
+            onUserChangedHandler = new OnUserChangedHandler(serviceRegistry);
+            onConversationChangedHandler = new OnConversationChangedHandler(serviceRegistry);
+            onParticipationChangedHandler = new OnParticipationChangedHandler(serviceRegistry);
 
+            isServerRunning = true;
             Log.Info("Server instance started");
+
             ListenForNewClients();
+        }
+
+        public void Shutdown()
+        {
+            Log.Debug("Starting server shutdown.");
+            isServerRunning = false;
+            onUserChangedHandler.StopOnMessageChangedHandling();
+            onConversationChangedHandler.StopOnMessageChangedHandling();
+            onParticipationChangedHandler.StopOnMessageChangedHandling();
+            Log.Debug("Server shutdown process finished.");
         }
 
         private void ListenForNewClients()
@@ -44,7 +54,7 @@ namespace Server
             clientListener.Start();
             Log.Info("Server started listening for clients to connect");
 
-            while (true)
+            while (isServerRunning)
             {
                 TcpClient client = clientListener.AcceptTcpClient();
 
@@ -52,12 +62,7 @@ namespace Server
 
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-                var clientLoginWorkerThread = new Thread(() => InitialiseNewClient(client))
-                {
-                    Name = "Client Login Worker Thread"
-                };
-
-                clientLoginWorkerThread.Start();
+                InitialiseNewClient(client);
             }
         }
 
@@ -65,19 +70,11 @@ namespace Server
         {
             var clientHandler = new ClientHandler();
 
-            LoginResponse loginResponse = clientHandler.LoginClient(tcpClient, repositoryManager, entityGeneratorFactory);
+            LoginResponse loginResponse = clientHandler.InitialiseClient(tcpClient, serviceRegistry);
 
             if (loginResponse.LoginResult == LoginResult.Success)
             {
-                int userId = loginResponse.User.UserId;
-
-                clientHandler.CreateConnectionHandler(userId, tcpClient);
-
-                clientHandlersIndexedByUserId[userId] = clientHandler;
-
                 clientHandler.MessageReceived += OnMessageReceived;
-
-                Log.InfoFormat("Client with User Id {0} has successfully logged in.", userId);
             }
         }
 
@@ -87,103 +84,13 @@ namespace Server
 
             try
             {
-                IMessageHandler handler =
-                    MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                IMessageHandler handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                IMessageContext context = serverContextRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
-                handler.HandleMessage(message, context);
+                handler.HandleMessage(message, serviceRegistry);
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
-                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
-                    keyNotFoundException);
-            }
-        }
-
-        private void OnUserUpdated(User user)
-        {
-            var userNotification = new UserNotification(user, NotificationType.Update);
-
-            foreach (ClientHandler clientHandler in clientHandlersIndexedByUserId.Values)
-            {
-                clientHandler.SendMessage(userNotification);
-            }
-        }
-
-        private void OnConversationAdded(Conversation conversation)
-        {
-            var conversationNotification = new ConversationNotification(conversation);
-
-            foreach (Participation participant in repositoryManager.ParticipationRepository
-                .GetParticipationsByConversationId(
-                    conversation.ConversationId))
-            {
-                clientHandlersIndexedByUserId[participant.UserId].SendMessage(conversationNotification);
-            }
-        }
-
-        private void OnContributionAdded(Contribution contribution)
-        {
-            var contributionNotification = new ContributionNotification(contribution);
-
-            Conversation conversation = repositoryManager.ConversationRepository
-                .FindConversationById(contribution.ConversationId);
-
-            foreach (User user in
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(conversation.ConversationId)
-                    .Select(participant => repositoryManager.UserRepository.FindUserByID(participant.UserId))
-                    .Where(user => user.ConnectionStatus == ConnectionStatus.Connected))
-            {
-                clientHandlersIndexedByUserId[user.UserId].SendMessage(contributionNotification);
-            }
-        }
-
-        private void OnParticipationsAdded(IEnumerable<Participation> participations)
-        {
-            IList<Participation> participationsEnumerable = participations as IList<Participation> ?? participations.ToList();
-
-            List<int> userIds = participationsEnumerable.Select(participation => participation.UserId).ToList();
-
-            foreach (Participation participation in participationsEnumerable)
-            {
-                foreach (int userId in userIds)
-                {
-                    clientHandlersIndexedByUserId[userId].SendMessage(new ParticipationNotification(participation));
-                }
-            }
-        }
-
-        private void OnParticipationAdded(Participation newParticipation)
-        {
-            UpdateUsersOfNewParticipation(newParticipation);
-
-            Conversation conversation = repositoryManager.ConversationRepository
-                .FindConversationById(newParticipation.ConversationId);
-
-            clientHandlersIndexedByUserId[newParticipation.UserId].SendMessage(new ConversationNotification(conversation));
-        }
-
-        private void UpdateUsersOfNewParticipation(Participation newParticipation)
-        {
-            IEnumerable<Participation> participations =
-                repositoryManager.ParticipationRepository.GetParticipationsByConversationId(newParticipation.ConversationId);
-
-            IEnumerable<Participation> conversationParticipations = participations as Participation[] ??
-                                                                    participations.ToArray();
-
-            // Give the new user all participations for this new conversation they are entering.
-            foreach (Participation conversationParticipation in conversationParticipations)
-            {
-                clientHandlersIndexedByUserId[newParticipation.UserId].SendMessage(
-                    new ParticipationNotification(conversationParticipation));
-            }
-
-            // Update other users of the new conversation participant
-            foreach (Participation conversationParticipation in conversationParticipations.Where(
-                conversationParticipation => conversationParticipation.UserId != newParticipation.UserId))
-            {
-                clientHandlersIndexedByUserId[conversationParticipation.UserId].SendMessage(
-                    new ParticipationNotification(newParticipation));
+                Log.Error("Server is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
             }
         }
     }

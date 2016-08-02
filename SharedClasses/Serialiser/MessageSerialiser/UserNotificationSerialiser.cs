@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using SharedClasses.Domain;
 using SharedClasses.Message;
+using SharedClasses.Serialiser.EntitySerialiser;
 
 namespace SharedClasses.Serialiser.MessageSerialiser
 {
@@ -10,21 +10,21 @@ namespace SharedClasses.Serialiser.MessageSerialiser
     /// </summary>
     internal sealed class UserNotificationSerialiser : Serialiser<UserNotification>
     {
-        private readonly BinaryFormatter binaryFormatter = new BinaryFormatter();
+        private readonly NotificationTypeSerialiser notificationTypeSerialiser = new NotificationTypeSerialiser();
+        private readonly UserSerialiser userSerialiser = new UserSerialiser();
 
-        private readonly MessageIdentifierSerialiser messageIdentifierSerialiser = new MessageIdentifierSerialiser();
-
-        protected override void Serialise(UserNotification message, NetworkStream networkStream)
+        protected override void Serialise(NetworkStream networkStream, UserNotification message)
         {
-            messageIdentifierSerialiser.SerialiseMessageIdentifier(message.MessageIdentifier, networkStream);
-
-            binaryFormatter.Serialize(networkStream, message);
-            Log.InfoFormat("{0} serialised and sent to network stream", message);
+            notificationTypeSerialiser.Serialise(networkStream, message.NotificationType);
+            userSerialiser.Serialise(networkStream, message.User);
         }
 
         public override IMessage Deserialise(NetworkStream networkStream)
         {
-            var userNotification = (UserNotification) binaryFormatter.Deserialize(networkStream);
+            NotificationType notificationType = notificationTypeSerialiser.Deserialise(networkStream);
+
+            var userNotification = new UserNotification(userSerialiser.Deserialise(networkStream), notificationType);
+
             Log.InfoFormat("Network stream has received data and deserialised to a {0} object", userNotification.MessageIdentifier);
             return userNotification;
         }

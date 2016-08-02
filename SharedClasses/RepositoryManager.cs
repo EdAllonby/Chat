@@ -1,26 +1,36 @@
-﻿using SharedClasses.Domain;
+﻿using System;
+using System.Collections.Generic;
+using SharedClasses.Domain;
 
 namespace SharedClasses
 {
-    public sealed class RepositoryManager
+    /// <summary>
+    /// Holds references to repositories. 
+    /// </summary>
+    public sealed class RepositoryManager : IService
     {
-        private readonly ConversationRepository conversationRepository = new ConversationRepository();
-        private readonly ParticipationRepository participationRepository = new ParticipationRepository();
-        private readonly UserRepository userRepository = new UserRepository();
+        private readonly IDictionary<Type, IEntityRepository> repositoriesIndexedByEnclosedEntity = new Dictionary<Type, IEntityRepository>();
 
-        public UserRepository UserRepository
+        /// <summary>
+        /// Add a repository to the <see cref="RepositoryManager"/>.
+        /// </summary>
+        /// <typeparam name="T">The type that the repository holds.</typeparam>
+        /// <param name="repository">The repository instance to add.</param>
+        public void AddRepository<T>(IEntityRepository repository) where T : IEntity
         {
-            get { return userRepository; }
+            repositoriesIndexedByEnclosedEntity.Add(typeof (T), repository);
         }
 
-        public ConversationRepository ConversationRepository
+        /// <summary>
+        /// Get a repository from the <see cref="RepositoryManager"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of <see cref="IEntity"/> that the repository holds.</typeparam>
+        /// <returns>A readonly version of the repository requested. If no repository is found, return null.</returns>
+        public IReadOnlyEntityRepository<T> GetRepository<T>() where T : IEntity
         {
-            get { return conversationRepository; }
-        }
-
-        public ParticipationRepository ParticipationRepository
-        {
-            get { return participationRepository; }
+            IEntityRepository repository;
+            repositoriesIndexedByEnclosedEntity.TryGetValue(typeof (T), out repository);
+            return (IReadOnlyEntityRepository<T>) repository;
         }
     }
 }

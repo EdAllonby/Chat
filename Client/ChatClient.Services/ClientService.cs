@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using ChatClient.Services.MessageHandler;
 using log4net;
 using SharedClasses;
@@ -8,34 +10,45 @@ using SharedClasses.Message;
 namespace ChatClient.Services
 {
     /// <summary>
-    /// Handles the logic for <see cref="IMessage" />
-    /// Delegates Server specific communications to the <see cref="connectionHandler" />
+    /// Handles the logic for <see cref="IMessage" />.
+    /// Delegates Server specific communications to the <see cref="connectionHandler" />.
     /// </summary>
     public sealed class ClientService : IClientService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (ClientService));
-        private readonly ClientContextRegistry clientContextRegistry;
-
-        private readonly RepositoryManager repositoryManager = new RepositoryManager();
+        private readonly IServiceRegistry serviceRegistry;
+        private readonly MessageThroughputLimiter<UserTypingRequest> userTypingThroughputLimiter;
         private ConnectionHandler connectionHandler;
 
-        public ClientService()
+        /// <summary>
+        /// Passes the service the reference to the <see cref="IServiceRegistry"/>.
+        /// </summary>
+        /// <param name="serviceRegistry">Contains a housing for client services.</param>
+        public ClientService(IServiceRegistry serviceRegistry)
         {
-            clientContextRegistry = new ClientContextRegistry(repositoryManager);
+            this.serviceRegistry = serviceRegistry;
+            const int MinimumMillisecondsAllowedBetweenUserTypingMessages = 1000;
+            userTypingThroughputLimiter = new MessageThroughputLimiter<UserTypingRequest>(MinimumMillisecondsAllowedBetweenUserTypingMessages);
+            userTypingThroughputLimiter.DeferredSendLastMessage += userTypingThroughputLimiter_DeferredSendLastMessage;
         }
+
+        /// <summary>
+        /// This client's EntityRepository Manager.
+        /// </summary>
+        public RepositoryManager RepositoryManager
+        {
+            get { return serviceRegistry.GetService<RepositoryManager>(); }
+        }
+
+        /// <summary>
+        /// Gets fired when bootstrapping the repository is complete.
+        /// </summary>
+        public event EventHandler BootstrapCompleted;
 
         /// <summary>
         /// This Client's unique User Id.
         /// </summary>
         public int ClientUserId { get; private set; }
-
-        /// <summary>
-        /// Holds the repositories for the Client.
-        /// </summary>
-        public RepositoryManager RepositoryManager
-        {
-            get { return repositoryManager; }
-        }
 
         /// <summary>
         /// Connects the Client to the server using the parameters as connection details
@@ -44,39 +57,42 @@ namespace ChatClient.Services
         /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
         public LoginResult LogOn(LoginDetails loginDetails)
         {
-            var loginHandler = new ServerLoginHandler(repositoryManager);
+            var serverLoginHandler = new ServerLoginHandler();
+            serverLoginHandler.BootstrapCompleted += OnBootstrapCompleted;
 
-            LoginResponse response = loginHandler.ConnectToServer(loginDetails);
+            LoginResponse response = serverLoginHandler.ConnectToServer(loginDetails, out connectionHandler);
 
-            if (response.LoginResult == LoginResult.Success)
+            switch (response.LoginResult)
             {
-                loginHandler.BootstrapRepositories(response.User.UserId);
-
-                connectionHandler = loginHandler.CreateServerConnectionHandler(response.User.UserId);
-
-                Log.DebugFormat("Connection process to the server has finished");
-
-                ClientUserId = response.User.UserId;
-
-                connectionHandler.MessageReceived += OnNewMessageReceived;
-            }
-            else
-            {
-                Log.WarnFormat("User {0} already connected.", loginDetails.Username);
+                case LoginResult.Success:
+                    ClientUserId = response.User.Id;
+                    connectionHandler.MessageReceived += OnNewMessageReceived;
+                    break;
+                case LoginResult.AlreadyConnected:
+                    Log.WarnFormat("User {0} already connected.", loginDetails.Username);
+                    break;
+                case LoginResult.ServerNotFound:
+                    Log.WarnFormat("Cannot find server.");
+                    break;
             }
 
             return response.LoginResult;
         }
 
         /// <summary>
-        /// Sends a <see cref="NewConversationRequest"/> message to the server.
+        /// Sends a <see cref="ConversationRequest"/> message to the server.
         /// </summary>
         /// <param name="userIds">The participants that are included in the conversation.</param>
         public void CreateConversation(List<int> userIds)
         {
-            connectionHandler.SendMessage(new NewConversationRequest(userIds));
+            connectionHandler.SendMessage(new ConversationRequest(userIds));
         }
 
+        /// <summary>
+        /// Sends a <see cref="ParticipationRequest"/> message to the server to add a user to an existing conversation.
+        /// </summary>
+        /// <param name="userId">The participant that will be added to the conversation.</param>
+        /// <param name="conversationId">The targetted conversation the participant will be added to.</param>
         public void AddUserToConversation(int userId, int conversationId)
         {
             connectionHandler.SendMessage(new ParticipationRequest(new Participation(userId, conversationId)));
@@ -85,11 +101,45 @@ namespace ChatClient.Services
         /// <summary>
         /// Sends a <see cref="ContributionRequest"/> message to the server.
         /// </summary>
-        /// <param name="conversationID">The ID of the conversation the Client wants to send the message to.</param>
+        /// <param name="conversationId">The ID of the conversation the Client wants to send the message to.</param>
         /// <param name="message">The content of the message.</param>
-        public void SendContribution(int conversationID, string message)
+        public void SendContribution(int conversationId, string message)
         {
-            connectionHandler.SendMessage(new ContributionRequest(conversationID, ClientUserId, message));
+            connectionHandler.SendMessage(new ContributionRequest(new TextContribution(ClientUserId, message, conversationId)));
+        }
+
+        /// <summary>
+        /// Sends an image <see cref="ContributionRequest"/> message to the server.
+        /// </summary>
+        /// <param name="conversationId">The Id of the conversation the Client wants to send the message to.</param>
+        /// <param name="image">The image to add to a conversation</param>
+        public void SendContribution(int conversationId, Image image)
+        {
+            connectionHandler.SendMessage(new ContributionRequest(new ImageContribution(ClientUserId, image, conversationId)));
+        }
+
+        /// <summary>
+        /// Sends an <see cref="AvatarRequest"/> message to the server to change a user's avatar.
+        /// </summary>
+        /// <param name="avatar">The new image the user requests to have.</param>
+        public void SendAvatarRequest(Image avatar)
+        {
+            connectionHandler.SendMessage(new AvatarRequest(ClientUserId, avatar));
+        }
+
+        /// <summary>
+        /// Sends a <see cref="UserTypingRequest"/> message to the server to change the status of a current user's state of typing.
+        /// </summary>
+        /// <param name="participationId">The participation Id that holds reference to the user and conversation.</param>
+        /// <param name="isTyping">Whether the user has started or finished typing.</param>
+        public void SendUserTypingRequest(int participationId, bool isTyping)
+        {
+            userTypingThroughputLimiter.QueueMessageRequest(new UserTypingRequest(new UserTyping(isTyping, participationId)));
+        }
+
+        private void userTypingThroughputLimiter_DeferredSendLastMessage(object sender, UserTypingRequest e)
+        {
+            connectionHandler.SendMessage(e);
         }
 
         private void OnNewMessageReceived(object sender, MessageEventArgs e)
@@ -98,18 +148,23 @@ namespace ChatClient.Services
 
             try
             {
-                IMessageHandler handler =
-                    MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                IMessageHandler handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                IMessageContext context =
-                    clientContextRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
-
-                handler.HandleMessage(message, context);
+                handler.HandleMessage(message, serviceRegistry);
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
-                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier,
-                    keyNotFoundException);
+                Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
+            }
+        }
+
+        private void OnBootstrapCompleted(object sender, EventArgs e)
+        {
+            EventHandler bootstrapCompletedCopy = BootstrapCompleted;
+
+            if (bootstrapCompletedCopy != null)
+            {
+                bootstrapCompletedCopy(this, EventArgs.Empty);
             }
         }
     }
