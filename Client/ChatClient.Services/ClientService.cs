@@ -35,10 +35,7 @@ namespace ChatClient.Services
         /// <summary>
         /// This client's EntityRepository Manager.
         /// </summary>
-        public RepositoryManager RepositoryManager
-        {
-            get { return serviceRegistry.GetService<RepositoryManager>(); }
-        }
+        public RepositoryManager RepositoryManager => serviceRegistry.GetService<RepositoryManager>();
 
         /// <summary>
         /// Gets fired when bootstrapping the repository is complete.

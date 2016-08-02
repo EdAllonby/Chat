@@ -26,10 +26,7 @@ namespace ServerTests.MessageHandlerTests
         private readonly ContributionRequestHandler contributionRequestHandler = new ContributionRequestHandler();
         private const int ConversationId = 1;
 
-        private IEntityRepository<Conversation> ConversationRepository
-        {
-            get { return (IEntityRepository<Conversation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>(); }
-        }
+        private IEntityRepository<Conversation> ConversationRepository => (IEntityRepository<Conversation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
         [TestFixture]
         public class HandleMessageTest : ContributionRequestHandlerTest

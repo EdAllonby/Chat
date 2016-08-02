@@ -17,9 +17,6 @@ namespace SharedClasses.Message
 
         public IEnumerable<Conversation> Conversations { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.ConversationSnapshot; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.ConversationSnapshot;
     }
 }

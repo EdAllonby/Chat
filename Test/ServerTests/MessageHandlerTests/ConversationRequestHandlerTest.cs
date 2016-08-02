@@ -23,10 +23,7 @@ namespace ServerTests.MessageHandlerTests
 
         private List<int> usersInConversation;
 
-        private IReadOnlyEntityRepository<Conversation> ConversationRepository
-        {
-            get { return ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>(); }
-        }
+        private IReadOnlyEntityRepository<Conversation> ConversationRepository => ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
         private static Conversation GetNewlyAddedConversation(IEnumerable<Conversation> newConversationList, IEnumerable<Conversation> previousConversationList)
         {

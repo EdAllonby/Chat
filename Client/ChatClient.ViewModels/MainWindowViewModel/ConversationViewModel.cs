@@ -23,15 +23,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        public string ConversationParticipants
-        {
-            get { return GetConversationParticipants(); }
-        }
+        public string ConversationParticipants => GetConversationParticipants();
 
-        public int ConversationId
-        {
-            get { return conversation.Id; }
-        }
+        public int ConversationId => conversation.Id;
 
         private string GetConversationParticipants()
         {

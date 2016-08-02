@@ -109,10 +109,7 @@ namespace ChatClient.ViewModels.LoginWindowViewModel
 
         #region Login Command
 
-        public ICommand Login
-        {
-            get { return new RelayCommand(LoginToChat, CanLogin); }
-        }
+        public ICommand Login => new RelayCommand(LoginToChat, CanLogin);
 
         public static ICommand Closing
         {

@@ -19,7 +19,7 @@ namespace Server
 
         private void OnUserAdded(object sender, EntityChangedEventArgs<User> e)
         {
-            var userNotification = new UserNotification(e.Entity, NotificationType.Create);
+            var userNotification = new EntityNotification<User>(e.Entity, NotificationType.Create);
 
             ClientManager.SendMessageToClients(userNotification);
         }
@@ -38,14 +38,14 @@ namespace Server
 
         private void OnUserConnectionUpdated(User user)
         {
-            var userNotification = new ConnectionStatusNotification(user.ConnectionStatus, NotificationType.Update);
+            var userNotification = new EntityNotification<ConnectionStatus>(user.ConnectionStatus, NotificationType.Update);
 
             ClientManager.SendMessageToClients(userNotification);
         }
 
         private void OnUserAvatarUpdated(User user)
         {
-            var avatarNotification = new AvatarNotification(user.Avatar, NotificationType.Update);
+            var avatarNotification = new EntityNotification<Avatar>(user.Avatar, NotificationType.Update);
 
             ClientManager.SendMessageToClients(avatarNotification);
         }

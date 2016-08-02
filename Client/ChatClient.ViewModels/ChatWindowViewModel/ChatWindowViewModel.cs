@@ -240,10 +240,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
 
         #region Commands
 
-        public ICommand SendMessage
-        {
-            get { return new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest); }
-        }
+        public ICommand SendMessage => new RelayCommand(NewConversationContributionRequest, CanSendConversationContributionRequest);
 
         public ICommand AddUserCommand { get; private set; }
 
@@ -252,10 +249,7 @@ namespace ChatClient.ViewModels.ChatWindowViewModel
             get { return new RelayCommand(() => ConversationWindowManager.SetWindowStatus(groupChat.Conversation.Id, WindowStatus.Closed)); }
         }
 
-        public ICommand OpenUserSettings
-        {
-            get { return new RelayCommand(OpenUserSettingsWindow); }
-        }
+        public ICommand OpenUserSettings => new RelayCommand(OpenUserSettingsWindow);
 
         private void OpenUserSettingsWindow()
         {

@@ -16,9 +16,6 @@ namespace SharedClasses.Message
 
         public User User { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.LoginRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.LoginRequest;
     }
 }

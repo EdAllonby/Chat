@@ -53,7 +53,7 @@ namespace SharedClasses
         {
             lock (messageSenderLock)
             {
-                ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
+                IMessageSerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
                 messageSerialiser.Serialise(tcpClient.GetStream(), message);
                 Log.DebugFormat($"Sent message with identifier {message.MessageIdentifier} to user with id {clientUserId}");
             }

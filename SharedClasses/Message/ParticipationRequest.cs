@@ -16,9 +16,6 @@ namespace SharedClasses.Message
 
         public Participation Participation { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.ParticipationRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.ParticipationRequest;
     }
 }

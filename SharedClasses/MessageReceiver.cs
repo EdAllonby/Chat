@@ -36,7 +36,7 @@ namespace SharedClasses
                     {
                         MessageIdentifier messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(networkStream);
 
-                        ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
+                        IMessageSerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
                         IMessage message = serialiser.Deserialise(networkStream);
 

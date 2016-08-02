@@ -37,20 +37,11 @@ namespace ChatClient.ViewModels.UserSettingsViewModel
             }
         }
 
-        public ICommand ApplyAvatarCommand
-        {
-            get { return new RelayCommand(SendAvatarRequest, CanSendAvatarRequest); }
-        }
+        public ICommand ApplyAvatarCommand => new RelayCommand(SendAvatarRequest, CanSendAvatarRequest);
 
-        public ICommand ApplyAvatarCommandAndClose
-        {
-            get { return new RelayCommand(SendAvatarRequestAndClose); }
-        }
+        public ICommand ApplyAvatarCommandAndClose => new RelayCommand(SendAvatarRequestAndClose);
 
-        public ICommand CancelCommand
-        {
-            get { return new RelayCommand(OnCloseUserSettingsRequest); }
-        }
+        public ICommand CancelCommand => new RelayCommand(OnCloseUserSettingsRequest);
 
         public void DragOver(IDropInfo dropInfo)
         {

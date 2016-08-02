@@ -60,7 +60,7 @@ namespace Server
         {
             MessageIdentifier messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(tcpClient.GetStream());
 
-            ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
+            IMessageSerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
             var loginRequest = (LoginRequest) serialiser.Deserialise(tcpClient.GetStream());
 
@@ -78,7 +78,7 @@ namespace Server
 
         private static void SendLoginResponse(IMessage loginResponse, TcpClient tcpClient)
         {
-            ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(loginResponse.MessageIdentifier);
+            IMessageSerialiser messageSerialiser = SerialiserFactory.GetSerialiser(loginResponse.MessageIdentifier);
             messageSerialiser.Serialise(tcpClient.GetStream(), loginResponse);
         }
 

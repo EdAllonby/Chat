@@ -81,17 +81,18 @@ namespace Server
         private void OnMessageReceived(object sender, MessageEventArgs e)
         {
             IMessage message = e.Message;
-
+            IMessageHandler handler = null;
             try
             {
-                IMessageHandler handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
-
-                handler.HandleMessage(message, serviceRegistry);
+                handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
                 Log.Error("Server is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
             }
+
+            handler.HandleMessage(message, serviceRegistry);
+
         }
     }
 }

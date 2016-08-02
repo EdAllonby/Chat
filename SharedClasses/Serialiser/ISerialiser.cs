@@ -1,27 +1,24 @@
 ﻿using System.Net.Sockets;
-using SharedClasses.Message;
 
 namespace SharedClasses.Serialiser
 {
     /// <summary>
-    /// Groups the message serialisers together.
-    /// Each <see cref="ISerialiser" /> can only serialise and deserialise an <see cref="IMessage" />
-    /// This was created to allow the <see cref="SerialiserFactory" /> class to pick the correct serialiser
+    /// Serialise and Deserialise an <see langword="object" /> across a <see cref="NetworkStream" />.
     /// </summary>
     public interface ISerialiser
     {
         /// <summary>
-        /// Serialise an <see cref="IMessage" /> down the NetworkStream
+        /// Serialise an <see langword="object" /> across the stream.
         /// </summary>
-        /// <param name="networkStream">The networkStream that connects the Client and Server</param>
-        /// <param name="message">The message to send</param>
-        void Serialise(NetworkStream networkStream, IMessage message);
+        /// <param name="serialisationStream">The stream to serialise across.</param>
+        /// <param name="serialisableObject">The <see langword="object" /> to serialise.</param>
+        void Serialise(NetworkStream serialisationStream, object serialisableObject);
 
         /// <summary>
-        /// Deserialise an <see cref="IMessage" /> from the NetworkStream
+        /// Deserialise an <see langword="object" /> send across the stream.
         /// </summary>
-        /// <param name="networkStream">The networkStream that connects the Client and Server</param>
-        /// <returns>an <see cref="IMessage" /> object</returns>
-        IMessage Deserialise(NetworkStream networkStream);
+        /// <param name="serialisationStream">The stream to deserialise.</param>
+        /// <returns>An <see langword="object" /> that has been deserialised.</returns>
+        object Deserialise(NetworkStream serialisationStream);
     }
 }

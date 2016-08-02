@@ -17,9 +17,6 @@ namespace SharedClasses.Message
 
         public Avatar Avatar { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.AvatarRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.AvatarRequest;
     }
 }

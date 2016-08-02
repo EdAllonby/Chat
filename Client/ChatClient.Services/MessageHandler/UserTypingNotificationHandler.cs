@@ -8,15 +8,15 @@ namespace ChatClient.Services.MessageHandler
     {
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var userTypingNotification = (UserTypingNotification) message;
+            var userTypingNotification = (EntityNotification<UserTyping>) message;
 
             var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
-            Participation participation = participationRepository.FindEntityById(userTypingNotification.UserTyping.ParticipationId);
+            Participation participation = participationRepository.FindEntityById(userTypingNotification.Entity.ParticipationId);
 
             Participation clonedParticipation = Participation.DeepClone(participation);
 
-            clonedParticipation.UserTyping = userTypingNotification.UserTyping;
+            clonedParticipation.UserTyping = userTypingNotification.Entity;
 
             participationRepository.UpdateEntity(clonedParticipation);
         }

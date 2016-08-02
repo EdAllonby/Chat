@@ -135,14 +135,14 @@ namespace ChatClient.Services
         {
             MessageIdentifier messageIdentifier = MessageIdentifierSerialiser.DeserialiseMessageIdentifier(serverConnection.GetStream());
 
-            ISerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
+            IMessageSerialiser serialiser = SerialiserFactory.GetSerialiser(messageIdentifier);
 
             return serialiser.Deserialise(serverConnection.GetStream());
         }
 
         private void SendConnectionMessage(IMessage message)
         {
-            ISerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
+            IMessageSerialiser messageSerialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
             messageSerialiser.Serialise(serverConnection.GetStream(), message);
         }
 

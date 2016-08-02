@@ -38,10 +38,7 @@ namespace SharedClasses.Domain
 
         public DateTime ContributionTimeStamp { get; }
 
-        public ContributionType ContributionType
-        {
-            get { return ContributionType.Image; }
-        }
+        public ContributionType ContributionType => ContributionType.Image;
 
         public bool Equals(TextContribution other)
         {

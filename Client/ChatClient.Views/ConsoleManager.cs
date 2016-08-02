@@ -16,10 +16,7 @@ namespace ChatClient.Views
     {
         private const string Kernel32DllName = "kernel32.dll";
 
-        private static bool HasConsole
-        {
-            get { return GetConsoleWindow() != IntPtr.Zero; }
-        }
+        private static bool HasConsole => GetConsoleWindow() != IntPtr.Zero;
 
         [DllImport(Kernel32DllName)]
         private static extern bool AllocConsole();

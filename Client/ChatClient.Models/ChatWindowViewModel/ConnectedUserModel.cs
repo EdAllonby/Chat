@@ -11,19 +11,10 @@ namespace ChatClient.Models.ChatWindowViewModel
             this.user = user;
         }
 
-        public int UserId
-        {
-            get { return user.Id; }
-        }
+        public int UserId => user.Id;
 
-        public string Username
-        {
-            get { return user.Username; }
-        }
+        public string Username => user.Username;
 
-        public ConnectionStatus ConnectionStatus
-        {
-            get { return user.ConnectionStatus; }
-        }
+        public ConnectionStatus ConnectionStatus => user.ConnectionStatus;
     }
 }

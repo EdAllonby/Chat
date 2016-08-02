@@ -6,7 +6,7 @@ namespace SharedClasses.Domain
     /// Gives a user a current connection status.
     /// </summary>
     [Serializable]
-    public sealed class ConnectionStatus
+    public sealed class ConnectionStatus : IEntity
     {
         public enum Status
         {
@@ -39,5 +39,7 @@ namespace SharedClasses.Domain
         /// The current status of the user.
         /// </summary>
         public Status UserConnectionStatus { get; }
+
+        public int Id { get; } = 1;
     }
 }

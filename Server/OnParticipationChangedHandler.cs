@@ -35,7 +35,7 @@ namespace Server
 
             List<Participation> conversationParticipants = participationRepository.GetParticipationsByConversationId(participation.ConversationId);
 
-            var participationNotification = new ParticipationNotification(participation, NotificationType.Create);
+            var participationNotification = new EntityNotification<Participation>(participation, NotificationType.Create);
 
             IEnumerable<int> conversationParticipantUserIds = conversationParticipants.Select(conversationParticipation => conversationParticipation.UserId);
 
@@ -44,7 +44,7 @@ namespace Server
             List<Participation> otherParticipants = conversationParticipants.Where(conversationParticipant => !conversationParticipant.Equals(participation)).ToList();
 
             otherParticipants.ForEach(
-                otherParticipant => ClientManager.SendMessageToClient(new ParticipationNotification(otherParticipant, NotificationType.Create), participation.UserId));
+                otherParticipant => ClientManager.SendMessageToClient(new EntityNotification<Participation>(otherParticipant, NotificationType.Create), participation.UserId));
 
             Conversation conversation = conversationRepository.FindEntityById(participation.ConversationId);
 
@@ -57,7 +57,7 @@ namespace Server
 
             List<int> usersInConversation = participationsForConversation.Select(x => x.UserId).ToList();
 
-            var userTypingNotification = new UserTypingNotification(participation.UserTyping, NotificationType.Update);
+            var userTypingNotification = new EntityNotification<UserTyping>(participation.UserTyping, NotificationType.Update);
 
             ClientManager.SendMessageToClients(userTypingNotification, usersInConversation);
         }
@@ -66,11 +66,11 @@ namespace Server
         {
             if (conversation != null)
             {
-                ClientManager.SendMessageToClient(new ConversationNotification(conversation, NotificationType.Create), newParticipantUserId);
+                ClientManager.SendMessageToClient(new EntityNotification<Conversation>(conversation, NotificationType.Create), newParticipantUserId);
 
                 IEnumerable<int> currentConversationParticipantUserIds = otherParticipants.Select(participant => participant.UserId);
 
-                ClientManager.SendMessageToClients(new ConversationNotification(conversation, NotificationType.Update), currentConversationParticipantUserIds);
+                ClientManager.SendMessageToClients(new EntityNotification<Conversation>(conversation, NotificationType.Update), currentConversationParticipantUserIds);
             }
         }
 

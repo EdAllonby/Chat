@@ -17,9 +17,6 @@ namespace SharedClasses.Message
 
         public IEnumerable<Participation> Participations { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.ParticipationSnapshot; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.ParticipationSnapshot;
     }
 }

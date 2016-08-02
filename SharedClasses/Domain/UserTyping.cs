@@ -6,7 +6,7 @@ namespace SharedClasses.Domain
     /// Signifies when a <see cref="User" /> has started or finished typing a contribution to a conversation.
     /// </summary>
     [Serializable]
-    public sealed class UserTyping : IEquatable<UserTyping>
+    public sealed class UserTyping : IEquatable<UserTyping>, IEntity
     {
         public UserTyping(bool isUserTyping, int participationId)
         {
@@ -53,5 +53,7 @@ namespace SharedClasses.Domain
         }
 
         #endregion
+
+        public int Id { get; } = 1;
     }
 }

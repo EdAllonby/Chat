@@ -5,24 +5,24 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="ConversationNotification" /> the Client received.
+    /// Handles a <see cref="EntityNotification{TEntity}" /> the Client received.
     /// </summary>
     internal sealed class ConversationNotificationHandler : IMessageHandler
     {
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var conversationNotification = (ConversationNotification) message;
+            var conversationNotification = (EntityNotification<Conversation>) message;
 
             var conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
             switch (conversationNotification.NotificationType)
             {
                 case NotificationType.Create:
-                    conversationRepository.AddEntity(conversationNotification.Conversation);
+                    conversationRepository.AddEntity(conversationNotification.Entity);
                     break;
 
                 case NotificationType.Update:
-                    conversationRepository.UpdateEntity(conversationNotification.Conversation);
+                    conversationRepository.UpdateEntity(conversationNotification.Entity);
                     break;
             }
         }

@@ -16,9 +16,6 @@ namespace SharedClasses.Message
 
         public List<int> UserIds { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.ConversationRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.ConversationRequest;
     }
 }

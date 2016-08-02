@@ -13,9 +13,6 @@ namespace SharedClasses.Message
 
         public UserTyping UserTyping { get; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.UserTypingRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.UserTypingRequest;
     }
 }

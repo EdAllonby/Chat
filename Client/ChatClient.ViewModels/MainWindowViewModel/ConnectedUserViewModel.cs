@@ -50,25 +50,13 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        public int UserId
-        {
-            get { return user.Id; }
-        }
+        public int UserId => user.Id;
 
-        public wpfBrush.Brush BorderColour
-        {
-            get { return ConnectionStatusToColour(); }
-        }
+        public wpfBrush.Brush BorderColour => ConnectionStatusToColour();
 
-        public Image UserAvatar
-        {
-            get { return user.Avatar.UserAvatar ?? Resources.DefaultUserImage; }
-        }
+        public Image UserAvatar => user.Avatar.UserAvatar ?? Resources.DefaultUserImage;
 
-        public string Username
-        {
-            get { return user.Username; }
-        }
+        public string Username => user.Username;
 
         private wpfBrush.Brush ConnectionStatusToColour()
         {

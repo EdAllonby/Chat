@@ -12,10 +12,7 @@ namespace SharedClasses.Domain
 
         private readonly IDictionary<int, T> entitiesIndexedById = new ConcurrentDictionary<int, T>();
 
-        public Type EnclosedEntityType
-        {
-            get { return typeof(T); }
-        }
+        public Type EnclosedEntityType => typeof(T);
 
         public event EventHandler<EntityChangedEventArgs<T>> EntityAdded;
 

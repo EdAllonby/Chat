@@ -9,19 +9,12 @@ namespace SharedClassesTests
     public class SerialiserFactoryTests
     {
         [Test]
-        public void GetSerialiserFromGenericTest()
-        {
-            ISerialiser serialiser = SerialiserFactory.GetSerialiser<ParticipationNotification>();
-            Assert.IsInstanceOf<ParticipationNotificationSerialiser>(serialiser);
-        }
-
-        [Test]
         public void GetSerialiserFromIMessageTest()
         {
             IMessage message = new LoginRequest("User");
 
-            ISerialiser serialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
-            Assert.IsInstanceOf<LoginRequestSerialiser>(serialiser);
+            IMessageSerialiser serialiser = SerialiserFactory.GetSerialiser(message.MessageIdentifier);
+            Assert.IsInstanceOf<MessageSerialiser<LoginRequest>>(serialiser);
         }
     }
 }

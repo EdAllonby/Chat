@@ -16,9 +16,6 @@ namespace SharedClasses.Message
 
         public IContribution Contribution { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.ContributionRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.ContributionRequest;
     }
 }

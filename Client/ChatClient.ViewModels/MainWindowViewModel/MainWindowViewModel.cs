@@ -45,15 +45,9 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        public string Username
-        {
-            get { return userRepository.FindEntityById(userId).Username; }
-        }
+        public string Username => userRepository.FindEntityById(userId).Username;
 
-        public ICommand OpenUserSettings
-        {
-            get { return new RelayCommand(OpenUserSettingsWindow); }
-        }
+        public ICommand OpenUserSettings => new RelayCommand(OpenUserSettingsWindow);
 
         private void OpenUserSettingsWindow()
         {

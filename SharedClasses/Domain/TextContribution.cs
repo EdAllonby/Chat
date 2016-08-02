@@ -50,10 +50,7 @@ namespace SharedClasses.Domain
         /// </summary>
         public DateTime ContributionTimeStamp { get; }
 
-        public ContributionType ContributionType
-        {
-            get { return ContributionType.Text; }
-        }
+        public ContributionType ContributionType => ContributionType.Text;
 
         /// <summary>
         /// The Unique ID of this Contribution

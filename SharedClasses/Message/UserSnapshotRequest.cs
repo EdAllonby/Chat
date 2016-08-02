@@ -15,9 +15,6 @@ namespace SharedClasses.Message
 
         public int UserId { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.UserSnapshotRequest; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.UserSnapshotRequest;
     }
 }

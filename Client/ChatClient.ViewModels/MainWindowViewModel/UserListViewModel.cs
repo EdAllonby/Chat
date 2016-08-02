@@ -88,10 +88,7 @@ namespace ChatClient.ViewModels.MainWindowViewModel
             }
         }
 
-        public ICommand StartMultiUserConversation
-        {
-            get { return new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation); }
-        }
+        public ICommand StartMultiUserConversation => new RelayCommand(StartNewMultiUserConversation, CanStartNewMultiUserConversation);
 
         private void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
         {

@@ -18,9 +18,6 @@ namespace SharedClasses.Message
 
         public int UserId { get; private set; }
 
-        public MessageIdentifier MessageIdentifier
-        {
-            get { return MessageIdentifier.ClientDisconnection; }
-        }
+        public MessageIdentifier MessageIdentifier => MessageIdentifier.ClientDisconnection;
     }
 }

@@ -31,10 +31,7 @@ namespace ServerTests.MessageHandlerTests
         private AvatarRequest avatarRequest;
         private User userToUpdate;
 
-        private IEntityRepository<User> UserRepository
-        {
-            get { return (IEntityRepository<User>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>(); }
-        }
+        private IEntityRepository<User> UserRepository => (IEntityRepository<User>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
         [TestFixture]
         public class HandleMessageTest : AvatarRequestHandlerTest

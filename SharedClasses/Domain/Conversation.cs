@@ -24,10 +24,7 @@ namespace SharedClasses.Domain
         /// <summary>
         /// The most recent contribution added.
         /// </summary>
-        public IContribution LastContribution
-        {
-            get { return contributionsIndexedByContributionId.Values.LastOrDefault(); }
-        }
+        public IContribution LastContribution => contributionsIndexedByContributionId.Values.LastOrDefault();
 
         /// <summary>
         /// Conversation is a domain entity class and gets a unique Id.

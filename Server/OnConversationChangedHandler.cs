@@ -25,7 +25,7 @@ namespace Server
 
         private void OnConversationAdded(object sender, EntityChangedEventArgs<Conversation> e)
         {
-            var conversationNotification = new ConversationNotification(e.Entity, NotificationType.Create);
+            var conversationNotification = new EntityNotification<Conversation>(e.Entity, NotificationType.Create);
 
             IEnumerable<int> userIds = participationRepository.GetParticipationsByConversationId(e.Entity.Id).Select(participation => participation.UserId);
 
@@ -42,7 +42,7 @@ namespace Server
 
         private void OnContributionAdded(IContribution contribution)
         {
-            var contributionNotification = new ContributionNotification(contribution, NotificationType.Create);
+            var contributionNotification = new EntityNotification<IContribution>(contribution, NotificationType.Create);
 
             List<Participation> participationsByConversationId = participationRepository.GetParticipationsByConversationId(contribution.ConversationId);
 

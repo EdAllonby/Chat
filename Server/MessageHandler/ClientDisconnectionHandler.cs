@@ -53,7 +53,7 @@ namespace Server.MessageHandler
             {
                 Participation participation = participationRepository.GetParticipationByUserIdandConversationId(userId, conversationId);
                 var userTyping = new UserTyping(false, participation.Id);
-                var userTypingNotification = new UserTypingNotification(userTyping, NotificationType.Create);
+                var userTypingNotification = new EntityNotification<UserTyping>(userTyping, NotificationType.Create);
                 List<Participation> participationsForConversation = participationRepository.GetParticipationsByConversationId(conversationId);
 
                 List<int> userIdsInConversation = participationsForConversation.Select(x => x.UserId).ToList();
