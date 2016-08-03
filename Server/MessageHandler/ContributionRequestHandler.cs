@@ -7,28 +7,30 @@ namespace Server.MessageHandler
     /// <summary>
     /// Handles a <see cref="ContributionRequest" /> the Server received.
     /// </summary>
-    internal sealed class ContributionRequestHandler : IMessageHandler
+    internal sealed class ContributionRequestHandler : MessageHandler<ContributionRequest>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ContributionRequestHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var contributionRequest = (ContributionRequest) message;
+        }
 
-            var conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+        protected override void HandleMessage(ContributionRequest message)
+        {
+            var conversationRepository = (ConversationRepository)ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
-            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+            var entityIdAllocatorFactory = ServiceRegistry.GetService<EntityIdAllocatorFactory>();
 
             IContribution newContribution;
 
-            IContribution contribution = contributionRequest.Contribution;
+            IContribution contribution = message.Contribution;
 
             switch (contribution.ContributionType)
             {
                 case ContributionType.Text:
-                    newContribution = new TextContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (TextContribution) contribution);
+                    newContribution = new TextContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (TextContribution)contribution);
                     conversationRepository.AddContributionToConversation(newContribution);
                     break;
                 case ContributionType.Image:
-                    newContribution = new ImageContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (ImageContribution) contribution);
+                    newContribution = new ImageContribution(entityIdAllocatorFactory.AllocateEntityId<IContribution>(), (ImageContribution)contribution);
                     conversationRepository.AddContributionToConversation(newContribution);
                     break;
             }

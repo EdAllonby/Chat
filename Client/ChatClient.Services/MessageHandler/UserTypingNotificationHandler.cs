@@ -4,19 +4,21 @@ using SharedClasses.Message;
 
 namespace ChatClient.Services.MessageHandler
 {
-    public sealed class UserTypingNotificationHandler : IMessageHandler
+    public sealed class UserTypingNotificationHandler : MessageHandler<EntityNotification<UserTyping>>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public UserTypingNotificationHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var userTypingNotification = (EntityNotification<UserTyping>) message;
+        }
 
-            var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+        protected override void HandleMessage(EntityNotification<UserTyping> message)
+        {
+            var participationRepository = (IEntityRepository<Participation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
-            Participation participation = participationRepository.FindEntityById(userTypingNotification.Entity.ParticipationId);
+            Participation participation = participationRepository.FindEntityById(message.Entity.ParticipationId);
 
             Participation clonedParticipation = Participation.DeepClone(participation);
 
-            clonedParticipation.UserTyping = userTypingNotification.Entity;
+            clonedParticipation.UserTyping = message.Entity;
 
             participationRepository.UpdateEntity(clonedParticipation);
         }

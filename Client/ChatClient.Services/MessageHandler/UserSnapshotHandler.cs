@@ -6,17 +6,19 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="EntitySnapshot{User}" /> the Client received.
+    /// Handles a <see cref="EntitySnapshot{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class UserSnapshotHandler : IMessageHandler
+    internal sealed class UserSnapshotHandler : MessageHandler<EntitySnapshot<User>>, IBootstrapper
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public UserSnapshotHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var userSnapshot = (EntitySnapshot<User>) message;
+        }
 
-            var userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+        protected override void HandleMessage(EntitySnapshot<User> message)
+        {
+            var userRepository = (UserRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
-            foreach (User user in userSnapshot.Entities)
+            foreach (User user in message.Entities)
             {
                 userRepository.AddEntity(user);
             }
@@ -24,16 +26,16 @@ namespace ChatClient.Services.MessageHandler
             OnUserBootstrapCompleted();
         }
 
-        public event EventHandler UserBootstrapCompleted;
-
         private void OnUserBootstrapCompleted()
         {
-            EventHandler handler = UserBootstrapCompleted;
+            var handler = EntityBootstrapCompleted;
 
             if (handler != null)
             {
-                handler(this, EventArgs.Empty);
+                handler(this, new EntityBootstrapEventArgs(typeof(User)));
             }
         }
+
+        public event EventHandler<EntityBootstrapEventArgs> EntityBootstrapCompleted;
     }
 }

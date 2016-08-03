@@ -19,6 +19,7 @@ namespace ChatClient.Services
         private readonly IServiceRegistry serviceRegistry;
         private readonly MessageThroughputLimiter<UserTypingRequest> userTypingThroughputLimiter;
         private ConnectionHandler connectionHandler;
+        private MessageHandlerRegistry messageHandlerRegistry;
 
         /// <summary>
         /// Passes the service the reference to the <see cref="IServiceRegistry" />.
@@ -26,9 +27,10 @@ namespace ChatClient.Services
         /// <param name="serviceRegistry">Contains a housing for client services.</param>
         public ClientService(IServiceRegistry serviceRegistry)
         {
+            messageHandlerRegistry = new MessageHandlerRegistry(serviceRegistry);
             this.serviceRegistry = serviceRegistry;
-            const int MinimumMillisecondsAllowedBetweenUserTypingMessages = 1000;
-            userTypingThroughputLimiter = new MessageThroughputLimiter<UserTypingRequest>(MinimumMillisecondsAllowedBetweenUserTypingMessages);
+            const int minimumMillisecondsAllowedBetweenUserTypingMessages = 1000;
+            userTypingThroughputLimiter = new MessageThroughputLimiter<UserTypingRequest>(minimumMillisecondsAllowedBetweenUserTypingMessages);
             userTypingThroughputLimiter.DeferredSendLastMessage += userTypingThroughputLimiter_DeferredSendLastMessage;
         }
 
@@ -54,7 +56,7 @@ namespace ChatClient.Services
         /// <param name="loginDetails">The details used to log in to the Chat Program.</param>
         public LoginResult LogOn(LoginDetails loginDetails)
         {
-            var serverLoginHandler = new ServerLoginHandler();
+            var serverLoginHandler = new ServerLoginHandler(messageHandlerRegistry);
             serverLoginHandler.BootstrapCompleted += OnBootstrapCompleted;
 
             LoginResponse response = serverLoginHandler.ConnectToServer(loginDetails, out connectionHandler);
@@ -143,17 +145,18 @@ namespace ChatClient.Services
         private void OnNewMessageReceived(object sender, MessageEventArgs e)
         {
             IMessage message = e.Message;
-
+            IMessageHandler handler = null;
             try
             {
-                IMessageHandler handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                handler = messageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
 
-                handler.HandleMessage(message, serviceRegistry);
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
                 Log.Error("ClientService is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
             }
+
+            handler?.HandleMessage(message);
         }
 
         private void OnBootstrapCompleted(object sender, EventArgs e)

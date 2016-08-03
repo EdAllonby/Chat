@@ -21,11 +21,11 @@ namespace ServerTests.MessageHandlerTests
 
         public override void HandleMessage(IMessage message)
         {
-            clientDisconnectionHandler.HandleMessage(message, ServiceRegistry);
+            var clientDisconnectionHandler = new ClientDisconnectionHandler(ServiceRegistry);
+            clientDisconnectionHandler.HandleMessage(message);
         }
 
         private ClientDisconnection clientDisconnection;
-        private readonly ClientDisconnectionHandler clientDisconnectionHandler = new ClientDisconnectionHandler();
 
         [TestFixture]
         public class HandleMessageTest : ClientDisconnectionHandlerTest

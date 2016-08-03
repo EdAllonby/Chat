@@ -5,28 +5,40 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Holds the link between an <see cref="IMessage" /> and their implementation of an <see cref="IClientMessageHandler" />
+    /// Holds the link between an <see cref="IMessage" /> and their implementation of an <see cref="IMessageHandler" />
     /// to be used by the Client.
     /// </summary>
-    internal static class MessageHandlerRegistry
+    internal class MessageHandlerRegistry
     {
         /// <summary>
-        /// A dictionary of <see cref="IClientMessageHandler" /> implementations indexed by their relevant
+        /// A dictionary of <see cref="IMessageHandler" /> implementations indexed by their relevant
         /// <see cref="MessageIdentifier" /> to be used by the Client.
         /// </summary>
-        public static readonly IReadOnlyDictionary<MessageIdentifier, IMessageHandler>
+        public readonly IReadOnlyDictionary<MessageIdentifier, IMessageHandler> MessageHandlersIndexedByMessageIdentifier;
+
+
+        public MessageHandlerRegistry(IServiceRegistry serviceRegistry)
+        {
             MessageHandlersIndexedByMessageIdentifier = new Dictionary<MessageIdentifier, IMessageHandler>
             {
-                { MessageIdentifier.ContributionNotification, new ContributionNotificationHandler() },
-                { MessageIdentifier.UserNotification, new UserNotificationHandler() },
-                { MessageIdentifier.ConversationNotification, new ConversationNotificationHandler() },
-                { MessageIdentifier.ParticipationNotification, new ParticipationNotificationHandler() },
-                { MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationHandler() },
-                { MessageIdentifier.AvatarNotification, new AvatarNotificationHandler() },
-                { MessageIdentifier.UserSnapshot, new UserSnapshotHandler() },
-                { MessageIdentifier.ConversationSnapshot, new ConversationSnapshotHandler() },
-                { MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotHandler() },
-                { MessageIdentifier.UserTypingNotification, new UserTypingNotificationHandler() }
+                { MessageIdentifier.ContributionNotification, new ContributionNotificationHandler(serviceRegistry) },
+                { MessageIdentifier.UserNotification, new UserNotificationHandler(serviceRegistry) },
+                { MessageIdentifier.ConversationNotification, new ConversationNotificationHandler(serviceRegistry) },
+                { MessageIdentifier.ParticipationNotification, new ParticipationNotificationHandler(serviceRegistry) },
+                { MessageIdentifier.ConnectionStatusNotification, new ConnectionStatusNotificationHandler(serviceRegistry) },
+                { MessageIdentifier.AvatarNotification, new AvatarNotificationHandler(serviceRegistry) },
+                { MessageIdentifier.UserSnapshot, new UserSnapshotHandler(serviceRegistry) },
+                { MessageIdentifier.ConversationSnapshot, new ConversationSnapshotHandler(serviceRegistry) },
+                { MessageIdentifier.ParticipationSnapshot, new ParticipationSnapshotHandler(serviceRegistry) },
+                { MessageIdentifier.UserTypingNotification, new UserTypingNotificationHandler(serviceRegistry) }
             };
+        }
+
+        public IReadOnlyCollection<IBootstrapper> Bootstrappers => new List<IBootstrapper>
+        {
+            (IBootstrapper) MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot],
+            (IBootstrapper) MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot],
+            (IBootstrapper) MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot]
+        };
     }
 }

@@ -8,25 +8,28 @@ namespace Server.MessageHandler
     /// <summary>
     /// Handles a <see cref="EntitySnapshotRequest{Participation}" /> the Server received.
     /// </summary>
-    internal sealed class ParticipationSnapshotRequestHandler : IMessageHandler
+    internal sealed class ParticipationSnapshotRequestHandler : MessageHandler<EntitySnapshotRequest<Participation>>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ParticipationSnapshotRequestHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var participationSnapshotRequest = (EntitySnapshotRequest<Participation>) message;
+        }
 
-            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-            var clientManager = serviceRegistry.GetService<IClientManager>();
+        protected override void HandleMessage(EntitySnapshotRequest<Participation> message)
+        {
+
+            var participationRepository = (ParticipationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var clientManager = ServiceRegistry.GetService<IClientManager>();
 
             var userParticipations = new List<Participation>();
 
-            foreach (int conversationId in participationRepository.GetAllConversationIdsByUserId(participationSnapshotRequest.UserId))
+            foreach (int conversationId in participationRepository.GetAllConversationIdsByUserId(message.UserId))
             {
                 userParticipations.AddRange(participationRepository.GetParticipationsByConversationId(conversationId));
             }
 
             var participationSnapshot = new EntitySnapshot<Participation>(userParticipations);
 
-            clientManager.SendMessageToClient(participationSnapshot, participationSnapshotRequest.UserId);
+            clientManager.SendMessageToClient(participationSnapshot, message.UserId);
         }
     }
 }

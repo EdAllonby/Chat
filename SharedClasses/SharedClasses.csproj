@@ -87,6 +87,7 @@
     <Compile Include="Domain\UserTyping.cs" />
     <Compile Include="EntityChangedEventArgs.cs" />
     <Compile Include="IMessageHandler.cs" />
+    <Compile Include="MessageHandler.cs" />
     <Compile Include="IServiceRegistry.cs" />
     <Compile Include="Message\AvatarRequest.cs" />
     <Compile Include="Message\EntityNotification.cs" />

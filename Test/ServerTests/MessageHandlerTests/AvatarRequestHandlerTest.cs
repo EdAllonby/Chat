@@ -17,19 +17,17 @@ namespace ServerTests.MessageHandlerTests
             base.BeforeEachTest();
 
             avatarRequest = new AvatarRequest(UserId, Resources.SmallImage);
-            userToUpdate = new User("user", UserId, new ConnectionStatus(UserId, ConnectionStatus.Status.Connected));
         }
 
         public override void HandleMessage(IMessage message)
         {
-            avatarRequestHandler.HandleMessage(message, ServiceRegistry);
+            var avatarRequestHandler = new AvatarRequestHandler(ServiceRegistry);
+            avatarRequestHandler.HandleMessage(message);
         }
 
         private const int UserId = 1;
 
-        private readonly AvatarRequestHandler avatarRequestHandler = new AvatarRequestHandler();
         private AvatarRequest avatarRequest;
-        private User userToUpdate;
 
         private IEntityRepository<User> UserRepository => (IEntityRepository<User>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 

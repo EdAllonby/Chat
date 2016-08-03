@@ -24,13 +24,13 @@ namespace ServerTests.MessageHandlerTests
             userRepository.AddEntity(newParticipant);
         }
 
-        private readonly ParticipationRequestHandler participationRequestHandler = new ParticipationRequestHandler();
         private ParticipationRepository participationRepository;
         private User newParticipant;
 
         public override void HandleMessage(IMessage message)
         {
-            participationRequestHandler.HandleMessage(message, ServiceRegistry);
+            var participationRequestHandler = new ParticipationRequestHandler(ServiceRegistry);
+            participationRequestHandler.HandleMessage(message);
         }
 
         [TestFixture]

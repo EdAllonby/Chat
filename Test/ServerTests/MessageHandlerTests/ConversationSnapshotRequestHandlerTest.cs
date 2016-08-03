@@ -19,14 +19,12 @@ namespace ServerTests.MessageHandlerTests
             conversationSnapshotRequest = new EntitySnapshotRequest<Conversation>(DefaultUser.Id);
         }
 
-        private readonly ConversationSnapshotRequestHandler conversationSnapshotRequestHandler =
-            new ConversationSnapshotRequestHandler();
-
         private EntitySnapshotRequest<Conversation> conversationSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
-            conversationSnapshotRequestHandler.HandleMessage(message, ServiceRegistry);
+            var conversationSnapshotRequestHandler = new ConversationSnapshotRequestHandler(ServiceRegistry);
+            conversationSnapshotRequestHandler.HandleMessage(message);
         }
 
         [TestFixture]

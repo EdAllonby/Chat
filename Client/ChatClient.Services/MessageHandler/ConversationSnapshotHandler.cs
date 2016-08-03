@@ -6,17 +6,21 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="EntitySnapshot{Conversation}" /> the Client received.
+    /// Handles a <see cref="EntitySnapshot{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class ConversationSnapshotHandler : IMessageHandler
+    internal sealed class ConversationSnapshotHandler : MessageHandler<EntitySnapshot<Conversation>>, IBootstrapper
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ConversationSnapshotHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var conversationSnapshot = (EntitySnapshot<Conversation>) message;
+        }
 
-            var conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+        public event EventHandler<EntityBootstrapEventArgs> EntityBootstrapCompleted;
 
-            foreach (Conversation conversation in conversationSnapshot.Entities)
+        protected override void HandleMessage(EntitySnapshot<Conversation> message)
+        {
+            var conversationRepository = (ConversationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+
+            foreach (Conversation conversation in message.Entities)
             {
                 conversationRepository.AddEntity(conversation);
             }
@@ -24,12 +28,10 @@ namespace ChatClient.Services.MessageHandler
             OnConversationBootstrapCompleted();
         }
 
-        public event EventHandler ConversationBootstrapCompleted;
-
         private void OnConversationBootstrapCompleted()
         {
-            EventHandler handler = ConversationBootstrapCompleted;
-            if (handler != null) handler(this, EventArgs.Empty);
+            EventHandler<EntityBootstrapEventArgs> handler = EntityBootstrapCompleted;
+            handler?.Invoke(this, new EntityBootstrapEventArgs(typeof(Conversation)));
         }
     }
 }

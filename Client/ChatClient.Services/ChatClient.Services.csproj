@@ -46,6 +46,8 @@
     <Compile Include="MessageHandler\ContributionNotificationHandler.cs" />
     <Compile Include="MessageHandler\ConversationNotificationHandler.cs" />
     <Compile Include="MessageHandler\ConversationSnapshotHandler.cs" />
+    <Compile Include="MessageHandler\EntityBootstrapEventArgs.cs" />
+    <Compile Include="MessageHandler\IBootstrapper.cs" />
     <Compile Include="MessageHandler\MessageHandlerRegistry.cs" />
     <Compile Include="MessageHandler\ParticipationNotificationHandler.cs" />
     <Compile Include="MessageHandler\ParticipationSnapshotHandler.cs" />

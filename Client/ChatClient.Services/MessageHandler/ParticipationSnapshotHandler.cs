@@ -6,17 +6,21 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="EntitySnapshot{Participation}" /> the Client received.
+    /// Handles a <see cref="EntitySnapshot{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class ParticipationSnapshotHandler : IMessageHandler
+    internal sealed class ParticipationSnapshotHandler : MessageHandler<EntitySnapshot<Participation>>, IBootstrapper
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ParticipationSnapshotHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var participationSnapshot = (EntitySnapshot<Participation>) message;
+        }
 
-            var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+        public event EventHandler<EntityBootstrapEventArgs> EntityBootstrapCompleted;
 
-            foreach (Participation participation in participationSnapshot.Entities)
+        protected override void HandleMessage(EntitySnapshot<Participation> message)
+        {
+            var participationRepository = (IEntityRepository<Participation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+
+            foreach (Participation participation in message.Entities)
             {
                 participationRepository.AddEntity(participation);
             }
@@ -24,16 +28,10 @@ namespace ChatClient.Services.MessageHandler
             OnParticipationBootstrapCompleted();
         }
 
-        public event EventHandler ParticipationBootstrapCompleted;
-
         private void OnParticipationBootstrapCompleted()
         {
-            EventHandler handler = ParticipationBootstrapCompleted;
-
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            EventHandler<EntityBootstrapEventArgs> handler = EntityBootstrapCompleted;
+            handler?.Invoke(this, new EntityBootstrapEventArgs(typeof(Participation)));
         }
     }
 }

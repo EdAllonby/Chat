@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
@@ -10,20 +9,20 @@ namespace Server.MessageHandler
     /// <summary>
     /// Handles a <see cref="ParticipationRequest" /> the Server received.
     /// </summary>
-    internal sealed class ParticipationRequestHandler : IMessageHandler
+    internal sealed class ParticipationRequestHandler : MessageHandler<ParticipationRequest>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
-
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ParticipationRequestHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var participationRequest = (ParticipationRequest) message;
+        }
 
-            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+        protected override void HandleMessage(ParticipationRequest message)
+        {
+            var participationRepository = (ParticipationRepository)ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
-            if (CheckUserCanEnterConversation(participationRequest, participationRepository))
+            if (CheckUserCanEnterConversation(message, participationRepository))
             {
-                var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
-                AddUserToConversation(participationRequest, entityIdAllocatorFactory, participationRepository);
+                var entityIdAllocatorFactory = ServiceRegistry.GetService<EntityIdAllocatorFactory>();
+                AddUserToConversation(message, entityIdAllocatorFactory, participationRepository);
             }
         }
 
@@ -36,8 +35,7 @@ namespace Server.MessageHandler
 
             if (currentParticipantsInConversation.Any(participation => participation.UserId == newparticipation.UserId))
             {
-                Log.WarnFormat(
-                    $"User with id {participationRequest.Participation.UserId} cannot be added to conversation {participationRequest.Participation.ConversationId}, user already exists in this conversation.");
+                Log.WarnFormat($"User with id {participationRequest.Participation.UserId} cannot be added to conversation {participationRequest.Participation.ConversationId}, user already exists in this conversation.");
 
                 return false;
             }

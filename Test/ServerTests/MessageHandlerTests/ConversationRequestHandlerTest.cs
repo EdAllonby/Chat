@@ -19,7 +19,6 @@ namespace ServerTests.MessageHandlerTests
             conversationRequest = new ConversationRequest(usersInConversation);
         }
 
-        private readonly ConversationRequestHandler conversationRequestHandler = new ConversationRequestHandler();
 
         private List<int> usersInConversation;
 
@@ -34,7 +33,8 @@ namespace ServerTests.MessageHandlerTests
 
         public override void HandleMessage(IMessage message)
         {
-            conversationRequestHandler.HandleMessage(message, ServiceRegistry);
+            var conversationRequestHandler = new ConversationRequestHandler(ServiceRegistry);
+            conversationRequestHandler.HandleMessage(message);
         }
 
         private Conversation HandleMessageAndGetAddedConversation(IMessage message)

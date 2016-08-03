@@ -18,23 +18,21 @@ namespace ChatClient.Services
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ServerLoginHandler));
 
-        private readonly ConversationSnapshotHandler conversationSnapshotHandler = (ConversationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ConversationSnapshot];
-        private readonly ParticipationSnapshotHandler participationSnapshotHandler = (ParticipationSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.ParticipationSnapshot];
         private readonly TcpClient serverConnection = new TcpClient();
-        private readonly UserSnapshotHandler userSnapshotHandler = (UserSnapshotHandler) MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[MessageIdentifier.UserSnapshot];
+        private bool hasReceivedConversationSnapshot;
+        private bool hasReceivedParticipationSnapshot;
 
-        private bool hasConversationSnapshotBeenSent;
-        private bool hasParticipationSnapshotBeenSent;
-        private bool hasUserSnapshotBeenSent;
+        private bool hasReceivedUserSnapshot;
 
         /// <summary>
         /// Initialises a server login helper.
         /// </summary>
-        public ServerLoginHandler()
+        public ServerLoginHandler(MessageHandlerRegistry messageHandlerRegistry)
         {
-            userSnapshotHandler.UserBootstrapCompleted += OnUserBootstrapCompleted;
-            participationSnapshotHandler.ParticipationBootstrapCompleted += OnParticipationBootstrapCompleted;
-            conversationSnapshotHandler.ConversationBootstrapCompleted += OnConversationBootstrapCompleted;
+            foreach (IBootstrapper bootstrapper in messageHandlerRegistry.Bootstrappers)
+            {
+                bootstrapper.EntityBootstrapCompleted += EntityBootstrapCompleted;
+            }
         }
 
         /// <summary>
@@ -55,8 +53,6 @@ namespace ChatClient.Services
             if (!isServerFound)
             {
                 connectionHandler = null;
-                RemoveBootstrapEventSubscriptions();
-
                 return new LoginResponse(LoginResult.ServerNotFound);
             }
 
@@ -75,7 +71,6 @@ namespace ChatClient.Services
             else
             {
                 connectionHandler = null;
-                RemoveBootstrapEventSubscriptions();
             }
 
             return loginResponse;
@@ -86,6 +81,31 @@ namespace ChatClient.Services
             SendConnectionMessage(new EntitySnapshotRequest<User>(userId));
             SendConnectionMessage(new EntitySnapshotRequest<Conversation>(userId));
             SendConnectionMessage(new EntitySnapshotRequest<Participation>(userId));
+        }
+
+        private void EntityBootstrapCompleted(object sender, EntityBootstrapEventArgs e)
+        {
+            if (e.EntityType == typeof(User))
+            {
+                hasReceivedUserSnapshot = true;
+            }
+            else if (e.EntityType == typeof(Conversation))
+            {
+                hasReceivedConversationSnapshot = true;
+            }
+            else if (e.EntityType == typeof(Participation))
+            {
+                hasReceivedParticipationSnapshot = true;
+            }
+            else
+            {
+                string errorMessage = $"{typeof(ServerLoginHandler).Name} class should not be bootstrapping for an entity of type {e.EntityType.Name}";
+                Log.ErrorFormat(errorMessage);
+
+                throw new ArgumentException(errorMessage);
+            }
+
+            TrySendBootstrapCompleteEvent();
         }
 
         private bool CreateConnection(IPAddress targetAddress, int targetPort)
@@ -125,11 +145,18 @@ namespace ChatClient.Services
 
         private void TrySendBootstrapCompleteEvent()
         {
-            if (hasUserSnapshotBeenSent && hasParticipationSnapshotBeenSent && hasConversationSnapshotBeenSent)
+            if (HasReceivedAllBootstraps())
             {
                 Log.Debug("Client bootstrap complete. Sending Bootstrap Completed event.");
                 OnBootstrapCompleted();
             }
+        }
+
+        private bool HasReceivedAllBootstraps()
+        {
+            return hasReceivedUserSnapshot &&
+                   hasReceivedConversationSnapshot &&
+                   hasReceivedParticipationSnapshot;
         }
 
         private IMessage GetConnectionIMessage()
@@ -147,38 +174,10 @@ namespace ChatClient.Services
             messageSerialiser.Serialise(serverConnection.GetStream(), message);
         }
 
-        private void RemoveBootstrapEventSubscriptions()
-        {
-            userSnapshotHandler.UserBootstrapCompleted -= OnUserBootstrapCompleted;
-            participationSnapshotHandler.ParticipationBootstrapCompleted -= OnParticipationBootstrapCompleted;
-            conversationSnapshotHandler.ConversationBootstrapCompleted -= OnConversationBootstrapCompleted;
-        }
-
         private void OnBootstrapCompleted()
         {
             EventHandler handler = BootstrapCompleted;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        private void OnUserBootstrapCompleted(object sender, EventArgs e)
-        {
-            hasUserSnapshotBeenSent = true;
-            TrySendBootstrapCompleteEvent();
-        }
-
-        private void OnParticipationBootstrapCompleted(object sender, EventArgs e)
-        {
-            hasParticipationSnapshotBeenSent = true;
-            TrySendBootstrapCompleteEvent();
-        }
-
-        private void OnConversationBootstrapCompleted(object sender, EventArgs e)
-        {
-            hasConversationSnapshotBeenSent = true;
-            TrySendBootstrapCompleteEvent();
+            handler?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -7,15 +7,17 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="EntityNotification{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class AvatarNotificationHandler : IMessageHandler
+    internal sealed class AvatarNotificationHandler : MessageHandler<EntityNotification<Avatar>>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        protected override void HandleMessage(EntityNotification<Avatar> message)
         {
-            var avatarNotification = (EntityNotification<Avatar>) message;
+            var userRepository = (UserRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
-            var userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+            userRepository.UpdateUserAvatar(message.Entity);
+        }
 
-            userRepository.UpdateUserAvatar(avatarNotification.Entity);
+        public AvatarNotificationHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
+        {
         }
     }
 }

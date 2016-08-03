@@ -7,22 +7,24 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="EntityNotification{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class ConversationNotificationHandler : IMessageHandler
+    internal sealed class ConversationNotificationHandler : MessageHandler<EntityNotification<Conversation>>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ConversationNotificationHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var conversationNotification = (EntityNotification<Conversation>) message;
+        }
 
-            var conversationRepository = (ConversationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+        protected override void HandleMessage(EntityNotification<Conversation> message)
+        {
+            var conversationRepository = (ConversationRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
-            switch (conversationNotification.NotificationType)
+            switch (message.NotificationType)
             {
                 case NotificationType.Create:
-                    conversationRepository.AddEntity(conversationNotification.Entity);
+                    conversationRepository.AddEntity(message.Entity);
                     break;
 
                 case NotificationType.Update:
-                    conversationRepository.UpdateEntity(conversationNotification.Entity);
+                    conversationRepository.UpdateEntity(message.Entity);
                     break;
             }
         }

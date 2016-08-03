@@ -7,15 +7,17 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="EntityNotification{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class ParticipationNotificationHandler : IMessageHandler
+    internal sealed class ParticipationNotificationHandler : MessageHandler<EntityNotification<Participation>>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ParticipationNotificationHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var participationNotification = (EntityNotification<Participation>) message;
+        }
 
-            var participationRepository = (IEntityRepository<Participation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+        protected override void HandleMessage(EntityNotification<Participation> message)
+        {
+            var participationRepository = (IEntityRepository<Participation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
 
-            participationRepository.AddEntity(participationNotification.Entity);
+            participationRepository.AddEntity(message.Entity);
         }
     }
 }

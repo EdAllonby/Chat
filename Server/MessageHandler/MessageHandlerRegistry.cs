@@ -5,27 +5,32 @@ using SharedClasses.Message;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Holds the link between an <see cref="IMessage" /> and their implementation of an <see cref="IMessageHandler" /> to be
+    /// Holds the link between an <see cref="IMessage" /> and their implementation of an <see cref="MessageHandler" /> to be
     /// used by the Server.
     /// </summary>
-    internal static class MessageHandlerRegistry
+    internal class MessageHandlerRegistry
     {
         /// <summary>
         /// A dictionary of <see cref="IMessageHandler" /> implementations indexed by their relevant
-        /// <see cref="MessageIdentifier" /> to be used by the Server.
+        /// <see cref="MessageIdentifier" /> to be used by the Client.
         /// </summary>
-        public static readonly IReadOnlyDictionary<MessageIdentifier, IMessageHandler>
+        public readonly IReadOnlyDictionary<MessageIdentifier, IMessageHandler> MessageHandlersIndexedByMessageIdentifier;
+
+
+        public MessageHandlerRegistry(IServiceRegistry serviceRegistry)
+        {
             MessageHandlersIndexedByMessageIdentifier = new Dictionary<MessageIdentifier, IMessageHandler>
             {
-                { MessageIdentifier.UserSnapshotRequest, new UserSnapshotRequestHandler() },
-                { MessageIdentifier.ConversationSnapshotRequest, new ConversationSnapshotRequestHandler() },
-                { MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestHandler() },
-                { MessageIdentifier.ContributionRequest, new ContributionRequestHandler() },
-                { MessageIdentifier.ClientDisconnection, new ClientDisconnectionHandler() },
-                { MessageIdentifier.ParticipationRequest, new ParticipationRequestHandler() },
-                { MessageIdentifier.ConversationRequest, new ConversationRequestHandler() },
-                { MessageIdentifier.AvatarRequest, new AvatarRequestHandler() },
-                { MessageIdentifier.UserTypingRequest, new UserTypingRequestHandler() }
+                { MessageIdentifier.UserSnapshotRequest, new UserSnapshotRequestHandler(serviceRegistry) },
+                { MessageIdentifier.ConversationSnapshotRequest, new ConversationSnapshotRequestHandler(serviceRegistry) },
+                { MessageIdentifier.ParticipationSnapshotRequest, new ParticipationSnapshotRequestHandler(serviceRegistry) },
+                { MessageIdentifier.ContributionRequest, new ContributionRequestHandler(serviceRegistry) },
+                { MessageIdentifier.ClientDisconnection, new ClientDisconnectionHandler(serviceRegistry) },
+                { MessageIdentifier.ParticipationRequest, new ParticipationRequestHandler(serviceRegistry) },
+                { MessageIdentifier.ConversationRequest, new ConversationRequestHandler(serviceRegistry) },
+                { MessageIdentifier.AvatarRequest, new AvatarRequestHandler(serviceRegistry) },
+                { MessageIdentifier.UserTypingRequest, new UserTypingRequestHandler(serviceRegistry) }
             };
+        }
     }
 }

@@ -7,15 +7,17 @@ namespace ChatClient.Services.MessageHandler
     /// <summary>
     /// Handles a <see cref="EntityNotification{TEntity}" /> the Client received.
     /// </summary>
-    internal sealed class ConnectionStatusNotificationHandler : IMessageHandler
+    internal sealed class ConnectionStatusNotificationHandler : MessageHandler<EntityNotification<ConnectionStatus>>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ConnectionStatusNotificationHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var connectionStatusNotification = (EntityNotification<ConnectionStatus>) message;
+        }
 
-            var userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+        protected override void HandleMessage(EntityNotification<ConnectionStatus> message)
+        {
+            var userRepository = (UserRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
-            userRepository.UpdateUserConnectionStatus(connectionStatusNotification.Entity);
+            userRepository.UpdateUserConnectionStatus(message.Entity);
         }
     }
 }

@@ -19,13 +19,12 @@ namespace ServerTests.MessageHandlerTests
             participationSnapshotRequest = new EntitySnapshotRequest<Participation>(DefaultUser.Id);
         }
 
-        private readonly ParticipationSnapshotRequestHandler participationSnapshotRequestHandler = new ParticipationSnapshotRequestHandler();
-
         private EntitySnapshotRequest<Participation> participationSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
-            participationSnapshotRequestHandler.HandleMessage(message, ServiceRegistry);
+            var participationSnapshotRequestHandler = new ParticipationSnapshotRequestHandler(ServiceRegistry);
+            participationSnapshotRequestHandler.HandleMessage(message);
         }
 
         [TestFixture]

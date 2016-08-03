@@ -19,11 +19,11 @@ namespace ServerTests.MessageHandlerTests
 
         public override void HandleMessage(IMessage message)
         {
-            contributionRequestHandler.HandleMessage(message, ServiceRegistry);
+            var contributionRequestHandler = new ContributionRequestHandler(ServiceRegistry);
+            contributionRequestHandler.HandleMessage(message);
         }
 
         private ContributionRequest contributionRequest;
-        private readonly ContributionRequestHandler contributionRequestHandler = new ContributionRequestHandler();
         private const int ConversationId = 1;
 
         private IEntityRepository<Conversation> ConversationRepository => (IEntityRepository<Conversation>) ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();

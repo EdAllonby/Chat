@@ -15,6 +15,7 @@ namespace Server
     {
         private const int PortNumber = 5004;
         private static readonly ILog Log = LogManager.GetLogger(typeof(Server));
+        private readonly MessageHandlerRegistry messageHandlerRegistry;
 
         private readonly OnEntityChangedHandler onConversationChangedHandler;
         private readonly OnEntityChangedHandler onParticipationChangedHandler;
@@ -31,6 +32,8 @@ namespace Server
             onUserChangedHandler = new OnUserChangedHandler(serviceRegistry);
             onConversationChangedHandler = new OnConversationChangedHandler(serviceRegistry);
             onParticipationChangedHandler = new OnParticipationChangedHandler(serviceRegistry);
+
+            messageHandlerRegistry = new MessageHandlerRegistry(serviceRegistry);
 
             isServerRunning = true;
             Log.Info("Server instance started");
@@ -84,15 +87,14 @@ namespace Server
             IMessageHandler handler = null;
             try
             {
-                handler = MessageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
+                handler = messageHandlerRegistry.MessageHandlersIndexedByMessageIdentifier[message.MessageIdentifier];
             }
             catch (KeyNotFoundException keyNotFoundException)
             {
                 Log.Error("Server is not supposed to handle message with identifier: " + e.Message.MessageIdentifier, keyNotFoundException);
             }
 
-            handler.HandleMessage(message, serviceRegistry);
-
+            handler?.HandleMessage(message);
         }
     }
 }

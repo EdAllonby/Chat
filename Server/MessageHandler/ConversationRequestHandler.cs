@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using log4net;
 using SharedClasses;
 using SharedClasses.Domain;
 using SharedClasses.Message;
@@ -10,22 +9,22 @@ namespace Server.MessageHandler
     /// <summary>
     /// Handles a <see cref="ConversationRequest" /> the Server received.
     /// </summary>
-    internal sealed class ConversationRequestHandler : IMessageHandler
+    internal sealed class ConversationRequestHandler : MessageHandler<ConversationRequest>
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(ConversationRequestHandler));
-
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ConversationRequestHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var entityIdAllocatorFactory = serviceRegistry.GetService<EntityIdAllocatorFactory>();
+        }
 
-            var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
-            var conversationRepository = (IEntityRepository<Conversation>) serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
+        protected override void HandleMessage(ConversationRequest message)
+        {
+            var entityIdAllocatorFactory = ServiceRegistry.GetService<EntityIdAllocatorFactory>();
 
-            var newConversationRequest = (ConversationRequest) message;
+            var participationRepository = (ParticipationRepository)ServiceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
+            var conversationRepository = (IEntityRepository<Conversation>)ServiceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
 
-            if (IsConversationValid(newConversationRequest, participationRepository))
+            if (IsConversationValid(message, participationRepository))
             {
-                CreateConversationEntity(newConversationRequest, conversationRepository, participationRepository, entityIdAllocatorFactory);
+                CreateConversationEntity(message, conversationRepository, participationRepository, entityIdAllocatorFactory);
             }
         }
 

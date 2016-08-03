@@ -9,23 +9,25 @@ namespace Server.MessageHandler
     /// <summary>
     /// Handles a <see cref="ClientDisconnection" /> the Server received.
     /// </summary>
-    internal sealed class ClientDisconnectionHandler : IMessageHandler
+    internal sealed class ClientDisconnectionHandler : MessageHandler<ClientDisconnection>
     {
-        public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
+        public ClientDisconnectionHandler(IServiceRegistry serviceRegistry) : base(serviceRegistry)
         {
-            var clientDisconnection = (ClientDisconnection) message;
+        }
 
-            var userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
+        protected override void HandleMessage(ClientDisconnection message)
+        {
+            var userRepository = (UserRepository) ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
-            var clientManager = serviceRegistry.GetService<IClientManager>();
+            var clientManager = ServiceRegistry.GetService<IClientManager>();
 
-            clientManager.RemoveClientHandler(clientDisconnection.UserId);
+            clientManager.RemoveClientHandler(message.UserId);
 
-            var connectionStatus = new ConnectionStatus(clientDisconnection.UserId, ConnectionStatus.Status.Disconnected);
+            var connectionStatus = new ConnectionStatus(message.UserId, ConnectionStatus.Status.Disconnected);
 
             userRepository.UpdateUserConnectionStatus(connectionStatus);
 
-            SendUserTypingNotification(clientDisconnection.UserId, clientManager, serviceRegistry.GetService<RepositoryManager>());
+            SendUserTypingNotification(message.UserId, clientManager, ServiceRegistry.GetService<RepositoryManager>());
         }
 
         /// <summary>
@@ -37,7 +39,8 @@ namespace Server.MessageHandler
         /// <remarks>
         /// This could have be done in the Client when a client senses that a user's <see cref="ConnectionStatus" /> has been
         /// modified.
-        /// But I'd rather have it as a rule here where a client can use their same <see cref="UserTypingNotification" /> logic.
+        /// But I'd rather have it as a rule here where a client can use their same
+        /// <see cref="EntityNotification{UserNotification}" /> logic.
         /// </remarks>
         /// <param name="userId">The user that disconnected.</param>
         /// <param name="clientManager">Holds the connected clients.</param>
