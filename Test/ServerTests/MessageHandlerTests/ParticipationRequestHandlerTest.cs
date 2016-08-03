@@ -70,7 +70,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowsExceptionWhenNotPassedParticipationRequest()
             {
-                Assert.Throws<InvalidCastException>(() => HandleMessage(new ParticipationSnapshot(new List<Participation>())));
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new EntitySnapshot<Participation>(new List<Participation>())));
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SharedClasses.Domain;
 using SharedClasses.Message;
 using SharedClasses.Serialiser.MessageSerialiser;
@@ -22,12 +21,12 @@ namespace SharedClasses.Serialiser
                 { MessageIdentifier.ContributionNotification, new EntityNotificationSerialiser<IContribution>() },
                 { MessageIdentifier.LoginRequest, new MessageSerialiser<LoginRequest>() },
                 { MessageIdentifier.UserNotification, new EntityNotificationSerialiser<User>() },
-                { MessageIdentifier.UserSnapshotRequest, new MessageSerialiser<UserSnapshotRequest>() },
-                { MessageIdentifier.UserSnapshot, new MessageSerialiser<UserSnapshot>() },
-                { MessageIdentifier.ConversationSnapshotRequest, new MessageSerialiser<ConversationSnapshotRequest>() },
-                { MessageIdentifier.ConversationSnapshot, new MessageSerialiser<ConversationSnapshot>() },
-                { MessageIdentifier.ParticipationSnapshotRequest, new MessageSerialiser<ParticipationSnapshotRequest>() },
-                { MessageIdentifier.ParticipationSnapshot, new MessageSerialiser<ParticipationSnapshot>() },
+                { MessageIdentifier.UserSnapshotRequest, new MessageSerialiser<EntitySnapshotRequest<User>>() },
+                { MessageIdentifier.UserSnapshot, new MessageSerialiser<EntitySnapshot<User>>() },
+                { MessageIdentifier.ConversationSnapshotRequest, new MessageSerialiser<EntitySnapshotRequest<Conversation>>() },
+                { MessageIdentifier.ConversationSnapshot, new MessageSerialiser<EntitySnapshot<Conversation>>() },
+                { MessageIdentifier.ParticipationSnapshotRequest, new MessageSerialiser<EntitySnapshotRequest<Participation>>() },
+                { MessageIdentifier.ParticipationSnapshot, new MessageSerialiser<EntitySnapshot<Participation>>() },
                 { MessageIdentifier.ConversationRequest, new MessageSerialiser<ConversationRequest>() },
                 { MessageIdentifier.ConversationNotification, new EntityNotificationSerialiser<Conversation>() },
                 { MessageIdentifier.ParticipationRequest, new MessageSerialiser<ParticipationRequest>() },

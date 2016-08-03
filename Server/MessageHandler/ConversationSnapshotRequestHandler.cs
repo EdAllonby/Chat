@@ -7,13 +7,13 @@ using SharedClasses.Message;
 namespace Server.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="ConversationSnapshotRequest" /> the Server received.
+    /// Handles a <see cref="EntitySnapshotRequest{Conversation}" /> the Server received.
     /// </summary>
     internal sealed class ConversationSnapshotRequestHandler : IMessageHandler
     {
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var conversationSnapshotRequest = (ConversationSnapshotRequest) message;
+            var conversationSnapshotRequest = (EntitySnapshotRequest<Conversation>) message;
             var participationRepository = (ParticipationRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<Participation>();
             IReadOnlyEntityRepository<Conversation> conversationRepository = serviceRegistry.GetService<RepositoryManager>().GetRepository<Conversation>();
             var clientManager = serviceRegistry.GetService<IClientManager>();
@@ -22,7 +22,7 @@ namespace Server.MessageHandler
 
             List<Conversation> conversations = conversationIds.Select(conversationRepository.FindEntityById).ToList();
 
-            var conversationSnapshot = new ConversationSnapshot(conversations);
+            var conversationSnapshot = new EntitySnapshot<Conversation>(conversations);
 
             clientManager.SendMessageToClient(conversationSnapshot, conversationSnapshotRequest.UserId);
         }

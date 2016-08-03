@@ -6,17 +6,17 @@ using SharedClasses.Message;
 namespace ChatClient.Services.MessageHandler
 {
     /// <summary>
-    /// Handles a <see cref="UserSnapshot" /> the Client received.
+    /// Handles a <see cref="EntitySnapshot{User}" /> the Client received.
     /// </summary>
     internal sealed class UserSnapshotHandler : IMessageHandler
     {
         public void HandleMessage(IMessage message, IServiceRegistry serviceRegistry)
         {
-            var userSnapshot = (UserSnapshot) message;
+            var userSnapshot = (EntitySnapshot<User>) message;
 
             var userRepository = (UserRepository) serviceRegistry.GetService<RepositoryManager>().GetRepository<User>();
 
-            foreach (User user in userSnapshot.Users)
+            foreach (User user in userSnapshot.Entities)
             {
                 userRepository.AddEntity(user);
             }

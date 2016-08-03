@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using Server.MessageHandler;
 using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ServerTests.MessageHandlerTests
@@ -15,13 +16,13 @@ namespace ServerTests.MessageHandlerTests
         {
             base.BeforeEachTest();
 
-            conversationSnapshotRequest = new ConversationSnapshotRequest(DefaultUser.Id);
+            conversationSnapshotRequest = new EntitySnapshotRequest<Conversation>(DefaultUser.Id);
         }
 
         private readonly ConversationSnapshotRequestHandler conversationSnapshotRequestHandler =
             new ConversationSnapshotRequestHandler();
 
-        private ConversationSnapshotRequest conversationSnapshotRequest;
+        private EntitySnapshotRequest<Conversation> conversationSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
@@ -40,9 +41,9 @@ namespace ServerTests.MessageHandlerTests
 
                 HandleMessage(conversationSnapshotRequest);
 
-                var conversationSnapshot = (ConversationSnapshot) message;
+                var conversationSnapshot = (EntitySnapshot<Conversation>) message;
 
-                List<int> conversationIds = conversationSnapshot.Conversations.Select(conversation => conversation.Id).ToList();
+                List<int> conversationIds = conversationSnapshot.Entities.Select(conversation => conversation.Id).ToList();
 
                 Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
             }
@@ -73,7 +74,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowsExceptionWhenMessageIsNotConversationSnapshotRequest()
             {
-                var participationSnapshotRequest = new ParticipationSnapshotRequest(DefaultUser.Id);
+                var participationSnapshotRequest = new EntitySnapshotRequest<Participation>(DefaultUser.Id);
                 Assert.Throws<InvalidCastException>(() => HandleMessage(participationSnapshotRequest));
             }
         }

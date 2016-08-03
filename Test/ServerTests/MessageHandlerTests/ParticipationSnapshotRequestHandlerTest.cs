@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using Server.MessageHandler;
 using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 
 namespace ServerTests.MessageHandlerTests
@@ -15,12 +16,12 @@ namespace ServerTests.MessageHandlerTests
         {
             base.BeforeEachTest();
 
-            participationSnapshotRequest = new ParticipationSnapshotRequest(DefaultUser.Id);
+            participationSnapshotRequest = new EntitySnapshotRequest<Participation>(DefaultUser.Id);
         }
 
         private readonly ParticipationSnapshotRequestHandler participationSnapshotRequestHandler = new ParticipationSnapshotRequestHandler();
 
-        private ParticipationSnapshotRequest participationSnapshotRequest;
+        private EntitySnapshotRequest<Participation> participationSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
@@ -39,9 +40,9 @@ namespace ServerTests.MessageHandlerTests
 
                 HandleMessage(participationSnapshotRequest);
 
-                var conversationSnapshot = (ParticipationSnapshot) message;
+                var conversationSnapshot = (EntitySnapshot<Participation>) message;
 
-                int userId = conversationSnapshot.Participations.Select(participation => participation.UserId).First();
+                int userId = conversationSnapshot.Entities.Select(participation => participation.UserId).First();
 
                 Assert.AreEqual(DefaultUser.Id, userId);
             }
@@ -55,9 +56,9 @@ namespace ServerTests.MessageHandlerTests
 
                 HandleMessage(participationSnapshotRequest);
 
-                var conversationSnapshot = (ParticipationSnapshot) message;
+                var conversationSnapshot = (EntitySnapshot<Participation>) message;
 
-                List<int> conversationIds = conversationSnapshot.Participations.Select(participation => participation.ConversationId).ToList();
+                List<int> conversationIds = conversationSnapshot.Entities.Select(participation => participation.ConversationId).ToList();
 
                 Assert.AreEqual(DefaultConversationIdDefaultUserIsIn, conversationIds.Distinct().First());
             }
@@ -88,7 +89,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowsExceptionWhenGivenMessageThatIsNotParticipationSnapshot()
             {
-                Assert.Throws<InvalidCastException>(() => HandleMessage(new UserSnapshotRequest(31)));
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new EntitySnapshotRequest<User>(31)));
             }
         }
     }

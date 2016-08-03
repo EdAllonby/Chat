@@ -14,12 +14,12 @@ namespace ServerTests.MessageHandlerTests
         public override void BeforeEachTest()
         {
             base.BeforeEachTest();
-            userSnapshotRequest = new UserSnapshotRequest(DefaultUser.Id);
+            userSnapshotRequest = new EntitySnapshotRequest<User>(DefaultUser.Id);
         }
 
         private readonly UserSnapshotRequestHandler userSnapshotRequestHandler = new UserSnapshotRequestHandler();
 
-        private UserSnapshotRequest userSnapshotRequest;
+        private EntitySnapshotRequest<User> userSnapshotRequest;
 
         public override void HandleMessage(IMessage message)
         {
@@ -56,7 +56,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowsExceptionWhenMessageIsNotUserSnapshotRequest()
             {
-                var participationSnapshotRequest = new ConversationSnapshotRequest(DefaultUser.Id);
+                var participationSnapshotRequest = new EntitySnapshotRequest<Conversation>(DefaultUser.Id);
                 Assert.Throws<InvalidCastException>(() => HandleMessage(participationSnapshotRequest));
             }
 
@@ -69,11 +69,11 @@ namespace ServerTests.MessageHandlerTests
 
                 HandleMessage(userSnapshotRequest);
 
-                var userSnapshot = (UserSnapshot) message;
+                var userSnapshot = (EntitySnapshot<User>) message;
 
                 IEnumerable<User> allUsers = ServiceRegistry.GetService<RepositoryManager>().GetRepository<User>().GetAllEntities();
 
-                Assert.AreEqual(userSnapshot.Users, allUsers);
+                Assert.AreEqual(userSnapshot.Entities, allUsers);
             }
         }
     }

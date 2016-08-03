@@ -97,7 +97,7 @@ namespace ServerTests.MessageHandlerTests
             [Test]
             public void ThrowExceptionWhenNotGivenConversationRequest()
             {
-                Assert.Throws<InvalidCastException>(() => HandleMessage(new ParticipationSnapshotRequest(10)));
+                Assert.Throws<InvalidCastException>(() => HandleMessage(new EntitySnapshotRequest<Participation>(10)));
             }
         }
     }

@@ -5,6 +5,7 @@ using System.Threading;
 using ChatClient.Services.MessageHandler;
 using log4net;
 using SharedClasses;
+using SharedClasses.Domain;
 using SharedClasses.Message;
 using SharedClasses.Serialiser;
 
@@ -82,9 +83,9 @@ namespace ChatClient.Services
 
         private void BootstrapRepositories(int userId)
         {
-            SendConnectionMessage(new UserSnapshotRequest(userId));
-            SendConnectionMessage(new ConversationSnapshotRequest(userId));
-            SendConnectionMessage(new ParticipationSnapshotRequest(userId));
+            SendConnectionMessage(new EntitySnapshotRequest<User>(userId));
+            SendConnectionMessage(new EntitySnapshotRequest<Conversation>(userId));
+            SendConnectionMessage(new EntitySnapshotRequest<Participation>(userId));
         }
 
         private bool CreateConnection(IPAddress targetAddress, int targetPort)

@@ -90,7 +90,11 @@
     <Compile Include="IServiceRegistry.cs" />
     <Compile Include="Message\AvatarRequest.cs" />
     <Compile Include="Message\EntityNotification.cs" />
+    <Compile Include="Message\EntitySnapshot.cs" />
+    <Compile Include="Message\EntitySnapshotRequest.cs" />
     <Compile Include="Message\NotificationMessageIdentifierFactory.cs" />
+    <Compile Include="Message\SnapshotMessageIdentifierFactory.cs" />
+    <Compile Include="Message\SnapshotRequestMessageIdentifierFactory.cs" />
     <Compile Include="Message\UserTypingRequest.cs" />
     <Compile Include="Serialiser\BinarySerialiser.cs" />
     <Compile Include="ConnectionHandler.cs" />
@@ -104,8 +108,6 @@
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageReceiver.cs" />
     <Compile Include="Message\ClientDisconnection.cs" />
-    <Compile Include="Message\ConversationSnapshot.cs" />
-    <Compile Include="Message\ConversationSnapshotRequest.cs" />
     <Compile Include="Message\LoginResult.cs" />
     <Compile Include="Serialiser\EntitySerialiser\EntitySerialiser.cs" />
     <Compile Include="Serialiser\IMessageSerialiser.cs" />
@@ -113,8 +115,6 @@
     <Compile Include="Serialiser\MessageSerialiser\MessageSerialiser.cs" />
     <Compile Include="Serialiser\NotificationTypeSerialiser.cs" />
     <Compile Include="Message\ParticipationRequest.cs" />
-    <Compile Include="Message\ParticipationSnapshot.cs" />
-    <Compile Include="Message\ParticipationSnapshotRequest.cs" />
     <Compile Include="RepositoryManager.cs" />
     <Compile Include="Message\ContributionRequest.cs" />
     <Compile Include="Domain\TextContribution.cs" />
@@ -129,8 +129,6 @@
     <Compile Include="Message\NotificationType.cs" />
     <Compile Include="Serialiser\SerialiserFactory.cs" />
     <Compile Include="Serialiser\SerialiserRegistry.cs" />
-    <Compile Include="Message\UserSnapshot.cs" />
-    <Compile Include="Message\UserSnapshotRequest.cs" />
     <Compile Include="Domain\UserRepository.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="ServiceRegistry.cs" />
